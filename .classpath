@@ -7,6 +7,8 @@
   </classpathentry>
   <classpathentry kind="src" path="/com.idega.core">
   </classpathentry>
+  <classpathentry kind="src" path="/com.idega.user">
+  </classpathentry>
   <classpathentry kind="src" path="/com.idega.block.category">
   </classpathentry>
   <classpathentry kind="src" path="/com.idega.builder">

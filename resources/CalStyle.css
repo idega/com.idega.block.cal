@@ -1,0 +1,237 @@
+/*CalStyle.css*/
+/*birna*/
+
+body{
+	background-color: #ffffff;
+	font-size: 60%;
+	margin-top: 1px;
+	margin-right: 0px;
+	margin-bottom: 0px;
+	margin-left: 1px;
+}
+body, p, h1, h2, h3, table, td, th, textarea, input{
+	font-family: verdana,helvetica,arial,sans-serif;
+	font-size: 10px;
+	color:#303030;
+}
+.headline{
+	font-family: verdana,hevetica,arial,sans-serif;
+	font-size: 12px;
+	color: #303030;
+	font-weigh: bold;
+}
+.bold{
+	font-family: verdana,helvetica,arial,sans-serif;
+	font-size: 10px;
+	color: #000000;
+	font-weight: bold;
+}
+
+a.styledLink{
+	font-family: verdana,helvetica,arial,sans-serif;
+	font-size: 9px;
+	color: #5d5d5d;
+	font-weight: bold;
+	text-decoration: none;
+	text-transform: uppercase;
+}
+a:hover.styledLink{
+	font-family: verdana,helvetica,arial,sans-serif;
+	font-size: 9px;
+	color: #5d5d5d;
+	font-weight: bold;
+	text-decoration: none;
+	text-transform: uppercase;
+}
+a.entryLink{
+	font-family: verdana,helvetica,arial,sans-serif;
+	font-size: 9px;
+	color: #5d5d5d;
+	text-decoration: none;
+}
+a:hover.entryLink{
+	font-family: verdana,helvetica,arial,sans-serif;
+	font-size: 9px;
+	color: #5d5d5d;
+	font-weight: bold;
+	text-decoration: none;
+}
+a:active.entryLink{
+	font-family: verdana,helvetica,arial,sans-serif;
+	font-size: 9px;
+	color: #5d5d5d;
+	font-weight: bold;
+	text-decoration: none;
+}
+a.entryLinkActive{
+	font-family: verdana,helvetica,arial,sans-serif;
+	font-size: 9px;
+	color: #5d5d5d;
+	font-weight: bold;
+	text-decoration: none;
+}
+a:hover.entryLinkActive{
+	font-family: verdana,helvetica,arial,sans-serif;
+	font-size: 9px;
+	color: #5d5d5d;
+	font-weight: bold;
+	text-decoration: none;
+}
+a:active.entryLinkActive{
+	font-family: verdana,helvetica,arial,sans-serif;
+	font-size: 9px;
+	color: #5d5d5d;
+	font-weight: bold;
+	text-decoration: none;
+}
+a.markLink{
+	font-family: verdana,helvetica,arial,sans-serif;
+	font-size:9px;
+	color: #cccccc;
+	font-weight:bold;
+	text-decoration:underline;
+}
+a:hover.markLink{
+	font-family: verdana,helvetica,arial,sans-serif;
+	font-size:9px;
+	color: #cccccc;
+	font-weight:bold;
+	text-decoration:underline;
+}
+a.styledLinkUnderline{
+	font-family: verdana,helvetica,arial,sans-serif;
+	color:#757575;
+	font-size:9px;
+	font-weight:bold;
+	text-decoration:underline;
+}
+a:hover.styledLinkUnderline{
+	font-family: verdana,helvetica,arial,sans-serif;
+	color:#757575;
+	font-size:9px;
+	font-weight:bold;
+	text-decoration:none;
+}
+
+h1{
+	font-family: verdana,helvetica,arial,sans-serif;
+	font-size: 14pt;
+	color: #000000;
+	font-weight: normal;
+}
+.back{
+	background-color: #f5f5f5;
+	border: 1px solid #cccccc;
+}
+.grayBack{
+	background-color: #666666;
+}
+.main{
+	border: 1px solid #cccccc;
+	background-color: #ffffff;
+	font-size: 10px;
+	font-weight: bold;
+}
+.borderAll{
+	border: 1px solid #cccccc;
+}
+.borderAllWhite{
+	border: 1px solid #cccccc;
+	background-color: #ffffff;
+}
+.borderTopRightBottom{
+	border-top: 1px solid #cccccc;
+	border-right: 1px solid #cccccc;
+	border-bottom: 1px solid #cccccc;
+}
+.borderLeftTopRight{
+	border-left: 1px solid #cccccc;
+	border-top: 1px solid #cccccc;
+	border-right: 1px solid #cccccc;	
+}
+.borderRight{
+	border-right: 1px solid #cccccc;
+}
+.borderBottom{
+	border-bottom: 1px solid #ccccccc;
+	background-color: #ffffff;
+}
+.grayBorderBottom{
+	background-color: #f5f5f5;
+	border-bottom: 1px solid #cccccc;
+}
+.printTable{
+	border-style: 1px solid #f5f5f5;
+	border: 1px solid #cccccc;
+}
+.box{
+	border: 1px solid #bbbbbb;
+	width: 100px;
+	height: 12px;
+	font-size: 8px;
+	background: #ffffff url(button_tile.gif) repeat;
+}
+.overviewButton{
+	border-top: 1px solid #bbbbbb;
+	border-left: 1px solid #bbbbbb;
+	width: 100px;
+	height: 12px;
+	font-size: 8px;
+	background: #ffffff url(button_tile.gif) repeat;
+}
+div.ledgerList{
+	background:#ffffff;
+	overflow:auto;
+	width:400px;
+	height:180px;
+	border:1px solid #cccccc;
+}
+.errorMessage{
+	font-family: verdana,helvetica,arial,sans-serif;
+	font-size: 12px;
+	font-weight: bold;
+	color: #ff0000;
+	border: 1px solid #cccccc;
+}
+
+table.selectedBox{
+	border: 1px solid #bbbbbb;
+	width: 100px;
+	height: 12px;
+	background: #ffffff url(dark_button_tile.gif) repeat;
+}
+td.white{
+	background-color: #ffffff;
+	font-size: 10px;
+}
+td.lightgray{
+	border-bottom: 1px solid #cccccc;
+	background-color: #eeeeee;
+	font-size: 10px;
+}
+input.text{
+	border: 1px solid #bbbbbb;
+}
+input.checkbox{
+	border: 1px solid #cccccc;
+	background-color: #ffffff;
+}
+
+textarea{
+	border: 1px solid #bbbbbb;
+}
+
+select {
+	border: 1px solid #bbbbbb; 
+	font-family: Verdana, Arial, Helvetica, sans-serif; 
+    font-size: 10px; 
+} 
+
+
+
+
+
+
+
+
+

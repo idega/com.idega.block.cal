@@ -26,6 +26,7 @@ confirm_delete=G\u00F6gnum ver\u00F0ur endanlega eytt. Halda \u00E1fram?
 createLedgerWindow.create_ledger=N\u00FDr kladdi
 createLedgerWindow.name=Heiti kladda
 createUILWindow.create_user=B\u00E6ta i\u00F0kanda vi\u00F0 kladda
+create_new_mark=B\u00FAa til n\u00FDtt t\u00E1kn
 creator=Stofnandi
 cul_icelandicSSNErrorMsg=\u00D3gild \u00EDslensk kennitala
 cul_name=Nafn

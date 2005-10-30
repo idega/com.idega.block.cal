@@ -62,6 +62,7 @@ ledgerwindow.no_division_text=No division
 ledgerwindow.print=Print
 ledgerwindow.save=Save
 ledgerwindow.statistics=Statistics
+ledgerwindow.user_not_in_ledger_group=(Not in ledger group)
 location=Location
 manyRadioButton=Delete/Change group of entries
 mark=Mark

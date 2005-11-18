@@ -62,6 +62,7 @@ ledgerwindow.no_division_text=Engin deild
 ledgerwindow.print=Prenta
 ledgerwindow.save=Vista
 ledgerwindow.statistics=T\u00F6lfr\u00E6\u00F0i
+ledgerwindow.user_not_in_ledger_group=(Ekki me\u00F0limur \u00ED h\u00F3pnum sem kladdinn er tengdur vi\u00F0)
 location=Sta\u00F0setning
 manyRadioButton=Breyta r\u00F6\u00F0 atbur\u00F0a
 mark=T\u00E1kn

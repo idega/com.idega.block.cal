@@ -67,6 +67,7 @@ location=Location
 manyRadioButton=Delete/Change group of entries
 mark=Mark
 mark_description=Mark description
+mobile=mobile
 monthly=Monthly
 newMarkWindow.mark_exists_msg=The selected Mark exists already. Please choose another one
 new_entry=New Entry

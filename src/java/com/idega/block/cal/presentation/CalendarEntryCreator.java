@@ -3,9 +3,9 @@
  */
 package com.idega.block.cal.presentation;
 
+import java.sql.Date;
 import java.sql.Timestamp;
 import java.util.ArrayList;
-import java.sql.Date;
 import java.util.Iterator;
 import java.util.List;
 import com.idega.block.cal.business.CalBusiness;
@@ -17,7 +17,6 @@ import com.idega.idegaweb.IWResourceBundle;
 import com.idega.idegaweb.presentation.CalendarParameters;
 import com.idega.presentation.IWContext;
 import com.idega.presentation.Page;
-import com.idega.presentation.PresentationObject;
 import com.idega.presentation.Table;
 import com.idega.presentation.text.Link;
 import com.idega.presentation.text.Text;
@@ -550,7 +549,7 @@ public class CalendarEntryCreator extends Form{
 		groupTable.setWidth(Table.HUNDRED_PERCENT);
 		groupTable.add(attendeesText,1,1);
 		// AttentantChooser is a PresentationObject
-		groupTable.add((PresentationObject) attendeesField,1,2);
+		groupTable.add(attendeesField,1,2);
 		
 		table.add(groupTable,1,7);
 		

@@ -4,7 +4,6 @@
 package com.idega.block.cal.presentation;
 
 import java.util.Date;
-
 import com.idega.block.cal.business.CalBusiness;
 import com.idega.block.cal.business.DefaultLedgerVariationsHandler;
 import com.idega.block.cal.business.LedgerVariationsHandler;
@@ -13,7 +12,6 @@ import com.idega.idegaweb.IWResourceBundle;
 import com.idega.idegaweb.presentation.StyledIWAdminWindow;
 import com.idega.presentation.IWContext;
 import com.idega.presentation.Page;
-import com.idega.presentation.PresentationObject;
 import com.idega.presentation.Table;
 import com.idega.presentation.text.Text;
 import com.idega.presentation.ui.CloseButton;
@@ -150,10 +148,10 @@ public class CreateLedgerWindow extends StyledIWAdminWindow {
 		mainTable.add(coachNameField,2,2);
 		mainTable.add(otherCoachesText,1,3);
 		// AttendantChooser is a PresentationObject
-		mainTable.add((PresentationObject) otherCoachesNameField,2,3);
+		mainTable.add(otherCoachesNameField,2,3);
 		mainTable.add(groupText,1,4);
 		// AttendantChooser is a PresentationObject
-		mainTable.add((PresentationObject)  groupNameField,2,4);
+		mainTable.add(groupNameField,2,4);
 		mainTable.add(dateText,1,5);
 		mainTable.add(fromDatePickerField,1,5);
 		

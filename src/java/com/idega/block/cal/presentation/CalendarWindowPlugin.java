@@ -3,7 +3,6 @@ package com.idega.block.cal.presentation;
 import java.io.IOException;
 import java.util.Map;
 import java.util.logging.Logger;
-import sun.security.action.GetLongAction;
 import com.idega.business.IBOLookup;
 import com.idega.business.IBOLookupException;
 import com.idega.business.IBORuntimeException;

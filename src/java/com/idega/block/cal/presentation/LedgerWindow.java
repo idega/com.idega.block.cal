@@ -133,14 +133,14 @@ public class LedgerWindow extends StyledIWAdminWindow{
 	private String borderAllWhiteStyle = "borderAllWhite";
 	private String styledLink = "styledLink";
 	private String markLink = "markLink";
-	private String styledLinkUnderline = "styledLinkUnderline";
+	String styledLinkUnderline = "styledLinkUnderline";
 	private String bold = "bold";
 	private String titleFont = "font-family:Verdana,Arial,Helvetica,sans-serif;font-size:9pt;font-weight:bold;color:#FFFFFF;";
 	
 	private String groupString = null;
 	private Integer groupID;
 	private String ledgerString = null;
-	private Integer ledgerID = null;
+	Integer ledgerID = null;
 	
 	public LedgerWindow() {
 		setHeight(650);

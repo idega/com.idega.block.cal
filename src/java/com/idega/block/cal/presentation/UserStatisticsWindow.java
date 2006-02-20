@@ -288,7 +288,7 @@ public class UserStatisticsWindow extends StyledIWAdminWindow{
 		buttonTable.setCellpadding(0);
 		buttonTable.setCellspacing(12);
 		buttonTable.setStyleClass(borderAllWhite);
-		buttonTable.add(getHelp(this.HELP_TEXT_KEY),1,1);
+		buttonTable.add(getHelp(UserStatisticsWindow.HELP_TEXT_KEY),1,1);
 		buttonTable.setAlignment(2,1,Table.HORIZONTAL_ALIGN_RIGHT);
 		buttonTable.add(closeButton,2,1);
 		

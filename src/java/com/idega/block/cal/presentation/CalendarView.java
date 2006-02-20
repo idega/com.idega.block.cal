@@ -5,6 +5,7 @@ package com.idega.block.cal.presentation;
 
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
@@ -994,7 +995,7 @@ public class CalendarView extends Block{
 		
 		CalendarEntryCreator creator = new CalendarEntryCreator();
 		
-		String save = iwc.getParameter(creator.saveButtonParameterName);
+		String save = iwc.getParameter(CalendarEntryCreator.saveButtonParameterName);
 		if(save != null) {
 			creator.saveEntry(iwc,parentPage);
 		}
@@ -1178,11 +1179,11 @@ public class CalendarView extends Block{
 	public void addNextWeekPrm(Link L, IWTimestamp idts) {
 		GregorianCalendar calendar = new GregorianCalendar(idts.getYear(),idts.getMonth(),idts.getDay());
 		Timestamp ts = idts.getTimestamp();
-		calendar.add(calendar.DAY_OF_MONTH,6);
-		if(calendar.get(calendar.DAY_OF_MONTH) < idts.getDay()) {
-			calendar.add(calendar.MONTH,1);
-			if(calendar.get(calendar.MONTH) < idts.getMonth()) {
-				calendar.add(calendar.YEAR,1);
+		calendar.add(Calendar.DAY_OF_MONTH,6);
+		if(calendar.get(Calendar.DAY_OF_MONTH) < idts.getDay()) {
+			calendar.add(Calendar.MONTH,1);
+			if(calendar.get(Calendar.MONTH) < idts.getMonth()) {
+				calendar.add(Calendar.YEAR,1);
 			}
 		}
 		Date sd = calendar.getTime();

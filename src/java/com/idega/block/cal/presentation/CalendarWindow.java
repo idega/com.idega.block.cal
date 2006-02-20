@@ -46,7 +46,7 @@ public class CalendarWindow extends StyledIWAdminWindow{
 		table.setAlignment("center");
 		table.setCellspacing(5);
 		table.add(calendar,1,1);
-		table.add(getHelp(this.HELP_TEXT_KEY), 1, 3);
+		table.add(getHelp(CalendarWindow.HELP_TEXT_KEY), 1, 3);
 		add(table,iwc);
 	}
 	

@@ -89,17 +89,8 @@ public class CalendarEntryCreator extends Form{
 	
 //	public static boolean isEntrySet = false;
 	
-	private String mainTableStyle = "main";
-	private String borderAllWhite = "borderAllWhite";
-	private String borderBottomStyle = "borderBottom";
-	private String styledLinkBox = "styledLinkBox";
-	private String styledLink = "styledLink";
 	private String boldText = "bold";
 	private String headlineFont = "headline";
-	private String menuTableStyle = "menu";
-	
-	private String oneOrMany = "one";
-		
 	//texts
 	private Text headlineText;
 	private Text typeText;
@@ -128,8 +119,6 @@ public class CalendarEntryCreator extends Form{
 	//fields
 	private TextInput headlineField;
 	private DropdownMenu typeField;
-	private SelectOption generalField;
-	private SelectOption practiceField;
 	private DropdownMenu repeatField;
 	private SelectOption noRepeatField;
 	private SelectOption dailyField;
@@ -151,7 +140,6 @@ public class CalendarEntryCreator extends Form{
 	private HiddenInput hiddenYear;
 	private HiddenInput hiddenMonth;
 	private HiddenInput hiddenDay;
-	private HiddenInput hiddenOneMany;
 	private DropdownMenu ledgerField;
 	private TextInput locationField;
 	private Link newEntryLink;
@@ -230,10 +218,6 @@ public class CalendarEntryCreator extends Form{
 		CalBusiness calBusiness = getCalBusiness(iwc);
 				
 		headlineField = new TextInput(headlineFieldParameterName);
-		
-		practiceField =new SelectOption(practiceText.toString(),generalFieldParameterName);
-		generalField =new SelectOption(generalText.toString(),practiceFieldParameterName);
-		
 		
 		typeField = new DropdownMenu(typeFieldParameterName);
 		

@@ -5,11 +5,11 @@ package com.idega.block.cal.presentation;
 
 import java.util.Collection;
 import java.util.Iterator;
+
 import com.idega.block.cal.business.CalBusiness;
 import com.idega.block.cal.data.AttendanceMark;
 import com.idega.idegaweb.IWApplicationContext;
 import com.idega.idegaweb.IWResourceBundle;
-import com.idega.idegaweb.help.presentation.Help;
 import com.idega.idegaweb.presentation.CalendarParameters;
 import com.idega.idegaweb.presentation.StyledIWAdminWindow;
 import com.idega.presentation.IWContext;
@@ -38,7 +38,6 @@ public class NewMarkWindow extends StyledIWAdminWindow{
 	private static String submitButtonParameterName = "submit";
 	private static String submitButtonParameterValue = "save";
 	
-	private Help help; 
 	private static final String HELP_TEXT_KEY = "new_marker";
 	
 	//texts

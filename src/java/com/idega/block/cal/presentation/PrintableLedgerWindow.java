@@ -67,7 +67,6 @@ public class PrintableLedgerWindow extends Window{
 	private PrintButton printButton;
 	
 	private static String bold = "bold";
-	private String printTable = "printTable";
 	private String grayBackground = "grayBack";
 	private String borderAllWhite = "borderAllWhite";
 	

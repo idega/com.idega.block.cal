@@ -3,7 +3,6 @@
  */
 package com.idega.block.cal.presentation;
 
-import java.util.Date;
 import com.idega.block.cal.business.CalBusiness;
 import com.idega.block.cal.business.DefaultLedgerVariationsHandler;
 import com.idega.block.cal.business.LedgerVariationsHandler;
@@ -43,7 +42,6 @@ public class CreateLedgerWindow extends StyledIWAdminWindow {
 	private static String creatorFieldParameterName = "creator";
 	private static String otherCoachesFieldParameterName = "otherCoaches";
 	private static String groupFieldParameterName = "group";
-	private static String ledgerFieldParameterName ="ledger";
 	private static String dateFieldParameterName = "date";
 	private static String saveButtonParameterName = "submit";
 	private static String saveButtonParameterValue = "save";
@@ -67,24 +65,13 @@ public class CreateLedgerWindow extends StyledIWAdminWindow {
   private SubmitButton saveButton;
   private CloseButton closeButton;
   
-  private User coach;
-  private String otherCoaches;
-  private String group;
-  private Date date;
-  
   private Form form;
   private Table mainTable;
-  private CalendarView calendar;
-  
   private CalBusiness calBiz;
-  private GroupBusiness groupBiz;
-  
   private String groupString;
   
   private String mainTableStyle = "main";
-  private String titleFont = "font-family:Verdana,Arial,Helvetica,sans-serif;font-size:9pt;font-weight:bold;color:#FFFFFF;";
-	
-	public CreateLedgerWindow() {
+  public CreateLedgerWindow() {
 		setHeight(400);
 		setWidth(400);
 		setResizable(true);

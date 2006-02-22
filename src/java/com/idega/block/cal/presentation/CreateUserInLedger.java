@@ -53,7 +53,6 @@ public class CreateUserInLedger extends StyledIWAdminWindow{
 	
 	private Form form;
 	
-	private String titleFont = "font-family:Verdana,Arial,Helvetica,sans-serif;font-size:9pt;font-weight:bold;color:#FFFFFF;";
 	private String borderAllWhite = "borderAllWhite";
 	
 	public CreateUserInLedger() {

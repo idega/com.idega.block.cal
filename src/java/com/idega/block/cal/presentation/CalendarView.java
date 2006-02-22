@@ -57,15 +57,10 @@ public class CalendarView extends Block{
 	private int beginHour = 6;
 	private int endHour = 24;
 	private String borderWhiteTableStyle = "borderAllWhite";
-	private String mainTableStyle = "main";
-	private String menuTableStyle = "menu";
-	private String borderLeftTopRight = "borderLeftTopRight";
 	private String styledLink = "styledLink";
 	private String entryLink = "entryLink";
 	private String entryLinkActive = "entryLinkActive";
-	private String bold = "bold";
 	private String headline ="headline";
-	private String ledgerListStyle = "ledgerList";
 	public static String ACTION = "action";
 	public static String OPEN = "open";
 	public static String CLOSE = "close";

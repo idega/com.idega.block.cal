@@ -80,7 +80,6 @@ public class UserStatisticsWindow extends StyledIWAdminWindow{
 	private String borderRight = "borderRight";
 	private String borderAllWhite = "borderAllWhite";
 	private String bold = "bold";
-	private String titleFont = "font-family:Verdana,Arial,Helvetica,sans-serif;font-size:9pt;font-weight:bold;color:#FFFFFF;";
 	private String grayBackground = "grayBack";
 	
 	

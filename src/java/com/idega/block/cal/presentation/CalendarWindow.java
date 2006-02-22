@@ -23,10 +23,6 @@ public class CalendarWindow extends StyledIWAdminWindow{
 	private static final String HELP_TEXT_KEY = "cal_calendar";
 	
 	private Table table = null;
-	private String borderWhiteTableStyle = "borderAllWhite";
-	private String styledLink = "styledLink";
-	private String titleFont = "font-family:Verdana,Arial,Helvetica,sans-serif;font-size:9pt;font-weight:bold;color:#FFFFFF;";
-	
 	private CalendarView calendar;
 	private CalBusiness calBiz;
 	

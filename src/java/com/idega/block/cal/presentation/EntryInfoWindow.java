@@ -63,16 +63,12 @@ public class EntryInfoWindow extends StyledIWAdminWindow{
 	private String typeField;
 	private String dayFromField;
 	private String dayToField;
-	private String timeFromField;
-	private String timeToField;
 	private String locationField;
 	private String descriptionField;
 	
 	//styles
 	private String boldText ="bold";
 	private String borderAllWhiteStyle ="borderAllWhite";
-	private String titleFont = "font-family:Verdana,Arial,Helvetica,sans-serif;font-size:9pt;font-weight:bold;color:#FFFFFF;";
-	
 	private Table table;
 	
 	public EntryInfoWindow() {

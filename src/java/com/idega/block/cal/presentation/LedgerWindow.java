@@ -129,16 +129,11 @@ public class LedgerWindow extends StyledIWAdminWindow{
 	private Table mainTable;
 	private EntityBrowser entityBrowser;
 	
-	private String mainTableStyle = "main";
 	private String borderAllWhiteStyle = "borderAllWhite";
 	private String styledLink = "styledLink";
 	private String markLink = "markLink";
 	String styledLinkUnderline = "styledLinkUnderline";
 	private String bold = "bold";
-	private String titleFont = "font-family:Verdana,Arial,Helvetica,sans-serif;font-size:9pt;font-weight:bold;color:#FFFFFF;";
-	
-	private String groupString = null;
-	private Integer groupID;
 	private String ledgerString = null;
 	Integer ledgerID = null;
 	
@@ -878,10 +873,7 @@ public class LedgerWindow extends StyledIWAdminWindow{
 		ledgerString = iwc.getParameter(LEDGER);		
 		ledgerID =new Integer(ledgerString);
 
-		CalendarLedger ledger = getCalendarBusiness(iwc).getLedger(ledgerID.intValue());
-		
-		int i = ledger.getGroupID();
-		groupID = new Integer(i);
+		getCalendarBusiness(iwc).getLedger(ledgerID.intValue());
 		
 		Collection users = null;
 		List entries = null;

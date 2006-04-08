@@ -289,7 +289,7 @@ public class LedgerWindow extends StyledIWAdminWindow{
 		deleteButton.addParameter(ConfirmDeleteWindow.PRM_DELETE_ID, lIDString);
 		deleteButton.addParameter(ConfirmDeleteWindow.PRM_DELETE, CalendarParameters.PARAMETER_TRUE);
 		deleteButton.addParameter(ConfirmDeleteWindow.PRM_ENTRY_OR_LEDGER,LEDGER);
-		styledDeleteButton = new StyledButton(deleteButton);;
+		styledDeleteButton = new StyledButton(deleteButton);
 		
 	}
 

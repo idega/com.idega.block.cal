@@ -12,6 +12,7 @@
     <project>com.idega.block.entity</project>
     <project>com.idega.block.calendar</project>
     <project>com.idega.block.text</project>
+    <project>com.idega.block.web2.0</project>
   </projects>
   <buildSpec>
     <buildCommand>

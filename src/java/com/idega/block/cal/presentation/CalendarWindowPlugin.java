@@ -55,17 +55,14 @@ public class CalendarWindowPlugin implements ToolbarElement {
 	 */
 	public boolean isValid(IWContext iwc) {
 		IWMainApplicationSettings settings = iwc.getApplicationSettings();
-       	String showStuff = settings.getProperty("temp_show_is_related_stuff");
-       	String showCalender = settings.getProperty("temp_show_calendar");
-       	// original condition, everything is true if not null
-       	return (showStuff != null) && (showCalender != null);
+		return (settings.getProperty("temp_show_calendar") != null && settings.getProperty("temp_show_is_related_stuff") != null);
 	}
 
 	/* (non-Javadoc)
 	 * @see com.idega.user.app.ToolbarElement#getPriority(com.idega.presentation.IWContext)
 	 */
 	public int getPriority(IWContext iwc) {
-		return 11;
+		return 9;
 	}
 
 	/* (non-Javadoc)

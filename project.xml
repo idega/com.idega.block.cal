@@ -5,7 +5,7 @@
   <pomVersion>3</pomVersion>
   <name>idegaWeb Cal Block</name>
   <artifactId>com.idega.block.cal</artifactId>
-  <currentVersion>3.1.1</currentVersion>
+  <currentVersion>3.1.2</currentVersion>
   <inceptionYear>2000</inceptionYear>
   <shortDescription>Cal (new version of Calendar)</shortDescription>
   <versions>

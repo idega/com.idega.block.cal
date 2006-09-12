@@ -3,6 +3,7 @@
  */
 package com.idega.block.cal.presentation;
 
+import java.rmi.RemoteException;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -13,6 +14,9 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.Iterator;
 import java.util.List;
+
+import javax.ejb.FinderException;
+
 import com.idega.block.cal.business.CalBusiness;
 import com.idega.block.cal.data.CalendarEntry;
 import com.idega.block.cal.data.CalendarLedger;
@@ -31,6 +35,7 @@ import com.idega.presentation.text.Link;
 import com.idega.presentation.text.Text;
 import com.idega.presentation.ui.GenericButton;
 import com.idega.presentation.ui.StyledButton;
+import com.idega.user.business.GroupBusiness;
 import com.idega.user.business.UserBusiness;
 import com.idega.user.data.Group;
 import com.idega.user.data.User;
@@ -895,25 +900,43 @@ public class CalendarView extends Block{
 			user = iwc.getCurrentUser();
 		}
 		
-		Iterator ledgerIter = getCalBusiness(iwc).getAllLedgers().iterator();
-		while(ledgerIter.hasNext()) {
-			CalendarLedger ledger = (CalendarLedger) ledgerIter.next();
-			Link ledgerLink =new Link(ledger.getName());
-			ledgerLink.setStyleClass(this.styledLink);
-			ledgerLink.addParameter(LedgerWindow.LEDGER,ledger.getPrimaryKey().toString());
-			ledgerLink.addParameter(CalendarParameters.PARAMETER_DAY,this.timeStamp.getDay());
-			ledgerLink.addParameter(CalendarParameters.PARAMETER_MONTH,this.timeStamp.getMonth());
-			ledgerLink.addParameter(CalendarParameters.PARAMETER_YEAR,this.timeStamp.getYear());
-			ledgerLink.setWindowToOpen(LedgerWindow.class);
-			if(user != null) {
-				if(((Integer) user.getPrimaryKey()).intValue() == ledger.getCoachID() || user.getPrimaryGroupID() == ledger.getCoachGroupID()) {						
-					ledgerTable.add(" &bull; ",1,row);
-					ledgerTable.add(ledgerLink,1,row++);
-				}			
-			}
-			
-		}
+		//only get the correct ledger right away!
+		GroupBusiness groupBiz;
+		try {
+			groupBiz = getUserBusiness(iwc).getGroupBusiness();
+			boolean isRoot = iwc.isSuperAdmin();
+
+			Iterator ledgerIter = getCalBusiness(iwc).getAllLedgers().iterator();
+			while(ledgerIter.hasNext()) {
+				CalendarLedger ledger = (CalendarLedger) ledgerIter.next();
+
+				if(user != null) {
+					Group coachGroup = groupBiz.getGroupByGroupID(ledger.getCoachGroupID());
 					
+
+					if( isRoot || ((Integer) user.getPrimaryKey()).intValue() == ledger.getCoachID() || user.hasRelationTo(coachGroup)) {						
+						//dont know why the hell this is here after Birna...
+						ledgerTable.add(" &bull; ",1,row);
+						
+						Link ledgerLink =new Link(ledger.getName());
+						ledgerLink.setStyleClass(this.styledLink);
+						ledgerLink.addParameter(LedgerWindow.LEDGER,ledger.getPrimaryKey().toString());
+						ledgerLink.addParameter(CalendarParameters.PARAMETER_DAY,this.timeStamp.getDay());
+						ledgerLink.addParameter(CalendarParameters.PARAMETER_MONTH,this.timeStamp.getMonth());
+						ledgerLink.addParameter(CalendarParameters.PARAMETER_YEAR,this.timeStamp.getYear());
+						ledgerLink.setWindowToOpen(LedgerWindow.class);
+						ledgerTable.add(ledgerLink,1,row++);
+					}			
+				}
+
+			}
+
+		} catch (RemoteException e) {
+			e.printStackTrace();
+		} catch (FinderException e) {
+			e.printStackTrace();
+		}
+		
 		Layer layer = new Layer(Layer.DIV);
 		layer.setOverflow("auto");
 		

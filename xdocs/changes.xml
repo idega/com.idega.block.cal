@@ -5,6 +5,13 @@
   </properties>
   <body>
   
+  	<release version="3.1.1" date="2006-09-12">
+		<action dev="eiki" type="fix">
+        Ledgerlist in the calendar window was not showing all ledgers belonging to a person.
+		Changed check for coachGroup from just checking the primarygroup of a user to checking all of his groups, super user can now also see all ledgers.
+		</action>              
+	</release>ßß
+	
 	<release version="3.1.0" date="2006-06-26">
 		<action dev="tryggvil" type="update">
         Declaration of version for use with ePlatform release 3.1

@@ -70,6 +70,7 @@ mark_description=Mark description
 mobile=mobile
 monthly=Monthly
 newMarkWindow.mark_exists_msg=The selected Mark exists already. Please choose another one
+newMarkWindow.mark_is_not_allowed_msg=The selected Mark is not allowed. Please choose another one
 new_entry=New Entry
 noLedger=No ledger
 none=No Repeat

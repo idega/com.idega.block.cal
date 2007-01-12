@@ -132,10 +132,10 @@ public class LedgerWindow extends StyledIWAdminWindow{
 	private String borderAllWhiteStyle = "borderAllWhite";
 	private String styledLink = "styledLink";
 	private String markLink = "markLink";
-	String styledLinkUnderline = "styledLinkUnderline";
+	private String styledLinkUnderline = "styledLinkUnderline";
 	private String bold = "bold";
 	private String ledgerString = null;
-	Integer ledgerID = null;
+	private Integer ledgerID = null;
 	
 	public LedgerWindow() {
 		setHeight(650);
@@ -794,7 +794,7 @@ public class LedgerWindow extends StyledIWAdminWindow{
 		this.entityBrowser.addEntity(Phone.class.getName());
 		
 		String confirmDeleting = resourceBundle.getLocalizedString("delete_selected_users", "Delete selected users");
-		confirmDeleting += " ?";
+		confirmDeleting += "?";
 		SubmitButton deleteButton =
 			new SubmitButton(
 					resourceBundle.getLocalizedString("Delete selection", "Delete selection"),
@@ -876,8 +876,6 @@ public class LedgerWindow extends StyledIWAdminWindow{
 		this.ledgerString = iwc.getParameter(LEDGER);		
 		this.ledgerID =new Integer(this.ledgerString);
 
-		getCalendarBusiness(iwc).getLedger(this.ledgerID.intValue());
-		
 		Collection users = null;
 		List entries = null;
 		List marks = null;

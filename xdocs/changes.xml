@@ -1,34 +1,43 @@
 <document>
-  <properties>
-    <title> changes</title>
-    <author email="tryggvi@idega.com">Tryggvi Larusson</author>
-  </properties>
-  <body>
-  	
-	<release version="3.1.2" date="2006-09-12">
-		<action dev="eiki" type="fix">
-      	Bugfix in CalendarView
-	  </action>              
-	</release>
-	
-  
-  	<release version="3.1.1" date="2006-09-12">
-		<action dev="eiki" type="fix">
-        Ledgerlist in the calendar window was not showing all ledgers belonging to a person.
-		Changed check for coachGroup from just checking the primarygroup of a user to checking all of his groups, super user can now also see all ledgers.
-		</action>              
-	</release>
-	
-	<release version="3.1.0" date="2006-06-26">
-		<action dev="tryggvil" type="update">
-        Declaration of version for use with ePlatform release 3.1
-		</action>              
-	</release>
-  
-     	<release version="1.0.1" date="2005-05-25">
-      <action dev="tryggvil" type="update">
-        Declaration of version for use with core 3.0.5
-      </action>              
-    </release>
-  </body>
+	<properties>
+		<title>changes</title>
+		<author email="tryggvi@idega.com">Tryggvi Larusson</author>
+	</properties>
+	<body>
+		<release version="3.1.3" date="2007-03-09">
+			<action dev="palli" type="update">
+				Updating and fixing dependencies to create a new sunnan3
+				application.
+			</action>
+		</release>
+
+		<release version="3.1.2" date="2006-09-12">
+			<action dev="eiki" type="fix">
+				Bugfix in CalendarView
+			</action>
+		</release>
+
+		<release version="3.1.1" date="2006-09-12">
+			<action dev="eiki" type="fix">
+				Ledgerlist in the calendar window was not showing all
+				ledgers belonging to a person. Changed check for
+				coachGroup from just checking the primarygroup of a user
+				to checking all of his groups, super user can now also
+				see all ledgers.
+			</action>
+		</release>
+
+		<release version="3.1.0" date="2006-06-26">
+			<action dev="tryggvil" type="update">
+				Declaration of version for use with ePlatform release
+				3.1
+			</action>
+		</release>
+
+		<release version="1.0.1" date="2005-05-25">
+			<action dev="tryggvil" type="update">
+				Declaration of version for use with core 3.0.5
+			</action>
+		</release>
+	</body>
 </document>

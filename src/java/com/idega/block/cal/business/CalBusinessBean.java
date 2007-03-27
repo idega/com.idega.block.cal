@@ -1054,6 +1054,18 @@ public class CalBusinessBean extends IBOServiceBean implements CalBusiness,UserG
 		}
 		return userBusiness;
 	}
+	
+	public Collection getEntriesByICGroup(int groupId){
+		List list = null; 
+		try {
+			CalendarEntryHome entryHome = (CalendarEntryHome) getIDOHome(CalendarEntry.class);
+			list = new ArrayList(entryHome.findEntriesByICGroup(groupId));
+		} catch(Exception e) {
+			e.printStackTrace();
+		}
+		return list;
+	}
+	
 	/* (non-Javadoc)
 	 * @see com.idega.user.business.UserGroupPlugInBusiness#beforeUserRemove(com.idega.user.data.User)
 	 */

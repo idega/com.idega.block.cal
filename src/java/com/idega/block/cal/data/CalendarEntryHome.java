@@ -9,4 +9,6 @@ public interface CalendarEntryHome extends com.idega.data.IDOHome
  public java.util.Collection findEntriesBetweenTimestamps(java.sql.Timestamp p0, java.sql.Timestamp p1) throws javax.ejb.FinderException;
  public java.util.Collection findEntriesByLedgerID(int p0) throws javax.ejb.FinderException;
  public java.util.Collection findEntriesByEntryGroupID(int p0) throws javax.ejb.FinderException;
+ public java.util.Collection findEntriesByICGroup(int p0) throws javax.ejb.FinderException;
+ 
 }

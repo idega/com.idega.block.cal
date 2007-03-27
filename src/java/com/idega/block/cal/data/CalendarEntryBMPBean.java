@@ -232,7 +232,11 @@ public class CalendarEntryBMPBean extends GenericEntity implements com.idega.blo
   	query.appendWhereEquals("CAL_ENTRY_GROUP_ID",entryGroupID);
   	return super.idoFindPKsByQuery(query);
   }
-
+  public Collection ejbFindEntriesByICGroup(int entryGroupID) throws FinderException {
+	  	IDOQuery query = idoQueryGetSelect();
+	  	query.appendWhereEquals("IC_GROUP_ID",entryGroupID);
+	  	return super.idoFindPKsByQuery(query);
+  }
 
   //DELETE
 	public void delete() throws SQLException{

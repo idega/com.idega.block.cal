@@ -42,6 +42,13 @@ public java.util.Collection findEntriesByEntryGroupID(int p0) throws javax.ejb.F
 	
 }
 
+public java.util.Collection findEntriesByICGroup(int p0) throws javax.ejb.FinderException{
+	com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
+	java.util.Collection ids = ((CalendarEntryBMPBean)entity).ejbFindEntriesByICGroup(p0);
+	this.idoCheckInPooledEntity(entity);
+	return this.getEntityCollectionForPrimaryKeys(ids);	
+}
+
  public CalendarEntry findByPrimaryKey(Object pk) throws javax.ejb.FinderException{
   return (CalendarEntry) super.findByPrimaryKeyIDO(pk);
  }

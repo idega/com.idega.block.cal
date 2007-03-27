@@ -237,6 +237,15 @@ public class CalendarEntryBMPBean extends GenericEntity implements com.idega.blo
 	  	query.appendWhereEquals("IC_GROUP_ID",entryGroupID);
 	  	return super.idoFindPKsByQuery(query);
   }
+  
+  public Collection ejbFindEntriesByEvents(List eventsList) throws FinderException {
+	  	IDOQuery query = idoQueryGetSelect();	  	
+	  	query.appendWhereEquals("CAL_TYPE_NAME","\""+eventsList.get(0)+"\"");
+	  	for (int i = 1; i < eventsList.size(); i++) {
+	  		query.appendOrEquals("CAL_TYPE_NAME", "\""+eventsList.get(i)+"\"");
+		}
+	  	return super.idoFindPKsByQuery(query);
+  }
 
   //DELETE
 	public void delete() throws SQLException{

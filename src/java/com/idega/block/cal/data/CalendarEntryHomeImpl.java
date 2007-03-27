@@ -1,5 +1,7 @@
 package com.idega.block.cal.data;
 
+import java.util.List;
+
 
 
 public class CalendarEntryHomeImpl extends com.idega.data.IDOFactory implements CalendarEntryHome
@@ -45,6 +47,13 @@ public java.util.Collection findEntriesByEntryGroupID(int p0) throws javax.ejb.F
 public java.util.Collection findEntriesByICGroup(int p0) throws javax.ejb.FinderException{
 	com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
 	java.util.Collection ids = ((CalendarEntryBMPBean)entity).ejbFindEntriesByICGroup(p0);
+	this.idoCheckInPooledEntity(entity);
+	return this.getEntityCollectionForPrimaryKeys(ids);	
+}
+
+public java.util.Collection findEntriesByEvents(List eventsList) throws javax.ejb.FinderException{
+	com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
+	java.util.Collection ids = ((CalendarEntryBMPBean)entity).ejbFindEntriesByEvents(eventsList);
 	this.idoCheckInPooledEntity(entity);
 	return this.getEntityCollectionForPrimaryKeys(ids);	
 }

@@ -6,15 +6,18 @@
     <create creator="ibo" javascript="CommentsEngine" scope="application">
       <param name="class" value="com.idega.block.article.business.CommentsEngine"/>
     </create>
-    <convert converter="bean" match="com.idega.block.article.bean.ArticleComment" />
+    <create creator="ibo" javascript="CalService" scope="application">
+      <param name="class" value="com.idega.block.cal.business.CalService"/>
+    </create>
+    <convert converter="bean" match="com.idega.block.cal.business.GroupNode" />
   </allow>
   
 	<signatures>
 		<![CDATA[
-  			import java.util.List;
-			import com.idega.block.article.bean.ArticleComment;
+			import java.util.Collection;
+			import com.idega.block.cal.business.GroupNode;
 
-  			CommentsEngine.getComments(String);
+  			CalService.getTopGroupNodes();
   		]]>
 	</signatures>
 </dwr>

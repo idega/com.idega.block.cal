@@ -227,10 +227,17 @@ select {
     font-size: 10px; 
 } 
 
+.hidden_table {
+	visibility: hidden
+}
 
-
-
-
+.tree_drag_drop {
+	list-style-type: none;
+}
+.tree_drag_drop ul{
+	list-style-type: none;
+		padding-left: 15px;
+}
 
 
 

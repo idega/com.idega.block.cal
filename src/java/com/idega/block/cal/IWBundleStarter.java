@@ -1,6 +1,6 @@
 package com.idega.block.cal;
 /*
- * $Id: IWBundleStarter.java,v 1.5 2007/03/27 08:07:08 justinas Exp $
+ * $Id: IWBundleStarter.java,v 1.6 2007/04/12 17:40:45 justinas Exp $
  * Created on 2.11.2004
  *
  * Copyright (C) 2004 Idega Software hf. All Rights Reserved.
@@ -35,7 +35,6 @@ import com.idega.slide.business.IWSlideService;
 
 public class IWBundleStarter implements IWBundleStartable {
 //	private static final String STYLE_SHEET_URL = "/style/article.css";
-	private static final String BUNDLE_IDENTIFIER="com.idega.block.cal";
 
 	/* (non-Javadoc)
 	 * @see com.idega.idegaweb.IWBundleStartable#start(com.idega.idegaweb.IWBundle)

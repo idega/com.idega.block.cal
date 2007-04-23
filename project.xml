@@ -5,7 +5,7 @@
   <pomVersion>3</pomVersion>
   <name>idegaWeb Cal Block</name>
   <artifactId>com.idega.block.cal</artifactId>
-  <currentVersion>3.1.3</currentVersion>
+  <currentVersion>3.1.4</currentVersion>
   <inceptionYear>2000</inceptionYear>
   <shortDescription>Cal (new version of Calendar)</shortDescription>
   <versions>
@@ -70,21 +70,21 @@
     <dependency>
       <groupId>bundles</groupId>
       <artifactId>com.idega.core</artifactId>
-      <version>3.1.39</version>
+      <version>3.1.41</version>
       <type>jar</type>
       <url>http://www.idega.com/</url>
     </dependency>
     <dependency>
       <groupId>bundles</groupId>
       <artifactId>com.idega.user</artifactId>
-      <version>3.1.4</version>
+      <version>3.1.5</version>
       <type>jar</type>
       <url>http://www.idega.com/</url>
     </dependency>
     <dependency>
       <groupId>bundles</groupId>
       <artifactId>com.idega.block.category</artifactId>
-      <version>3.1.1</version>
+      <version>3.1.2</version>
       <type>jar</type>
       <url>http://www.idega.com/</url>
       <properties>
@@ -108,12 +108,9 @@
     <dependency>
       <groupId>bundles</groupId>
       <artifactId>com.idega.block.calendar</artifactId>
-      <version>3.1.2</version>
+      <version>3.1.3</version>
       <type>jar</type>
       <url>http://www.idega.com/</url>
-      <properties>
-        <eclipse.dependency>true</eclipse.dependency>
-      </properties>
     </dependency>
     <dependency>
       <groupId>bundles</groupId>
@@ -121,19 +118,20 @@
       <version>3.1.1</version>
       <type>jar</type>
       <url>http://www.idega.com/</url>
-      <properties>
-        <eclipse.dependency>true</eclipse.dependency>
-      </properties>
     </dependency>
     <dependency>
       <groupId>bundles</groupId>
-      <artifactId>com.idega.block.rss</artifactId>
-      <version>3.5.0</version>
+      <artifactId>com.idega.slide</artifactId>
+      <version>3.1.3</version>
       <type>jar</type>
       <url>http://www.idega.com/</url>
-      <properties>
-        <eclipse.dependency>true</eclipse.dependency>
-      </properties>
+    </dependency> 
+    <dependency>
+      <groupId>bundles</groupId>
+      <artifactId>com.idega.block.rss</artifactId>
+      <version>3.1.10</version>
+      <type>jar</type>
+      <url>http://www.idega.com/</url>
     </dependency> 
     <dependency>
       <groupId>rome</groupId>
@@ -141,9 +139,6 @@
       <version>0.9</version>
       <type>jar</type>
       <url>https://rome.dev.java.net/</url>
-      <properties>
-        <idegaweb.bundle.include>true</idegaweb.bundle.include>
-      </properties>
     </dependency>
     <dependency>
       <groupId>rome</groupId>
@@ -151,9 +146,6 @@
       <version>0.7</version>
       <type>jar</type>
       <url>https://rome.dev.java.net/</url>
-      <properties>
-        <idegaweb.bundle.include>true</idegaweb.bundle.include>
-      </properties>
     </dependency>
     <dependency>
       <groupId>rome</groupId>
@@ -161,9 +153,6 @@
       <version>0.2j1.4.2</version>
       <type>jar</type>
       <url>https://rome.dev.java.net/</url>
-      <properties>
-        <idegaweb.bundle.include>true</idegaweb.bundle.include>
-      </properties>
     </dependency>
   </dependencies>
   <build>

@@ -8,6 +8,7 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+
 import com.idega.block.cal.business.CalBusiness;
 import com.idega.block.cal.data.CalendarEntry;
 import com.idega.block.cal.data.CalendarEntryType;
@@ -86,11 +87,12 @@ public class CalendarEntryCreator extends Form{
 	public static String manyValue = "many";
 	
 //	private static final String HELP_TEXT_KEY = "create_entry";
-	
 //	public static boolean isEntrySet = false;
-	
+
 	private String boldText = "bold";
 	private String headlineFont = "headline";
+
+		
 	//texts
 	private Text headlineText;
 	private Text typeText;
@@ -119,6 +121,8 @@ public class CalendarEntryCreator extends Form{
 	//fields
 	private TextInput headlineField;
 	private DropdownMenu typeField;
+	private SelectOption generalField;
+	private SelectOption practiceField;
 	private DropdownMenu repeatField;
 	private SelectOption noRepeatField;
 	private SelectOption dailyField;
@@ -218,6 +222,10 @@ public class CalendarEntryCreator extends Form{
 		CalBusiness calBusiness = getCalBusiness(iwc);
 				
 		this.headlineField = new TextInput(headlineFieldParameterName);
+		
+		this.practiceField =new SelectOption(this.practiceText.toString(),generalFieldParameterName);
+		this.generalField =new SelectOption(this.generalText.toString(),practiceFieldParameterName);
+		
 		
 		this.typeField = new DropdownMenu(typeFieldParameterName);
 		

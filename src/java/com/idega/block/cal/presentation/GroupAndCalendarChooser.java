@@ -1,30 +1,17 @@
 package com.idega.block.cal.presentation;
 
 import java.io.IOException;
-import java.rmi.RemoteException;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 import java.util.Vector;
 
-import javax.faces.component.html.HtmlOutputLink;
-import javax.faces.component.html.HtmlOutputText;
 import javax.faces.context.FacesContext;
 
-import org.apache.myfaces.custom.div.Div;
-
-//import org.springframework.web.servlet.tags.form.RadioButtonTag;
-
 import com.idega.block.cal.business.CalendarConstants;
-import com.idega.business.IBOLookup;
 import com.idega.core.data.IWTreeNode;
 import com.idega.idegaweb.IWApplicationContext;
 import com.idega.idegaweb.IWBundle;
-import com.idega.idegaweb.IWResourceBundle;
-import com.idega.idegaweb.IWUserContext;
-import com.idega.idegaweb.IWUserContextImpl;
 import com.idega.presentation.Block;
 import com.idega.presentation.IWContext;
 import com.idega.presentation.Layer;
@@ -32,24 +19,15 @@ import com.idega.presentation.Page;
 import com.idega.presentation.PresentationObjectUtil;
 import com.idega.presentation.Table;
 import com.idega.presentation.text.Text;
-import com.idega.presentation.ui.AbstractChooser;
 import com.idega.presentation.ui.GenericButton;
 import com.idega.presentation.ui.PasswordInput;
 import com.idega.presentation.ui.RadioButton;
 import com.idega.presentation.ui.RadioGroup;
-import com.idega.presentation.ui.SubmitButton;
 import com.idega.presentation.ui.TextInput;
-import com.idega.user.business.GroupBusiness;
 import com.idega.user.business.GroupTreeNode;
 import com.idega.user.business.UserBusiness;
 import com.idega.user.data.Group;
-import com.idega.user.data.GroupType;
-import com.idega.user.presentation.CreateGroupWindow;
-import com.idega.user.presentation.GroupChooserWindow;
-import com.idega.user.presentation.GroupTreeView;
-import com.idega.webface.IWTree;
 import com.idega.webface.WFTreeNode;
-import com.idega.webface.WFUtil;
 /**
  * 
  * @author <a href="justinas@idega.com">Justinas Rakita</a>

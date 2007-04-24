@@ -5,7 +5,7 @@
 	</properties>
 	<body>
 	
-		<release version="3.1.4" date="2007-03-20">
+		<release version="3.1.4" date="2007-04-23">
       		<action dev="eiki" type="update">
       			Merged changes made in v.2.0 to v3.1
       		</action>       

@@ -6,7 +6,7 @@ public class GroupNode {
 	String name = null;
 	String uniqueId = null;
 	boolean hasChildren = false;
-	Collection<GroupNode> children = null;
+	Collection children = null;
 	
 	public GroupNode() {
 		super();
@@ -30,10 +30,10 @@ public class GroupNode {
 	public void setUniqueId(String uniqueId) {
 		this.uniqueId = uniqueId;
 	}
-	public Collection<GroupNode> getChildren() {
-		return children;
+	public Collection getChildren() {
+		return this.children;
 	}
-	public void setChildren(Collection<GroupNode> children) {
+	public void setChildren(Collection children) {
 		this.children = children;
 	}
 	

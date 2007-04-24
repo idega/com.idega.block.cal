@@ -3,9 +3,6 @@
 
 <dwr>
   <allow>
-    <create creator="ibo" javascript="CommentsEngine" scope="application">
-      <param name="class" value="com.idega.block.article.business.CommentsEngine"/>
-    </create>
     <create creator="ibo" javascript="CalService" scope="application">
       <param name="class" value="com.idega.block.cal.business.CalService"/>
     </create>

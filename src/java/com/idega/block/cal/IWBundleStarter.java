@@ -1,6 +1,6 @@
 package com.idega.block.cal;
 /*
- * $Id: IWBundleStarter.java,v 1.6 2007/04/12 17:40:45 justinas Exp $
+ * $Id: IWBundleStarter.java,v 1.7 2007/04/24 12:08:20 eiki Exp $
  * Created on 2.11.2004
  *
  * Copyright (C) 2004 Idega Software hf. All Rights Reserved.
@@ -15,16 +15,9 @@ import com.idega.block.cal.business.CalendarRSSProducer;
 import com.idega.block.rss.business.RSSProducerRegistry;
 import com.idega.business.IBOLookup;
 import com.idega.business.IBOLookupException;
-import com.idega.content.business.ContentRSSProducer;
-import com.idega.content.view.ContentViewManager;
-import com.idega.core.uri.IWActionURIManager;
-import com.idega.core.view.DefaultViewNode;
-import com.idega.core.view.KeyboardShortcut;
-import com.idega.core.view.ViewNode;
 import com.idega.idegaweb.IWApplicationContext;
 import com.idega.idegaweb.IWBundle;
 import com.idega.idegaweb.IWBundleStartable;
-import com.idega.idegaweb.include.GlobalIncludeManager;
 import com.idega.slide.business.IWSlideService;
 
 /**

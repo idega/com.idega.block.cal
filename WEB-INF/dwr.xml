@@ -1,11 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE dwr PUBLIC "-//GetAhead Limited//DTD Direct Web Remoting 2.0//EN" "http://www.getahead.ltd.uk/dwr//dwr20.dtd">
+<!DOCTYPE dwr PUBLIC "-//GetAhead Limited//DTD Direct Web Remoting 1.0//EN" "http://www.getahead.ltd.uk/dwr/dwr10.dtd">
 
 <dwr>
   <allow>
-    <create creator="ibo" javascript="CommentsEngine" scope="application">
-      <param name="class" value="com.idega.block.article.business.CommentsEngine"/>
-    </create>
     <create creator="ibo" javascript="CalService" scope="application">
       <param name="class" value="com.idega.block.cal.business.CalService"/>
     </create>

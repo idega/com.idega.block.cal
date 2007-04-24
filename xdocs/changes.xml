@@ -7,7 +7,8 @@
 	
 		<release version="3.1.4" date="2007-04-23">
       		<action dev="eiki" type="update">
-      			Merged changes made in v.2.0 to v3.1
+      			Merged changes made in v.2.0 to v3.1 and from HEAD to v3.1.
+      			Branched the block with the branch BRANCH_PLATFORM_3_1
       		</action>       
     	</release>
     	

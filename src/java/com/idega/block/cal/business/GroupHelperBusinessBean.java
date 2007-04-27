@@ -10,7 +10,6 @@ import com.idega.business.IBOLookup;
 import com.idega.idegaweb.IWApplicationContext;
 import com.idega.presentation.IWContext;
 import com.idega.user.business.GroupBusiness;
-import com.idega.user.business.GroupTreeNode;
 import com.idega.user.business.UserBusiness;
 import com.idega.user.data.Group;
 

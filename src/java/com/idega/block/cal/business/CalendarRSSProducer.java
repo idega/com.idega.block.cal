@@ -215,7 +215,7 @@ public class CalendarRSSProducer  extends RSSAbstractProducer implements RSSProd
 			for (Iterator iter = coll.iterator(); iter.hasNext();) {
 				CalendarEntry element = (CalendarEntry) iter.next();
 				int id = element.getGroupID();
-				if (element.getGroupID() == entryGroupID){
+				if (id == entryGroupID){
 					entries.add(element);
 				}				
 			}
@@ -303,7 +303,7 @@ public class CalendarRSSProducer  extends RSSAbstractProducer implements RSSProd
 			return entries;
 		}
 		Collection result = calendar.getEntriesByEvents(eventsList);
-		return calendar.getEntriesByEvents(eventsList);
+		return result;
 	}		
 	private Timestamp getTimeStampFromString(String dateString){
 		try {

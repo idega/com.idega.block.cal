@@ -13,6 +13,7 @@
 		<![CDATA[
 			import java.util.Collection;
 			import com.idega.block.cal.business.GroupNode;
+			import com.idega.block.cal.business.*;
 
   			CalService.getTopGroupNodes();
   		]]>

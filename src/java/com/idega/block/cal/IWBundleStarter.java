@@ -1,6 +1,6 @@
 package com.idega.block.cal;
 /*
- * $Id: IWBundleStarter.java,v 1.7 2007/04/24 12:08:20 eiki Exp $
+ * $Id: IWBundleStarter.java,v 1.7.2.1 2007/04/30 17:33:16 eiki Exp $
  * Created on 2.11.2004
  *
  * Copyright (C) 2004 Idega Software hf. All Rights Reserved.
@@ -9,16 +9,11 @@ package com.idega.block.cal;
  * Use is subject to license terms.
  */
 
-import java.rmi.RemoteException;
-
+import com.idega.block.cal.business.CalendarConstants;
 import com.idega.block.cal.business.CalendarRSSProducer;
 import com.idega.block.rss.business.RSSProducerRegistry;
-import com.idega.business.IBOLookup;
-import com.idega.business.IBOLookupException;
-import com.idega.idegaweb.IWApplicationContext;
 import com.idega.idegaweb.IWBundle;
 import com.idega.idegaweb.IWBundleStartable;
-import com.idega.slide.business.IWSlideService;
 
 /**
  * 
@@ -104,16 +99,6 @@ public class IWBundleStarter implements IWBundleStartable {
 		//ContentRSSProducer, also a IWSlideChangeListener
 		
 		CalendarRSSProducer calendarProducer = new CalendarRSSProducer();
-		registry.addRSSProducer("calendar", calendarProducer);
-		
-		 IWApplicationContext iwac = starterBundle.getApplication().getIWApplicationContext();
-	        try {
-	            IWSlideService service = (IWSlideService) IBOLookup.getServiceInstance(iwac,IWSlideService.class);
-	            service.addIWSlideChangeListeners(calendarProducer);
-	        } catch (IBOLookupException e) {
-	            e.printStackTrace();
-	        } catch (RemoteException e) {
-	            e.printStackTrace();
-	        }
+		registry.addRSSProducer(CalendarConstants.RSS_PRODUCER_ID, calendarProducer);
 	}	
 }

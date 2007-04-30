@@ -10,9 +10,15 @@ import java.util.Iterator;
 import java.util.List;
 
 import com.idega.block.cal.business.CalBusiness;
+import com.idega.block.cal.business.CalendarConstants;
+import com.idega.block.cal.business.CalendarRSSProducer;
 import com.idega.block.cal.data.CalendarEntry;
 import com.idega.block.cal.data.CalendarEntryType;
 import com.idega.block.cal.data.CalendarLedger;
+import com.idega.block.rss.business.NoSuchRSSProducerException;
+import com.idega.block.rss.business.RSSProducer;
+import com.idega.block.rss.business.RSSProducerRegistry;
+import com.idega.block.rss.data.RSSRequest;
 import com.idega.idegaweb.IWApplicationContext;
 import com.idega.idegaweb.IWResourceBundle;
 import com.idega.idegaweb.presentation.CalendarParameters;
@@ -670,6 +676,17 @@ public class CalendarEntryCreator extends Form{
 				calBus.createNewEntry(entryHeadline, user, entryType, entryRepeat, entryDate,entryTimeHour, entryTimeMinute, entryEndDate, entryEndTimeHour, entryEndTimeMinute, entryAttendees, entryLedger, entryDescription, entryLocation);			
 			}
 		}
+		
+		RSSProducerRegistry registry = RSSProducerRegistry.getInstance();
+		RSSProducer producer = null;
+		try {
+			producer = registry.getRSSProducerByIdentifier(CalendarConstants.RSS_PRODUCER_ID);
+		} catch (NoSuchRSSProducerException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}		
+		String[] parameters = {entryDate, entryEndDate, entryLedger, entryAttendees, entryType, entryRepeat};
+		((CalendarRSSProducer) producer).clearRssCacheList(parameters);
 	}
 	
 	public void main(IWContext iwc) {
@@ -746,6 +763,4 @@ public class CalendarEntryCreator extends Form{
 		return groupBiz;
 	}
 	
-	
-
 }

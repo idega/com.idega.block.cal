@@ -63,6 +63,8 @@ public class CalendarRSSProducer  extends RSSAbstractProducer implements RSSProd
 	private static final String NO_ENTRIES_FOUND_FILE = "no_entries.xml";
 	private static final String INCORRECT_PERIOD_TITLE = "Incorrect period";
 	private static final String INCORRECT_PERIOD_FILE = "incorect_period.xml";
+	private static final String INCORRECT_URI_TITLE = "Incorrect uri";
+	private static final String INCORRECT_URI_FILE = "incorect_uri.xml";
 		
 	public void handleRSSRequest(RSSRequest rssRequest) throws IOException {
 		String extraURI = rssRequest.getExtraUri();
@@ -72,7 +74,8 @@ public class CalendarRSSProducer  extends RSSAbstractProducer implements RSSProd
 			extraURI = extraURI.concat("/");
 		
 		try {
-			this.dispatch("/content" + getFeedFile(extraURI, rssRequest), rssRequest);
+			IWContext iwc = getIWContext(rssRequest);
+			this.dispatch(iwc.getIWMainApplication().getApplicationContextURI()+"content" + getFeedFile(extraURI, rssRequest), rssRequest);
 		} catch (ServletException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -82,19 +85,45 @@ public class CalendarRSSProducer  extends RSSAbstractProducer implements RSSProd
 	private String getFeedFile(String extraURI, RSSRequest rssRequest){
 		if(extraURI.startsWith("period")){
 			rssFileURIsCacheList = rssFileURIsCacheListByPeriod;
-			return getFeedByPeriod(extraURI, rssRequest);
+			try {
+				return getFeedByPeriod(extraURI, rssRequest);
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+				return getFeed(INCORRECT_URI_TITLE, INCORRECT_URI_FILE, null, rssRequest, getIWContext(rssRequest));
+			}
 		}
 		else if(extraURI.startsWith("group")){
 			rssFileURIsCacheList = rssFileURIsCacheListByGroup;
-			return getFeedByGroup(extraURI, rssRequest);
+			try {
+				return getFeedByGroup(extraURI, rssRequest);
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+				return getFeed(INCORRECT_URI_TITLE, INCORRECT_URI_FILE, null, rssRequest, getIWContext(rssRequest));
+			}
 		}
 		else if(extraURI.startsWith("ledger")){
 			rssFileURIsCacheList = rssFileURIsCacheListByLedger;
-			return getFeedByLedger(extraURI, rssRequest);
+			String result = null;
+			try {
+				result = getFeedByLedger(extraURI, rssRequest);
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+				result = getFeed(INCORRECT_URI_TITLE, INCORRECT_URI_FILE, null, rssRequest, getIWContext(rssRequest));
+			}
+			return result;
 		}
 		else if(extraURI.startsWith("events")){
 			rssFileURIsCacheList = rssFileURIsCacheListByEvents;
-			return getFeedByEvents(extraURI, rssRequest);
+			try {
+				return getFeedByEvents(extraURI, rssRequest);
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+				return getFeed(INCORRECT_URI_TITLE, INCORRECT_URI_FILE, null, rssRequest, getIWContext(rssRequest));
+			}
 		}
 		else{
 			return getFeed(NO_ENTRIES_FOUND_TITLE, NO_ENTRIES_FOUND_FILE, null, rssRequest, getIWContext(rssRequest));
@@ -147,7 +176,7 @@ public class CalendarRSSProducer  extends RSSAbstractProducer implements RSSProd
 		} catch (NumberFormatException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-			return null;
+			return getFeed(INCORRECT_URI_TITLE, INCORRECT_URI_FILE, null, rssRequest, getIWContext(rssRequest));
 		}	
 		
 		LedgerVariationsHandler ledgerVariationsHandler = new DefaultLedgerVariationsHandler();
@@ -172,7 +201,7 @@ public class CalendarRSSProducer  extends RSSAbstractProducer implements RSSProd
 			to = getTimeStampFromString(toStr);
 			if(to.before(from))
 				return getFeed(INCORRECT_PERIOD_TITLE, INCORRECT_PERIOD_FILE, null, rssRequest, iwc);
-			title = title + " " + from + "-" + to;
+			title = title + " " + fromStr + "-" + toStr;
 			Collection coll = calendar.getEntriesBetweenTimestamps(from, to);
 			entries = new ArrayList();
 			for (Iterator iter = coll.iterator(); iter.hasNext();) {
@@ -193,9 +222,11 @@ public class CalendarRSSProducer  extends RSSAbstractProducer implements RSSProd
 	
 	private String getFeedByLedger(String extraURI, RSSRequest rssRequest){
 		IWContext iwc = getIWContext(rssRequest);
-		String feedFile = "ledger_"+extraURI.substring("ledger/".length(), extraURI.length()-1)+"_"+iwc.getLocale().getLanguage()+".xml";
+//		String feedFile = "ledger_"+extraURI.substring("ledger/".length(), extraURI.length()-1)+"_"+iwc.getLocale().getLanguage()+".xml";
+		String uri = extraURI.substring("ledger/".length(), extraURI.length());
+		String feedFile = "ledger_"+getName(uri)+getPeriod(uri)+"_"+iwc.getLocale().getLanguage()+".xml";
 		if(rssFileURIsCacheList.contains(feedFile))
-			return feedFile;
+			return PATH_TO_FEED_PARENT_FOLDER + feedFile;
 		String ledger = extraURI.substring("ledger/".length());
 		String ledgerID = ledger.substring(0, ledger.indexOf("/"));
 		String ledgerPeriod = ledger.substring(ledgerID.length()+1, ledger.length());
@@ -209,7 +240,7 @@ public class CalendarRSSProducer  extends RSSAbstractProducer implements RSSProd
 		} catch (NumberFormatException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-			return null;
+			return getFeed(INCORRECT_URI_TITLE, INCORRECT_URI_FILE, null, rssRequest, getIWContext(rssRequest));
 		}		
 		
 		LedgerVariationsHandler ledgerVariationsHandler = new DefaultLedgerVariationsHandler();
@@ -222,7 +253,7 @@ public class CalendarRSSProducer  extends RSSAbstractProducer implements RSSProd
 			to = getTimeStampFromString(toStr);
 			if(to.before(from))
 				return getFeed(INCORRECT_PERIOD_TITLE, INCORRECT_PERIOD_FILE, null, rssRequest, iwc);
-			title = title + " " + from + "-" + to;
+			title = title + " " + fromStr + "-" + toStr;
 			Collection coll = calendar.getEntriesBetweenTimestamps(from, to);
 			entries = new ArrayList();
 			for (Iterator iter = coll.iterator(); iter.hasNext();) {

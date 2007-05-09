@@ -2,12 +2,13 @@ var treeUlCounter = 0;
 
 function setLocal(tableId) {
 	var table = document.getElementById(tableId);
-	table.style.visibility = 'hidden';
+	table.style.display = 'none';
 }
 
 function setRemote(tableId) {
+//console.log(tableId);	
 	var table = document.getElementById(tableId);
-	table.style.visibility = 'visible';
+	table.style.display = 'inline';
 }
 
 function sendConnectionData(serverId, loginId, passwordId) {
@@ -18,3 +19,32 @@ function sendConnectionData(serverId, loginId, passwordId) {
 }
 
 function empty(result){}
+
+//	behaviour
+
+function setBehaviour(){
+	
+	var myrules = {
+/*		
+		'b.someclass' : function(element){
+			element.onclick = function(){
+				alert(this.innerHTML);
+			}
+		},
+*/ 
+		'#radioBtnLocal input' : function(element){
+			element.onclick = function(){
+				setLocal('connectionData');
+			}
+		}
+		,
+		'#radioBtnRemote input' : function(element){
+			element.onclick = function(){
+				setRemote('connectionData');
+			}
+		}
+		
+	};
+	
+	Behaviour.register(myrules);	
+}

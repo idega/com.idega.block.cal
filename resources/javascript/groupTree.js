@@ -11,18 +11,13 @@
 	/* Constructor */
 	
 	function setNodes(nodes){
-//		console.log('nodes');
-//		console.log(nodes);
-//		console.log(nodes[0].name);
-		
 		var rootUl = document.createElement('ul');		
 		rootUl = addTreeElements(nodes, rootUl);
 		rootUl.setAttribute('class', 'tree_drag_drop');
 		rootUl.setAttribute('id','tree');
 		var divElement = document.getElementById(divId);
 		divElement.appendChild(rootUl);
-		
-		treeObj = new JSDragDropTree();
+		treeObj = new GroupTree();
 		treeObj.setTreeId('tree');
 		treeObj.initTree();
 		treeObj.expandAll();
@@ -52,29 +47,12 @@
 		divId = div;
 	}
 	
-	function initCalendarTree(){
-//		include_once('/idegaweb/bundles/com.idega.block.cal/resources/javascript/cal.js');
-//		include_once('/idegaweb/bundles/com.idega.block.cal/resources/javascript/groupTree.js');
-//		include_once('/dwr/interface/CalService.js');
-//		include_once('/dwr/engine.js');
+	function loadTree(){
 
-		CalService.getDivId(setDivId);
-		CalService.getTopGroupNodes(setNodes);
-		
-//		getTree();
-/*			
-		treeObj = new JSDragDropTree();
-		treeObj.setTreeId('tree');
-		treeObj.initTree();
-		treeObj.expandAll();
-*/ 
+		CalService.getTopGroupNodes(setNodes);		
 	}
-/*
-	function getTree(){
-		CalService.getTopGroupNodes(setNodes);
-	}
-*/	
-	function JSDragDropTree()
+
+	function GroupTree()
 	{
 		var thisTree = false;
 		var idOfTree;
@@ -118,8 +96,8 @@
 //		this.imageFolder = '/idegaweb/bundles/com.idega.content.bundle/resources/images/';
 //		this.iconFolder = '/idegaweb/bundles/com.idega.content.bundle/resources/images/pageIcons/';
 		
-		this.imageFolder = '/idegaweb/bundles/com.idega.block.cal.bundle/resources/';
-		this.iconFolder = '/idegaweb/bundles/com.idega.block.cal.bundle/resources/';
+//		this.imageFolder = '/idegaweb/bundles/com.idega.block.cal.bundle/resources/';
+//		this.iconFolder = '/idegaweb/bundles/com.idega.block.cal.bundle/resources/';
 //		this.folderImage = 'text.png';
 		this.folderImage = 'general_node_closed.gif';
 		this.plusImage = 'nav-plus.gif';
@@ -154,8 +132,8 @@
 		this.messageMaximumDepthReached = ''; // Use '' if you don't want to display a message 
 	}
 	
-	/* JSDragDropTree class */
-	JSDragDropTree.prototype = {
+	/* GroupTree class */
+	GroupTree.prototype = {
 		
 		Get_Cookie : function(name) { 
 		   var start = document.cookie.indexOf(name+"="); 
@@ -271,9 +249,8 @@
 			JSTreeObj.iconFolder = path;
 		}
 		,
-		initDrag : function(e)
+		initClick : function(e)
 		{
-//alert('initDrag');			
 			if(saveOnDrop == true)
 				movingNode = true;
 			else
@@ -281,11 +258,6 @@
 			var liTag = document.getElementsByTagName('LI')[0];
 			
 			var subs = JSTreeObj.floatingContainer.getElementsByTagName('LI');
-/*
-console.log('JSTreeObj.dragNode_source');						
-console.log(JSTreeObj.dragNode_source);			
-			alert(JSTreeObj.dragNode_source);
-*/			
 			if(subs.length>0){
 				if(JSTreeObj.dragNode_sourceNextSib){
 					
@@ -338,7 +310,7 @@ console.log(JSTreeObj.dragNode_source);
 		}
 		,		
 		initTree : function()
-		{					
+		{
 			JSTreeObj = this;
 //			ThemesEngine.getPathToImageFolder(JSTreeObj.folderPath);
 //			JSTreeObj.createDropIndicator();
@@ -383,7 +355,6 @@ console.log(JSTreeObj.dragNode_source);
 					else
 						iconfile = JSTreeObj.iconFolder + this.folderImage;
 				}
-
 				var templatefile = null;		 
 				var tmpVar = menuItems[no].getAttribute('templatefile');
 				if(!tmpVar)				
@@ -405,7 +376,6 @@ console.log(JSTreeObj.dragNode_source);
 				}
 						
 				var aTag = menuItems[no].getElementsByTagName('A')[0];
-//console.log('a tag');				
 			
 				if(aTag.id)
 					numericId = aTag.id.replace(/[^0-9]/g,'');
@@ -423,11 +393,9 @@ console.log(JSTreeObj.dragNode_source);
 				input.id = menuItems[no].id + 'input';
 	
 //				if(!noDrag)
-//console.log(aTag.onmousedown);
-//				aTag.onclick = JSTreeObj.initDrag;
+
 				aTag.onclick = JSTreeObj.copyDragableNode;
-//				aTag.onmousedown = JSTreeObj.initDrag;
-//console.log(aTag);	
+
 				if(!noChildren)aTag.onmousemove = JSTreeObj.moveDragableNodes;
 				if(sourceTree)aTag.onmousedown = JSTreeObj.copyDragableNode;
 								
@@ -439,14 +407,15 @@ console.log(JSTreeObj.dragNode_source);
 					if(sourceTree)
 						folderImg.onmousedown = JSTreeObj.copyDragableNode;
 					else
-						folderImg.onmousedown = JSTreeObj.initDrag;
+						folderImg.onmousedown = JSTreeObj.initClick;
 				}
 				if(!noChildren)folderImg.onmousemove = JSTreeObj.moveDragableNodes;
 				
 				if(menuItems[no].className){
 					folderImg.src = this.imageFolder + menuItems[no].className;
 				}else{
-					folderImg.src = this.imageFolder + this.folderImage;					
+					folderImg.src = this.imageFolder + this.folderImage;			
+
 //					folderImg.src = this.imageFolder + this.iconFolder;					
 				}
 				if(iconfile)
@@ -458,15 +427,17 @@ console.log(JSTreeObj.dragNode_source);
 			if(initExpandedNodes){
 				var nodes = initExpandedNodes.split(',');
 			}			
+/*
 			document.documentElement.onmousemove = JSTreeObj.moveDragableNodes;	
 			
 			document.documentElement.onmouseup = JSTreeObj.dropDragableNodesCopy;
 			
-			if(sourceTree){			
+			if(sourceTree){
 				this.actionOnMouseUp = 'copy';
 			}
 			else{
 				this.actionOnMouseUp = 'move';
 			}
+*/ 
 		}
 	}

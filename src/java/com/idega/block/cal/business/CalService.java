@@ -8,7 +8,7 @@ public interface CalService extends IBOService{
 	public void setConnectionData(String serverName, String login, String password);
 //	public void getTopGroupNodes(String serverName, String login, String password);
 	
-	public Collection getTopGroupNodes();
+//	public Collection getTopGroupNodes();
 	
-	public String getDivId();
+//	public String getDivId();
 }

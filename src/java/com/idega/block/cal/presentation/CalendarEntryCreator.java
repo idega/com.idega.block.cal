@@ -16,6 +16,7 @@ import com.idega.block.cal.data.CalendarEntry;
 import com.idega.block.cal.data.CalendarEntryType;
 import com.idega.block.cal.data.CalendarLedger;
 import com.idega.block.rss.business.NoSuchRSSProducerException;
+import com.idega.block.rss.business.RSSAbstractProducer;
 import com.idega.block.rss.business.RSSProducer;
 import com.idega.block.rss.business.RSSProducerRegistry;
 import com.idega.block.rss.data.RSSRequest;
@@ -686,7 +687,8 @@ public class CalendarEntryCreator extends Form{
 			e.printStackTrace();
 		}		
 		String[] parameters = {entryDate, entryEndDate, entryLedger, entryAttendees, entryType, entryRepeat};
-		producer.clearRssCacheList(parameters);
+		
+		((CalendarRSSProducer)producer).clearRssCacheList(parameters);
 	}
 	
 	public void main(IWContext iwc) {

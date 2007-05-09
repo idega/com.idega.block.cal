@@ -47,7 +47,6 @@ import com.sun.syndication.feed.synd.SyndFeed;
  */
 
 public class CalendarRSSProducer  extends RSSAbstractProducer implements RSSProducer{
-//	private List rssFileURIsCacheList = new ArrayList();
 	
 	private List rssFileURIsCacheList;
 	
@@ -72,74 +71,12 @@ public class CalendarRSSProducer  extends RSSAbstractProducer implements RSSProd
 		if((!extraURI.endsWith("/")) && (extraURI.length() != 0))
 			extraURI = extraURI.concat("/");
 		
-//		IWContext iwc = getIWContext(rssRequest);
-//		String uri = null;
-//		if(extraURI.startsWith("period")){
-//			type = "period";
-//			rssFileURIsCacheList = rssFileURIsCacheListByPeriod;
-//			uri = extraURI.substring("period/".length(), extraURI.length());
-//			feedFile = "period_"+getName(uri)+iwc.getLocale().getLanguage()+".xml";
-//			entries = getEntriesByPeriod(extraURI);
-//		}
-//		else if(extraURI.startsWith("group")){
-//			type = "group";
-//			rssFileURIsCacheList = rssFileURIsCacheListByGroup;
-//			uri = extraURI.substring("group/".length(), extraURI.length());
-//			feedFile = "group_"+getName(uri)+getPeriod(uri)+iwc.getLocale().getLanguage()+".xml";
-//			entries = getEntriesByGroup(extraURI);
-//		}
-//		else if(extraURI.startsWith("ledger")){
-//			type = "ledger";
-//			rssFileURIsCacheList = rssFileURIsCacheListByLedger;
-//			feedFile = "ledger_"+extraURI.substring("ledger/".length(), extraURI.length()-1)+"_"+iwc.getLocale().getLanguage()+".xml";			
-//			entries = getEntriesByLedger(extraURI);
-//		}
-//		else if(extraURI.startsWith("events")){
-//			type = "events";
-//			rssFileURIsCacheList = rssFileURIsCacheListByEvents;
-//			uri = extraURI.substring("events/".length(), extraURI.length());
-//			feedFile = "events_"+getTypesString(uri)+getPeriod(uri)+iwc.getLocale().getLanguage()+".xml";
-//			entries = getEntriesByEvents(extraURI);
-//		}
-//		else{
-//		}
-//		feedParentFolder = PATH_TO_FEED_PARENT_FOLDER + type +"/";
-		
-//		String realURI = "/content"+feedParentFolder+feedFile;
-		
-//		if(rssFileURIsCacheList.contains(feedFile)){
-		
 		try {
-			IWContext iwc = getIWContext(rssRequest);
-			System.out.println("Application context: "+iwc.getIWMainApplication().getApplicationContextURI());
 			this.dispatch("/content" + getFeedFile(extraURI, rssRequest), rssRequest);
 		} catch (ServletException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
-//		if(false){
-//			try {
-//				this.dispatch(realURI, rssRequest);
-//			} catch (ServletException e) {
-//				e.printStackTrace();
-//			}
-//		}
-//		else{
-//			//generate rss and store and the dispatch to it
-//			//and add a listener to that directory
-//			try {
-////				feedFile = searchForEntries(rssRequest,feedParentFolder,feedFile, extraURI, entries);
-//				feedFile = getFeedFile(extraURI, rssRequest);
-//				rssFileURIsCacheList.add(feedFile);
-//					
-//				realURI = "/content"+feedFile;
-//				
-//				this.dispatch(realURI, rssRequest);
-//			} catch (Exception e) {
-//				throw new IOException(e.getMessage());
-//			}
-//		}
 	}
 	
 	private String getFeedFile(String extraURI, RSSRequest rssRequest){
@@ -228,8 +165,6 @@ public class CalendarRSSProducer  extends RSSAbstractProducer implements RSSProd
 			e.printStackTrace();
 		}
 
-		
-//		String title = groupID;
 		if (groupPeriod.length() != 0){
 			String fromStr = groupPeriod.substring(0, DATE_LENGTH);
 			String toStr = groupPeriod.substring(DATE_LENGTH+1, groupPeriod.length()-1);
@@ -279,7 +214,6 @@ public class CalendarRSSProducer  extends RSSAbstractProducer implements RSSProd
 		
 		LedgerVariationsHandler ledgerVariationsHandler = new DefaultLedgerVariationsHandler();
 		String title = ((DefaultLedgerVariationsHandler)ledgerVariationsHandler).getCalBusiness(iwc).getLedger(Integer.parseInt(ledgerID)).getName();
-//		String title = ledgerID;
 		
 		if (ledgerPeriod.length() != 0){
 			String fromStr = ledgerPeriod.substring(0, DATE_LENGTH);
@@ -365,8 +299,6 @@ public class CalendarRSSProducer  extends RSSAbstractProducer implements RSSProd
 		else 
 			entries = new ArrayList(calendar.getEntriesByEvents(eventsList));
 		
-//		return calendar.getEntriesByEvents(eventsList);		
-		
 		if(entries.isEmpty())
 			return getFeed(NO_ENTRIES_FOUND_TITLE, NO_ENTRIES_FOUND_FILE, null, rssRequest, iwc);
 		else{
@@ -429,246 +361,11 @@ public class CalendarRSSProducer  extends RSSAbstractProducer implements RSSProd
 			e1.printStackTrace();
 		}
 		return syndEntries;
-//		feed.setEntries(syndEntries);		
 	}
-	
-//	private String getEmptyFeed(String title, String feedFileName, RSSRequest rssRequest){
-//		Date now = new Date();
-//		RSSBusiness rss = null;
-//		IWContext iwc = getIWContext(rssRequest);
-//						
-//		try {
-//			rss = (RSSBusiness) IBOLookup.getServiceInstance(iwc,RSSBusiness.class);			
-//		} catch (IBOLookupException e1) {
-//			e1.printStackTrace();
-//		}
-//		String serverName = iwc.getServerURL();
-//		serverName = serverName.substring(0, serverName.length()-1);
-//		SyndFeed emptyFeed = rss.createNewFeed(title, serverName , FEED_DESCRIPTION, "atom_1.0", iwc.getCurrentLocale().toString(), new Timestamp(now.getTime()));
-//		
-//		try {
-//			String feedContent = rss.convertFeedToAtomXMLString(emptyFeed);
-//			IWSlideService service = this.getIWSlideService(rssRequest);
-//			service.uploadFileAndCreateFoldersFromStringAsRoot(PATH_TO_FEED_PARENT_FOLDER, feedFileName, feedContent, this.RSS_CONTENT_TYPE, true);
-//		} catch (RemoteException e) {
-//			e.printStackTrace();
-//		} catch (Exception e) {
-//			e.printStackTrace();
-//		}			
-//		return PATH_TO_FEED_PARENT_FOLDER + feedFileName;
-//
-//	}
-	
-//	private void saveFeed(){
-//		try {
-//			String feedContent = rss.convertFeedToAtomXMLString(emptyFeed);
-//			IWSlideService service = this.getIWSlideService(rssRequest);
-//			service.uploadFileAndCreateFoldersFromStringAsRoot(PATH_TO_FEED_PARENT_FOLDER, feedFileName, feedContent, this.RSS_CONTENT_TYPE, true);
-//		} catch (RemoteException e) {
-//			e.printStackTrace();
-//		} catch (Exception e) {
-//			e.printStackTrace();
-//		}			
-//	}
-	
-//	private String searchForEntries(RSSRequest rssRequest, String feedParentFolder, String feedFileName, String extraURI, Collection entries) {
-//		IWContext iwc = getIWContext(rssRequest);
-////		Collection entries = null;
-////		if(extraURI.startsWith("period"))
-////			entries = getEntriesByPeriod(extraURI);
-////		if(extraURI.startsWith("group"))
-////			entries = getEntriesByGroup(extraURI);
-////		if(extraURI.startsWith("ledger"))
-////			entries = getEntriesByLedger(extraURI);
-////		if(extraURI.startsWith("events"))
-////			entries = getEntriesByEvents(extraURI);		
-//		if(entries == null)
-//			return null;
-////		if (entries != null){
-//			Date now = new Date();
-//			RSSBusiness rss = null;
-//			try {
-//				rss = (RSSBusiness) IBOLookup.getServiceInstance(iwc,RSSBusiness.class);			
-//			} catch (IBOLookupException e1) {
-//				e1.printStackTrace();
-//			}
-//			String serverName = iwc.getServerURL();
-//			serverName = serverName.substring(0, serverName.length()-1);
-//			SyndFeed allArticles = null;
-//			
-//			if(entries == null){
-//				//some kind of error
-//			}			
-//			else if (entries.isEmpty()){
-//				allArticles = rss.createNewFeed(NO_ENTRIES_FOUND, serverName , FEED_DESCRIPTION, "atom_1.0", iwc.getCurrentLocale().toString(), new Timestamp(now.getTime()));
-//				feedParentFolder = PATH_TO_FEED_PARENT_FOLDER;
-//				feedFileName = "empty_"+iwc.getLocale().getLanguage()+".xml";		
-//			}
-//			else {
-//				allArticles = rss.createNewFeed(getTitle(), serverName , FEED_DESCRIPTION, "atom_1.0", iwc.getCurrentLocale().toString(), new Timestamp(now.getTime()));
-//			 
-//				List syndEntries = new ArrayList();
-//				try {
-//					List calendarEntries = new ArrayList(entries);
-//					CalendarEntry calEntry = null;
-//					for (int i = 0; i < entries.size(); i++) {
-//						SyndEntry sEntry = new SyndEntryImpl();
-//						calEntry = (CalendarEntry)calendarEntries.get(i);
-//						SyndContent scont = new SyndContentImpl();
-//						String content = "Name: "+calEntry.getName()+" Type: "+calEntry.getEntryTypeName()+" From: "+calEntry.getDate()+" To: "+calEntry.getEndDate();					
-//						scont.setValue(content);
-//						sEntry.setTitle(calEntry.getName());
-//						sEntry.setDescription(scont);
-//						sEntry.setPublishedDate(calEntry.getDate());
-//						syndEntries.add(sEntry);
-//					}
-//				} catch (RuntimeException e1) {
-//					e1.printStackTrace();
-//				}
-//				allArticles.setEntries(syndEntries);
-//			}
-//			
-//			try {
-//				String allArticlesContent = rss.convertFeedToAtomXMLString(allArticles);
-//				IWSlideService service = this.getIWSlideService(rssRequest);
-//				service.uploadFileAndCreateFoldersFromStringAsRoot(feedParentFolder, feedFileName, allArticlesContent, this.RSS_CONTENT_TYPE, true);
-//			} catch (RemoteException e) {
-//				e.printStackTrace();
-//			} catch (Exception e) {
-//				e.printStackTrace();
-//			}			
-////		}
-//		return feedParentFolder + feedFileName;
-//	}	
 	
 	protected List getrssFileURIsCacheList() {
 		return rssFileURIsCacheList;
 	}
-//	private Collection getEntriesByPeriod(String extraURI){
-//		String period = extraURI.substring("period/".length());
-//		String fromStr = period.substring(0, DATE_LENGTH);
-//		String toStr = period.substring(DATE_LENGTH+1, period.length()-1);
-//		Timestamp fromTmst = getTimeStampFromString(fromStr);
-//		Timestamp toTmst = getTimeStampFromString(toStr);
-//		CalBusiness calendar = new CalBusinessBean(); 
-//		return calendar.getEntriesBetweenTimestamps(fromTmst, toTmst);
-//	}
-	
-//	private Collection getEntriesByGroup(String extraURI){
-//		String group = extraURI.substring("group/".length());
-//		String groupID = group.substring(0, group.indexOf("/"));
-//		String groupPeriod = group.substring(groupID.length()+1, group.length());
-//		Timestamp from = null;
-//		Timestamp to = null;
-//		CalBusiness calendar = new CalBusinessBean();
-//		int entryGroupID;
-//		try {
-//			entryGroupID = Integer.parseInt(groupID);
-//		} catch (NumberFormatException e) {
-//			e.printStackTrace();
-//			return null;
-//		}		
-//		if (groupPeriod.length() != 0){
-//			String fromStr = groupPeriod.substring(0, DATE_LENGTH);
-//			String toStr = groupPeriod.substring(DATE_LENGTH+1, groupPeriod.length()-1);
-//			from = getTimeStampFromString(fromStr);
-//			to = getTimeStampFromString(toStr);
-//			Collection coll = calendar.getEntriesBetweenTimestamps(from, to);
-//			List entries = new ArrayList();
-//			for (Iterator iter = coll.iterator(); iter.hasNext();) {
-//				CalendarEntry element = (CalendarEntry) iter.next();
-//				int id = element.getGroupID();
-//				if (element.getGroupID() == entryGroupID){
-//					entries.add(element);
-//				}				
-//			}
-//			return entries;
-//		}		
-//		return calendar.getEntriesByICGroup(entryGroupID);
-//	}	
-	
-//	private Collection getEntriesByLedger(String extraURI){
-//		String ledger = extraURI.substring("ledger/".length());
-//		String ledgerID = ledger.substring(0, ledger.indexOf("/"));
-//		String ledgerPeriod = ledger.substring(ledgerID.length()+1, ledger.length());
-//		
-//		
-//		Timestamp from = null;
-//		Timestamp to = null;
-//		CalBusiness calendar = new CalBusinessBean();
-//		int ledgerIdInt;
-//		try {
-//			ledgerIdInt = Integer.parseInt(ledgerID);
-//		} catch (NumberFormatException e) {
-//			e.printStackTrace();
-//			return null;
-//		}		
-//		if (ledgerPeriod.length() != 0){
-//			String fromStr = ledgerPeriod.substring(0, DATE_LENGTH);
-//			String toStr = ledgerPeriod.substring(DATE_LENGTH+1, ledgerPeriod.length()-1);
-//			from = getTimeStampFromString(fromStr);
-//			to = getTimeStampFromString(toStr);
-//			Collection coll = calendar.getEntriesBetweenTimestamps(from, to);
-//			List entries = new ArrayList();
-//			for (Iterator iter = coll.iterator(); iter.hasNext();) {
-//				CalendarEntry element = (CalendarEntry) iter.next();
-//				if (element.getLedgerID() == ledgerIdInt){
-//					entries.add(element);
-//				}				
-//			}
-//			return entries;
-//		}
-//		return calendar.getEntriesByLedgerID(ledgerIdInt);
-//	}	
-//	private Collection getEntriesByEvents(String extraURI){
-//		String events = extraURI.substring("events/".length());
-//		String eventsPeriod = null;
-//		List eventsList = new ArrayList();
-//		int index = -1;
-//		if (events.indexOf("+") == -1){
-//			eventsList.add(events.substring(0, events.indexOf("/")));
-//			events = events.substring(events.indexOf("/")+1, events.length());
-//		}
-//		else{
-//			while(true){
-//				index = events.indexOf("+");
-//				if (index == -1){
-//					index = events.indexOf("/");
-//					eventsList.add(events.substring(0, index));
-//					events = events.substring(index+1, events.length());
-//					break;
-//				}
-//				else{
-//					eventsList.add(events.substring(0, index));
-//					events = events.substring(index+1, events.length());
-//				}
-//			}
-//		}
-//		
-//		eventsPeriod = events;		
-//		Timestamp from = null;
-//		Timestamp to = null;
-//		CalBusiness calendar = new CalBusinessBean();
-//		
-//		if (eventsPeriod.length() != 0){
-//			String fromStr = eventsPeriod.substring(0, DATE_LENGTH);
-//			String toStr = eventsPeriod.substring(DATE_LENGTH+1, eventsPeriod.length()-1);
-//			from = getTimeStampFromString(fromStr);
-//			to = getTimeStampFromString(toStr);
-//			Collection coll = calendar.getEntriesBetweenTimestamps(from, to);
-//			List entries = new ArrayList();
-//			
-//			for (Iterator iter = coll.iterator(); iter.hasNext();) {
-//				CalendarEntry element = (CalendarEntry) iter.next();				
-//				if(eventsList.contains(element.getEntryTypeName())){	
-//					entries.add(element);
-//				}				
-//			}
-//			return entries;
-//		}
-//		Collection result = calendar.getEntriesByEvents(eventsList);
-//		return calendar.getEntriesByEvents(eventsList);
-//	}		
 	
 	private Timestamp getTimeStampFromString(String dateString){
 		dateString = dateString.replaceAll("-", "");

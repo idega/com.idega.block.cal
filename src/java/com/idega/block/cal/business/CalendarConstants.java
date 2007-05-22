@@ -7,7 +7,6 @@ public class CalendarConstants {
 	public static final String serverNameFieldId = "serverNameFieldId";
 	public static final String loginFieldId = "loginFieldId";
 	public static final String passwordFieldid = "passwordFieldid";
-	public static final String groupsDivId = "groupsDIV";
 	
 	public static final String localServerParameterName = "localServer";
 	public static final String remoteServerParameterName = "remoteServer";

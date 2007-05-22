@@ -4,6 +4,13 @@
 		<author email="tryggvi@idega.com">Tryggvi Larusson</author>
 	</properties>
 	<body>
+	
+		<release version="3.1.6" date="2007-05-22">
+      		<action dev="eiki" type="update">
+      			Merged latest stuff from HEAD
+      		</action>       
+    	</release>
+    	
 		<release version="3.1.5" date="2007-04-23">
       		<action dev="eiki" type="update">
       			Updating rss to 3.1.13 and merged latest stuff from HEAD

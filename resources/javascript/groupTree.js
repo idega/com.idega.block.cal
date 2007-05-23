@@ -6,17 +6,28 @@
 	var globalDivId = null;
 	var saveOnDrop = false;
 	var movingNode = false;
-	var divId = '';
-		
-	/* Constructor */
 	
-	function setNodes(nodes){
+	function setNodes(nodes, id) {
+		var container = $(id);
+		if (container == null) {
+			return;
+		}
+		removeChildren(container);
+		
+		if (nodes == null) {
+			return;
+		}
+		if (nodes.length == 0) {
+			return;
+		}
+		
 		var rootUl = document.createElement('ul');		
 		rootUl = addTreeElements(nodes, rootUl);
 		rootUl.setAttribute('class', 'tree_drag_drop');
-		rootUl.setAttribute('id','tree');
-		var divElement = document.getElementById(divId);
-		divElement.appendChild(rootUl);
+		rootUl.setAttribute('id', 'tree');
+		
+		container.appendChild(rootUl);
+		
 		treeObj = new GroupTree();
 		treeObj.setTreeId('tree');
 		treeObj.initTree();
@@ -24,7 +35,7 @@
 	}
 	
 	function addTreeElements(nodes, rootUl){
-		for(var i = 0; i < nodes.length; i++){
+		for (var i = 0; i < nodes.length; i++){
 			var liElement = document.createElement('li');
 			liElement.setAttribute('id',nodes[i].uniqueId);
 			var link = document.createElement('a');
@@ -42,18 +53,8 @@
 		}
 		return rootUl;
 	}
-	
-	function setDivId(div){
-		divId = div;
-	}
-	
-	function loadTree(){
 
-		CalService.getTopGroupNodes(setNodes);		
-	}
-
-	function GroupTree()
-	{
+	function GroupTree() {
 		var thisTree = false;
 		var idOfTree;
 		

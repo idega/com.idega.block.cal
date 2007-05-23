@@ -9,9 +9,7 @@ import com.idega.idegaweb.IWBundle;
 import com.idega.presentation.Block;
 import com.idega.presentation.IWContext;
 import com.idega.presentation.Layer;
-import com.idega.presentation.Page;
-import com.idega.presentation.PresentationObjectUtil;
-import com.idega.user.business.GroupChooser;
+import com.idega.user.presentation.GroupInfoChooser;
 /**
  * 
  * @author <a href="justinas@idega.com">Justinas Rakita</a>
@@ -23,12 +21,7 @@ public class GroupAndCalendarChooser extends Block {
 	private static IWBundle bundle = null;	
 	
 	public void main(IWContext iwc) {
-		GroupChooser chooser = new GroupChooser();
-		Page parentPage = PresentationObjectUtil.getParentPage(this);
-		if (parentPage == null){
-			return;
-		}
-		parentPage = chooser.getParentPage(parentPage);
+		add(new GroupInfoChooser());
 	}
 	
 //	public void main(IWContext iwc) {

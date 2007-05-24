@@ -21,7 +21,7 @@ public class GroupAndCalendarChooser extends Block {
 	private static IWBundle bundle = null;	
 	
 	public void main(IWContext iwc) {
-		add(new GroupInfoChooser());
+		add(new GroupInfoChooser(null, null));
 	}
 	
 //	public void main(IWContext iwc) {

@@ -9,7 +9,7 @@ import com.idega.idegaweb.IWBundle;
 import com.idega.presentation.Block;
 import com.idega.presentation.IWContext;
 import com.idega.presentation.Layer;
-import com.idega.user.presentation.GroupInfoChooser;
+import com.idega.user.presentation.group.GroupInfoChooserBlock;
 /**
  * 
  * @author <a href="justinas@idega.com">Justinas Rakita</a>
@@ -21,7 +21,7 @@ public class GroupAndCalendarChooser extends Block {
 	private static IWBundle bundle = null;	
 	
 	public void main(IWContext iwc) {
-		add(new GroupInfoChooser(null, null));
+		add(new GroupInfoChooserBlock());
 	}
 	
 //	public void main(IWContext iwc) {

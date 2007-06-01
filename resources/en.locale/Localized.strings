@@ -4,3 +4,4 @@ serverName=Server name
 login= Login
 password=Password
 getGroups=Get groups
+refresh=Refresh

@@ -5,6 +5,12 @@
 	</properties>
 	<body>
 	
+		<release version="3.1.7" date="2007-06-01">
+      		<action dev="eiki" type="update">
+      			Merged latest stuff from HEAD
+      		</action>       
+    	</release>
+    	
 		<release version="3.1.6" date="2007-05-22">
       		<action dev="eiki" type="update">
       			Merged latest stuff from HEAD

@@ -6,16 +6,5 @@
     <create creator="ibo" javascript="CalService" scope="application">
       <param name="class" value="com.idega.block.cal.business.CalService"/>
     </create>
-    <convert converter="bean" match="com.idega.block.cal.business.GroupNode" />
   </allow>
-  
-	<signatures>
-		<![CDATA[
-			import java.util.Collection;
-			import com.idega.block.cal.business.GroupNode;
-			import com.idega.block.cal.business.*;
-
-  			CalService.getTopGroupNodes();
-  		]]>
-	</signatures>
 </dwr>

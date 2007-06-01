@@ -5,7 +5,7 @@
   <pomVersion>3</pomVersion>
   <name>idegaWeb Cal Block</name>
   <artifactId>com.idega.block.cal</artifactId>
-  <currentVersion>3.1.6</currentVersion>
+  <currentVersion>3.1.7</currentVersion>
   <inceptionYear>2000</inceptionYear>
   <shortDescription>Cal (new version of Calendar)</shortDescription>
   <versions>
@@ -85,7 +85,7 @@
     <dependency>
       <groupId>bundles</groupId>
       <artifactId>com.idega.core</artifactId>
-      <version>3.1.41</version>
+      <version>3.1.48</version>
       <type>jar</type>
       <url>http://www.idega.com/</url>
     </dependency>
@@ -99,7 +99,7 @@
     <dependency>
       <groupId>bundles</groupId>
       <artifactId>com.idega.user</artifactId>
-      <version>3.1.5</version>
+      <version>3.1.7</version>
       <type>jar</type>
       <url>http://www.idega.com/</url>
     </dependency>

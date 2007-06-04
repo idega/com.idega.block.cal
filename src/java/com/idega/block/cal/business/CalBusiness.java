@@ -1,5 +1,5 @@
 /*
- * $Id: CalBusiness.java,v 1.15 2007/03/27 12:37:08 justinas Exp $ Created on Dec 7, 2004
+ * $Id: CalBusiness.java,v 1.16 2007/06/04 20:21:40 justinas Exp $ Created on Dec 7, 2004
  * 
  * Copyright (C) 2004 Idega Software hf. All Rights Reserved.
  * 
@@ -31,10 +31,10 @@ import com.idega.user.data.User;
 
 /**
  * 
- * Last modified: $Date: 2007/03/27 12:37:08 $ by $Author: justinas $
+ * Last modified: $Date: 2007/06/04 20:21:40 $ by $Author: justinas $
  * 
  * @author <a href="mailto:eiki@idega.com">eiki </a>
- * @version $Revision: 1.15 $
+ * @version $Revision: 1.16 $
  */
 public interface CalBusiness extends IBOService, UserGroupPlugInBusiness {
 
@@ -305,4 +305,6 @@ public interface CalBusiness extends IBOService, UserGroupPlugInBusiness {
 	public Collection getEntriesByICGroup(int groupId);
 	
 	public Collection getEntriesByEvents(List eventsList);
+	
+	public List getLedgersByGroupId(String groupId);
 }

@@ -1163,4 +1163,22 @@ public class CalBusinessBean extends IBOServiceBean implements CalBusiness,UserG
 	public String canCreateSubGroup(Group group, String groupTypeOfSubGroup) throws RemoteException {
 		return null;
 	}
+	
+	public List getLedgersByGroupId(String groupId){
+		List ledgers = null;
+		try {
+			CalendarLedgerHome ledgerHome = (CalendarLedgerHome) getIDOHome(CalendarLedger.class);
+			ledgers = new ArrayList(ledgerHome.findLedgersByGroupId(groupId)); 
+		}catch(Exception e) {
+			e.printStackTrace();
+		}
+		return ledgers;
+	}
+
+	
+	
+	public List getTypesByGroupId(String groupId){
+		return null;
+	}
+	
 }

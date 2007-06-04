@@ -9,6 +9,8 @@ import com.idega.idegaweb.IWBundle;
 import com.idega.presentation.Block;
 import com.idega.presentation.IWContext;
 import com.idega.presentation.Layer;
+import com.idega.presentation.Page;
+import com.idega.user.presentation.group.GroupInfoChooserBlock;
 import com.idega.user.presentation.group.GroupsChooserBlock;
 /**
  * 
@@ -21,7 +23,19 @@ public class GroupAndCalendarChooser extends Block {
 	private static IWBundle bundle = null;	
 	
 	public void main(IWContext iwc) {
-		add(new GroupsChooserBlock());
+		Layer groupsAndCalendarsLayer = new Layer();
+		Page parentPage = getParentPage();
+		
+		groupsAndCalendarsLayer.add(new GroupInfoChooserBlock());
+		groupsAndCalendarsLayer.add(new CalendarChooserBlock());	
+		groupsAndCalendarsLayer.setStyleClass("groupsAndCalendarsLayerStyleClass");
+//		groupsAndCalendarsLayer.add
+		add(groupsAndCalendarsLayer);
+//		parentPage.setStyleSheetURL();
+//		add(new GroupInfoChooserBlock());
+//		add(new CalendarChooserBlock());	
+		
+//		add(new GroupsChooserBlock());
 	}
 	
 //	public void main(IWContext iwc) {

@@ -130,4 +130,11 @@ public class CalendarLedgerBMPBean extends GenericEntity implements com.idega.bl
 			e.printStackTrace();
 		}
 	}
+	public Collection ejbFindLedgersByGroupId(String id) throws FinderException {
+		IDOQuery query = idoQueryGetSelect();
+		query.appendWhereEqualsQuoted("IC_GROUP_ID", id);		
+		List result = new ArrayList(super.idoFindPKsByQuery(query));
+		return result;
+		
+	}
 }

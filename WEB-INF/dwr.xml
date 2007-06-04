@@ -3,8 +3,20 @@
 
 <dwr>
 	<allow>
+	
+		<convert converter="bean" match="com.idega.block.cal.business.CalendarLedgersAndTypes" />
+	
 		<create creator="ibo" javascript="CalService" scope="application">
 			<param name="class" value="com.idega.block.cal.business.CalService"/>
 		</create>
 	</allow>
+	<signatures>
+		<![CDATA[
+  			import java.util.List;
+  			import com.idega.block.cal.business.CalService;
+			import com.idega.block.cal.business.CalendarLedgersAndTypes;
+
+			CalBusiness.getCalendarParametersList();
+  		]]>
+	</signatures>	
 </dwr>

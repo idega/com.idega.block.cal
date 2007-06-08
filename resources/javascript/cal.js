@@ -55,6 +55,17 @@ function loadLocalCalendarList(id) {
 	PASSWORD = null;
 
 	calendar_list_container_id = id;
+/*	
+	$$('span.' + getGroupTreeListElementStyleClass()).each(
+		function(element) {
+			element.onclick = function() {
+				alert(element.id);
+				selectGroup(element);
+				checkOtherProperties(element);
+			}
+    	}
+    );
+*/	
 /*
 	prepareDwr(CalService, DEFAULT_DWR_PATH);
 	CalService.getCalendarParametersList({

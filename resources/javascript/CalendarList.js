@@ -2,10 +2,6 @@ var arrayOfParameters = null;
 var arrayOfCheckedParameters = null;
 /*
 function setCalendars(calendars, id){
-	console.log('id');
-	console.log(id);
-	console.log('calendars');
-	console.log(calendars);
 	var parentOfList = document.getElementById(id);
 	var ledgersList = document.createElement('div');
 	var entryTypesList = document.createElement('div');
@@ -74,10 +70,9 @@ function displayCalendarAttributes(calendars){
 	tdLedgersCaption.appendChild(document.createTextNode('Ledgers:'));
 	tdTypesCaption.appendChild(document.createTextNode('Types:'));
 		
-
-		
-		
 	var element = null;
+	var addLedgerList = false;
+	var addEntryTypesList = false;
 	for (var i = 0; i < calendars.length; i++){
 		element = calendars[i];
 		if(element.type == 'L'){
@@ -93,6 +88,7 @@ function displayCalendarAttributes(calendars){
 			ledgersList.appendChild(ledgerCaption);
 			
 			arrayOfParameters.push(element.type + element.id);
+			addLedgerList = true;
 		}	
 		if(element.type == 'T'){
 			var typeElement = document.createElement('input');
@@ -101,23 +97,25 @@ function displayCalendarAttributes(calendars){
 			typeElement.setAttribute('name',element.name);
 			typeElement.setAttribute('elementType',element.type);			
 			typeElement.setAttribute('type','checkbox');				
-			ledgerElement.setAttribute('class','callendarCheckbox');			
+			typeElement.setAttribute('class','callendarCheckbox');			
 			var typeCaption = document.createTextNode(element.name); 					
 			entryTypesList.appendChild(typeElement);
 			entryTypesList.appendChild(typeCaption);
 			
 			arrayOfParameters.push(element.type + element.id);
+			addEntryTypesList = true;
 		}	
-
-	tdLedgersList.appendChild(ledgersList);
-	tdTypesList.appendChild(entryTypesList);
-
-	trLedgers.appendChild(tdLedgersCaption);
-	trLedgers.appendChild(tdLedgersList);
-
-	trTypes.appendChild(tdTypesCaption);
-	trTypes.appendChild(tdTypesList);
+	if (addLedgerList == true){
+		tdLedgersList.appendChild(ledgersList);
+		trLedgers.appendChild(tdLedgersCaption);
+		trLedgers.appendChild(tdLedgersList);
+	}	
 	
+	if (addEntryTypesList == true){
+		tdTypesList.appendChild(entryTypesList);
+		trTypes.appendChild(tdTypesCaption);
+		trTypes.appendChild(tdTypesList);
+	}
 	tableOfParameters.appendChild(trLedgers);
 	tableOfParameters.appendChild(trTypes);
 

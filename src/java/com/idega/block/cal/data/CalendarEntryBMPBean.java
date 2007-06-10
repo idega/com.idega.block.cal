@@ -256,5 +256,25 @@ public class CalendarEntryBMPBean extends GenericEntity implements com.idega.blo
   public static CalendarEntry getStaticInstance() {
     return (CalendarEntry) GenericEntity.getStaticInstance(CalendarEntry.class);
   }
-
+  public Collection ejbFindEntriesByICGroup(List listOfLedgerIds){
+	  if(listOfLedgerIds.isEmpty())
+		  return new ArrayList();
+	  
+	  IDOQuery query = idoQueryGetSelect();
+	  
+	  query.appendWhereEquals("CAL_LEDGER_ID",listOfLedgerIds.get(0));
+	  if(listOfLedgerIds.size() > 1){
+		  for(int i = 1; i < listOfLedgerIds.size(); i++){
+			  query.appendOr().append("CAL_LEDGER_ID").appendEqualSign().append(listOfLedgerIds.get(i));
+		  }
+	  }
+		  
+	  try {
+		return super.idoFindPKsByQuery(query);
+	} catch (FinderException e) {
+		// TODO Auto-generated catch block
+		e.printStackTrace();
+		return new ArrayList();
+	}
+  }
 }

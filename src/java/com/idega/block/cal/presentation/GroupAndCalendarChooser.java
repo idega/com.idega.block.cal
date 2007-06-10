@@ -17,7 +17,10 @@ import com.idega.util.CoreUtil;
  *
  */
 public class GroupAndCalendarChooser extends Block {
-	
+
+	private static final String GROUPS_AND_CALENDAR_STYLE_CLASS = "groupsAndCalendarsLayerStyleClass";
+	private static final String CALENDAR_STYLE_CLASS = "calendarsLayerStyleClass";
+	private static final String NODE_ON_CLICK_ACTION = "function(){CalService.getCalendarParameters(this.id, displayCalendarAttributes);}";
 //	private UserBusiness userBiz = null;
 	private static IWBundle bundle = null;	
 	
@@ -26,20 +29,25 @@ public class GroupAndCalendarChooser extends Block {
 //		Page parentPage = getParentPage();
 		
 		GroupsChooserBlock groupsChooser = new GroupsChooserBlock();
-		groupsChooser.setNodeOnClickAction("function(){CalService.getCalendarParameters(this.id, displayCalendarAttributes);}");
+		groupsChooser.setNodeOnClickAction(NODE_ON_CLICK_ACTION);
+		groupsChooser.setStyleClass("groupsLayerStyleClass");
 		
 		groupsAndCalendarsLayer.add(groupsChooser);
 		
 		CoreUtil.addJavaSciptForChooser(iwc);
 		
-		groupsAndCalendarsLayer.add(new CalendarChooserBlock());	
-		groupsAndCalendarsLayer.setStyleClass("groupsAndCalendarsLayerStyleClass");
+//		groupsAndCalendarsLayer.add(new CalendarChooserBlock());	
+		CalendarChooserBlock calendarChooserBlock = new CalendarChooserBlock();
+		calendarChooserBlock.setStyleClass(CALENDAR_STYLE_CLASS);
+		groupsAndCalendarsLayer.add(calendarChooserBlock);		
+		groupsAndCalendarsLayer.setStyleClass(GROUPS_AND_CALENDAR_STYLE_CLASS);
+		
 		add(groupsAndCalendarsLayer);
+		
 	}
 		
 	public void encodeBegin(FacesContext fc)throws IOException{
 		super.encodeBegin(fc);
-		
 		Layer panels = (Layer)this.getFacet("PANELS");
 		this.renderChild(fc,panels);
 		

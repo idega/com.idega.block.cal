@@ -6,3 +6,13 @@ position:relative;
 .groupInfoChooserStyleClass{
 	width: 200px;
 }
+.groupsLayerStyleClass{
+	width: 49.5%;
+/*	float: left;*/
+}
+.calendarsLayerStyleClass{
+/*	width: 49.5%;
+	float: right;
+	*/
+}
+

@@ -1,5 +1,6 @@
 var arrayOfParameters = null;
 var arrayOfCheckedParameters = null;
+var arrayOfEntryIds = null;
 /*
 function setCalendars(calendars, id){
 	var parentOfList = document.getElementById(id);
@@ -48,7 +49,7 @@ function setCalendars(calendars, id){
 function displayCalendarAttributes(calendars){
 	arrayOfParameters = new Array();
 	var parentOfList = document.getElementById(calendar_list_container_id);
-	parentOfList.setAttribute('class','calendarChooserStyleClass');
+//	parentOfList.setAttribute('class','calendarChooserStyleClass');
 	removeChildren(parentOfList);
 	var ledgersList = document.createElement('div');
 	var entryTypesList = document.createElement('div');
@@ -147,7 +148,7 @@ function displayCalendarAttributes(calendars){
 					if (element.checked)
 						arrayOfCheckedParameters.push(arrayOfParameters[i]);
 				}
-					CalService.setCheckedParameters(arrayOfCheckedParameters, empty);	
+					CalService.setCheckedParameters(arrayOfCheckedParameters, displayEntries);	
 			}
     	}
     	);
@@ -162,6 +163,46 @@ function displayCalendarAttributes(calendars){
     	}
     	);
 	}	
-	function empty(result){
-		
+/*	
+			this.entryName = entryName;
+		this.entryDate = entryDate;
+		this.entryEndDate = entryEndDate;
+		this.repeat = repeat;
+		this.entryTypeName = entryTypeName;
+*/ 
+	function displayEntries(result){
+		if (arrayOfEntryIds)
+			clearPreviousEntries();
+		arrayOfEntryIds = new Array();
+		for(var i = 0; i < result.length; i++){
+			var entry = result[i];
+			addEntryToCalendar(entry.entryName, entry.entryDate, entry.entryEndDate, entry.entryTime, entry.entryEndTime);
+		}
 	}	
+	
+	function addEntryToCalendar(entryName, entryDate, entryEndDate, entryTime, entryEndTime){
+		var entryCell = document.getElementById('_id0_body_'+entryDate);	
+		if (entryCell){
+			arrayOfEntryIds.push('_id0_body_'+entryDate);
+			var entryTable = entryCell.getElementsByTagName('table')[0];
+			var trElement =  document.createElement('tr');
+			var tdElement = document.createElement('td');
+			var entryName = document.createTextNode(entryName+' '+entryTime+'-'+entryEndTime);
+			tdElement.appendChild(entryName);
+			trElement.appendChild(tdElement);
+			entryTable.appendChild(trElement);
+		}
+	}
+	
+	function clearPreviousEntries(){
+		for(var i = 0; i < arrayOfEntryIds.length; i++){
+			var entryDiv = document.getElementById(arrayOfEntryIds[i])
+			var entryTable = entryDiv.childNodes[0];
+
+			for (var j = 0; j < entryTable.childNodes.length; j++){
+				entryTable.removeChild(entryTable.childNodes[j]);
+			}
+
+//			var entryParent = entry.parentNode;
+		}
+	}

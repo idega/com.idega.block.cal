@@ -97,3 +97,17 @@ function prepareDwr(interfaceClass, path) {
 	interfaceClass._path = path;
 	DWREngine.setMethod(DWREngine.ScriptTag);
 }
+/*
+function addEntry(){
+
+	var entryCell = document.getElementById('_id0_body_20070615');
+	var entryTable = entryCell.getElementsByTagName('table')[0];
+//console.log('addEntry()');
+	var trElement =  document.createElement('tr');
+	var tdElement = document.createElement('td');
+	var textElement = document.createTextNode('second entry');
+	tdElement.appendChild(textElement);
+	trElement.appendChild(tdElement);
+	entryTable.appendChild(trElement);
+}
+*/

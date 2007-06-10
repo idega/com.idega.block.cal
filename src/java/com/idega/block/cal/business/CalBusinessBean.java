@@ -136,7 +136,6 @@ public class CalBusinessBean extends IBOServiceBean implements CalBusiness,UserG
 			}
 			
 		}
-//		System.out.println("list: " + list.toString());
 		return list;
 	}
 	public Collection getPracticesByLedIDandMonth(int ledgerID, int month, int year) {
@@ -482,7 +481,6 @@ public class CalBusinessBean extends IBOServiceBean implements CalBusiness,UserG
 			type.store();			
 		}
 		catch(Exception e) {
-//			System.out.println("Couldn't add type: " + typeName);
 			return false;
 		}
 		return true;
@@ -1175,10 +1173,31 @@ public class CalBusinessBean extends IBOServiceBean implements CalBusiness,UserG
 		return ledgers;
 	}
 
+/*	
+	public List getAllEntryTypes() {
+		List types = null;
+		try {
+			CalendarEntryTypeHome typeHome = (CalendarEntryTypeHome) getIDOHome(CalendarEntryType.class);
+			types = new ArrayList(typeHome.findTypes());
+		} catch(Exception e) {
+			e.printStackTrace();
+		}
+		return types;
+	}
+*/
+//	public List getTypesByGroupId(String groupId){
+//		return null;
+//	}
 	
-	
-	public List getTypesByGroupId(String groupId){
-		return null;
+	public List getEntriesByLedgersAndEntryTypes(List<String> listOfEntryTypesIds, List<String> listOfLedgerIds){
+		List list = null; 
+		try {
+			CalendarEntryHome entryHome = (CalendarEntryHome) getIDOHome(CalendarEntry.class);
+			list = new ArrayList(entryHome.findEntriesByLedgerId(listOfLedgerIds));
+		} catch(Exception e) {
+			e.printStackTrace();
+		}
+		return list;		
 	}
 	
 }

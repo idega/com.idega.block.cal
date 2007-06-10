@@ -5,7 +5,8 @@
 	<allow>
 	
 		<convert converter="bean" match="com.idega.block.cal.business.CalendarLedgersAndTypes" />
-	
+		<convert converter="bean" match="com.idega.block.cal.business.CalEntry" />
+			
 		<create creator="ibo" javascript="CalService" scope="application">
 			<param name="class" value="com.idega.block.cal.business.CalService"/>
 		</create>
@@ -15,8 +16,10 @@
   			import java.util.List;
   			import com.idega.block.cal.business.CalService;
 			import com.idega.block.cal.business.CalendarLedgersAndTypes;
+			import com.idega.block.cal.business.CalEntry;
 
 			CalBusiness.getCalendarParametersList();
+			CalBusiness.setCheckedParameters(List<String>);
   		]]>
 	</signatures>	
 </dwr>

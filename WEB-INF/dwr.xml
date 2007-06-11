@@ -11,15 +11,4 @@
 			<param name="class" value="com.idega.block.cal.business.CalService"/>
 		</create>
 	</allow>
-	<signatures>
-		<![CDATA[
-  			import java.util.List;
-  			import com.idega.block.cal.business.CalService;
-			import com.idega.block.cal.business.CalendarLedgersAndTypes;
-			import com.idega.block.cal.business.CalEntry;
-
-			CalBusiness.getCalendarParametersList();
-			CalBusiness.setCheckedParameters(List<String>);
-  		]]>
-	</signatures>	
 </dwr>

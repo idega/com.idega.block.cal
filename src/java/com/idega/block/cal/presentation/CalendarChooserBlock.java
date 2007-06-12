@@ -15,10 +15,6 @@ public class CalendarChooserBlock extends AbstractChooserBlock {
 
 		if(styleClass != null){
 			main.setStyleClass(styleClass);
-			System.out.println("setting style class");
-		}
-		else{
-			System.out.println("STYLE CLASS == NULL");
 		}
 		
 		CalendarListViewer calendarList = new CalendarListViewer();

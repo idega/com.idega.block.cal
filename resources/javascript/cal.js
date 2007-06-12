@@ -21,17 +21,11 @@ function sendConnectionData(serverId, loginId, passwordId) {
 function empty(result){}
 
 //	behaviour
-
+/*
 function setBehaviour(){
 	
 	var myrules = {
-/*		
-		'b.someclass' : function(element){
-			element.onclick = function(){
-				alert(this.innerHTML);
-			}
-		},
-*/ 
+
 		'#radioBtnLocal input' : function(element){
 			element.onclick = function(){
 				setLocal('connectionData');
@@ -48,7 +42,7 @@ function setBehaviour(){
 	
 	Behaviour.register(myrules);	
 }
-
+*/
 function loadLocalCalendarList(id) {
 	SERVER = null;
 	LOGIN = null;

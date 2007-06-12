@@ -11,4 +11,18 @@
 			<param name="class" value="com.idega.block.cal.business.CalService"/>
 		</create>
 	</allow>
+	<signatures>
+		<![CDATA[
+  			import java.util.List;
+  			import org.jdom.Document;
+  			
+			CalService.setCheckedParameters(List<String>);
+			CalService.changeModeToDay();
+			CalService.changeModeToWorkweek();			
+			CalService.changeModeToWeek();			
+			CalService.changeModeToMonth();			
+			CalService.getNext();
+			CalService.getPrevious();			
+  		]]>
+	</signatures>	
 </dwr>

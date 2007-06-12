@@ -9,7 +9,7 @@ public class CalEntry {
 	private String repeat = null;
 	private String entryTypeName = null;
 		
-public CalEntry(String entryName, String entryDate, String entryEndDate, String entryTime, String entryEndTime, String repeat, String entryTypeName) {
+	public CalEntry(String entryName, String entryDate, String entryEndDate, String entryTime, String entryEndTime, String repeat, String entryTypeName) {
 		super();
 		this.entryName = entryName;
 		this.entryDate = entryDate;
@@ -19,14 +19,16 @@ public CalEntry(String entryName, String entryDate, String entryEndDate, String 
 		this.repeat = repeat;
 		this.entryTypeName = entryTypeName;
 	}
-	//	public CalEntry(String entryName, String entryDate, String entryEndDate, String repeat, String entryTypeName) {
-//		super();
-//		this.entryName = entryName;
-//		this.entryDate = entryDate;
-//		this.entryEndDate = entryEndDate;
-//		this.repeat = repeat;
-//		this.entryTypeName = entryTypeName;
-//	}
+
+	public CalEntry(String entryName, String entryDate, String entryEndDate, String repeat, String entryTypeName) {
+		super();
+		this.entryName = entryName;
+		this.entryDate = entryDate;
+		this.entryEndDate = entryEndDate;
+		this.repeat = repeat;
+		this.entryTypeName = entryTypeName;
+	}
+		
 	public String getEntryDate() {
 		return entryDate;
 	}

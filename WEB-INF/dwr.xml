@@ -17,12 +17,7 @@
   			import org.jdom.Document;
   			
 			CalService.setCheckedParameters(List<String>);
-			CalService.changeModeToDay();
-			CalService.changeModeToWorkweek();			
-			CalService.changeModeToWeek();			
-			CalService.changeModeToMonth();			
-			CalService.getNext();
-			CalService.getPrevious();			
+
   		]]>
 	</signatures>	
 </dwr>

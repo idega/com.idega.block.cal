@@ -219,9 +219,9 @@ function displayCalendarAttributes(calendars){
 		var scheduleButtonsLayer = document.createElement('div');
 		scheduleButtonsLayer.appendChild(scheduleNextButton);
 		scheduleButtonsLayer.appendChild(schedulePreviousButton);		
-		scheduleButtonsLayer.appendChild(scheduleDayButton);		
+//		scheduleButtonsLayer.appendChild(scheduleDayButton);		
 		scheduleButtonsLayer.appendChild(scheduleWeekButton);
-		scheduleButtonsLayer.appendChild(scheduleWorkweekButton);		
+//		scheduleButtonsLayer.appendChild(scheduleWorkweekButton);		
 		scheduleButtonsLayer.appendChild(scheduleMonthButton);
 		return  scheduleButtonsLayer;	
 	}
@@ -241,6 +241,21 @@ function displayCalendarAttributes(calendars){
 //			setBehaviourToScheduleButtons();
 		}
 		insertNodesToContainer(result, scheduleEntries);
+	}
+	
+	function getEmptySchedule(){
+		CalService.setCheckedParameters(new Array(), displayEntries);
+	}
+	
+	function createEmptySchedule(result){
+		var scheduleLayer = document.getElementById('calendarViewerScheduleId');
+		var scheduleEntries = document.getElementById(scheduleEntryTableId);
+		scheduleEntries = document.createElement('div');
+		scheduleEntries.setAttribute('id',scheduleEntryTableId);
+		scheduleLayer.appendChild(scheduleEntries);
+		scheduleLayer.appendChild(getScheduleButtons());
+		insertNodesToContainer(result, scheduleEntries);
+
 	}
 	
 	function setBehaviourToScheduleButtons(){

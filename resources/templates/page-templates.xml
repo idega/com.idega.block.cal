@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<page-templates>
+	<page name="Calendar" type="calendar" iconfile="idegaweb/bundles/com.idega.block.cal.bundle/resources/images/pageIcons/calendar.png" templatefile="idegaweb/bundles/com.idega.block.cal.bundle/resources/pages/idega_theme_calendar.xml"></page>
+</page-templates>

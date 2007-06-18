@@ -96,7 +96,6 @@ function addEntry(){
 
 	var entryCell = document.getElementById('_id0_body_20070615');
 	var entryTable = entryCell.getElementsByTagName('table')[0];
-//console.log('addEntry()');
 	var trElement =  document.createElement('tr');
 	var tdElement = document.createElement('td');
 	var textElement = document.createTextNode('second entry');

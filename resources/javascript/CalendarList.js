@@ -3,6 +3,11 @@ var arrayOfCheckedParameters = null;
 var arrayOfEntryIds = null;
 var scheduleEntryTableId = 'scheduleEntryTableId';
 var scheduleButtonsId = 'scheduleButtonsId';
+var groups_and_calendar_chooser_helper = null;
+
+var scheduleId = null;
+
+
 /*
 function setCalendars(calendars, id){
 	var parentOfList = document.getElementById(id);
@@ -49,8 +54,8 @@ function setCalendars(calendars, id){
 }
 */
 function displayCalendarAttributes(calendars){
-	arrayOfParameters = new Array();
-	var parentOfList = document.getElementById(calendar_list_container_id);
+	arrayOfParameters = new Array();	
+	var parentOfList = document.getElementById('calendar_list_container_id');
 //	parentOfList.setAttribute('class','calendarChooserStyleClass');
 	removeChildren(parentOfList);
 	var ledgersList = document.createElement('div');
@@ -74,6 +79,7 @@ function displayCalendarAttributes(calendars){
 	tdTypesCaption.appendChild(document.createTextNode('Types:'));
 		
 	var element = null;
+	var getEntriesButton = null;
 	var addLedgerList = false;
 	var addEntryTypesList = false;
 	for (var i = 0; i < calendars.length; i++){
@@ -85,7 +91,7 @@ function displayCalendarAttributes(calendars){
 			ledgerElement.setAttribute('name',element.name);
 			ledgerElement.setAttribute('elementType',element.type);			
 			ledgerElement.setAttribute('type','checkbox');		
-			ledgerElement.setAttribute('class','callendarCheckbox');
+			ledgerElement.setAttribute('class','calendarCheckbox');
 			var ledgerCaption = document.createTextNode(element.name); 
 			ledgersList.appendChild(ledgerElement);
 			ledgersList.appendChild(ledgerCaption);
@@ -100,7 +106,7 @@ function displayCalendarAttributes(calendars){
 			typeElement.setAttribute('name',element.name);
 			typeElement.setAttribute('elementType',element.type);			
 			typeElement.setAttribute('type','checkbox');				
-			typeElement.setAttribute('class','callendarCheckbox');			
+			typeElement.setAttribute('class','calendarCheckbox');			
 			var typeCaption = document.createTextNode(element.name); 					
 			entryTypesList.appendChild(typeElement);
 			entryTypesList.appendChild(typeCaption);
@@ -121,20 +127,19 @@ function displayCalendarAttributes(calendars){
 	}
 	tableOfParameters.appendChild(trLedgers);
 	tableOfParameters.appendChild(trTypes);
-
-
-		var getEntriesButton = document.createElement('input');
+				
+	}
+		getEntriesButton = document.createElement('input');
 		getEntriesButton.setAttribute('type', 'button');
 		getEntriesButton.setAttribute('class', 'calendarButtonStyleClass');	
-		getEntriesButton.setAttribute('value', 'Get entries');					
-	}
+		getEntriesButton.setAttribute('value', 'Get entries');		
 /*
 	parentOfList.appendChild(ledgersList);
 	parentOfList.appendChild(entryTypesList);
 */
 	parentOfList.appendChild(tableOfParameters);
-	parentOfList.appendChild(getEntriesButton);	
-	
+//	if(getEntriesButton)
+//		parentOfList.appendChild(getEntriesButton);	
 	addButtonBehaviour();
 	
 }
@@ -150,17 +155,61 @@ function displayCalendarAttributes(calendars){
 					if (element.checked)
 						arrayOfCheckedParameters.push(arrayOfParameters[i]);
 				}
-				CalService.setCheckedParameters(arrayOfCheckedParameters, displayEntries);	
+
+				groups_and_calendar_chooser_helper = new ChooserHelper();
+				groups_and_calendar_chooser_helper.removeAllAdvancedProperties();
+				for(var index=0; index<arrayOfCheckedParameters.length; index++) {
+					groups_and_calendar_chooser_helper.addAdvancedProperty(arrayOfCheckedParameters[index].id, arrayOfCheckedParameters[index]);
+				}
+				ScheduleSession.setCheckedParameters(arrayOfCheckedParameters, displayEntries);	
 			}
     	}
     	);
+    	$$('input.calendarCheckbox').each(
+	    	function(element) {
+	    		element.onclick = function(){
+	    			if(element.checked == false){
+	    				groups_and_calendar_chooser_helper.removeAdvancedProperty(element.id);
+	    			}
+	    			else{
+	    				groups_and_calendar_chooser_helper.addAdvancedProperty(element.id, element.id);
+	    			}
+	    		}
+	    	}
+	    );
+/*    	
+    	var groupsAndCalendarsLayer = document.getElementById('groupsAndCalendarsLayerId').parentNode;
+    	var buttonId = null;
+    	for(var index=0; index<groupsAndCalendarsLayer.getElementsByTagName('input').length; index++) {
+    		var element = groupsAndCalendarsLayer.getElementsByTagName('input')[index];
+    		if (element.name.toString() == 'save'){
+	    		buttonId = element.id;
+    		}
+    	}
+    	
+    	$(buttonId).addEvent('click', function(e) {
+			arrayOfCheckedParameters = new Array();
+			for(var i = 0; i < arrayOfParameters.length; i++){					
+				var element = document.getElementById(arrayOfParameters[i]);
+				if (element.checked)
+					arrayOfCheckedParameters.push(arrayOfParameters[i]);
+			}
+
+			groups_and_calendar_chooser_helper = new ChooserHelper();
+			groups_and_calendar_chooser_helper.removeAllAdvancedProperties();
+			for(var index=0; index<arrayOfCheckedParameters.length; index++) {
+				groups_and_calendar_chooser_helper.addAdvancedProperty(arrayOfCheckedParameters[index].id, arrayOfCheckedParameters[index]);
+			}
+			ScheduleSession.setCheckedParameters(scheduleId, arrayOfCheckedParameters, displayEntries);
+    	});
+  */  	
 	};
 	
 	function addBehaviour(){
 	    $$('li.groupNode').each(
     	function(element) {
 			element.onclick = function() {
-				CalService.getCalendarParameters(element.id, displayCalendarAttributes);
+				ScheduleSession.getCalendarParameters(element.id, displayCalendarAttributes);
 			}
     	}
     	);
@@ -179,49 +228,49 @@ function displayCalendarAttributes(calendars){
 		scheduleNextButton.setAttribute('class', 'scheduleNextButtonStyleClass');	
 		scheduleNextButton.setAttribute('value', 'Next');
 		
-		scheduleNextButton.setAttribute('onclick', 'CalService.getNext(displayEntries)');	
+		scheduleNextButton.setAttribute('onclick', 'ScheduleSession.getNext(displayEntries)');	
 		
 		var schedulePreviousButton = document.createElement('input');
 		schedulePreviousButton.setAttribute('type', 'button');
 		schedulePreviousButton.setAttribute('class', 'schedulePreviousButtonStyleClass');	
 		schedulePreviousButton.setAttribute('value', 'Previous');	
 		
-		schedulePreviousButton.setAttribute('onclick', 'CalService.getPrevious(displayEntries)');	
+		schedulePreviousButton.setAttribute('onclick', 'ScheduleSession.getPrevious(displayEntries)');	
 		
 		var scheduleDayButton = document.createElement('input');
 		scheduleDayButton.setAttribute('type', 'button');
 		scheduleDayButton.setAttribute('class', 'scheduleDayButtonStyleClass');	
 		scheduleDayButton.setAttribute('value', 'Day');	
 		
-		scheduleDayButton.setAttribute('onclick', 'CalService.changeModeToDay(displayEntries)');	
+		scheduleDayButton.setAttribute('onclick', 'ScheduleSession.changeModeToDay(displayEntries)');	
 		
 		var scheduleWeekButton = document.createElement('input');
 		scheduleWeekButton.setAttribute('type', 'button');
 		scheduleWeekButton.setAttribute('class', 'scheduleWeekButtonStyleClass');	
 		scheduleWeekButton.setAttribute('value', 'Week');	
 		
-		scheduleWeekButton.setAttribute('onclick', 'CalService.changeModeToWeek(displayEntries)');	
+		scheduleWeekButton.setAttribute('onclick', 'ScheduleSession.changeModeToWeek(displayEntries)');	
 		
 		var scheduleWorkweekButton = document.createElement('input');
 		scheduleWorkweekButton.setAttribute('type', 'button');
 		scheduleWorkweekButton.setAttribute('class', 'scheduleWorkweekButtonStyleClass');	
 		scheduleWorkweekButton.setAttribute('value', 'Workweek');	
 		
-		scheduleWorkweekButton.setAttribute('onclick', 'CalService.changeModeToWorkweek(displayEntries)');	
+		scheduleWorkweekButton.setAttribute('onclick', 'ScheduleSession.changeModeToWorkweek(displayEntries)');	
 		
 		var scheduleMonthButton = document.createElement('input');
 		scheduleMonthButton.setAttribute('type', 'button');
 		scheduleMonthButton.setAttribute('class', 'scheduleMonthButtonStyleClass');	
 		scheduleMonthButton.setAttribute('value', 'Month');	
 
-		scheduleMonthButton.setAttribute('onclick', 'CalService.changeModeToMonth(displayEntries)');	
+		scheduleMonthButton.setAttribute('onclick', 'ScheduleSession.changeModeToMonth(displayEntries)');	
 		
 		var scheduleButtonsLayer = document.createElement('div');
 		scheduleButtonsLayer.appendChild(scheduleNextButton);
 		scheduleButtonsLayer.appendChild(schedulePreviousButton);		
-//		scheduleButtonsLayer.appendChild(scheduleDayButton);		
+		scheduleButtonsLayer.appendChild(scheduleDayButton);		
 		scheduleButtonsLayer.appendChild(scheduleWeekButton);
-//		scheduleButtonsLayer.appendChild(scheduleWorkweekButton);		
+		scheduleButtonsLayer.appendChild(scheduleWorkweekButton);		
 		scheduleButtonsLayer.appendChild(scheduleMonthButton);
 		return  scheduleButtonsLayer;	
 	}
@@ -244,7 +293,12 @@ function displayCalendarAttributes(calendars){
 	}
 	
 	function getEmptySchedule(){
-		CalService.setCheckedParameters(new Array(), displayEntries);
+		ScheduleSession.setCheckedParameters(new Array(), displayEntries);
+	}
+
+	function getSchedule(id, array){
+		scheduleId = id;
+		ScheduleSession.setCheckedParameters(id, array, displayEntries);
 	}
 	
 	function createEmptySchedule(result){
@@ -261,39 +315,45 @@ function displayCalendarAttributes(calendars){
 	function setBehaviourToScheduleButtons(){
 		$$('input.scheduleNextButtonStyleClass').each(
 			function(element) {
-				CalService.getNext(displayEntries);
+				ScheduleSession.getNext(displayEntries);
 	    	}
 	    );		
 		$$('input.schedulePreviousButtonStyleClass').each(
 			function(element) {
-				CalService.getPrevious(displayEntries);
+				ScheduleSession.getPrevious(displayEntries);
 	    	}
 	    );		
 	    $$('input.scheduleDayButtonStyleClass').each(
 			function(element) {
-				CalService.changeModeToDay(displayEntries);
+				ScheduleSession.changeModeToDay(displayEntries);
 	    	}
 	    );		
 	    $$('input.scheduleWorkweekButtonStyleClass').each(
 			function(element) {
-				CalService.changeModeToWorkweek(displayEntries);
+				ScheduleSession.changeModeToWorkweek(displayEntries);
 	    	}
 	    );		
 	    $$('input.scheduleWeekButtonStyleClass').each(
 			function(element) {
-				CalService.changeModeToWeek(displayEntries);
+				ScheduleSession.changeModeToWeek(displayEntries);
 	    	}
 	    );		
 	    $$('input.scheduleMonthButtonStyleClass').each(
 			function(element) {
-				CalService.changeModeToMonth(displayEntries);
+				ScheduleSession.changeModeToMonth(displayEntries);
 	    	}
 	    );		
 	    
 	    
 	}
 	
-
+	function saveProperties(){
+		groups_and_calendar_chooser_helper = new ChooserHelper();
+		groups_and_calendar_chooser_helper.removeAllAdvancedProperties();
+		for(var index=0; index<arrayOfParameters.length; index++) {
+			groups_and_calendar_chooser_helper.addAdvancedProperty(arrayOfParameters[index].id, arrayOfParameters[index].id);
+		}
+	}
 /*
 		if (arrayOfEntryIds)
 			clearPreviousEntries();

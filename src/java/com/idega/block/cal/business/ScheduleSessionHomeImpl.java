@@ -4,17 +4,17 @@ import javax.ejb.CreateException;
 
 import com.idega.business.IBOHomeImpl;
 
-public class CalServiceHomeImpl extends IBOHomeImpl implements CalServiceHome {
+public class ScheduleSessionHomeImpl extends IBOHomeImpl implements ScheduleSessionHome {
 
 
 	private static final long serialVersionUID = 7141978995132493723L;
 
 	public Class getBeanInterfaceClass() {
-		return CalService.class;
+		return ScheduleSession.class;
 	}
 
-	public CalService create() throws CreateException {
-		return (CalService) super.createIBO();
+	public ScheduleSession create() throws CreateException {
+		return (ScheduleSession) super.createIBO();
 	}
 
 }

@@ -7,16 +7,20 @@
 		<convert converter="bean" match="com.idega.block.cal.business.CalendarLedgersAndTypes" />
 		<convert converter="bean" match="com.idega.block.cal.business.CalEntry" />
 			
+		<create creator="ibo" javascript="ScheduleSession" scope="application">
+			<param name="class" value="com.idega.block.cal.business.ScheduleSession"/>
+		</create>
 		<create creator="ibo" javascript="CalService" scope="application">
 			<param name="class" value="com.idega.block.cal.business.CalService"/>
 		</create>
+
 	</allow>
 	<signatures>
 		<![CDATA[
   			import java.util.List;
   			import org.jdom.Document;
   			
-			CalService.setCheckedParameters(List<String>);
+			ScheduleSession.setCheckedParameters(String, List<String>);
 
   		]]>
 	</signatures>	

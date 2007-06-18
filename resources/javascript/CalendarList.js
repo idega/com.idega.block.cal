@@ -228,42 +228,42 @@ function displayCalendarAttributes(calendars){
 		scheduleNextButton.setAttribute('class', 'scheduleNextButtonStyleClass');	
 		scheduleNextButton.setAttribute('value', 'Next');
 		
-		scheduleNextButton.setAttribute('onclick', 'ScheduleSession.getNext(displayEntries)');	
+		scheduleNextButton.setAttribute('onclick', 'ScheduleSession.getNext(scheduleId, displayEntries)');	
 		
 		var schedulePreviousButton = document.createElement('input');
 		schedulePreviousButton.setAttribute('type', 'button');
 		schedulePreviousButton.setAttribute('class', 'schedulePreviousButtonStyleClass');	
 		schedulePreviousButton.setAttribute('value', 'Previous');	
 		
-		schedulePreviousButton.setAttribute('onclick', 'ScheduleSession.getPrevious(displayEntries)');	
+		schedulePreviousButton.setAttribute('onclick', 'ScheduleSession.getPrevious(scheduleId, displayEntries)');	
 		
 		var scheduleDayButton = document.createElement('input');
 		scheduleDayButton.setAttribute('type', 'button');
 		scheduleDayButton.setAttribute('class', 'scheduleDayButtonStyleClass');	
 		scheduleDayButton.setAttribute('value', 'Day');	
 		
-		scheduleDayButton.setAttribute('onclick', 'ScheduleSession.changeModeToDay(displayEntries)');	
+		scheduleDayButton.setAttribute('onclick', 'ScheduleSession.changeModeToDay(scheduleId, displayEntries)');	
 		
 		var scheduleWeekButton = document.createElement('input');
 		scheduleWeekButton.setAttribute('type', 'button');
 		scheduleWeekButton.setAttribute('class', 'scheduleWeekButtonStyleClass');	
 		scheduleWeekButton.setAttribute('value', 'Week');	
 		
-		scheduleWeekButton.setAttribute('onclick', 'ScheduleSession.changeModeToWeek(displayEntries)');	
+		scheduleWeekButton.setAttribute('onclick', 'ScheduleSession.changeModeToWeek(scheduleId, displayEntries)');	
 		
 		var scheduleWorkweekButton = document.createElement('input');
 		scheduleWorkweekButton.setAttribute('type', 'button');
 		scheduleWorkweekButton.setAttribute('class', 'scheduleWorkweekButtonStyleClass');	
 		scheduleWorkweekButton.setAttribute('value', 'Workweek');	
 		
-		scheduleWorkweekButton.setAttribute('onclick', 'ScheduleSession.changeModeToWorkweek(displayEntries)');	
+		scheduleWorkweekButton.setAttribute('onclick', 'ScheduleSession.changeModeToWorkweek(scheduleId, displayEntries)');	
 		
 		var scheduleMonthButton = document.createElement('input');
 		scheduleMonthButton.setAttribute('type', 'button');
 		scheduleMonthButton.setAttribute('class', 'scheduleMonthButtonStyleClass');	
 		scheduleMonthButton.setAttribute('value', 'Month');	
 
-		scheduleMonthButton.setAttribute('onclick', 'ScheduleSession.changeModeToMonth(displayEntries)');	
+		scheduleMonthButton.setAttribute('onclick', 'ScheduleSession.changeModeToMonth(scheduleId, displayEntries)');	
 		
 		var scheduleButtonsLayer = document.createElement('div');
 		scheduleButtonsLayer.appendChild(scheduleNextButton);
@@ -346,7 +346,7 @@ function displayCalendarAttributes(calendars){
 	    
 	    
 	}
-	
+/*	
 	function saveProperties(){
 		groups_and_calendar_chooser_helper = new ChooserHelper();
 		groups_and_calendar_chooser_helper.removeAllAdvancedProperties();
@@ -354,6 +354,7 @@ function displayCalendarAttributes(calendars){
 			groups_and_calendar_chooser_helper.addAdvancedProperty(arrayOfParameters[index].id, arrayOfParameters[index].id);
 		}
 	}
+*/
 /*
 		if (arrayOfEntryIds)
 			clearPreviousEntries();

@@ -1,5 +1,7 @@
 package com.idega.block.cal.presentation;
 
+import java.util.List;
+
 import org.apache.myfaces.renderkit.html.util.AddResource;
 import org.apache.myfaces.renderkit.html.util.AddResourceFactory;
 
@@ -20,10 +22,23 @@ public class CalendarViewer extends Block{
 	private static final String BUTTON_WEEK_VALUE = "Week";
 	private static final String BUTTON_MONTH_VALUE = "Month";	
 	
+	private String server = null;
+	private String user = null;
+	private String password = null;	
+	
+	private List<String> uniqueIds = null;
+	
+	private List entries = null;
+	
+	private boolean remoteMode = false;	
+	
+	
 	public void main(IWContext iwc) {
 		Layer main = new Layer();
+		main.setId(CALENDAR_VIEWER_SCHEDULE_ID);
 		Layer schedule = new Layer();
-		schedule.setId(CALENDAR_VIEWER_SCHEDULE_ID);
+		schedule.setId(this.getId());
+//		schedule.setId(CALENDAR_VIEWER_SCHEDULE_ID);
 //		Layer calendarViewerButtons = new Layer();
 //		
 //		HtmlCommandButton buttonNext = new HtmlCommandButton();
@@ -55,10 +70,15 @@ public class CalendarViewer extends Block{
 //		main.add(calendarViewerButtons);
 		
 		add(main);
+		setID();
 		addJavaScript(iwc);
 //		main.setId(CALENDAR_VIEWER_CONTAINER_ID);
 		
-	} 
+	}
+	
+	public void setEntries(){
+		
+	}
 	
 	private void addJavaScript(IWContext iwc) {
 		IWBundle iwb = getBundle(iwc);
@@ -72,13 +92,28 @@ public class CalendarViewer extends Block{
 		//	DWR
 		resourceAdder.addJavaScriptAtPosition(iwc, AddResource.HEADER_BEGIN, CalendarConstants.CALENDAR_SERVICE_DWR_INTERFACE_SCRIPT);
 		resourceAdder.addJavaScriptAtPosition(iwc, AddResource.HEADER_BEGIN, "/dwr/engine.js");
-		
+		resourceAdder.addJavaScriptAtPosition(iwc, AddResource.HEADER_BEGIN, "/dwr/interface/ScheduleSession.js");
 		resourceAdder.addStyleSheet(iwc, AddResource.HEADER_BEGIN, iwb.getVirtualPathWithFileNameString("style/cal.css"));
 
 		
 //		//	Actions to be performed on page loaded event
-		StringBuffer action = new StringBuffer("registerEvent(window, 'load', function() {getEmptySchedule();});");
 		
+		StringBuffer action = new StringBuffer("registerEvent(window, 'load', function() {" +
+				"var array = new Array();");
+				if (entries != null){
+					for (int i = 0; i < entries.size(); i++) {
+						action.append("array.push('"+entries.get(i)+"');");
+					}
+				}
+			action.append("var scheduleLayer = document.getElementById('"+CALENDAR_VIEWER_SCHEDULE_ID+"');");
+			action.append("var schedule = scheduleLayer.getElementsByTagName('div')[0];");
+			action.append("var scheduleId = schedule.id;");
+			action.append("getSchedule(scheduleId, array);});");
+//			action.append("getSchedule(array);});");
+//				"getSchedule(array);});");
+		
+//		System.out.println(action.toString());	
+			
 		StringBuffer scriptString = new StringBuffer();
 		scriptString.append("<script type=\"text/javascript\" > \n")
 		.append("\t").append(action).append(" \n")
@@ -89,6 +124,83 @@ public class CalendarViewer extends Block{
 	public String getBundleIdentifier()	{
 		return CalendarConstants.IW_BUNDLE_IDENTIFIER;
 	}
+	
+//	PropertiesBean bean
+	public void setGroups(List entries) {
+		this.entries = entries;
+		server = null;
+		user = null;
+		password = null;
+		uniqueIds = null;
+		remoteMode = false;
+//		return;
+	}
+//	public void setGroups(PropertiesBean bean) {
+//		if (bean == null) {
+//			server = null;
+//			user = null;
+//			password = null;
+//			uniqueIds = null;
+//			remoteMode = false;
+//			return;
+//		}
+//		server = bean.getServer();
+//		user = bean.getLogin();
+//		password = bean.getPassword();
+//		uniqueIds = bean.getUniqueIds();
+//		remoteMode = bean.isRemoteMode();
+//		
+//		if (server != null) {
+//			if (!server.startsWith("http://") && !server.startsWith("https://")) {
+//				server = new StringBuffer("http://").append(server).toString();
+//			}
+//			if (server.endsWith("/")) {
+//				server = server.substring(0, server.lastIndexOf("/"));
+//			}
+//		}
+//	}	
+	
+//	public boolean isRemoteMode() {
+//		return remoteMode;
+//	}
+//	
+//	public void setRemoteMode(boolean remoteMode) {
+//		this.remoteMode = remoteMode;
+//	}
+//
+//	public String getPassword() {
+//		return password;
+//	}
+//
+//	public void setPassword(String password) {
+//		this.password = password;
+//	}
+//
+//	public String getServer() {
+//		return server;
+//	}
+//
+//	public void setServer(String server) {
+//		this.server = server;
+//	}
+//
+//	public List<String> getUniqueIds() {
+//		return uniqueIds;
+//	}
+//
+//	public void setUniqueIds(List<String> uniqueIds) {
+//		this.uniqueIds = uniqueIds;
+//	}
+//
+//	public String getUser() {
+//		return user;
+//	}
+//
+//	public void setUser(String user) {
+//		this.user = user;
+//	}	
+	
+	
 //	HtmlSchedule schedule = null;
 //	ScheduleModel scheduleModel = null;
 //	private String mode = null;

@@ -23,6 +23,7 @@ public class CalendarHandler implements ICPropertyHandler {
 		
 		String action = null;
 //		IWResourceBundle iwrb = null;
+System.out.println("getHandlerObject");
 		
 		BuilderLogic builder = BuilderLogic.getInstance();
 		String className = builder.getModuleClassName(builder.getCurrentIBPage(iwc), instanceId);

@@ -6,7 +6,6 @@ import java.util.List;
 import org.apache.myfaces.renderkit.html.util.AddResource;
 import org.apache.myfaces.renderkit.html.util.AddResourceFactory;
 
-import com.idega.bean.GroupsAndCalendarPropertiesBean;
 import com.idega.block.cal.business.CalendarConstants;
 import com.idega.idegaweb.IWBundle;
 import com.idega.presentation.Block;

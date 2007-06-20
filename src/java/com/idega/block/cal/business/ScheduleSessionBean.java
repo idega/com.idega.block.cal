@@ -3,7 +3,6 @@ package com.idega.block.cal.business;
 import java.rmi.RemoteException;
 import java.text.ParsePosition;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -15,17 +14,14 @@ import org.apache.myfaces.custom.schedule.model.ScheduleModel;
 import org.apache.myfaces.custom.schedule.model.SimpleScheduleModel;
 import org.jdom.Document;
 
-import com.idega.block.cal.data.CalendarEntryBMPBean;
-import com.idega.block.cal.data.CalendarEntryTypeBMPBean;
-import com.idega.block.cal.data.CalendarLedgerBMPBean;
-import com.idega.business.IBOServiceBean;
+import com.idega.business.IBOSessionBean;
 import com.idega.core.builder.business.BuilderService;
 import com.idega.core.builder.business.BuilderServiceFactory;
 import com.idega.presentation.IWContext;
 import com.idega.presentation.Layer;
 import com.idega.util.CoreUtil;
 
-public class ScheduleSessionBean extends IBOServiceBean implements ScheduleSession{
+public class ScheduleSessionBean extends IBOSessionBean implements ScheduleSession{
 
 //	private HtmlSchedule schedule = null;
 	private Map<String, HtmlSchedule> htmlSchedules = new HashMap<String, HtmlSchedule>();
@@ -35,6 +31,8 @@ public class ScheduleSessionBean extends IBOServiceBean implements ScheduleSessi
 	private static final int DAY_IN_MILLISECONDS = 1000 * 60 * 60 * 24;
 	private static final int WEEK_IN_MILLISECONDS = DAY_IN_MILLISECONDS * 7;
 	private static final int MONTH_IN_MILLISECONDS = DAY_IN_MILLISECONDS * 30;	
+	
+
 	
 	public Document changeModeToDay(String id){
 		dateMode.put(id, ScheduleModel.DAY);
@@ -125,7 +123,7 @@ public class ScheduleSessionBean extends IBOServiceBean implements ScheduleSessi
 		model.setSelectedDate(date);
 		htmlSchedules.get(id).setModel(model);
 	}
-	public Document getSchedule(String id, List<CalEntry> result, boolean usePreviousEntries){
+	public Document getSchedule(String id, List<ScheduleEntry> result, boolean usePreviousEntries){
 		IWContext iwc = CoreUtil.getIWContext();
 		BuilderService service = null;
 		try { 
@@ -140,6 +138,7 @@ public class ScheduleSessionBean extends IBOServiceBean implements ScheduleSessi
 		}
 		ScheduleModel scheduleModel = null;
 		
+		
 		if(usePreviousEntries){
 			scheduleModel = htmlSchedules.get(id).getModel();
 		}
@@ -147,7 +146,7 @@ public class ScheduleSessionBean extends IBOServiceBean implements ScheduleSessi
 			scheduleModel = new SimpleScheduleModel();
 			
 			for (int i = 0; i < result.size(); i++) {
-				CalEntry calEntry = result.get(i);
+				ScheduleEntry calEntry = result.get(i);
 				DefaultScheduleEntry scheduleEntry = new DefaultScheduleEntry();
 				if (simpleDate == null){
 					simpleDate = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.S");
@@ -158,7 +157,7 @@ public class ScheduleSessionBean extends IBOServiceBean implements ScheduleSessi
 				scheduleModel.addEntry(scheduleEntry);
 			}			
 		}
-		if(dateMode.get(id) == -1){
+		if(dateMode.get(id) == null){
 			scheduleModel.setMode(ScheduleModel.MONTH);
 			dateMode.put(id, ScheduleModel.MONTH);
 		}
@@ -171,75 +170,105 @@ public class ScheduleSessionBean extends IBOServiceBean implements ScheduleSessi
 		scheduleLayer.add(htmlSchedules.get(id));
 		return service.getRenderedComponent(iwc, scheduleLayer, false);
 	}
-	public List getCalendarParameters(String id){
 
-		List <CalendarLedgersAndTypes>calendarParameters = new ArrayList<CalendarLedgersAndTypes>();
-		
-		IWContext iwc = IWContext.getInstance();
-		LedgerVariationsHandler ledgerVariationsHandler = new DefaultLedgerVariationsHandler();
-		
-		CalBusiness calBusiness = ((DefaultLedgerVariationsHandler)ledgerVariationsHandler).getCalBusiness(iwc);
-		
-		List ledgersByGroupId = calBusiness.getLedgersByGroupId(id);
-		
-		List allEntryTypes = calBusiness.getAllEntryTypes();
-		
-		for (int i = 0; i < ledgersByGroupId.size(); i++) {
-			CalendarLedgerBMPBean ledger = (CalendarLedgerBMPBean)ledgersByGroupId.get(i);
-			calendarParameters.add(new CalendarLedgersAndTypes(""+ledger.getID(), ledger.getName(), "L"));
-		}
-		
-		for (int i = 0; i < allEntryTypes.size(); i++) {
-			CalendarEntryTypeBMPBean entryType = (CalendarEntryTypeBMPBean)allEntryTypes.get(i);
-			calendarParameters.add(new CalendarLedgersAndTypes(""+entryType.getID(), entryType.getName(), "T"));
-		}
-				
-		return calendarParameters;
-	}
-	
-	public Document setCheckedParameters(String id, List checkedParameters){
-		
-		IWContext iwc = IWContext.getInstance();
-		String parameter = null;
-		LedgerVariationsHandler ledgerVariationsHandler = new DefaultLedgerVariationsHandler();
-		
-		List<String> listOfLedgerIds = new ArrayList<String>();
-		List<String> listOfEntryTypesIds = new ArrayList<String>();
-		
-		for (int i = 0; i < checkedParameters.size(); i++) {
-//			System.out.println(checkedParameters.get(i));
-			parameter = (String)(checkedParameters.get(i));
-			if(parameter.substring(0, 1).equals("L")){
-				listOfLedgerIds.add(parameter.substring(1));
-			}
-			if(parameter.substring(0, 1).equals("T")){
-				listOfEntryTypesIds.add(parameter.substring(1));
-			}			
-		}
-		
-		CalBusiness calBusiness = ((DefaultLedgerVariationsHandler)ledgerVariationsHandler).getCalBusiness(iwc);
-		
-		List entriesToDisplay = calBusiness.getEntriesByLedgersAndEntryTypes(listOfEntryTypesIds, listOfLedgerIds);
-		
-		List<CalEntry> result = new ArrayList<CalEntry>();
+//	public Document setCheckedParameters(String id, List checkedParameters){
+//		
+//		IWContext iwc = IWContext.getInstance();
+//		String parameter = null;
+//		LedgerVariationsHandler ledgerVariationsHandler = new DefaultLedgerVariationsHandler();
+//		
+//		List<String> listOfLedgerIds = new ArrayList<String>();
+//		List<String> listOfEntryTypesIds = new ArrayList<String>();
+//		
+//		for (int i = 0; i < checkedParameters.size(); i++) {
+////			System.out.println(checkedParameters.get(i));
+//			parameter = (String)(checkedParameters.get(i));
+//			if(parameter.substring(0, 1).equals("L")){
+//				listOfLedgerIds.add(parameter.substring(1));
+//			}
+//			if(parameter.substring(0, 1).equals("T")){
+//				listOfEntryTypesIds.add(parameter.substring(1));
+//			}			
+//		}
+//		
+//		CalBusiness calBusiness = ((DefaultLedgerVariationsHandler)ledgerVariationsHandler).getCalBusiness(iwc);
+//		
+//		List entriesToDisplay = calBusiness.getEntriesByLedgersAndEntryTypes(listOfEntryTypesIds, listOfLedgerIds);
+//		
+//		List<CalEntry> result = new ArrayList<CalEntry>();
+//
+//		for (int i = 0; i < entriesToDisplay.size(); i++) {
+//			CalendarEntryBMPBean entry = (CalendarEntryBMPBean)entriesToDisplay.get(i);
+//			if(checkIfTypeIsCorrect(entry, listOfEntryTypesIds)){
+////				result.add(new CalEntry(entry.getStringColumnValue("CAL_ENTRY_NAME"), getDate(entry.getStringColumnValue("CAL_ENTRY_DATE")), getDate(entry.getStringColumnValue("CAL_ENTRY_END_DATE")),getTime(entry.getStringColumnValue("CAL_ENTRY_DATE")), getTime(entry.getStringColumnValue("CAL_ENTRY_END_DATE")), entry.getStringColumnValue("CAL_ENTRY_REPEAT"), entry.getStringColumnValue("CAL_TYPE_NAME")));
+//				result.add(new CalEntry(entry.getStringColumnValue("CAL_ENTRY_NAME"), entry.getStringColumnValue("CAL_ENTRY_DATE"), entry.getStringColumnValue("CAL_ENTRY_END_DATE"), entry.getStringColumnValue("CAL_ENTRY_REPEAT"), entry.getStringColumnValue("CAL_TYPE_NAME")));
+//			}
+//		}
+//		dateMode.put(id, ScheduleModel.MONTH);
+//		return getSchedule(id, result, false);
+//	}
 
-		for (int i = 0; i < entriesToDisplay.size(); i++) {
-			CalendarEntryBMPBean entry = (CalendarEntryBMPBean)entriesToDisplay.get(i);
-			if(checkIfTypeIsCorrect(entry, listOfEntryTypesIds)){
-//				result.add(new CalEntry(entry.getStringColumnValue("CAL_ENTRY_NAME"), getDate(entry.getStringColumnValue("CAL_ENTRY_DATE")), getDate(entry.getStringColumnValue("CAL_ENTRY_END_DATE")),getTime(entry.getStringColumnValue("CAL_ENTRY_DATE")), getTime(entry.getStringColumnValue("CAL_ENTRY_END_DATE")), entry.getStringColumnValue("CAL_ENTRY_REPEAT"), entry.getStringColumnValue("CAL_TYPE_NAME")));
-				result.add(new CalEntry(entry.getStringColumnValue("CAL_ENTRY_NAME"), entry.getStringColumnValue("CAL_ENTRY_DATE"), entry.getStringColumnValue("CAL_ENTRY_END_DATE"), entry.getStringColumnValue("CAL_ENTRY_REPEAT"), entry.getStringColumnValue("CAL_TYPE_NAME")));
-			}
-		}
-		dateMode.put(id, ScheduleModel.MONTH);
-		return getSchedule(id, result, false);
-	}
+//	private boolean checkIfTypeIsCorrect(CalendarEntryBMPBean entry, List<String> entryTypesIds){
+//		String typeId = entry.getStringColumnValue("CAL_TYPE_ID");
+//		for (int i = 0; i < entryTypesIds.size(); i++) {
+//			if(entryTypesIds.get(i).equals(typeId))
+//				return true;
+//		}
+//		return false;
+//	}	
+
 	
-	private boolean checkIfTypeIsCorrect(CalendarEntryBMPBean entry, List<String> entryTypesIds){
-		String typeId = entry.getStringColumnValue("CAL_TYPE_ID");
-		for (int i = 0; i < entryTypesIds.size(); i++) {
-			if(entryTypesIds.get(i).equals(typeId))
-				return true;
+//	public List getLocalCalendarParameters(String id){
+//		return null
+//	}
+//	public Document getScheduleWithEntries(List<CalEntry> entries, String id){
+	public Document getScheduleDOM(List<ScheduleEntry> entries, String id){
+		IWContext iwc = CoreUtil.getIWContext();
+		BuilderService service = null;
+		try { 
+			service = BuilderServiceFactory.getBuilderService(iwc);
+		} catch (RemoteException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return null;
 		}
-		return false;
-	}	
+		if (htmlSchedules.get(id) == null){
+			htmlSchedules.put(id, new HtmlSchedule());
+		}
+		ScheduleModel scheduleModel = null;
+		
+//		if(usePreviousEntries){
+//			scheduleModel = htmlSchedules.get(id).getModel();
+//		}
+//		else{ 
+			scheduleModel = new SimpleScheduleModel();
+			
+			for (int i = 0; i < entries.size(); i++) {
+				ScheduleEntry entry = entries.get(i);
+				DefaultScheduleEntry scheduleEntry = new DefaultScheduleEntry();
+				if (simpleDate == null){
+					simpleDate = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.S");
+				}
+				if (entry.getEntryDate() != null)
+					scheduleEntry.setStartTime(simpleDate.parse(entry.getEntryDate(), new ParsePosition(0)));
+				if (entry.getEntryEndDate() != null)
+					scheduleEntry.setEndTime(simpleDate.parse(entry.getEntryEndDate(), new ParsePosition(0)));
+				if (entry.getEntryName() != null)
+					scheduleEntry.setTitle(entry.getEntryName());
+				scheduleModel.addEntry(scheduleEntry);
+//			}			
+		}
+		if(dateMode.get(id) == null){
+			scheduleModel.setMode(ScheduleModel.MONTH);
+			dateMode.put(id, ScheduleModel.MONTH);
+		}
+		else{
+			scheduleModel.setMode(dateMode.get(id));
+		}
+		scheduleModel.refresh();
+		htmlSchedules.get(id).setModel(scheduleModel);
+		Layer scheduleLayer = new Layer();
+		scheduleLayer.add(htmlSchedules.get(id));
+		return service.getRenderedComponent(iwc, scheduleLayer, false);		
+	}
 }

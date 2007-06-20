@@ -1,10 +1,12 @@
 package com.idega.block.cal.presentation;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.myfaces.renderkit.html.util.AddResource;
 import org.apache.myfaces.renderkit.html.util.AddResourceFactory;
 
+import com.idega.bean.GroupsAndCalendarPropertiesBean;
 import com.idega.block.cal.business.CalendarConstants;
 import com.idega.idegaweb.IWBundle;
 import com.idega.presentation.Block;
@@ -15,25 +17,27 @@ import com.idega.presentation.Layer;
 public class CalendarViewer extends Block{
 
 	private static final String CALENDAR_VIEWER_SCHEDULE_ID = "calendarViewerScheduleId";
-	private static final String BUTTON_NEXT_VALUE = "Next";
-	private static final String BUTTON_PREVIOUS_VALUE = "Previous";
-	private static final String BUTTON_DAY_VALUE = "Day mode";
-	private static final String BUTTON_WORKWEEK_VALUE = "Work week";
-	private static final String BUTTON_WEEK_VALUE = "Week";
-	private static final String BUTTON_MONTH_VALUE = "Month";	
+//	private static final String BUTTON_NEXT_VALUE = "Next";
+//	private static final String BUTTON_PREVIOUS_VALUE = "Previous";
+//	private static final String BUTTON_DAY_VALUE = "Day mode";
+//	private static final String BUTTON_WORKWEEK_VALUE = "Work week";
+//	private static final String BUTTON_WEEK_VALUE = "Week";
+//	private static final String BUTTON_MONTH_VALUE = "Month";	
 	
 	private String server = null;
 	private String user = null;
 	private String password = null;	
+//	private List<String> uniqueIds = null;
 	
-	private List<String> uniqueIds = null;
-	
-	private List entries = null;
+//	private List entries = null;
 	
 	private boolean remoteMode = false;	
+	private List<String> calendarAttributes = null;
 	
+//	private IWContext iwc = null;
 	
 	public void main(IWContext iwc) {
+//		this.iwc = iwc;
 		Layer main = new Layer();
 		main.setId(CALENDAR_VIEWER_SCHEDULE_ID);
 		Layer schedule = new Layer();
@@ -100,20 +104,20 @@ public class CalendarViewer extends Block{
 		
 		StringBuffer action = new StringBuffer("registerEvent(window, 'load', function() {" +
 				"var array = new Array();");
-				if (entries != null){
-					for (int i = 0; i < entries.size(); i++) {
-						action.append("array.push('"+entries.get(i)+"');");
+				if (calendarAttributes != null){
+					for (int i = 0; i < calendarAttributes.size(); i++) {
+						action.append("array.push('"+calendarAttributes.get(i)+"');");
 					}
 				}
 			action.append("var scheduleLayer = document.getElementById('"+CALENDAR_VIEWER_SCHEDULE_ID+"');");
 			action.append("var schedule = scheduleLayer.getElementsByTagName('div')[0];");
 			action.append("var scheduleId = schedule.id;");
-			action.append("getSchedule(scheduleId, array);});");
+//			action.append("getSchedule(scheduleId, array);});");
+			action.append("getEntries('"+remoteMode+"', '"+server+"', '"+user+"', '"+password+"', array);});");
 //			action.append("getSchedule(array);});");
 //				"getSchedule(array);});");
 		
 //		System.out.println(action.toString());	
-			
 		StringBuffer scriptString = new StringBuffer();
 		scriptString.append("<script type=\"text/javascript\" > \n")
 		.append("\t").append(action).append(" \n")
@@ -126,15 +130,66 @@ public class CalendarViewer extends Block{
 	}
 	
 //	PropertiesBean bean
-	public void setGroups(List entries) {
-		this.entries = entries;
-		server = null;
-		user = null;
-		password = null;
-		uniqueIds = null;
-		remoteMode = false;
-//		return;
-	}
+
+	public void setCalendarEntries(List list) {
+		if (list == null) {
+			server = null;
+			user = null;
+			password = null;
+			remoteMode = false;
+			calendarAttributes = null;
+			return;
+		}
+		if (((String)list.get(3)).equals("true")){
+			remoteMode = true;
+			server = (String)list.get(0);
+			user = (String)list.get(1);
+			password = (String)list.get(2);
+		}
+		else{
+			remoteMode = false;
+			server = null;
+			user = null;
+			password = null;			
+		}
+		calendarAttributes = new ArrayList<String>();
+		for (int i = 4; i < list.size(); i++) {
+			calendarAttributes.add((String)list.get(i));
+			
+		}
+//		user = bean.getLogin();
+//		password = bean.getPassword();
+//		remoteMode = bean.isRemoteMode();
+//		calendarAttributes = bean.getCalendarAttributes();
+//		addJavaScript(iwc);
+	}	
+	
+//	public void setCalendarEntries(GroupsAndCalendarPropertiesBean bean) {
+//		if (entries == null) {
+//			server = null;
+//			user = null;
+//			password = null;
+//			remoteMode = false;
+//			calendarAttributes = null;
+//			return;
+//		}
+//		server = bean.getServer();
+//		user = bean.getLogin();
+//		password = bean.getPassword();
+//		remoteMode = bean.isRemoteMode();
+//		calendarAttributes = bean.getCalendarAttributes();
+//	}
+//	
+//	public void setGroups(List entries) {
+//		System.out.println("setGroups");
+//		this.entries = entries;
+//		server = null;
+//		user = null;
+//		password = null;
+//		uniqueIds = null;
+//		remoteMode = false;
+////		return;
+//	}
 //	public void setGroups(PropertiesBean bean) {
 //		if (bean == null) {
 //			server = null;

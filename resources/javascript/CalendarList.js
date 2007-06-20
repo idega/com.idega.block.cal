@@ -4,8 +4,12 @@ var arrayOfEntryIds = null;
 var scheduleEntryTableId = 'scheduleEntryTableId';
 var scheduleButtonsId = 'scheduleButtonsId';
 var groups_and_calendar_chooser_helper = null;
-
+var serverErrorMessage = 'can\'t connect to:';
 var scheduleId = null;
+var arrayOfCheckedCalendarParameters = new Array();
+var groups_and_calendar_chooser_helper = null;
+
+var loadingMsg = 'Loading...';
 
 
 /*
@@ -54,6 +58,7 @@ function setCalendars(calendars, id){
 }
 */
 function displayCalendarAttributes(calendars){
+	closeLoadingMessage();
 	arrayOfParameters = new Array();	
 	var parentOfList = document.getElementById('calendar_list_container_id');
 //	parentOfList.setAttribute('class','calendarChooserStyleClass');
@@ -147,7 +152,6 @@ function displayCalendarAttributes(calendars){
 	function addButtonBehaviour(){
 	    $$('input.calendarButtonStyleClass').each(
     	function(element) {
-    		
 			element.onclick = function() {
 				arrayOfCheckedParameters = new Array();
 				for(var i = 0; i < arrayOfParameters.length; i++){					
@@ -161,7 +165,7 @@ function displayCalendarAttributes(calendars){
 				for(var index=0; index<arrayOfCheckedParameters.length; index++) {
 					groups_and_calendar_chooser_helper.addAdvancedProperty(arrayOfCheckedParameters[index].id, arrayOfCheckedParameters[index]);
 				}
-				ScheduleSession.setCheckedParameters(arrayOfCheckedParameters, displayEntries);	
+				CalService.setCheckedParameters(arrayOfCheckedParameters, displayEntries);	
 			}
     	}
     	);
@@ -169,10 +173,16 @@ function displayCalendarAttributes(calendars){
 	    	function(element) {
 	    		element.onclick = function(){
 	    			if(element.checked == false){
+						arrayOfCheckedCalendarParameters.remove(element.id);
 	    				groups_and_calendar_chooser_helper.removeAdvancedProperty(element.id);
+//	    				groups_and_calendar_chooser_helper.removeAdvancedProperty('calendarAttributes');
+//	    				groups_and_calendar_chooser_helper.addAdvancedProperty('calendarAttributes', arrayOfCheckedCalendarParameters);	    				
 	    			}
 	    			else{
+						arrayOfCheckedCalendarParameters.push(element.id);
 	    				groups_and_calendar_chooser_helper.addAdvancedProperty(element.id, element.id);
+//	    				groups_and_calendar_chooser_helper.removeAdvancedProperty('calendarAttributes');
+//	    				groups_and_calendar_chooser_helper.addAdvancedProperty('calendarAttributes', arrayOfCheckedCalendarParameters);	    				
 	    			}
 	    		}
 	    	}
@@ -209,7 +219,7 @@ function displayCalendarAttributes(calendars){
 	    $$('li.groupNode').each(
     	function(element) {
 			element.onclick = function() {
-				ScheduleSession.getCalendarParameters(element.id, displayCalendarAttributes);
+				CalService.getCalendarParameters(element.id, displayCalendarAttributes);
 			}
     	}
     	);
@@ -276,6 +286,7 @@ function displayCalendarAttributes(calendars){
 	}
 
 	function displayEntries(result){
+		closeLoadingMessage();
 		var scheduleLayer = document.getElementById('calendarViewerScheduleId');
 		var scheduleEntries = document.getElementById(scheduleEntryTableId);
 		if(scheduleEntries){
@@ -291,11 +302,11 @@ function displayCalendarAttributes(calendars){
 		}
 		insertNodesToContainer(result, scheduleEntries);
 	}
-	
+/*	
 	function getEmptySchedule(){
 		ScheduleSession.setCheckedParameters(new Array(), displayEntries);
 	}
-
+*/
 	function getSchedule(id, array){
 		scheduleId = id;
 		ScheduleSession.setCheckedParameters(id, array, displayEntries);
@@ -346,6 +357,118 @@ function displayCalendarAttributes(calendars){
 	    
 	    
 	}
+	
+/*	
+	function getGroupsWithValues(loadingMsg, server, login, password, id, canNotConnectMsg, failedLoginMsg, noGroupsMsg, needsDecode, selectedGroups, styleClass) {
+	showLoadingMessage(loadingMsg);
+	if (needsDecode) {
+		password = decode64(password);
+	}
+	GroupService.canUseRemoteServer(server, {
+		callback: function(result) {
+			canUseRemoteCallback(result, server, login, password, id, canNotConnectMsg, failedLoginMsg, noGroupsMsg, selectedGroups, styleClass);
+		}
+	});
+}
+*/	
+	
+//	function getCalendarParameters(groupId){
+	function prepareDwrForGettingCalendarParameters(groupId){
+		
+		groups_and_calendar_chooser_helper = new ChooserHelper();
+		groups_and_calendar_chooser_helper.removeAllAdvancedProperties();
+		groups_and_calendar_chooser_helper.addAdvancedProperty('server', SERVER);
+		groups_and_calendar_chooser_helper.addAdvancedProperty('login', LOGIN);
+		groups_and_calendar_chooser_helper.addAdvancedProperty('password', PASSWORD);		
+		
+		var connection = $('connectionData');
+		if (connection == null) {
+			return;
+		}
+		if (connection.style.display == 'none'){
+			groups_and_calendar_chooser_helper.addAdvancedProperty('isRemoteMode', 'false');
+			getLocalCalendarParameters(groupId);
+		}
+		else{
+			groups_and_calendar_chooser_helper.addAdvancedProperty('isRemoteMode', 'true');			
+			canUseRemoteCalendar(groupId);
+		}
+
+		
+	}
+	
+	function getLocalCalendarParameters(groupId){
+		showLoadingMessage(loadingMsg);
+		prepareDwr(CalService, DEFAULT_DWR_PATH);
+		CalService.getCalendarParameters(groupId, displayCalendarAttributes);
+	}
+		
+	function canUseRemoteCalendar(groupId){
+		showLoadingMessage(loadingMsg);
+		CalService.canUseRemoteServer(SERVER, {
+			callback: function(result) {
+				canUseRemoteCalendarCallback(result, groupId);
+			}
+		});
+	}
+	function canUseRemoteCalendarCallback(canUse, groupUniqueId){
+		if(canUse){
+			prepareDwr(CalService, SERVER + DEFAULT_DWR_PATH);
+		
+			//	Getting info from remote server
+			CalService.getRemoteCalendarParameters(groupUniqueId, LOGIN, PASSWORD, displayCalendarAttributes);		
+		}
+		else{
+			//	Cannot use remote server
+			closeLoadingMessage();
+			alert(serverErrorMessage + ' ' + server);
+			return false;			
+		}
+	}
+	
+	function getEntries(isRemoteMode, server, login, password, calendarAttributes){
+		if(isRemoteMode == 'true'){
+			showLoadingMessage(loadingMsg);
+			CalService.canUseRemoteServer(server, {
+				callback: function(result) {
+					getEntriesCallback(result, server, login, password, calendarAttributes);
+				}
+			});
+		}
+		else{
+			CalService.getEntries(calendarAttributes, getScheduleWithEntries);		
+		}
+	}
+	function getEntriesCallback(canUse, server, login, password, calendarAttributes){
+		if(canUse){
+			prepareDwr(CalService, server + getDefaultDwrPath());
+			CalService.getRemoteEntries(calendarAttributes, login, password, getScheduleWithEntries);
+		}
+		else{
+			closeLoadingMessage();
+			alert(serverErrorMessage + ' ' + server);
+			return false;	
+		}
+	}
+	function getScheduleWithEntries(entries){
+		prepareDwr(ScheduleSession, getDefaultDwrPath());
+		ScheduleSession.getScheduleDOM(entries, scheduleId, displayEntries);
+	}
+
+		
+//		prepareDwr(ScheduleSession, server + DEFAULT_DWR_PATH);
+		
+//		showLoadingMessage(loadingMsg);
+/*		
+		if(SERVER != null){
+			prepareDwr(ScheduleSession, SERVER + getDefaultDwrPath());
+			getRemoteCalendarParameters(groupId, login, password);
+		}
+		else{
+			prepareDwr(ScheduleSession, getDefaultDwrPath());
+			getLocalCalendarParameters(groupId);			
+		}
+		*/ 
 /*	
 	function saveProperties(){
 		groups_and_calendar_chooser_helper = new ChooserHelper();
@@ -364,7 +487,7 @@ function displayCalendarAttributes(calendars){
 			addEntryToCalendar(entry.entryName, entry.entryDate, entry.entryEndDate, entry.entryTime, entry.entryEndTime);
 		}
 */
-//	}	
+
 /*	
 	function addEntryToCalendar(entryName, entryDate, entryEndDate, entryTime, entryEndTime){
 		var entryCell = document.getElementById('_id0_body_'+entryDate);	

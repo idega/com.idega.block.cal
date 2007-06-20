@@ -20,10 +20,8 @@ public class CalendarHandler implements ICPropertyHandler {
 
 	public PresentationObject getHandlerObject(String name, String stringValue, IWContext iwc, boolean oldGenerationHandler, String instanceId,
 			String method) {
-		
 		String action = null;
 //		IWResourceBundle iwrb = null;
-System.out.println("getHandlerObject");
 		
 		BuilderLogic builder = BuilderLogic.getInstance();
 		String className = builder.getModuleClassName(builder.getCurrentIBPage(iwc), instanceId);

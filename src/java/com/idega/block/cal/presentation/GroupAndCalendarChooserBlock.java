@@ -11,11 +11,11 @@ public class GroupAndCalendarChooserBlock extends Block{
 	private static final String GROUPS_AND_CALENDAR_ID = "groupsAndCalendarsLayerId";
 	private static final String CALENDAR_STYLE_CLASS = "calendarsLayerStyleClass";
 	private static final String NODE_ON_CLICK_ACTION = "function(){" +
-			"ScheduleSession.getCalendarParameters(this.id, displayCalendarAttributes);" +
-			"groups_and_calendar_chooser_helper = new ChooserHelper();" +
-			"groups_and_calendar_chooser_helper.removeAllAdvancedProperties();" +
-			"}";
-
+//		"var groups_and_calendar_chooser_helper = new ChooserHelper();" +
+//		"groups_and_calendar_chooser_helper.removeAllAdvancedProperties();" +			
+		"prepareDwrForGettingCalendarParameters(this.id);" +
+//			"ScheduleSession.getCalendarParameters(this.id, displayCalendarAttributes);" +
+		"}";
 	
 	public void main(IWContext iwc) {
 		Layer groupsAndCalendarsLayer = new Layer();
@@ -50,6 +50,8 @@ public class GroupAndCalendarChooserBlock extends Block{
 	protected void addClientResources() {
 		add(
 			new StringBuilder("<script type=\"text/javascript\">")
+			.append("var groups_chooser_helper = new ChooserHelper();")
+//			.append("console.log(groups_chooser_helper);")
 //			.append("var groups_and_calendar_chooser_helper = new ChooserHelper();")
 //			.append("saveProperties();")
 //			.append("calendar_chooser_helper.removeAllAdvancedProperties();")

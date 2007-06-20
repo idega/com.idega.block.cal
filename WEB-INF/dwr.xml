@@ -20,6 +20,7 @@
   			import java.util.List;
   			import org.jdom.Document;
 	  		import com.idega.block.cal.business.CalendarEntry;
+	  		import com.idega.block.cal.business.CalendarLedgersAndTypes;
 	  		
 			ScheduleSession.setCheckedParameters(String, List<String>);
 			ScheduleSession.getSchedule(String, List<CalendarEntry>, boolean);
@@ -27,7 +28,7 @@
 
 			CalService.getEntries(List<String>);
 			CalService.getRemoteEntries(List<String>, String, String);
-
+			CalService.getRemoteCalendarParameters(String, String, String);
 
   		]]>
 	</signatures>	

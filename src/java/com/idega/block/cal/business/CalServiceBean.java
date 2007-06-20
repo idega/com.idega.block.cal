@@ -54,9 +54,9 @@ public class CalServiceBean extends IBOServiceBean implements CalService {
 //	public List<ScheduleEntryTypeBMPBean> getAllEntryTypes(){
 //		return null;
 //	}
-	public List getCalendarParameters(String id){
+	public List<CalendarLedgersAndTypes> getCalendarParameters(String id){
 
-		List <CalendarLedgersAndTypes>calendarParameters = new ArrayList<CalendarLedgersAndTypes>();
+		List<CalendarLedgersAndTypes> calendarParameters = new ArrayList<CalendarLedgersAndTypes>();
 		
 		IWContext iwc = IWContext.getInstance();
 		LedgerVariationsHandler ledgerVariationsHandler = new DefaultLedgerVariationsHandler();
@@ -79,7 +79,7 @@ public class CalServiceBean extends IBOServiceBean implements CalService {
 				
 		return calendarParameters;
 	}
-	public List getRemoteCalendarParameters(String id, String login, String password){
+	public List<CalendarLedgersAndTypes> getRemoteCalendarParameters(String id, String login, String password){
 		if (login == null || password == null) {
 			return null;
 		}

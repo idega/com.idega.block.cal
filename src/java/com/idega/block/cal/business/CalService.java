@@ -13,8 +13,8 @@ public interface CalService extends IBOService{
 //	public List<CalendarEntryTypeBMPBean> getAllEntryTypes();
 
 //	public Document setCheckedParameters(String id, List<String> checkedParameters);
-	public List getCalendarParameters(String id);
-	public List getRemoteCalendarParameters(String id, String login, String password);
+	public List<CalendarLedgersAndTypes> getCalendarParameters(String id);
+	public List<CalendarLedgersAndTypes> getRemoteCalendarParameters(String id, String login, String password);
 	public boolean canUseRemoteServer(String server);
 	public List<ScheduleEntry> getEntries(List<String> calendarAttributes);
 	public List<ScheduleEntry> getRemoteEntries(List<String> calendarAttributes, String login, String password);

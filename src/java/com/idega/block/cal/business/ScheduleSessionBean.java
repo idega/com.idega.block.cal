@@ -31,9 +31,7 @@ public class ScheduleSessionBean extends IBOSessionBean implements ScheduleSessi
 	private static final int DAY_IN_MILLISECONDS = 1000 * 60 * 60 * 24;
 	private static final int WEEK_IN_MILLISECONDS = DAY_IN_MILLISECONDS * 7;
 	private static final int MONTH_IN_MILLISECONDS = DAY_IN_MILLISECONDS * 30;	
-	
 
-	
 	public Document changeModeToDay(String id){
 		dateMode.put(id, ScheduleModel.DAY);
 		return getSchedule(id, null, true);
@@ -65,7 +63,7 @@ public class ScheduleSessionBean extends IBOSessionBean implements ScheduleSessi
 		return getSchedule(id, null, true);
 	}	
 	
-	public Document getPrevious(String id){
+	public Document getPrevious(String id){		
 		ScheduleModel model = htmlSchedules.get(id).getModel();
 		switch (model.getMode()){
 			case ScheduleModel.DAY: setSelectedDateToPreviousDay(id); break;
@@ -79,7 +77,7 @@ public class ScheduleSessionBean extends IBOSessionBean implements ScheduleSessi
 	private void setSelectedDateToNextDay(String id){
 		ScheduleModel model = htmlSchedules.get(id).getModel();
 		Date date = model.getSelectedDate();
-		date.setTime(date.getTime()-DAY_IN_MILLISECONDS);
+		date.setTime(date.getTime()+DAY_IN_MILLISECONDS);
 		model.setSelectedDate(date);
 		htmlSchedules.get(id).setModel(model);
 	}
@@ -87,7 +85,7 @@ public class ScheduleSessionBean extends IBOSessionBean implements ScheduleSessi
 	private void setSelectedDateToNextWeek(String id){
 		ScheduleModel model = htmlSchedules.get(id).getModel();
 		Date date = model.getSelectedDate();
-		date.setTime(date.getTime()-WEEK_IN_MILLISECONDS);
+		date.setTime(date.getTime()+WEEK_IN_MILLISECONDS);
 		model.setSelectedDate(date);
 		htmlSchedules.get(id).setModel(model);
 	}
@@ -103,7 +101,7 @@ public class ScheduleSessionBean extends IBOSessionBean implements ScheduleSessi
 	private void setSelectedDateToPreviousDay(String id){
 		ScheduleModel model = htmlSchedules.get(id).getModel();
 		Date date = model.getSelectedDate();
-		date.setTime(date.getTime()+DAY_IN_MILLISECONDS);
+		date.setTime(date.getTime()-DAY_IN_MILLISECONDS);
 		model.setSelectedDate(date);
 		htmlSchedules.get(id).setModel(model);
 	}
@@ -111,7 +109,7 @@ public class ScheduleSessionBean extends IBOSessionBean implements ScheduleSessi
 	private void setSelectedDateToPreviousWeek(String id){
 		ScheduleModel model = htmlSchedules.get(id).getModel();
 		Date date = model.getSelectedDate();
-		date.setTime(date.getTime()+WEEK_IN_MILLISECONDS);
+		date.setTime(date.getTime()-WEEK_IN_MILLISECONDS);
 		model.setSelectedDate(date);
 		htmlSchedules.get(id).setModel(model);
 	}
@@ -223,6 +221,7 @@ public class ScheduleSessionBean extends IBOSessionBean implements ScheduleSessi
 //	}
 //	public Document getScheduleWithEntries(List<CalEntry> entries, String id){
 	public Document getScheduleDOM(List<ScheduleEntry> entries, String id){
+		
 		IWContext iwc = CoreUtil.getIWContext();
 		BuilderService service = null;
 		try { 

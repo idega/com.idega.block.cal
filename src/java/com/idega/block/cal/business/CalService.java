@@ -2,6 +2,7 @@ package com.idega.block.cal.business;
 
 import java.util.List;
 
+import com.idega.bean.GroupsAndCalendarPropertiesBean;
 import com.idega.business.IBOService;
 
 public interface CalService extends IBOService{
@@ -19,6 +20,7 @@ public interface CalService extends IBOService{
 	public List<ScheduleEntry> getEntries(List<String> calendarAttributes);
 	public List<ScheduleEntry> getRemoteEntries(List<String> calendarAttributes, String login, String password);
 
+	public GroupsAndCalendarPropertiesBean getCalendarProperties(String scheduleId);
 	
 	//public void setConnectionData(String serverName, String login, String password);
 	

@@ -23,4 +23,6 @@ public class CalendarConstants {
 	public static final String CALENDAR_SERVICE_DWR_INTERFACE_SCRIPT = "/dwr/interface/CalService.js";
 	
 	public static final String IW_BUNDLE_IDENTIFIER = "com.idega.block.cal";
+	
+	public static final String CALENDAR_MANAGER_BEAN_ID = "CalendarManagerBean";
 }

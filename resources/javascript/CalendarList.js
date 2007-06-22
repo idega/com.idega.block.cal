@@ -11,6 +11,15 @@ var groups_and_calendar_chooser_helper = null;
 
 var loadingMsg = 'Loading...';
 
+var showEntriesAsList = false;
+var showMenu = false;
+var showPreviousAndNext = false;
+var entryNumber = 'Number';
+var entryName = 'Name';
+var entryDate = 'Begin date';
+var entryEndDate = 'End date';
+var entryType = 'Type';
+
 
 /*
 function setCalendars(calendars, id){
@@ -275,22 +284,27 @@ function displayCalendarAttributes(calendars){
 
 		scheduleMonthButton.setAttribute('onclick', 'ScheduleSession.changeModeToMonth(scheduleId, displayEntries)');	
 		
+
 		var scheduleButtonsLayer = document.createElement('div');
-		scheduleButtonsLayer.appendChild(scheduleNextButton);
-		scheduleButtonsLayer.appendChild(schedulePreviousButton);		
-		scheduleButtonsLayer.appendChild(scheduleDayButton);		
-		scheduleButtonsLayer.appendChild(scheduleWeekButton);
-		scheduleButtonsLayer.appendChild(scheduleWorkweekButton);		
-		scheduleButtonsLayer.appendChild(scheduleMonthButton);
+		if(showMenu == true){
+			if (showPreviousAndNext == true){
+				scheduleButtonsLayer.appendChild(schedulePreviousButton);
+				scheduleButtonsLayer.appendChild(scheduleNextButton);				
+			}
+			scheduleButtonsLayer.appendChild(scheduleDayButton);		
+			scheduleButtonsLayer.appendChild(scheduleWeekButton);
+			scheduleButtonsLayer.appendChild(scheduleWorkweekButton);		
+			scheduleButtonsLayer.appendChild(scheduleMonthButton);
+		}
 		return  scheduleButtonsLayer;	
 	}
 
-	function displayEntries(result){
-		closeLoadingMessage();
+	function displayEntries(result){			//inserting schedule DOM object
+
 		var scheduleLayer = document.getElementById('calendarViewerScheduleId');
 		var scheduleEntries = document.getElementById(scheduleEntryTableId);
 		if(scheduleEntries){
-			removeChildren(scheduleEntries);
+			removeChildren(scheduleEntries);  //remove previous schedule DOM object
 		}
 		else{
 			scheduleEntries = document.createElement('div');
@@ -301,6 +315,91 @@ function displayCalendarAttributes(calendars){
 //			setBehaviourToScheduleButtons();
 		}
 		insertNodesToContainer(result, scheduleEntries);
+		closeLoadingMessage();		
+	}
+	function displayEntriesAsList(entries){
+
+		scheduleEntries = document.createElement('div');
+		scheduleEntries.setAttribute('id',scheduleEntryTableId);		
+		var scheduleTable = document.createElement('table');
+		var tr=document.createElement('tr');
+		var tdNumber=document.createElement('td');
+		var tdName=document.createElement('td');
+		var tdDate=document.createElement('td');		
+		var tdEndDate=document.createElement('td');		
+		var tdType=document.createElement('td');	
+		
+		var txtNumber=document.createTextNode(entryNumber);
+		var txtName=document.createTextNode(entryName);
+		var txtDate=document.createTextNode(entryDate);		
+		var txtEndDate=document.createTextNode(entryEndDate);		
+		var txtType=document.createTextNode(entryType);	
+							
+		tdNumber.appendChild(txtNumber);
+		tdName.appendChild(txtName);
+		tdDate.appendChild(txtDate);
+		tdEndDate.appendChild(txtEndDate);
+		tdType.appendChild(txtType);		
+				  	
+		tr.appendChild(tdNumber);
+		tr.appendChild(tdName);
+		tr.appendChild(tdDate);
+		tr.appendChild(tdEndDate);
+		tr.appendChild(tdType);		
+		scheduleTable.appendChild(tr);
+		
+		for(var index=0; index<entries.length; index++) {
+			
+			var tr=document.createElement('tr');
+			var tdNumber=document.createElement('td');
+			var tdName=document.createElement('td');
+			var tdDate=document.createElement('td');		
+			var tdEndDate=document.createElement('td');		
+			var tdType=document.createElement('td');	
+			
+			var txtNumber=document.createTextNode(index+1);
+			var txtName=document.createTextNode(entries[index].entryName);
+			var txtDate=document.createTextNode(entries[index].entryDate.substring(0,16));		
+			var txtEndDate=document.createTextNode(entries[index].entryEndDate.substring(0,16));		
+			var txtType=document.createTextNode(entries[index].entryTypeName);	
+			
+			tdNumber.appendChild(txtNumber);
+			tdName.appendChild(txtName);
+			tdDate.appendChild(txtDate);
+			tdEndDate.appendChild(txtEndDate);
+			tdType.appendChild(txtType);		
+					  	
+			tr.appendChild(tdNumber);
+			tr.appendChild(tdName);
+			tr.appendChild(tdDate);
+			tr.appendChild(tdEndDate);
+			tr.appendChild(tdType);		
+			scheduleTable.appendChild(tr);
+		}
+		var scheduleLayer = document.getElementById('calendarViewerScheduleId');
+		var scheduleEntries = document.getElementById(scheduleEntryTableId);
+		if(scheduleEntries){
+			removeChildren(scheduleEntries);  //remove previous schedule DOM object
+		}
+		else{
+			scheduleEntries = document.createElement('div');
+			scheduleEntries.setAttribute('id',scheduleEntryTableId);
+//			scheduleEntries.appendChild(result);
+			scheduleLayer.appendChild(scheduleEntries);
+			scheduleLayer.appendChild(getScheduleButtons());
+//			setBehaviourToScheduleButtons();
+		}
+		scheduleEntries.appendChild(scheduleTable);
+		closeLoadingMessage();
+//		scheduleEntries.appendChild(scheduleTable);
+		
+		
+/*		
+		  	td.appendChild(tdText);  					// - put the text node in the table cell
+		  	tr.appendChild(td); 						// - put the cell into the row
+		  	tempTable.appendChild(tr); 	
+		  	rootUl.appendChild(tempTable);		
+*/		
 	}
 /*	
 	function getEmptySchedule(){
@@ -354,10 +453,18 @@ function displayCalendarAttributes(calendars){
 				ScheduleSession.changeModeToMonth(displayEntries);
 	    	}
 	    );		
-	    
-	    
 	}
-	
+
+	function getCalendarProperties(){
+		prepareDwr(CalService, getDefaultDwrPath());
+		CalService.getCalendarProperties(scheduleId, {
+			callback: function(result) {
+				getEntries(result.remoteMode, result.server, result.login, result.password, result.calendarAttributes);
+//				getEntries('"+remoteMode+"', '"+server+"', '"+user+"', '"+password+"', array);
+//				canUseRemoteCalendarCallback(result, groupId);
+			}
+		});
+	}
 /*	
 	function getGroupsWithValues(loadingMsg, server, login, password, id, canNotConnectMsg, failedLoginMsg, noGroupsMsg, needsDecode, selectedGroups, styleClass) {
 	showLoadingMessage(loadingMsg);
@@ -399,7 +506,7 @@ function displayCalendarAttributes(calendars){
 	
 	function getLocalCalendarParameters(groupId){
 		showLoadingMessage(loadingMsg);
-		prepareDwr(CalService, DEFAULT_DWR_PATH);
+		prepareDwr(CalService, getDefaultDwrPath());
 		CalService.getCalendarParameters(groupId, displayCalendarAttributes);
 	}
 		
@@ -427,7 +534,7 @@ function displayCalendarAttributes(calendars){
 	}
 	
 	function getEntries(isRemoteMode, server, login, password, calendarAttributes){
-		if(isRemoteMode == 'true'){
+		if(isRemoteMode == true){
 			showLoadingMessage(loadingMsg);
 			CalService.canUseRemoteServer(server, {
 				callback: function(result) {
@@ -439,6 +546,30 @@ function displayCalendarAttributes(calendars){
 			CalService.getEntries(calendarAttributes, getScheduleWithEntries);		
 		}
 	}
+	
+/*
+	function getEntries(isRemoteMode, calendarAttributes){
+		if(isRemoteMode == 'true'){
+			showLoadingMessage(loadingMsg);
+			CalService.getCalendarConnectionProperties(server, {
+				callback: function(result) {
+					getEntriesCallback(result, server, login, password, calendarAttributes);
+				}
+			});
+		}
+		else{
+			CalService.getEntries(calendarAttributes, getScheduleWithEntries);		
+		}
+	}
+*/
+	function getCalendarConnectionPropertiesCallback(){
+		CalService.canUseRemoteServer(server, {
+			callback: function(result) {
+				getEntriesCallback(result, server, login, password, calendarAttributes);
+			}
+		});		
+	}
+	
 	function getEntriesCallback(canUse, server, login, password, calendarAttributes){
 		if(canUse){
 			prepareDwr(CalService, server + getDefaultDwrPath());
@@ -451,8 +582,13 @@ function displayCalendarAttributes(calendars){
 		}
 	}
 	function getScheduleWithEntries(entries){
-		prepareDwr(ScheduleSession, getDefaultDwrPath());
-		ScheduleSession.getScheduleDOM(entries, scheduleId, displayEntries);
+		if(showEntriesAsList == true){
+			displayEntriesAsList(entries);
+		}
+		else{
+			prepareDwr(ScheduleSession, getDefaultDwrPath());
+			ScheduleSession.getScheduleDOM(entries, scheduleId, displayEntries);
+		}
 	}
 
 		

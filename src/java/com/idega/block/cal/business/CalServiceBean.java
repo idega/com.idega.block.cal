@@ -10,10 +10,11 @@ import javax.ejb.FinderException;
 
 import org.apache.myfaces.custom.schedule.HtmlSchedule;
 
+import com.idega.bean.GroupsAndCalendarPropertiesBean;
 import com.idega.block.cal.data.CalendarEntryBMPBean;
 import com.idega.block.cal.data.CalendarEntryTypeBMPBean;
-//import com.idega.block.cal.data.ScheduleEntryTypeBMPBean;
 import com.idega.block.cal.data.CalendarLedgerBMPBean;
+import com.idega.block.cal.data.CalendarManagerBean;
 import com.idega.business.IBOServiceBean;
 import com.idega.core.accesscontrol.business.LoginBusinessBean;
 import com.idega.core.accesscontrol.data.LoginTable;
@@ -24,6 +25,7 @@ import com.idega.presentation.IWContext;
 import com.idega.user.data.User;
 import com.idega.util.CoreConstants;
 import com.idega.util.CoreUtil;
+import com.idega.webface.WFUtil;
 
 public class CalServiceBean extends IBOServiceBean implements CalService {
 
@@ -318,7 +320,29 @@ public class CalServiceBean extends IBOServiceBean implements CalService {
 //		return calendarParameters;
 //	}
 	
-
+	private CalendarManagerBean getBean() {
+		Object o = WFUtil.getBeanInstance(CalendarConstants.CALENDAR_MANAGER_BEAN_ID);
+		if (!(o instanceof CalendarManagerBean)) {
+			return null;
+		}
+		return (CalendarManagerBean) o;
+	}
+	
+	public GroupsAndCalendarPropertiesBean getCalendarProperties(String instanceId){
+		if (instanceId == null) {
+			return null;
+		}
+		CalendarManagerBean bean = getBean();
+		if (bean == null) {
+			return null;
+		}
+		
+		GroupsAndCalendarPropertiesBean properties = bean.getCalendarProperties(instanceId);
+		if (properties == null) {
+			return null;
+		}		
+		return properties;
+	}
 	
 	private String getDate(String entryDate){
 		String date = entryDate.substring(0, 10);

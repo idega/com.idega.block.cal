@@ -6,6 +6,7 @@
 	
 		<convert converter="bean" match="com.idega.block.cal.business.CalendarLedgersAndTypes" />
 		<convert converter="bean" match="com.idega.block.cal.business.ScheduleEntry" />
+		<convert converter="bean" match="com.idega.bean.GroupsAndCalendarPropertiesBean" />
 			
 		<create creator="ibo" javascript="ScheduleSession" scope="session">
 			<param name="class" value="com.idega.block.cal.business.ScheduleSession"/>
@@ -21,6 +22,7 @@
   			import org.jdom.Document;
 	  		import com.idega.block.cal.business.CalendarEntry;
 	  		import com.idega.block.cal.business.CalendarLedgersAndTypes;
+	  		import com.idega.bean.GroupsAndCalendarPropertiesBean;
 	  		
 			ScheduleSession.setCheckedParameters(String, List<String>);
 			ScheduleSession.getSchedule(String, List<CalendarEntry>, boolean);
@@ -29,7 +31,7 @@
 			CalService.getEntries(List<String>);
 			CalService.getRemoteEntries(List<String>, String, String);
 			CalService.getRemoteCalendarParameters(String, String, String);
-
+			CalService getCalendarProperties(String);
   		]]>
 	</signatures>	
 </dwr>

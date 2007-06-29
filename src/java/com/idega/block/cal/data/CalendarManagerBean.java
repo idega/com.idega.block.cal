@@ -4,7 +4,7 @@ import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
-import com.idega.bean.GroupsAndCalendarPropertiesBean;
+import com.idega.user.bean.GroupsAndCalendarPropertiesBean;
 
 public class CalendarManagerBean implements Serializable {
 

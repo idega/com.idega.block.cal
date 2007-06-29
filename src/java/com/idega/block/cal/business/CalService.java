@@ -2,8 +2,8 @@ package com.idega.block.cal.business;
 
 import java.util.List;
 
-import com.idega.bean.GroupsAndCalendarPropertiesBean;
 import com.idega.business.IBOService;
+import com.idega.user.bean.GroupsAndCalendarPropertiesBean;
 
 public interface CalService extends IBOService{
 	

@@ -10,7 +10,6 @@ import javax.ejb.FinderException;
 
 import org.apache.myfaces.custom.schedule.HtmlSchedule;
 
-import com.idega.bean.GroupsAndCalendarPropertiesBean;
 import com.idega.block.cal.data.CalendarEntryBMPBean;
 import com.idega.block.cal.data.CalendarEntryTypeBMPBean;
 import com.idega.block.cal.data.CalendarLedgerBMPBean;
@@ -22,6 +21,7 @@ import com.idega.core.accesscontrol.data.LoginTableHome;
 import com.idega.data.IDOLookup;
 import com.idega.data.IDOLookupException;
 import com.idega.presentation.IWContext;
+import com.idega.user.bean.GroupsAndCalendarPropertiesBean;
 import com.idega.user.data.User;
 import com.idega.util.CoreConstants;
 import com.idega.util.CoreUtil;

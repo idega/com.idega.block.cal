@@ -247,43 +247,42 @@ function displayCalendarAttributes(calendars){
 		scheduleNextButton.setAttribute('class', 'scheduleNextButtonStyleClass');	
 		scheduleNextButton.setAttribute('value', 'Next');
 		
-		scheduleNextButton.setAttribute('onclick', 'ScheduleSession.getNext(scheduleId, displayEntries)');	
+//		scheduleNextButton.setAttribute('onclick', 'ScheduleSession.getNext(scheduleId, displayEntries)');	
 		
 		var schedulePreviousButton = document.createElement('input');
 		schedulePreviousButton.setAttribute('type', 'button');
 		schedulePreviousButton.setAttribute('class', 'schedulePreviousButtonStyleClass');	
 		schedulePreviousButton.setAttribute('value', 'Previous');	
 		
-		schedulePreviousButton.setAttribute('onclick', 'ScheduleSession.getPrevious(scheduleId, displayEntries)');	
+//		schedulePreviousButton.setAttribute('onclick', 'ScheduleSession.getPrevious(scheduleId, displayEntries)');	
 		
 		var scheduleDayButton = document.createElement('input');
 		scheduleDayButton.setAttribute('type', 'button');
 		scheduleDayButton.setAttribute('class', 'scheduleDayButtonStyleClass');	
 		scheduleDayButton.setAttribute('value', 'Day');	
 		
-		scheduleDayButton.setAttribute('onclick', 'ScheduleSession.changeModeToDay(scheduleId, displayEntries)');	
+//		scheduleDayButton.setAttribute('onclick', 'ScheduleSession.changeModeToDay(scheduleId, displayEntries)');	
 		
 		var scheduleWeekButton = document.createElement('input');
 		scheduleWeekButton.setAttribute('type', 'button');
 		scheduleWeekButton.setAttribute('class', 'scheduleWeekButtonStyleClass');	
 		scheduleWeekButton.setAttribute('value', 'Week');	
 		
-		scheduleWeekButton.setAttribute('onclick', 'ScheduleSession.changeModeToWeek(scheduleId, displayEntries)');	
+//		scheduleWeekButton.setAttribute('onclick', 'ScheduleSession.changeModeToWeek(scheduleId, displayEntries)');	
 		
 		var scheduleWorkweekButton = document.createElement('input');
 		scheduleWorkweekButton.setAttribute('type', 'button');
 		scheduleWorkweekButton.setAttribute('class', 'scheduleWorkweekButtonStyleClass');	
 		scheduleWorkweekButton.setAttribute('value', 'Workweek');	
 		
-		scheduleWorkweekButton.setAttribute('onclick', 'ScheduleSession.changeModeToWorkweek(scheduleId, displayEntries)');	
+//		scheduleWorkweekButton.setAttribute('onclick', 'ScheduleSession.changeModeToWorkweek(scheduleId, displayEntries)');	
 		
 		var scheduleMonthButton = document.createElement('input');
 		scheduleMonthButton.setAttribute('type', 'button');
 		scheduleMonthButton.setAttribute('class', 'scheduleMonthButtonStyleClass');	
 		scheduleMonthButton.setAttribute('value', 'Month');	
 
-		scheduleMonthButton.setAttribute('onclick', 'ScheduleSession.changeModeToMonth(scheduleId, displayEntries)');	
-		
+//		scheduleMonthButton.setAttribute('onclick', 'ScheduleSession.changeModeToMonth(scheduleId, displayEntries)');	
 
 		var scheduleButtonsLayer = document.createElement('div');
 		if(showMenu == true){
@@ -299,6 +298,60 @@ function displayCalendarAttributes(calendars){
 		return  scheduleButtonsLayer;	
 	}
 
+	function getNext(){
+		if(showEntriesAsList){
+			ScheduleSession.getNextAsList(scheduleId, displayEntriesAsList);
+		}	
+		else{
+			ScheduleSession.getNext(scheduleId, displayEntries);
+		}
+	}
+	function getPrevious(){
+		if(showEntriesAsList){
+			ScheduleSession.getPreviousAsList(scheduleId, displayEntriesAsList);
+		}	
+		else{
+			ScheduleSession.getPrevious(scheduleId, displayEntries);
+		}		
+	}
+	function changeModeToDay(){
+		if(showEntriesAsList){
+//console.log(showEntriesAsList);
+			ScheduleSession.changeModeToDayAndDisplayEntriesAsList(scheduleId, displayEntriesAsList);
+		}	
+		else{
+//console.log(showEntriesAsList);
+			ScheduleSession.changeModeToDay(scheduleId, displayEntries);
+		}		
+	}
+	function changeModeToWorkweek(){
+		if(showEntriesAsList){
+			ScheduleSession.changeModeToWorkweekAndDisplayEntriesAsList(scheduleId, displayEntriesAsList);
+		}	
+		else{
+			ScheduleSession.changeModeToWorkweek(scheduleId, displayEntries);
+		}		
+		
+	}
+	function changeModeToWeek(){
+		if(showEntriesAsList){
+			ScheduleSession.changeModeToWeekAndDisplayEntriesAsList(scheduleId, displayEntriesAsList);
+		}	
+		else{
+			ScheduleSession.changeModeToWeek(scheduleId, displayEntries);
+		}		
+		
+	}
+	function changeModeToMonth(){
+		if(showEntriesAsList){
+			ScheduleSession.changeModeToMonthAndDisplayEntriesAsList(scheduleId, displayEntriesAsList);
+		}	
+		else{
+			ScheduleSession.changeModeToMonth(scheduleId, displayEntries);
+		}		
+		
+	}
+	
 	function displayEntries(result){			//inserting schedule DOM object
 
 		var scheduleLayer = document.getElementById('calendarViewerScheduleId');
@@ -311,8 +364,9 @@ function displayCalendarAttributes(calendars){
 			scheduleEntries.setAttribute('id',scheduleEntryTableId);
 //			scheduleEntries.appendChild(result);
 			scheduleLayer.appendChild(scheduleEntries);
-			scheduleLayer.appendChild(getScheduleButtons());
-//			setBehaviourToScheduleButtons();
+			scheduleLayer.appendChild(getScheduleButtons());		
+			setBehaviourToScheduleButtons();
+//			console.log('setBehaviourToScheduleButtons()');
 		}
 		insertNodesToContainer(result, scheduleEntries);
 		closeLoadingMessage();		
@@ -387,7 +441,7 @@ function displayCalendarAttributes(calendars){
 //			scheduleEntries.appendChild(result);
 			scheduleLayer.appendChild(scheduleEntries);
 			scheduleLayer.appendChild(getScheduleButtons());
-//			setBehaviourToScheduleButtons();
+			setBehaviourToScheduleButtons();
 		}
 		scheduleEntries.appendChild(scheduleTable);
 		closeLoadingMessage();
@@ -422,35 +476,56 @@ function displayCalendarAttributes(calendars){
 
 	}
 	
+
 	function setBehaviourToScheduleButtons(){
+//console.log('setBehaviourToScheduleButtons');
 		$$('input.scheduleNextButtonStyleClass').each(
 			function(element) {
-				ScheduleSession.getNext(displayEntries);
+				element.onclick = function() {
+//console.log('getNext()');
+					getNext();					
+				}
+//				ScheduleSession.getNext(displayEntries);
 	    	}
 	    );		
 		$$('input.schedulePreviousButtonStyleClass').each(
 			function(element) {
-				ScheduleSession.getPrevious(displayEntries);
+				element.onclick = function() {				
+					getPrevious();
+				}
+//				ScheduleSession.getPrevious(displayEntries);
 	    	}
 	    );		
 	    $$('input.scheduleDayButtonStyleClass').each(
 			function(element) {
-				ScheduleSession.changeModeToDay(displayEntries);
+				element.onclick = function() {
+//				ScheduleSession.changeModeToDay(displayEntries);
+					changeModeToDay();
+				}
 	    	}
 	    );		
 	    $$('input.scheduleWorkweekButtonStyleClass').each(
 			function(element) {
-				ScheduleSession.changeModeToWorkweek(displayEntries);
+//				ScheduleSession.changeModeToWorkweek(displayEntries);
+				element.onclick = function() {
+					changeModeToWorkweek();	
+				}
 	    	}
 	    );		
 	    $$('input.scheduleWeekButtonStyleClass').each(
 			function(element) {
-				ScheduleSession.changeModeToWeek(displayEntries);
+//				ScheduleSession.changeModeToWeek(displayEntries);
+				element.onclick = function() {
+					changeModeToWeek();
+				}
 	    	}
 	    );		
 	    $$('input.scheduleMonthButtonStyleClass').each(
 			function(element) {
-				ScheduleSession.changeModeToMonth(displayEntries);
+				element.onclick = function() {				
+//				ScheduleSession.changeModeToMonth(displayEntries);
+					changeModeToMonth();	
+				}
 	    	}
 	    );		
 	}
@@ -571,6 +646,7 @@ function displayCalendarAttributes(calendars){
 	}
 	
 	function getEntriesCallback(canUse, server, login, password, calendarAttributes){
+//console.log('getEntriesCallback');
 		if(canUse){
 			prepareDwr(CalService, server + getDefaultDwrPath());
 			CalService.getRemoteEntries(calendarAttributes, login, password, getScheduleWithEntries);
@@ -578,19 +654,61 @@ function displayCalendarAttributes(calendars){
 		else{
 			closeLoadingMessage();
 			alert(serverErrorMessage + ' ' + server);
-			return false;	
+			return false;
 		}
 	}
 	function getScheduleWithEntries(entries){
-		if(showEntriesAsList == true){
-			displayEntriesAsList(entries);
+		
+		if(showEntriesAsList){
+/*			
+console.log('initializeSchedule +++');
+console.log(entries);
+console.log(scheduleId);
+*/
+var masyvas = new Array();
+//var masyvas = entries;
+for(var index=0; index<entries.length; index++) {
+//	console.log(index);
+//	console.log(entries[index]);
+	var entry = new Array();
+	var entryFromList = entries[index];
+/*	
+	entry.push(entryFromList.entryDate);
+	entry.push(entryFromList.entryEndDate);	
+	entry.push(entryFromList.entryEndTime);		
+	entry.push(entryFromList.entryName);		
+	entry.push(entryFromList.entryTime);			
+	entry.push(entryFromList.entryTypeName);				
+	entry.push(entryFromList.repeat);		
+*/	
+	if(index < 14){
+		masyvas.push(entries[index]);
+//console.log(masyvas[index]);
+	}
+//console.log(entries.length);
+}
+//	console.log(masyvas);
+
+			ScheduleSession.initializeSchedule(masyvas, scheduleId, 
+
+			function(result){
+				displayEntriesAsList(entries);
+			}
+ 
+			);
+//			displayEntriesAsList(entries);
 		}
 		else{
 			prepareDwr(ScheduleSession, getDefaultDwrPath());
+			
 			ScheduleSession.getScheduleDOM(entries, scheduleId, displayEntries);
 		}
 	}
 
+//console.log('initialize callback');
+	function testDisplayEntriesAsList(result){
+//		console.log('testDisplayEntriesAsList');
+	}
 		
 //		prepareDwr(ScheduleSession, server + DEFAULT_DWR_PATH);
 		

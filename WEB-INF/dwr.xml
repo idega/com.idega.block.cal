@@ -5,33 +5,41 @@
 	<allow>
 	
 		<convert converter="bean" match="com.idega.block.cal.business.CalendarLedgersAndTypes" />
-		<convert converter="bean" match="com.idega.block.cal.business.ScheduleEntry" />
-		<convert converter="bean" match="com.idega.bean.GroupsAndCalendarPropertiesBean" />
+		<convert converter="bean" match="com.idega.block.cal.business.CalScheduleEntry" />
+		<convert converter="bean" match="com.idega.user.bean.GroupsAndCalendarPropertiesBean" />
 			
 		<create creator="ibo" javascript="ScheduleSession" scope="session">
 			<param name="class" value="com.idega.block.cal.business.ScheduleSession"/>
 		</create>
-		<create creator="ibo" javascript="CalService" scope="application">
+<!--  		<create creator="ibo" javascript="CalService" scope="application">
 			<param name="class" value="com.idega.block.cal.business.CalService"/>
 		</create>
+-->
+
+		<create creator="jsf" javascript="CalService">
+	    	<param name="managedBeanName" value="calendar" />
+	    	<param name="class" value="com.idega.block.cal.business.CalServiceBean" />
+    	</create>
 
 	</allow>
 	<signatures>
 		<![CDATA[
   			import java.util.List;
   			import org.jdom.Document;
-	  		import com.idega.block.cal.business.CalendarEntry;
 	  		import com.idega.block.cal.business.CalendarLedgersAndTypes;
 	  		import com.idega.bean.GroupsAndCalendarPropertiesBean;
+	  		import com.idega.block.cal.business.CalScheduleEntry;
 	  		
-			ScheduleSession.setCheckedParameters(String, List<String>);
-			ScheduleSession.getSchedule(String, List<CalendarEntry>, boolean);
-			ScheduleSession.getScheduleDOM(List<CalendarEntry>, String);
+	  		
+	  		ScheduleSession.initializeSchedule(List<CalScheduleEntry>, String);
 
-			CalService.getEntries(List<String>);
+			ScheduleSession.getSchedule(String, List<CalScheduleEntry>, boolean);
+			ScheduleSession.getScheduleDOM(List<CalScheduleEntry>, String);
+
+			List<CalScheduleEntry> CalService.getEntries(List<String>);
 			CalService.getRemoteEntries(List<String>, String, String);
 			CalService.getRemoteCalendarParameters(String, String, String);
-			CalService getCalendarProperties(String);
+			CalService.getCalendarProperties(String);
   		]]>
 	</signatures>	
 </dwr>

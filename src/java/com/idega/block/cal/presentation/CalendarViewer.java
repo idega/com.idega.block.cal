@@ -1,5 +1,6 @@
 package com.idega.block.cal.presentation;
 
+import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -7,6 +8,9 @@ import org.apache.myfaces.renderkit.html.util.AddResource;
 import org.apache.myfaces.renderkit.html.util.AddResourceFactory;
 
 import com.idega.block.cal.business.CalendarConstants;
+import com.idega.block.web2.business.Web2Business;
+import com.idega.business.SpringBeanLookup;
+import com.idega.idegaweb.IWApplicationContext;
 import com.idega.idegaweb.IWBundle;
 import com.idega.presentation.Block;
 import com.idega.presentation.IWContext;
@@ -69,15 +73,42 @@ public class CalendarViewer extends Block{
 		WFUtil.invoke(CalendarConstants.CALENDAR_MANAGER_BEAN_ID, "addCalendarProperties", parameters, classes);
 		
 	}
+	protected Web2Business getWeb2Service(IWApplicationContext iwc) {
+		return (Web2Business) SpringBeanLookup.getInstance().getSpringBean(iwc, Web2Business.class);
+	}
 	
 	private void addJavaScript(IWContext iwc) {
 		IWBundle iwb = getBundle(iwc);
-		
+		Web2Business web2_business = getWeb2Service(iwc.getApplicationContext());
+//		BuilderService bService = null;
+//		try {
+//			bService = BuilderServiceFactory.getBuilderService(iwc.getApplicationContext());
+//		} catch (RemoteException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
 		AddResource resourceAdder = AddResourceFactory.getInstance(iwc);
 		
 //		//	"Helpers"
+
+		if(web2_business != null){
+			try {
+//				resourceAdder.addJavaScriptAtPosition(iwc, AddResource.HEADER_BEGIN,web2_business.getBundleURIToBehaviourLib());
+				resourceAdder.addJavaScriptAtPosition(iwc, AddResource.HEADER_BEGIN,web2_business.getBundleURIToMootoolsLib());
+			} catch (RemoteException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		
 		resourceAdder.addJavaScriptAtPosition(iwc, AddResource.HEADER_BEGIN,iwb.getVirtualPathWithFileNameString("javascript/CalendarList.js"));
 		resourceAdder.addJavaScriptAtPosition(iwc, AddResource.HEADER_BEGIN,iwb.getVirtualPathWithFileNameString("javascript/cal.js"));
+		resourceAdder.addJavaScriptAtPosition(iwc, AddResource.HEADER_BEGIN,iwb.getVirtualPathWithFileNameString("javascript/alphaAPI.js"));
+		resourceAdder.addJavaScriptAtPosition(iwc, AddResource.HEADER_BEGIN,iwb.getVirtualPathWithFileNameString("javascript/domLib.js"));
+		resourceAdder.addJavaScriptAtPosition(iwc, AddResource.HEADER_BEGIN,iwb.getVirtualPathWithFileNameString("javascript/domTT_drag.js"));
+		resourceAdder.addJavaScriptAtPosition(iwc, AddResource.HEADER_BEGIN,iwb.getVirtualPathWithFileNameString("javascript/domTT.js"));
+		resourceAdder.addJavaScriptAtPosition(iwc, AddResource.HEADER_BEGIN,iwb.getVirtualPathWithFileNameString("javascript/fadomatic.js"));
+		resourceAdder.addJavaScriptAtPosition(iwc, AddResource.HEADER_BEGIN,iwb.getVirtualPathWithFileNameString("javascript/schedule.js"));
 		
 		//	DWR
 		resourceAdder.addJavaScriptAtPosition(iwc, AddResource.HEADER_BEGIN, CalendarConstants.CALENDAR_SERVICE_DWR_INTERFACE_SCRIPT);

@@ -2,19 +2,15 @@ package com.idega.block.cal.business;
 
 import java.io.InputStream;
 import java.net.URL;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 
 import javax.ejb.FinderException;
 
-import org.apache.myfaces.custom.schedule.HtmlSchedule;
-
 import com.idega.block.cal.data.CalendarEntryBMPBean;
 import com.idega.block.cal.data.CalendarEntryTypeBMPBean;
 import com.idega.block.cal.data.CalendarLedgerBMPBean;
 import com.idega.block.cal.data.CalendarManagerBean;
-import com.idega.business.IBOServiceBean;
 import com.idega.core.accesscontrol.business.LoginBusinessBean;
 import com.idega.core.accesscontrol.data.LoginTable;
 import com.idega.core.accesscontrol.data.LoginTableHome;
@@ -27,14 +23,14 @@ import com.idega.util.CoreConstants;
 import com.idega.util.CoreUtil;
 import com.idega.webface.WFUtil;
 
-public class CalServiceBean extends IBOServiceBean implements CalService {
+public class CalServiceBean implements CalService {
 
-	private HtmlSchedule schedule = null;
-	private SimpleDateFormat simpleDate = null;
-	private int dateMode = -1;
-	private static final int DAY_IN_MILLISECONDS = 1000 * 60 * 60 * 24;
-	private static final int WEEK_IN_MILLISECONDS = DAY_IN_MILLISECONDS * 7;
-	private static final int MONTH_IN_MILLISECONDS = DAY_IN_MILLISECONDS * 30;
+//	private HtmlSchedule schedule = null;
+//	private SimpleDateFormat simpleDate = null;
+//	private int dateMode = -1;
+//	private static final int DAY_IN_MILLISECONDS = 1000 * 60 * 60 * 24;
+//	private static final int WEEK_IN_MILLISECONDS = DAY_IN_MILLISECONDS * 7;
+//	private static final int MONTH_IN_MILLISECONDS = DAY_IN_MILLISECONDS * 30;
 	
 	private LoginTableHome loginHome = null;
 	private LoginBusinessBean loginBean = null;
@@ -177,7 +173,7 @@ public class CalServiceBean extends IBOServiceBean implements CalService {
 		return loginHome;
 	}
 	
-	public List<ScheduleEntry> getRemoteEntries(List<String> attributes, String login, String password){
+	public List<CalScheduleEntry> getRemoteEntries(List<String> attributes, String login, String password){
 		if (login == null || password == null) {
 			return null;
 		}
@@ -198,13 +194,17 @@ public class CalServiceBean extends IBOServiceBean implements CalService {
 		return null;
 	}
 	
-	public List<ScheduleEntry> getEntries(List<String> attributes){
+	public List<CalScheduleEntry> getEntries(List<String> attributes){
 		IWContext iwc = IWContext.getInstance();
 		String parameter = null;
 		LedgerVariationsHandler ledgerVariationsHandler = new DefaultLedgerVariationsHandler();
+		List<CalScheduleEntry> result = new ArrayList<CalScheduleEntry>();
 		
 		List<String> listOfLedgerIds = new ArrayList<String>(); 
 		List<String> listOfEntryTypesIds = new ArrayList<String>();
+		
+		if (attributes == null)
+			return result;
 		
 		for (int i = 0; i < attributes.size(); i++) {
 			parameter = (String)(attributes.get(i));
@@ -220,13 +220,12 @@ public class CalServiceBean extends IBOServiceBean implements CalService {
 		
 		List entriesToDisplay = calBusiness.getEntriesByLedgersAndEntryTypes(listOfEntryTypesIds, listOfLedgerIds);
 
-		List<ScheduleEntry> result = new ArrayList<ScheduleEntry>();
-
 		for (int i = 0; i < entriesToDisplay.size(); i++) {
+//		for (int i = 0; i < 15; i++) {
 			CalendarEntryBMPBean entry = (CalendarEntryBMPBean)entriesToDisplay.get(i);
 			if(checkIfTypeIsCorrect(entry, listOfEntryTypesIds)){
 //				result.add(new ScheduleEntry(entry.getStringColumnValue("CAL_ENTRY_NAME"), getDate(entry.getStringColumnValue("CAL_ENTRY_DATE")), getDate(entry.getStringColumnValue("CAL_ENTRY_END_DATE")),getTime(entry.getStringColumnValue("CAL_ENTRY_DATE")), getTime(entry.getStringColumnValue("CAL_ENTRY_END_DATE")), entry.getStringColumnValue("CAL_ENTRY_REPEAT"), entry.getStringColumnValue("CAL_TYPE_NAME")));
-				ScheduleEntry calEntry = new ScheduleEntry();
+				CalScheduleEntry calEntry = new CalScheduleEntry();
 				calEntry.setEntryName(entry.getStringColumnValue("CAL_ENTRY_NAME"));
 				
 //				calEntry.setEntryDate(getDate(entry.getStringColumnValue("CAL_ENTRY_DATE")));
@@ -344,10 +343,10 @@ public class CalServiceBean extends IBOServiceBean implements CalService {
 		return properties;
 	}
 	
-	private String getDate(String entryDate){
-		String date = entryDate.substring(0, 10);
-		return date.replaceAll("-", "");
-	}
+//	private String getDate(String entryDate){
+//		String date = entryDate.substring(0, 10);
+//		return date.replaceAll("-", "");
+//	}
 
 	private String getTime(String entryDate){
 		return entryDate.substring(11,16);

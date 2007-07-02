@@ -40,10 +40,28 @@ public interface ScheduleSession extends IBOSession {
 	/**
 	 * @see com.idega.block.cal.business.ScheduleSessionBean#getSchedule
 	 */
-	public Document getSchedule(String id, List<ScheduleEntry> result, boolean usePreviousEntries) throws RemoteException;
+	public Document getSchedule(String id, List<CalScheduleEntry> result, boolean usePreviousEntries) throws RemoteException;
 
 	/**
 	 * @see com.idega.block.cal.business.ScheduleSessionBean#getScheduleDOM
 	 */
-	public Document getScheduleDOM(List<ScheduleEntry> entries, String id) throws RemoteException;
+	public Document getScheduleDOM(List<CalScheduleEntry> entries, String id) throws RemoteException;
+
+	/**
+	 * @see com.idega.block.cal.business.ScheduleSessionBean#initializeSchedule
+	 */
+	public int initializeSchedule(List<CalScheduleEntry> entries, String id);
+	
+	public List<CalScheduleEntry> changeModeToDayAndDisplayEntriesAsList(String id);	
+	
+	public List<CalScheduleEntry> changeModeToWorkweekAndDisplayEntriesAsList(String id);
+
+	public List<CalScheduleEntry> changeModeToWeekAndDisplayEntriesAsList(String id);
+	
+	public List<CalScheduleEntry> changeModeToMonthAndDisplayEntriesAsList(String id);
+	
+	public List<CalScheduleEntry> getPreviousAsList(String scheduleId);
+	
+	public List<CalScheduleEntry> getNextAsList(String scheduleId);
 }
+

@@ -1,6 +1,6 @@
 package com.idega.block.cal.business;
 
-public class ScheduleEntry {
+public class CalScheduleEntry {
 	private String entryName = null;
 	private String entryDate = null;
 	private String entryEndDate = null;	

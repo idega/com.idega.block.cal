@@ -2,10 +2,9 @@ package com.idega.block.cal.business;
 
 import java.util.List;
 
-import com.idega.business.IBOService;
 import com.idega.user.bean.GroupsAndCalendarPropertiesBean;
 
-public interface CalService extends IBOService{
+public interface CalService {
 	
 //	public List<CalendarEntryBMPBean> getEntriesToDisplay(List<String> listOfEntryTypesIds, List<String> listOfLedgerIds);
 	
@@ -17,8 +16,8 @@ public interface CalService extends IBOService{
 	public List<CalendarLedgersAndTypes> getCalendarParameters(String id);
 	public List<CalendarLedgersAndTypes> getRemoteCalendarParameters(String id, String login, String password);
 	public boolean canUseRemoteServer(String server);
-	public List<ScheduleEntry> getEntries(List<String> calendarAttributes);
-	public List<ScheduleEntry> getRemoteEntries(List<String> calendarAttributes, String login, String password);
+	public List<CalScheduleEntry> getEntries(List<String> calendarAttributes);
+	public List<CalScheduleEntry> getRemoteEntries(List<String> calendarAttributes, String login, String password);
 
 	public GroupsAndCalendarPropertiesBean getCalendarProperties(String scheduleId);
 	

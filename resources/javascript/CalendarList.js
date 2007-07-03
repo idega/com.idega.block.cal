@@ -19,8 +19,15 @@ var entryName = 'Name';
 var entryDate = 'Begin date';
 var entryEndDate = 'End date';
 var entryType = 'Type';
+var entryListTableStyleClass = 'entryListTableStyleClass';
+var entryListTableCaptionStyleClass = 'entryListTableCaptionStyleClass';
+var calendarProperties = null;
 
-
+var entriesToCalendar = null;
+var entriesPackageSize = 10;
+var packageIndex = 0;
+var packageEndIndex = entriesPackageSize;
+var noEntries = 'There are no entries to display';
 /*
 function setCalendars(calendars, id){
 	var parentOfList = document.getElementById(id);
@@ -300,54 +307,53 @@ function displayCalendarAttributes(calendars){
 
 	function getNext(){
 		if(showEntriesAsList){
-			ScheduleSession.getNextAsList(scheduleId, displayEntriesAsList);
+//			ScheduleSession.getNextAsList(scheduleId, displayEntriesAsList);
+			ScheduleSession.switchToNextAndGetListOfEntries(scheduleId, displayEntriesAsList);
 		}	
 		else{
-			ScheduleSession.getNext(scheduleId, displayEntries);
+			ScheduleSession.switchToNextAndGetScheduleDOM(scheduleId, displayEntries);
 		}
 	}
 	function getPrevious(){
 		if(showEntriesAsList){
-			ScheduleSession.getPreviousAsList(scheduleId, displayEntriesAsList);
+			ScheduleSession.switchToPreviousAndGetListOfEntries(scheduleId, displayEntriesAsList);
 		}	
 		else{
-			ScheduleSession.getPrevious(scheduleId, displayEntries);
+			ScheduleSession.switchToPreviousAndGetScheduleDOM(scheduleId, displayEntries);
 		}		
 	}
 	function changeModeToDay(){
 		if(showEntriesAsList){
-//console.log(showEntriesAsList);
-			ScheduleSession.changeModeToDayAndDisplayEntriesAsList(scheduleId, displayEntriesAsList);
+			ScheduleSession.changeModeToDayAndGetListOfEntries(scheduleId, displayEntriesAsList);
 		}	
 		else{
-//console.log(showEntriesAsList);
-			ScheduleSession.changeModeToDay(scheduleId, displayEntries);
+			ScheduleSession.changeModeToDayAndGetScheduleDOM(scheduleId, displayEntries);
 		}		
 	}
 	function changeModeToWorkweek(){
 		if(showEntriesAsList){
-			ScheduleSession.changeModeToWorkweekAndDisplayEntriesAsList(scheduleId, displayEntriesAsList);
+			ScheduleSession.changeModeToWorkweekAndGetListOfEntries(scheduleId, displayEntriesAsList);
 		}	
 		else{
-			ScheduleSession.changeModeToWorkweek(scheduleId, displayEntries);
+			ScheduleSession.changeModeToWorkweekAndGetScheduleDOM(scheduleId, displayEntries);
 		}		
 		
 	}
 	function changeModeToWeek(){
 		if(showEntriesAsList){
-			ScheduleSession.changeModeToWeekAndDisplayEntriesAsList(scheduleId, displayEntriesAsList);
+			ScheduleSession.changeModeToWeekAndGetListOfEntries(scheduleId, displayEntriesAsList);
 		}	
 		else{
-			ScheduleSession.changeModeToWeek(scheduleId, displayEntries);
+			ScheduleSession.changeModeToWeekAndGetScheduleDOM(scheduleId, displayEntries);
 		}		
 		
 	}
 	function changeModeToMonth(){
 		if(showEntriesAsList){
-			ScheduleSession.changeModeToMonthAndDisplayEntriesAsList(scheduleId, displayEntriesAsList);
+			ScheduleSession.changeModeToMonthAndGetListOfEntries(scheduleId, displayEntriesAsList);
 		}	
 		else{
-			ScheduleSession.changeModeToMonth(scheduleId, displayEntries);
+			ScheduleSession.changeModeToMonthAndGetScheduleDOM(scheduleId, displayEntries);
 		}		
 		
 	}
@@ -366,22 +372,49 @@ function displayCalendarAttributes(calendars){
 			scheduleLayer.appendChild(scheduleEntries);
 			scheduleLayer.appendChild(getScheduleButtons());		
 			setBehaviourToScheduleButtons();
-//			console.log('setBehaviourToScheduleButtons()');
 		}
 		insertNodesToContainer(result, scheduleEntries);
 		closeLoadingMessage();		
 	}
-	function displayEntriesAsList(entries){
-
-		scheduleEntries = document.createElement('div');
-		scheduleEntries.setAttribute('id',scheduleEntryTableId);		
+	
+	function displayEntriesAsList(entries){	
+		var scheduleLayer = document.getElementById('calendarViewerScheduleId');
+		var scheduleEntries = document.getElementById(scheduleEntryTableId);
+		if(scheduleEntries){
+			removeChildren(scheduleEntries);  //remove previous schedule DOM object
+		}
+		else{
+			scheduleEntries = document.createElement('div');
+			scheduleEntries.setAttribute('id',scheduleEntryTableId);
+//			scheduleEntries.appendChild(result);
+			scheduleLayer.appendChild(scheduleEntries);
+			scheduleLayer.appendChild(getScheduleButtons());
+			setBehaviourToScheduleButtons();
+		}
+		if (entries.length == 0){
+			var txtEntries=document.createTextNode(noEntries);
+			scheduleEntries.appendChild(txtEntries);
+			return;
+		}
+//		scheduleEntries = document.createElement('div');
+//		scheduleEntries.setAttribute('id',scheduleEntryTableId);
+		
 		var scheduleTable = document.createElement('table');
+		scheduleTable.setAttribute('class', entryListTableStyleClass);
+		
+		
 		var tr=document.createElement('tr');
+//		tr.setAttribute('class',entryListTableCaptionStyleClass)
 		var tdNumber=document.createElement('td');
+		tdNumber.setAttribute('class',entryListTableCaptionStyleClass);
 		var tdName=document.createElement('td');
+		tdName.setAttribute('class',entryListTableCaptionStyleClass);		
 		var tdDate=document.createElement('td');		
+		tdDate.setAttribute('class',entryListTableCaptionStyleClass);		
 		var tdEndDate=document.createElement('td');		
+		tdEndDate.setAttribute('class',entryListTableCaptionStyleClass);		
 		var tdType=document.createElement('td');	
+		tdType.setAttribute('class',entryListTableCaptionStyleClass);
 		
 		var txtNumber=document.createTextNode(entryNumber);
 		var txtName=document.createTextNode(entryName);
@@ -406,10 +439,15 @@ function displayCalendarAttributes(calendars){
 			
 			var tr=document.createElement('tr');
 			var tdNumber=document.createElement('td');
+			tdNumber.setAttribute('class',entryListTableStyleClass);
 			var tdName=document.createElement('td');
+			tdName.setAttribute('class',entryListTableStyleClass);
 			var tdDate=document.createElement('td');		
+			tdDate.setAttribute('class',entryListTableStyleClass);
 			var tdEndDate=document.createElement('td');		
+			tdEndDate.setAttribute('class',entryListTableStyleClass);
 			var tdType=document.createElement('td');	
+			tdType.setAttribute('class',entryListTableStyleClass);
 			
 			var txtNumber=document.createTextNode(index+1);
 			var txtName=document.createTextNode(entries[index].entryName);
@@ -430,19 +468,7 @@ function displayCalendarAttributes(calendars){
 			tr.appendChild(tdType);		
 			scheduleTable.appendChild(tr);
 		}
-		var scheduleLayer = document.getElementById('calendarViewerScheduleId');
-		var scheduleEntries = document.getElementById(scheduleEntryTableId);
-		if(scheduleEntries){
-			removeChildren(scheduleEntries);  //remove previous schedule DOM object
-		}
-		else{
-			scheduleEntries = document.createElement('div');
-			scheduleEntries.setAttribute('id',scheduleEntryTableId);
-//			scheduleEntries.appendChild(result);
-			scheduleLayer.appendChild(scheduleEntries);
-			scheduleLayer.appendChild(getScheduleButtons());
-			setBehaviourToScheduleButtons();
-		}
+
 		scheduleEntries.appendChild(scheduleTable);
 		closeLoadingMessage();
 //		scheduleEntries.appendChild(scheduleTable);
@@ -460,11 +486,12 @@ function displayCalendarAttributes(calendars){
 		ScheduleSession.setCheckedParameters(new Array(), displayEntries);
 	}
 */
+/*
 	function getSchedule(id, array){
 		scheduleId = id;
 		ScheduleSession.setCheckedParameters(id, array, displayEntries);
 	}
-	
+*/	
 	function createEmptySchedule(result){
 		var scheduleLayer = document.getElementById('calendarViewerScheduleId');
 		var scheduleEntries = document.getElementById(scheduleEntryTableId);
@@ -478,11 +505,9 @@ function displayCalendarAttributes(calendars){
 	
 
 	function setBehaviourToScheduleButtons(){
-//console.log('setBehaviourToScheduleButtons');
 		$$('input.scheduleNextButtonStyleClass').each(
 			function(element) {
 				element.onclick = function() {
-//console.log('getNext()');
 					getNext();					
 				}
 //				ScheduleSession.getNext(displayEntries);
@@ -534,11 +559,11 @@ function displayCalendarAttributes(calendars){
 		prepareDwr(CalService, getDefaultDwrPath());
 		CalService.getCalendarProperties(scheduleId, {
 			callback: function(result) {
+				calendarProperties = result;
 				getEntries(result.remoteMode, result.server, result.login, result.password, result.calendarAttributes);
-//				getEntries('"+remoteMode+"', '"+server+"', '"+user+"', '"+password+"', array);
-//				canUseRemoteCalendarCallback(result, groupId);
 			}
 		});
+//		getEntries(calendarProperties.remoteMode, calendarProperties.server, calendarProperties.login, result.password, result.calendarAttributes);
 	}
 /*	
 	function getGroupsWithValues(loadingMsg, server, login, password, id, canNotConnectMsg, failedLoginMsg, noGroupsMsg, needsDecode, selectedGroups, styleClass) {
@@ -609,6 +634,14 @@ function displayCalendarAttributes(calendars){
 	}
 	
 	function getEntries(isRemoteMode, server, login, password, calendarAttributes){
+//	function getEntries(){
+/*
+		var isRemoteMode = calendarProperties.remoteMode;
+		var server = calendarProperties.server;		
+		var login = calendarProperties.login;
+		var password = calendarProperties.password;
+		var calendarAttributes = calendarProperties.calendarAttributes;
+*/		
 		if(isRemoteMode == true){
 			showLoadingMessage(loadingMsg);
 			CalService.canUseRemoteServer(server, {
@@ -618,7 +651,7 @@ function displayCalendarAttributes(calendars){
 			});
 		}
 		else{
-			CalService.getEntries(calendarAttributes, getScheduleWithEntries);		
+			CalService.getEntries(calendarAttributes, addEntriesToListOrSchedule);		
 		}
 	}
 	
@@ -646,10 +679,9 @@ function displayCalendarAttributes(calendars){
 	}
 	
 	function getEntriesCallback(canUse, server, login, password, calendarAttributes){
-//console.log('getEntriesCallback');
 		if(canUse){
 			prepareDwr(CalService, server + getDefaultDwrPath());
-			CalService.getRemoteEntries(calendarAttributes, login, password, getScheduleWithEntries);
+			CalService.getRemoteEntries(calendarAttributes, login, password, addEntriesToListOrSchedule);
 		}
 		else{
 			closeLoadingMessage();
@@ -657,58 +689,82 @@ function displayCalendarAttributes(calendars){
 			return false;
 		}
 	}
-	function getScheduleWithEntries(entries){
-		
-		if(showEntriesAsList){
-/*			
-console.log('initializeSchedule +++');
-console.log(entries);
-console.log(scheduleId);
-*/
-var masyvas = new Array();
-//var masyvas = entries;
-for(var index=0; index<entries.length; index++) {
-//	console.log(index);
-//	console.log(entries[index]);
-	var entry = new Array();
-	var entryFromList = entries[index];
 /*	
-	entry.push(entryFromList.entryDate);
-	entry.push(entryFromList.entryEndDate);	
-	entry.push(entryFromList.entryEndTime);		
-	entry.push(entryFromList.entryName);		
-	entry.push(entryFromList.entryTime);			
-	entry.push(entryFromList.entryTypeName);				
-	entry.push(entryFromList.repeat);		
-*/	
-	if(index < 14){
-		masyvas.push(entries[index]);
-//console.log(masyvas[index]);
+	function emtpyCallback(result){
+		
 	}
-//console.log(entries.length);
-}
-//	console.log(masyvas);
-
-			ScheduleSession.initializeSchedule(masyvas, scheduleId, 
-
-			function(result){
-				displayEntriesAsList(entries);
+*/	
+	function addEntriesCallback(result){
+//		entriesPackageSize = 3;
+		packageIndex += entriesPackageSize;
+		packageEndIndex += entriesPackageSize;
+		packageOfEntries = new Array();
+		var reachedEnd = false;
+		for(var index=packageIndex; index<packageEndIndex; index++) {
+			if ((entriesToCalendar[index] == null) || (entriesToCalendar[index] == undefined)){
+				reachedEnd = true;
+				break;
 			}
- 
-			);
-//			displayEntriesAsList(entries);
+			packageOfEntries.push(entriesToCalendar[index]);
+		}
+//		if (packageOfEntries.length != 0){
+			ScheduleSession.addEntries(packageOfEntries, scheduleId, false, function(result){
+				if(reachedEnd == false){
+					addEntriesCallback(result);
+				}
+				else{
+					if(showEntriesAsList){
+//						displayEntriesAsList(entriesToCalendar);
+						ScheduleSession.getListOfEntries(scheduleId, displayEntriesAsList);
+					}
+					else{
+//						ScheduleSession.getScheduleDOM(entries, scheduleId, displayEntries);
+						ScheduleSession.getScheduleDOM(scheduleId, displayEntries);
+					}
+				}
+			});
+//		}	
+	}
+	
+	function addEntriesToListOrSchedule(entries){
+		entriesToCalendar = entries;
+		
+		var packageOfEntries = new Array();
+		var limitOfPackage = null;    
+		if(entries.length > entriesPackageSize){
+			limitOfPackage = entriesPackageSize;
+		}
+		else{
+			limitOfPackage = entries.length;
+		}
+		for(var index=0; index<limitOfPackage; index++) {
+			packageOfEntries.push(entries[index]);			
+		}
+		ScheduleSession.addEntries(packageOfEntries, scheduleId, true, addEntriesCallback);		
+	}
+/*		
+		if(showEntriesAsList){
+
 		}
 		else{
 			prepareDwr(ScheduleSession, getDefaultDwrPath());
-			
+			var packageOfEntries = new Array();
+			var maxPackageSize = 3;
+			for(var index=0; index<entries.length; index++) {
+				if(index % maxPackageSize == 0){
+					ScheduleSession.addEntries(packageOfEntries, scheduleId, emptyCallback);
+					packageOfEntries = new Array();
+				}
+			}			
+			ScheduleSession.addEntries(packageOfEntries, scheduleId, emptyCallback);
+			DWREngine.setOrdered(false);
 			ScheduleSession.getScheduleDOM(entries, scheduleId, displayEntries);
 		}
-	}
+*/ 
+//	}
 
-//console.log('initialize callback');
-	function testDisplayEntriesAsList(result){
-//		console.log('testDisplayEntriesAsList');
-	}
+//	function testDisplayEntriesAsList(result){
+//	}
 		
 //		prepareDwr(ScheduleSession, server + DEFAULT_DWR_PATH);
 		

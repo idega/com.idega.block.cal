@@ -30,13 +30,9 @@
 	  		import com.idega.bean.GroupsAndCalendarPropertiesBean;
 	  		import com.idega.block.cal.business.CalScheduleEntry;
 	  		
-	  		
-	  		ScheduleSession.initializeSchedule(List<CalScheduleEntry>, String);
+			ScheduleSession.addEntries(List<CalScheduleEntry>, String, boolean);
 
-			ScheduleSession.getSchedule(String, List<CalScheduleEntry>, boolean);
-			ScheduleSession.getScheduleDOM(List<CalScheduleEntry>, String);
-
-			List<CalScheduleEntry> CalService.getEntries(List<String>);
+			CalService.getEntries(List<String>);
 			CalService.getRemoteEntries(List<String>, String, String);
 			CalService.getRemoteCalendarParameters(String, String, String);
 			CalService.getCalendarProperties(String);

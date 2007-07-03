@@ -10,6 +10,23 @@ position:relative;
 	width: 49.5%;
 /*	float: left;*/
 }
+
+tr.entryListTableCaptionStyleClass{
+	background: #DDD;
+}
+
+table.entryListTableStyleClass{
+	background: #CCC;
+	margin-bottom: 5px;
+}
+td.entryListTableStyleClass{
+	padding: 5px;
+	padding-left: 3px;
+	background: #EEE;
+	
+}
+
+
 .calendarsLayerStyleClass{
 /*	width: 49.5%;
 	float: right;

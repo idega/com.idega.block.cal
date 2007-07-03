@@ -7,61 +7,80 @@ import com.idega.business.IBOSession;
 import java.rmi.RemoteException;
 
 public interface ScheduleSession extends IBOSession {
-	/**
-	 * @see com.idega.block.cal.business.ScheduleSessionBean#changeModeToDay
-	 */
-	public Document changeModeToDay(String id) throws RemoteException;
 
 	/**
-	 * @see com.idega.block.cal.business.ScheduleSessionBean#changeModeToWorkweek
+	 * @see com.idega.block.cal.business.ScheduleSessionBean#changeModeToDayAndGetScheduleDOM
 	 */
-	public Document changeModeToWorkweek(String id) throws RemoteException;
+	public Document changeModeToDayAndGetScheduleDOM(String id) throws RemoteException;
 
 	/**
-	 * @see com.idega.block.cal.business.ScheduleSessionBean#changeModeToWeek
+	 * @see com.idega.block.cal.business.ScheduleSessionBean#changeModeToWorkweekAndGetScheduleDOM
 	 */
-	public Document changeModeToWeek(String id) throws RemoteException;
+	public Document changeModeToWorkweekAndGetScheduleDOM(String id) throws RemoteException;
 
 	/**
-	 * @see com.idega.block.cal.business.ScheduleSessionBean#changeModeToMonth
+	 * @see com.idega.block.cal.business.ScheduleSessionBean#changeModeToWeekAndGetScheduleDOM
 	 */
-	public Document changeModeToMonth(String id) throws RemoteException;
+	public Document changeModeToWeekAndGetScheduleDOM(String id) throws RemoteException;
 
 	/**
-	 * @see com.idega.block.cal.business.ScheduleSessionBean#getNext
+	 * @see com.idega.block.cal.business.ScheduleSessionBean#changeModeToMonthAndGetScheduleDOM
 	 */
-	public Document getNext(String id) throws RemoteException;
+	public Document changeModeToMonthAndGetScheduleDOM(String id) throws RemoteException;
 
 	/**
-	 * @see com.idega.block.cal.business.ScheduleSessionBean#getPrevious
+	 * @see com.idega.block.cal.business.ScheduleSessionBean#switchToNextAndGetScheduleDOM
 	 */
-	public Document getPrevious(String id) throws RemoteException;
+	public Document switchToNextAndGetScheduleDOM(String id) throws RemoteException;
 
 	/**
-	 * @see com.idega.block.cal.business.ScheduleSessionBean#getSchedule
+	 * @see com.idega.block.cal.business.ScheduleSessionBean#switchToPreviousAndGetScheduleDOM
 	 */
-	public Document getSchedule(String id, List<CalScheduleEntry> result, boolean usePreviousEntries) throws RemoteException;
+	public Document switchToPreviousAndGetScheduleDOM(String id) throws RemoteException;
 
 	/**
 	 * @see com.idega.block.cal.business.ScheduleSessionBean#getScheduleDOM
 	 */
-	public Document getScheduleDOM(List<CalScheduleEntry> entries, String id) throws RemoteException;
+//	public Document getScheduleDOM(List<CalScheduleEntry> entries, String id) throws RemoteException;
+	public Document getScheduleDOM(String id) throws RemoteException;
+	/**
+	 * @see com.idega.block.cal.business.ScheduleSessionBean#changeModeToDayAndGetListOfEntries
+	 */
+	public List<CalScheduleEntry> changeModeToDayAndGetListOfEntries(String id);	
+	
+	/**
+	 * @see com.idega.block.cal.business.ScheduleSessionBean#changeModeToWorkweekAndGetListOfEntries
+	 */
+	public List<CalScheduleEntry> changeModeToWorkweekAndGetListOfEntries(String id);
 
 	/**
-	 * @see com.idega.block.cal.business.ScheduleSessionBean#initializeSchedule
+	 * @see com.idega.block.cal.business.ScheduleSessionBean#changeModeToWeekAndGetListOfEntries
 	 */
-	public int initializeSchedule(List<CalScheduleEntry> entries, String id);
+	public List<CalScheduleEntry> changeModeToWeekAndGetListOfEntries(String id);
 	
-	public List<CalScheduleEntry> changeModeToDayAndDisplayEntriesAsList(String id);	
+	/**
+	 * @see com.idega.block.cal.business.ScheduleSessionBean#changeModeToMonthAndGetListOfEntries
+	 */
+	public List<CalScheduleEntry> changeModeToMonthAndGetListOfEntries(String id);
 	
-	public List<CalScheduleEntry> changeModeToWorkweekAndDisplayEntriesAsList(String id);
-
-	public List<CalScheduleEntry> changeModeToWeekAndDisplayEntriesAsList(String id);
+	/**
+	 * @see com.idega.block.cal.business.ScheduleSessionBean#switchToPreviousAndGetListOfEntries
+	 */
+	public List<CalScheduleEntry> switchToPreviousAndGetListOfEntries(String scheduleId);
 	
-	public List<CalScheduleEntry> changeModeToMonthAndDisplayEntriesAsList(String id);
+	/**
+	 * @see com.idega.block.cal.business.ScheduleSessionBean#switchToNextAndGetListOfEntries
+	 */
+	public List<CalScheduleEntry> switchToNextAndGetListOfEntries(String scheduleId);
 	
-	public List<CalScheduleEntry> getPreviousAsList(String scheduleId);
+	/**
+	 * @see com.idega.block.cal.business.ScheduleSessionBean#addEntries
+	 */
+	public int addEntries(List<CalScheduleEntry> entries, String id, boolean clearPreviousEntries);
 	
-	public List<CalScheduleEntry> getNextAsList(String scheduleId);
+	/**
+	 * @see com.idega.block.cal.business.ScheduleSessionBean#getListOfEntries
+	 */
+	public List<CalScheduleEntry> getListOfEntries(String id);
 }
 

@@ -13,19 +13,66 @@ position:relative;
 
 tr.entryListTableCaptionStyleClass{
 	background: #DDD;
+/*	visibility: hidden;*/
+/*	display: none;*/
+		
 }
 
 table.entryListTableStyleClass{
 	background: #CCC;
 	margin-bottom: 5px;
 }
+
 td.entryListTableStyleClass{
 	padding: 5px;
 	padding-left: 3px;
 	background: #EEE;
-	
 }
 
+div.entryInfoStyleClass{
+	background: #DDD;
+	position: absolute;
+	display: table;
+}
+
+div.entryInfoRow{
+	display: table-row;
+}
+div.entryInfoCell{
+	display: table-cell;
+	background: #DDD;
+	padding: 3px;
+	margin: 1px;
+	border: 1px solid #EEE; 	
+/*	width: 100px;*/
+}
+
+
+div.entryListCaptionStyleClass{
+	display: table-row;
+	background: #DDD;
+	display:none;
+
+}
+
+div.entryListRowStyleClass{
+	display: table-row;
+}
+
+div.entryListElementStyleClass{
+	display: table-cell;
+	background: #EEE;
+	padding: 3px;
+	margin: 1px;
+	border: 1px solid #DDD; 
+/*	width:180px;
+*/
+}
+
+div.entryListTableStyleClass{
+	display: table;
+	background: #DDD;
+}
 
 .calendarsLayerStyleClass{
 /*	width: 49.5%;

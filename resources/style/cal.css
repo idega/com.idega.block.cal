@@ -11,36 +11,65 @@ position:relative;
 /*	float: left;*/
 }
 
-tr.entryListTableCaptionStyleClass{
-	background: #DDD;
-/*	visibility: hidden;*/
+div.entryListElementTime{
 /*	display: none;*/
-		
+/*	visibility: hidden;*/
+	display: none;
 }
-
-table.entryListTableStyleClass{
+div.entryListEvenRow{
 	background: #CCC;
-	margin-bottom: 5px;
+	padding: 2px;
+	display: block;
 }
-
-td.entryListTableStyleClass{
-	padding: 5px;
-	padding-left: 3px;
+div.entryListOddRow{
 	background: #EEE;
+	padding: 2px;	
+	display: block;	
 }
 
-div.entryInfoStyleClass{
-	background: #DDD;
+div.entryInfo{
+/*	background: #DDD;*/
 	position: absolute;
-	display: table;
+	display: block;
+	width: 200px;
+}
+div.entryInfoHeader{
+	background: #AAA;
+	display: block;
+}
+
+div.entryInfoBody{
+	background: #EEE;
 }
 
 div.entryInfoRow{
 	display: table-row;
 }
+div.entryInfoName{
+	text-align: center;
+	font-size:medium;
+	padding: 4px;
+}
+
+div.entryInfoDescription{
+	padding: 4px;
+}
+div.entryInfoType{
+	display: none;
+}
+
+div.entryInfoDate{
+	display: inline;
+	padding: 2px;
+}
+div.entryInfoTime{
+	display: inline;
+	padding: 2px;
+}
+
 div.entryInfoCell{
 	display: table-cell;
-	background: #DDD;
+/*	background: #DDD;*/
 	padding: 3px;
 	margin: 1px;
 	border: 1px solid #EEE; 	
@@ -48,28 +77,28 @@ div.entryInfoCell{
 }
 
 
-div.entryListCaptionStyleClass{
+div.entryListCaption{
 	display: table-row;
-	background: #DDD;
+	background: #CCC;
 	display:none;
 
 }
-
+/*
 div.entryListRowStyleClass{
 	display: table-row;
 }
-
-div.entryListElementStyleClass{
-	display: table-cell;
-	background: #EEE;
+*/
+div.entryListElement{
+	display: inline;
+/*	background: #EEE;*/
 	padding: 3px;
 	margin: 1px;
-	border: 1px solid #DDD; 
+/*	border: 1px solid #DDD; */
 /*	width:180px;
 */
 }
 
-div.entryListTableStyleClass{
+div.entryList{
 	display: table;
 	background: #DDD;
 }

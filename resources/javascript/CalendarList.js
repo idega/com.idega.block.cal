@@ -24,13 +24,21 @@ var entryTime = 'Time';
 var entryDate = 'Date';
 var entryDescription = 'Description';
 
-var entryListTableStyleClass = 'entryListTableStyleClass';
-var entryListCaptionStyleClass = 'entryListCaptionStyleClass';
-var entryListRowStyleClass = 'entryListRowStyleClass';
-var entryListElementStyleClass = 'entryListElementStyleClass';
-var entryInfoStyleClass = 'entryInfoStyleClass';
-var entryInfoRow = 'entryInfoRow';
-var entryInfoCell = 'entryInfoCell';
+var entryListTableStyleClass = 'entryList';
+var entryListCaptionStyleClass = 'entryListCaption';
+//var entryListRowStyleClass = 'entryListRow';
+var entryListEvenRowStyleClass = 'entryListEvenRow';
+var entryListOddRowStyleClass = 'entryListOddRow';
+var entryListElementStyleClass = 'entryListElement';
+var entryInfoStyleClass = 'entryInfo';
+//var entryInfoRow = 'entryInfoRow';
+//var entryInfoCell = 'entryInfoCell';
+var entryListElementTimeStyleClass = 'entryListElementTime';
+var entryInfoNameStyleClass = 'entryInfoName';
+var entryInfoDateStyleClass = 'entryInfoDate';
+var entryInfoTimeStyleClass = 'entryInfoTime';
+var entryInfoTypeStyleClass = 'entryInfoType';
+var entryInfoDescriptionStyleClass = 'entryInfoDescription';
 
 var calendarProperties = null;
 
@@ -359,7 +367,12 @@ function displayCalendarAttributes(calendars){
 		for(var index=0; index<entries.length; index++) {
 			
 			var listRow=document.createElement('div');
-			listRow.setAttribute('class', entryListRowStyleClass);
+			if(index % 2 == 0){
+				listRow.setAttribute('class', entryListEvenRowStyleClass);
+			}
+			else{
+				listRow.setAttribute('class', entryListOddRowStyleClass);				
+			}
 			listRow.setAttribute('id', index);
 /*			
 			var tdNumber=document.createElement('td');
@@ -370,7 +383,7 @@ function displayCalendarAttributes(calendars){
 			var dateOfEntry=document.createElement('div');		
 			dateOfEntry.setAttribute('class',entryListElementStyleClass);
 			var timeOfEntry=document.createElement('div');	
-			timeOfEntry.setAttribute('class',entryListElementStyleClass);
+			timeOfEntry.setAttribute('class',entryListElementTimeStyleClass);
 			
 //			var endDateOfEntry=document.createElement('div');	
 //			endDateOfEntry.setAttribute('class',entryListElementStyleClass);
@@ -393,9 +406,9 @@ function displayCalendarAttributes(calendars){
 //			typeOfEntry.appendChild(txtType);		
 					  	
 //			tr.appendChild(tdNumber);
-			listRow.appendChild(nameOfEntry);
 			listRow.appendChild(dateOfEntry);
 			listRow.appendChild(timeOfEntry);
+			listRow.appendChild(nameOfEntry);
 //			listRow.appendChild(endDateOfEntry);
 //			listRow.appendChild(typeOfEntry);		
 			scheduleList.appendChild(listRow);
@@ -411,30 +424,30 @@ function displayCalendarAttributes(calendars){
 		var txtTime=document.createTextNode(entryTimeValue+'-'+entryEndTimeValue);	
 		var txtType=document.createTextNode(entryTypeValue);		
 		var txtDescription=document.createTextNode(entryDescriptionValue);		
-
+/*
 		var txtNameCaption=document.createTextNode(entryName+':');
 		var txtDateCaption=document.createTextNode(entryDate+':');		
 		var txtTimeCaption=document.createTextNode(entryTime+':');	
 		var txtTypeCaption=document.createTextNode(entryType+':');	
 		var txtDescriptionCaption=document.createTextNode(entryDescription+':');	
-
+*/
 		
 		var nameOfEntry=document.createElement('div');
 		nameOfEntry.appendChild(txtName);
-		nameOfEntry.setAttribute('class', entryInfoCell);
+		nameOfEntry.setAttribute('class', entryInfoNameStyleClass);
 		var dateOfEntry=document.createElement('div');			
 		dateOfEntry.appendChild(txtDate);			
-		dateOfEntry.setAttribute('class', entryInfoCell);		
+		dateOfEntry.setAttribute('class', entryInfoDateStyleClass);		
 		var timeOfEntry=document.createElement('div');			
 		timeOfEntry.appendChild(txtTime);			
-		timeOfEntry.setAttribute('class', entryInfoCell);
+		timeOfEntry.setAttribute('class', entryInfoTimeStyleClass);
 		var typeOfEntry=document.createElement('div');			
 		typeOfEntry.appendChild(txtType);			
-		typeOfEntry.setAttribute('class', entryInfoCell);
+		typeOfEntry.setAttribute('class', entryInfoTypeStyleClass);
 		var descriptionOfEntry=document.createElement('div');			
 		descriptionOfEntry.appendChild(txtDescription);			
-		descriptionOfEntry.setAttribute('class', entryInfoCell);
-
+		descriptionOfEntry.setAttribute('class', entryInfoDescriptionStyleClass);
+/*
 		var nameCaption=document.createElement('div');
 		nameCaption.appendChild(txtNameCaption);
 		nameCaption.setAttribute('class', entryInfoCell);
@@ -450,7 +463,8 @@ function displayCalendarAttributes(calendars){
 		var descriptionCaption=document.createElement('div');			
 		descriptionCaption.appendChild(txtDescriptionCaption);			
 		descriptionCaption.setAttribute('class', entryInfoCell);
-		
+*/		
+/*
 		var entryInfoNameRow = document.createElement('div');
 		entryInfoNameRow.setAttribute('class', entryInfoRow);
 		entryInfoNameRow.appendChild(nameCaption);
@@ -472,53 +486,71 @@ function displayCalendarAttributes(calendars){
 		entryInfoDescriptionRow.setAttribute('class', entryInfoRow);
 		entryInfoDescriptionRow.appendChild(descriptionCaption);
 		entryInfoDescriptionRow.appendChild(descriptionOfEntry);
-								
-		entryInfo.appendChild(entryInfoNameRow);
-		entryInfo.appendChild(entryInfoDateRow);
-		entryInfo.appendChild(entryInfoTimeRow);
-		entryInfo.appendChild(entryInfoTypeRow);
-		entryInfo.appendChild(entryInfoDescriptionRow);
+*/								
+
+		var entryInfoHeader = document.createElement('div');
+		entryInfoHeader.setAttribute('class', 'entryInfoHeader');
+		var entryInfoBody = document.createElement('div');
+		entryInfoBody.setAttribute('class', 'entryInfoBody');
+		
+		entryInfoHeader.appendChild(dateOfEntry);
+		entryInfoHeader.appendChild(timeOfEntry);
+		entryInfoHeader.appendChild(nameOfEntry);
+		entryInfoHeader.appendChild(typeOfEntry);
+		entryInfoBody.appendChild(descriptionOfEntry);
+		
+		entryInfo.appendChild(entryInfoHeader);
+		entryInfo.appendChild(entryInfoBody);
 			
 		document.body.appendChild(entryInfo);
 		entryInfo.setAttribute('class', entryInfoStyleClass);
 	}
 
 	function setBehaviourOnListRows(){
-		$$('div.'+entryListRowStyleClass).each(
+		$$('div.'+entryListEvenRowStyleClass).each(
 			function(element) {
-//				entryInfo.
 				element.onmouseover = function(e) {
-					createInfoTable(entriesToList[element.id].entryName, 
-						entriesToList[element.id].entryDate.substring(0,10), 
-						entriesToList[element.id].entryDate.substring(11,16),
-						entriesToList[element.id].entryEndDate.substring(11,16),
-						entriesToList[element.id].entryTypeName,
-						entriesToList[element.id].entryDescription
-					);
-
-					var currentRow = null;
-					var entryId = element.id;
-					currentRow = document.getElementById(element.id);
-					
-					entryInfo.style.display = 'block';
-					dragDrop_x = e.clientX/1 + document.body.scrollLeft;
-					dragDrop_y = e.clientY/1 + document.documentElement.scrollTop;	
-
-					dragDrop_x = 400;
-					
-					entryInfo.style.left = dragDrop_x + 'px';
-					entryInfo.style.top = dragDrop_y + 'px';				
-					
-//					entryInfo.appendChild(document.createTextNode(entryId));
-//				drawInfoTable(e); 
-
+					displayEntryInfo(element, e);
 				}
 				element.onmouseout = function(){
-//					entryInfo.style.display = 'none';
 					removeChildren(entryInfo);
 				}
 	    	}
 	    );	
+		$$('div.'+entryListOddRowStyleClass).each(
+			function(element) {
+				element.onmouseover = function(e) {
+					displayEntryInfo(element, e);
+				}
+				element.onmouseout = function(){
+					removeChildren(entryInfo);
+				}
+	    	}
+	    );	
+
+	}
+
+	function displayEntryInfo(element, e){
+		createInfoTable(entriesToList[element.id].entryName, 
+			entriesToList[element.id].entryDate.substring(0,10), 
+			entriesToList[element.id].entryDate.substring(11,16),
+			entriesToList[element.id].entryEndDate.substring(11,16),
+			entriesToList[element.id].entryTypeName,
+			entriesToList[element.id].entryDescription
+		);
+
+		var currentRow = null;
+		var entryId = element.id;
+		currentRow = document.getElementById(element.id);
+					
+		entryInfo.style.display = 'block';
+		dragDrop_x = e.clientX/1 + document.body.scrollLeft;
+		dragDrop_y = e.clientY/1 + document.documentElement.scrollTop;	
+
+		dragDrop_x = 400;
+					
+		entryInfo.style.left = dragDrop_x + 'px';
+		entryInfo.style.top = dragDrop_y + 'px';		
 	}
 
 	function drawInfoTable(e){

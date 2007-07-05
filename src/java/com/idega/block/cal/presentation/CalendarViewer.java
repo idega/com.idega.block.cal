@@ -27,8 +27,8 @@ public class CalendarViewer extends Block{
 	private String password = null;	
 	
 	private boolean showEntriesAsList = false;
-	private boolean showMenu = false;
-	private boolean showPreviousAndNext = false;
+	private boolean hideMenu = false;
+	private boolean hidePreviousAndNext = false;
 	
 	private List<String> uniqueIds = null;
 	
@@ -124,8 +124,8 @@ public class CalendarViewer extends Block{
 				"");
 			action.append("scheduleId = '"+this.getId()+"';");
 			action.append("showEntriesAsList = "+showEntriesAsList+";");
-			action.append("showMenu = "+showMenu+";");
-			action.append("showPreviousAndNext = "+showPreviousAndNext+";");
+			action.append("hideMenu = "+hideMenu+";");
+			action.append("hidePreviousAndNext = "+hidePreviousAndNext+";");
 			action.append("getCalendarProperties();");
 			action.append("});");
 			
@@ -146,12 +146,12 @@ public class CalendarViewer extends Block{
 		this.showEntriesAsList = showEntriesAsList;
 	}
 
-	public void setShowMenu(boolean showMenu){
-		this.showMenu = showMenu;
+	public void setHideMenu(boolean hideMenu){
+		this.hideMenu = hideMenu;
 	}
 	
-	public void setShowPreviousAndNext(boolean showPreviousAndNext){
-		this.showPreviousAndNext = showPreviousAndNext;
+	public void setHidePreviousAndNext(boolean hidePreviousAndNext){
+		this.hidePreviousAndNext = hidePreviousAndNext;
 	}
 	
 	

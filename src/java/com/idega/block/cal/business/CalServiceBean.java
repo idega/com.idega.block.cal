@@ -237,6 +237,7 @@ public class CalServiceBean implements CalService {
 				calEntry.setEntryTime(getTime(entry.getStringColumnValue("CAL_ENTRY_END_DATE")));
 				calEntry.setEntryTypeName(entry.getStringColumnValue("CAL_TYPE_NAME"));
 				calEntry.setRepeat(entry.getStringColumnValue("CAL_ENTRY_REPEAT"));
+				calEntry.setEntryDescription(entry.getStringColumnValue("CAL_ENTRY_DESCRIPTION"));
 				result.add(calEntry);
 //				result.add(new ScheduleEntry(entry.getStringColumnValue("CAL_ENTRY_NAME"), entry.getStringColumnValue("CAL_ENTRY_DATE"), entry.getStringColumnValue("CAL_ENTRY_END_DATE"), entry.getStringColumnValue("CAL_ENTRY_REPEAT"), entry.getStringColumnValue("CAL_TYPE_NAME")));
 			}

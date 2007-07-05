@@ -8,6 +8,8 @@ public class CalScheduleEntry {
 	private String entryEndTime = null;
 	private String repeat = null;
 	private String entryTypeName = null;
+	private String entryDescription = null;
+	
 	public String getEntryDate() {
 		return entryDate;
 	}
@@ -49,5 +51,11 @@ public class CalScheduleEntry {
 	}
 	public void setRepeat(String repeat) {
 		this.repeat = repeat;
+	}
+	public String getEntryDescription() {
+		return entryDescription;
+	}
+	public void setEntryDescription(String entryDescription) {
+		this.entryDescription = entryDescription;
 	}
 }

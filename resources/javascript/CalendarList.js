@@ -12,81 +12,43 @@ var groups_and_calendar_chooser_helper = null;
 var loadingMsg = 'Loading...';
 
 var showEntriesAsList = false;
-var showMenu = false;
-var showPreviousAndNext = false;
+var hideMenu = false;
+var hidePreviousAndNext = false;
+
 var entryNumber = 'Number';
 var entryName = 'Name';
-var entryDate = 'Begin date';
+var entryBeginDate = 'Begin date';
 var entryEndDate = 'End date';
 var entryType = 'Type';
+var entryTime = 'Time';
+var entryDate = 'Date';
+var entryDescription = 'Description';
+
 var entryListTableStyleClass = 'entryListTableStyleClass';
-var entryListTableCaptionStyleClass = 'entryListTableCaptionStyleClass';
+var entryListCaptionStyleClass = 'entryListCaptionStyleClass';
+var entryListRowStyleClass = 'entryListRowStyleClass';
+var entryListElementStyleClass = 'entryListElementStyleClass';
+var entryInfoStyleClass = 'entryInfoStyleClass';
+var entryInfoRow = 'entryInfoRow';
+var entryInfoCell = 'entryInfoCell';
+
 var calendarProperties = null;
 
 var entriesToCalendar = null;
-var entriesPackageSize = 10;
+var entriesToList = null;
+var entriesPackageSize = 5;
 var packageIndex = 0;
 var packageEndIndex = entriesPackageSize;
 var noEntries = 'There are no entries to display';
-/*
-function setCalendars(calendars, id){
-	var parentOfList = document.getElementById(id);
-	var ledgersList = document.createElement('div');
-	var entryTypesList = document.createElement('div');
-	
-	var ledgersListCaption = document.createTextNode('Ledgers: '); 					
-	ledgersList.appendChild(ledgersListCaption);
-	var typesListCaption = document.createTextNode('Types: '); 					
-	entryTypesList.appendChild(typesListCaption);
-		
-	var element = null;
-	for (var i = 0; i < calendars.length; i++){
-		element = calendars[i];
-		if(element.type == 'L'){
-			var ledgerElement = document.createElement('input');
-			ledgerElement.setAttribute('id', element.type + element.elementId);						
-			ledgerElement.setAttribute('elementId',element.elementId);			
-			ledgerElement.setAttribute('name',element.name);
-			ledgerElement.setAttribute('type','checkbox');		
-			var ledgerCaption = document.createTextNode(element.name); 
-			ledgersList.appendChild(ledgerElement);
-			ledgersList.appendChild(ledgerCaption);
-			
-			arrayOfParameters.push(element.elementId + element.type);
-		}	
-		if(element.type == 'T'){
-			ledgerElement.setAttribute('id',element.elementId + element.type);									
-			var typeElement = document.createElement('input');
-			typeElement.setAttribute('elementId',element[0]);			
-			typeElement.setAttribute('name',element[1]);
-			typeElement.setAttribute('type','checkbox');				
-			var typeCaption = document.createTextNode(element.name); 					
-			entryTypesList.appendChild(typeElement);
-			entryTypesList.appendChild(typeCaption);
-			
-			arrayOfParameters.push(element.elementId + element.type);			
-		}	
-	}
+var entryInfo = document.createElement('div');
 
-	parentOfList.appendChild(ledgersList);
-//	parentOfList.appendChild(typesListCaption);	
-	parentOfList.appendChild(entryTypesList);	
-}
-*/
 function displayCalendarAttributes(calendars){
 	closeLoadingMessage();
 	arrayOfParameters = new Array();	
 	var parentOfList = document.getElementById('calendar_list_container_id');
-//	parentOfList.setAttribute('class','calendarChooserStyleClass');
 	removeChildren(parentOfList);
 	var ledgersList = document.createElement('div');
 	var entryTypesList = document.createElement('div');
-/*	
-	var ledgersListCaption = document.createTextNode('Ledgers: '); 					
-	ledgersList.appendChild(ledgersListCaption);
-	var typesListCaption = document.createTextNode('Types: '); 					
-	entryTypesList.appendChild(typesListCaption);
-*/		
 	var tableOfParameters = document.createElement('table');
 	var trLedgers = document.createElement('tr');
 	var trTypes = document.createElement('tr');
@@ -154,13 +116,7 @@ function displayCalendarAttributes(calendars){
 		getEntriesButton.setAttribute('type', 'button');
 		getEntriesButton.setAttribute('class', 'calendarButtonStyleClass');	
 		getEntriesButton.setAttribute('value', 'Get entries');		
-/*
-	parentOfList.appendChild(ledgersList);
-	parentOfList.appendChild(entryTypesList);
-*/
 	parentOfList.appendChild(tableOfParameters);
-//	if(getEntriesButton)
-//		parentOfList.appendChild(getEntriesButton);	
 	addButtonBehaviour();
 	
 }
@@ -191,44 +147,14 @@ function displayCalendarAttributes(calendars){
 	    			if(element.checked == false){
 						arrayOfCheckedCalendarParameters.remove(element.id);
 	    				groups_and_calendar_chooser_helper.removeAdvancedProperty(element.id);
-//	    				groups_and_calendar_chooser_helper.removeAdvancedProperty('calendarAttributes');
-//	    				groups_and_calendar_chooser_helper.addAdvancedProperty('calendarAttributes', arrayOfCheckedCalendarParameters);	    				
 	    			}
 	    			else{
 						arrayOfCheckedCalendarParameters.push(element.id);
 	    				groups_and_calendar_chooser_helper.addAdvancedProperty(element.id, element.id);
-//	    				groups_and_calendar_chooser_helper.removeAdvancedProperty('calendarAttributes');
-//	    				groups_and_calendar_chooser_helper.addAdvancedProperty('calendarAttributes', arrayOfCheckedCalendarParameters);	    				
 	    			}
 	    		}
 	    	}
 	    );
-/*    	
-    	var groupsAndCalendarsLayer = document.getElementById('groupsAndCalendarsLayerId').parentNode;
-    	var buttonId = null;
-    	for(var index=0; index<groupsAndCalendarsLayer.getElementsByTagName('input').length; index++) {
-    		var element = groupsAndCalendarsLayer.getElementsByTagName('input')[index];
-    		if (element.name.toString() == 'save'){
-	    		buttonId = element.id;
-    		}
-    	}
-    	
-    	$(buttonId).addEvent('click', function(e) {
-			arrayOfCheckedParameters = new Array();
-			for(var i = 0; i < arrayOfParameters.length; i++){					
-				var element = document.getElementById(arrayOfParameters[i]);
-				if (element.checked)
-					arrayOfCheckedParameters.push(arrayOfParameters[i]);
-			}
-
-			groups_and_calendar_chooser_helper = new ChooserHelper();
-			groups_and_calendar_chooser_helper.removeAllAdvancedProperties();
-			for(var index=0; index<arrayOfCheckedParameters.length; index++) {
-				groups_and_calendar_chooser_helper.addAdvancedProperty(arrayOfCheckedParameters[index].id, arrayOfCheckedParameters[index]);
-			}
-			ScheduleSession.setCheckedParameters(scheduleId, arrayOfCheckedParameters, displayEntries);
-    	});
-  */  	
 	};
 	
 	function addBehaviour(){
@@ -240,13 +166,6 @@ function displayCalendarAttributes(calendars){
     	}
     	);
 	}	
-/*	
-			this.entryName = entryName;
-		this.entryDate = entryDate;
-		this.entryEndDate = entryEndDate;
-		this.repeat = repeat;
-		this.entryTypeName = entryTypeName;
-*/ 
 	
 	function getScheduleButtons(){
 		var scheduleNextButton = document.createElement('input');
@@ -254,46 +173,34 @@ function displayCalendarAttributes(calendars){
 		scheduleNextButton.setAttribute('class', 'scheduleNextButtonStyleClass');	
 		scheduleNextButton.setAttribute('value', 'Next');
 		
-//		scheduleNextButton.setAttribute('onclick', 'ScheduleSession.getNext(scheduleId, displayEntries)');	
-		
 		var schedulePreviousButton = document.createElement('input');
 		schedulePreviousButton.setAttribute('type', 'button');
 		schedulePreviousButton.setAttribute('class', 'schedulePreviousButtonStyleClass');	
 		schedulePreviousButton.setAttribute('value', 'Previous');	
-		
-//		schedulePreviousButton.setAttribute('onclick', 'ScheduleSession.getPrevious(scheduleId, displayEntries)');	
 		
 		var scheduleDayButton = document.createElement('input');
 		scheduleDayButton.setAttribute('type', 'button');
 		scheduleDayButton.setAttribute('class', 'scheduleDayButtonStyleClass');	
 		scheduleDayButton.setAttribute('value', 'Day');	
 		
-//		scheduleDayButton.setAttribute('onclick', 'ScheduleSession.changeModeToDay(scheduleId, displayEntries)');	
-		
 		var scheduleWeekButton = document.createElement('input');
 		scheduleWeekButton.setAttribute('type', 'button');
 		scheduleWeekButton.setAttribute('class', 'scheduleWeekButtonStyleClass');	
 		scheduleWeekButton.setAttribute('value', 'Week');	
-		
-//		scheduleWeekButton.setAttribute('onclick', 'ScheduleSession.changeModeToWeek(scheduleId, displayEntries)');	
 		
 		var scheduleWorkweekButton = document.createElement('input');
 		scheduleWorkweekButton.setAttribute('type', 'button');
 		scheduleWorkweekButton.setAttribute('class', 'scheduleWorkweekButtonStyleClass');	
 		scheduleWorkweekButton.setAttribute('value', 'Workweek');	
 		
-//		scheduleWorkweekButton.setAttribute('onclick', 'ScheduleSession.changeModeToWorkweek(scheduleId, displayEntries)');	
-		
 		var scheduleMonthButton = document.createElement('input');
 		scheduleMonthButton.setAttribute('type', 'button');
 		scheduleMonthButton.setAttribute('class', 'scheduleMonthButtonStyleClass');	
 		scheduleMonthButton.setAttribute('value', 'Month');	
 
-//		scheduleMonthButton.setAttribute('onclick', 'ScheduleSession.changeModeToMonth(scheduleId, displayEntries)');	
-
 		var scheduleButtonsLayer = document.createElement('div');
-		if(showMenu == true){
-			if (showPreviousAndNext == true){
+		if(hideMenu == false){
+			if (hidePreviousAndNext == false){
 				scheduleButtonsLayer.appendChild(schedulePreviousButton);
 				scheduleButtonsLayer.appendChild(scheduleNextButton);				
 			}
@@ -307,7 +214,6 @@ function displayCalendarAttributes(calendars){
 
 	function getNext(){
 		if(showEntriesAsList){
-//			ScheduleSession.getNextAsList(scheduleId, displayEntriesAsList);
 			ScheduleSession.switchToNextAndGetListOfEntries(scheduleId, displayEntriesAsList);
 		}	
 		else{
@@ -368,7 +274,6 @@ function displayCalendarAttributes(calendars){
 		else{
 			scheduleEntries = document.createElement('div');
 			scheduleEntries.setAttribute('id',scheduleEntryTableId);
-//			scheduleEntries.appendChild(result);
 			scheduleLayer.appendChild(scheduleEntries);
 			scheduleLayer.appendChild(getScheduleButtons());		
 			setBehaviourToScheduleButtons();
@@ -378,6 +283,7 @@ function displayCalendarAttributes(calendars){
 	}
 	
 	function displayEntriesAsList(entries){	
+		entriesToList = entries;
 		var scheduleLayer = document.getElementById('calendarViewerScheduleId');
 		var scheduleEntries = document.getElementById(scheduleEntryTableId);
 		if(scheduleEntries){
@@ -386,7 +292,6 @@ function displayCalendarAttributes(calendars){
 		else{
 			scheduleEntries = document.createElement('div');
 			scheduleEntries.setAttribute('id',scheduleEntryTableId);
-//			scheduleEntries.appendChild(result);
 			scheduleLayer.appendChild(scheduleEntries);
 			scheduleLayer.appendChild(getScheduleButtons());
 			setBehaviourToScheduleButtons();
@@ -396,102 +301,241 @@ function displayCalendarAttributes(calendars){
 			scheduleEntries.appendChild(txtEntries);
 			return;
 		}
-//		scheduleEntries = document.createElement('div');
-//		scheduleEntries.setAttribute('id',scheduleEntryTableId);
 		
-		var scheduleTable = document.createElement('table');
-		scheduleTable.setAttribute('class', entryListTableStyleClass);
+//		var scheduleTable = document.createElement('table');
+		var scheduleList = document.createElement('div');
+		scheduleList.setAttribute('class', entryListTableStyleClass);
 		
 		
-		var tr=document.createElement('tr');
-//		tr.setAttribute('class',entryListTableCaptionStyleClass)
-		var tdNumber=document.createElement('td');
-		tdNumber.setAttribute('class',entryListTableCaptionStyleClass);
-		var tdName=document.createElement('td');
-		tdName.setAttribute('class',entryListTableCaptionStyleClass);		
-		var tdDate=document.createElement('td');		
-		tdDate.setAttribute('class',entryListTableCaptionStyleClass);		
-		var tdEndDate=document.createElement('td');		
-		tdEndDate.setAttribute('class',entryListTableCaptionStyleClass);		
-		var tdType=document.createElement('td');	
-		tdType.setAttribute('class',entryListTableCaptionStyleClass);
-		
-		var txtNumber=document.createTextNode(entryNumber);
-		var txtName=document.createTextNode(entryName);
-		var txtDate=document.createTextNode(entryDate);		
-		var txtEndDate=document.createTextNode(entryEndDate);		
-		var txtType=document.createTextNode(entryType);	
-							
-		tdNumber.appendChild(txtNumber);
-		tdName.appendChild(txtName);
-		tdDate.appendChild(txtDate);
-		tdEndDate.appendChild(txtEndDate);
-		tdType.appendChild(txtType);		
-				  	
-		tr.appendChild(tdNumber);
-		tr.appendChild(tdName);
-		tr.appendChild(tdDate);
-		tr.appendChild(tdEndDate);
-		tr.appendChild(tdType);		
-		scheduleTable.appendChild(tr);
-		
-		for(var index=0; index<entries.length; index++) {
-			
-			var tr=document.createElement('tr');
-			var tdNumber=document.createElement('td');
-			tdNumber.setAttribute('class',entryListTableStyleClass);
-			var tdName=document.createElement('td');
-			tdName.setAttribute('class',entryListTableStyleClass);
-			var tdDate=document.createElement('td');		
-			tdDate.setAttribute('class',entryListTableStyleClass);
-			var tdEndDate=document.createElement('td');		
-			tdEndDate.setAttribute('class',entryListTableStyleClass);
-			var tdType=document.createElement('td');	
-			tdType.setAttribute('class',entryListTableStyleClass);
-			
-			var txtNumber=document.createTextNode(index+1);
-			var txtName=document.createTextNode(entries[index].entryName);
-			var txtDate=document.createTextNode(entries[index].entryDate.substring(0,16));		
-			var txtEndDate=document.createTextNode(entries[index].entryEndDate.substring(0,16));		
-			var txtType=document.createTextNode(entries[index].entryTypeName);	
-			
-			tdNumber.appendChild(txtNumber);
-			tdName.appendChild(txtName);
-			tdDate.appendChild(txtDate);
-			tdEndDate.appendChild(txtEndDate);
-			tdType.appendChild(txtType);		
-					  	
-			tr.appendChild(tdNumber);
-			tr.appendChild(tdName);
-			tr.appendChild(tdDate);
-			tr.appendChild(tdEndDate);
-			tr.appendChild(tdType);		
-			scheduleTable.appendChild(tr);
-		}
+//		var tr=document.createElement('tr');
+//		tr.setAttribute('class',entryListTableCaptionStyleClass);	
 
-		scheduleEntries.appendChild(scheduleTable);
-		closeLoadingMessage();
-//		scheduleEntries.appendChild(scheduleTable);
-		
+		var listCaptionRow = document.createElement('div');
+		listCaptionRow.setAttribute('class', entryListCaptionStyleClass);
 		
 /*		
-		  	td.appendChild(tdText);  					// - put the text node in the table cell
-		  	tr.appendChild(td); 						// - put the cell into the row
-		  	tempTable.appendChild(tr); 	
-		  	rootUl.appendChild(tempTable);		
+		var tdNumber=document.createElement('td');
+		tdNumber.setAttribute('class',entryListTableCaptionStyleClass);
 */		
-	}
-/*	
-	function getEmptySchedule(){
-		ScheduleSession.setCheckedParameters(new Array(), displayEntries);
-	}
-*/
+		var nameOfEntry=document.createElement('div');
+		nameOfEntry.setAttribute('class',entryListElementStyleClass);		
+		var dateOfEntry=document.createElement('div');
+		dateOfEntry.setAttribute('class',entryListElementStyleClass);		
+//		var endDateOfEntry=document.createElement('div');
+//		endDateOfEntry.setAttribute('class',entryListElementStyleClass);		
+//		var typeOfEntry=document.createElement('div');	
+//		typeOfEntry.setAttribute('class',entryListElementStyleClass);
+		var timeOfEntry=document.createElement('div');
+		timeOfEntry.setAttribute('class',entryListElementStyleClass);
+		
+//		var txtNumber=document.createTextNode(entryNumber);
+		var txtName=document.createTextNode(entryName);
+		var txtDate=document.createTextNode(entryDate);		
+//		var txtEndDate=document.createTextNode(entryEndDate);		
+//		var txtType=document.createTextNode(entryType);	
+		var txtTime=document.createTextNode(entryTime);	
+							
+//		tdNumber.appendChild(txtNumber);
+		nameOfEntry.appendChild(txtName);
+		dateOfEntry.appendChild(txtDate);
+		timeOfEntry.appendChild(txtTime);		
+//		endDateOfEntry.appendChild(txtEndDate);
+//		typeOfEntry.appendChild(txtType);		
+				  	
+//		tr.appendChild(tdNumber);
 /*
-	function getSchedule(id, array){
-		scheduleId = id;
-		ScheduleSession.setCheckedParameters(id, array, displayEntries);
+		listCaptionRow.appendChild(nameOfEntry);
+		listCaptionRow.appendChild(dateOfEntry);
+		listCaptionRow.appendChild(endDateOfEntry);
+		listCaptionRow.appendChild(typeOfEntry);		
+*/
+		listCaptionRow.appendChild(dateOfEntry);
+		listCaptionRow.appendChild(timeOfEntry);
+		listCaptionRow.appendChild(nameOfEntry);
+
+
+		scheduleList.appendChild(listCaptionRow);
+		testTable = listCaptionRow;
+		for(var index=0; index<entries.length; index++) {
+			
+			var listRow=document.createElement('div');
+			listRow.setAttribute('class', entryListRowStyleClass);
+			listRow.setAttribute('id', index);
+/*			
+			var tdNumber=document.createElement('td');
+			tdNumber.setAttribute('class',entryListTableStyleClass);
+*/
+			var nameOfEntry=document.createElement('div');
+			nameOfEntry.setAttribute('class',entryListElementStyleClass);
+			var dateOfEntry=document.createElement('div');		
+			dateOfEntry.setAttribute('class',entryListElementStyleClass);
+			var timeOfEntry=document.createElement('div');	
+			timeOfEntry.setAttribute('class',entryListElementStyleClass);
+			
+//			var endDateOfEntry=document.createElement('div');	
+//			endDateOfEntry.setAttribute('class',entryListElementStyleClass);
+//			var typeOfEntry=document.createElement('div');	
+//			typeOfEntry.setAttribute('class',entryListElementStyleClass);
+			
+//			var txtNumber=document.createTextNode(index+1);
+			var txtName=document.createTextNode(entries[index].entryName);
+			var txtDate=document.createTextNode(entries[index].entryDate.substring(0,10));		
+			var txtTime=document.createTextNode(entries[index].entryDate.substring(11,16)+'-'+
+				entries[index].entryEndDate.substring(11,16));	
+//			var txtEndDate=document.createTextNode(entries[index].entryEndDate.substring(0,16));		
+//			var txtType=document.createTextNode(entries[index].entryTypeName);	
+			
+//			tdNumber.appendChild(txtNumber);
+			nameOfEntry.appendChild(txtName);
+			dateOfEntry.appendChild(txtDate);
+			timeOfEntry.appendChild(txtTime);		
+//			endDateOfEntry.appendChild(txtEndDate);
+//			typeOfEntry.appendChild(txtType);		
+					  	
+//			tr.appendChild(tdNumber);
+			listRow.appendChild(nameOfEntry);
+			listRow.appendChild(dateOfEntry);
+			listRow.appendChild(timeOfEntry);
+//			listRow.appendChild(endDateOfEntry);
+//			listRow.appendChild(typeOfEntry);		
+			scheduleList.appendChild(listRow);
+		}
+
+		scheduleEntries.appendChild(scheduleList);
+		setBehaviourOnListRows();
+		closeLoadingMessage();
 	}
-*/	
+	function createInfoTable(entryNameValue, entryDateValue, entryTimeValue, entryEndTimeValue, entryTypeValue, entryDescriptionValue){
+		var txtName=document.createTextNode(entryNameValue);
+		var txtDate=document.createTextNode(entryDateValue);		
+		var txtTime=document.createTextNode(entryTimeValue+'-'+entryEndTimeValue);	
+		var txtType=document.createTextNode(entryTypeValue);		
+		var txtDescription=document.createTextNode(entryDescriptionValue);		
+
+		var txtNameCaption=document.createTextNode(entryName+':');
+		var txtDateCaption=document.createTextNode(entryDate+':');		
+		var txtTimeCaption=document.createTextNode(entryTime+':');	
+		var txtTypeCaption=document.createTextNode(entryType+':');	
+		var txtDescriptionCaption=document.createTextNode(entryDescription+':');	
+
+		
+		var nameOfEntry=document.createElement('div');
+		nameOfEntry.appendChild(txtName);
+		nameOfEntry.setAttribute('class', entryInfoCell);
+		var dateOfEntry=document.createElement('div');			
+		dateOfEntry.appendChild(txtDate);			
+		dateOfEntry.setAttribute('class', entryInfoCell);		
+		var timeOfEntry=document.createElement('div');			
+		timeOfEntry.appendChild(txtTime);			
+		timeOfEntry.setAttribute('class', entryInfoCell);
+		var typeOfEntry=document.createElement('div');			
+		typeOfEntry.appendChild(txtType);			
+		typeOfEntry.setAttribute('class', entryInfoCell);
+		var descriptionOfEntry=document.createElement('div');			
+		descriptionOfEntry.appendChild(txtDescription);			
+		descriptionOfEntry.setAttribute('class', entryInfoCell);
+
+		var nameCaption=document.createElement('div');
+		nameCaption.appendChild(txtNameCaption);
+		nameCaption.setAttribute('class', entryInfoCell);
+		var dateCaption=document.createElement('div');			
+		dateCaption.appendChild(txtDateCaption);			
+		dateCaption.setAttribute('class', entryInfoCell);
+		var timeCaption=document.createElement('div');			
+		timeCaption.appendChild(txtTimeCaption);			
+		timeCaption.setAttribute('class', entryInfoCell);
+		var typeCaption=document.createElement('div');			
+		typeCaption.appendChild(txtTypeCaption);			
+		typeCaption.setAttribute('class', entryInfoCell);
+		var descriptionCaption=document.createElement('div');			
+		descriptionCaption.appendChild(txtDescriptionCaption);			
+		descriptionCaption.setAttribute('class', entryInfoCell);
+		
+		var entryInfoNameRow = document.createElement('div');
+		entryInfoNameRow.setAttribute('class', entryInfoRow);
+		entryInfoNameRow.appendChild(nameCaption);
+		entryInfoNameRow.appendChild(nameOfEntry);
+		var entryInfoDateRow = document.createElement('div');
+		entryInfoDateRow.setAttribute('class', entryInfoRow);
+		entryInfoDateRow.appendChild(dateCaption);
+		entryInfoDateRow.appendChild(dateOfEntry);
+		var entryInfoTimeRow = document.createElement('div');
+		entryInfoTimeRow.setAttribute('class', entryInfoRow);
+		entryInfoTimeRow.appendChild(timeCaption);
+		entryInfoTimeRow.appendChild(timeOfEntry);
+		var entryInfoTypeRow = document.createElement('div');
+		entryInfoTypeRow.setAttribute('class', entryInfoRow);
+		entryInfoTypeRow.appendChild(typeCaption);
+		entryInfoTypeRow.appendChild(typeOfEntry);
+		
+		var entryInfoDescriptionRow = document.createElement('div');
+		entryInfoDescriptionRow.setAttribute('class', entryInfoRow);
+		entryInfoDescriptionRow.appendChild(descriptionCaption);
+		entryInfoDescriptionRow.appendChild(descriptionOfEntry);
+								
+		entryInfo.appendChild(entryInfoNameRow);
+		entryInfo.appendChild(entryInfoDateRow);
+		entryInfo.appendChild(entryInfoTimeRow);
+		entryInfo.appendChild(entryInfoTypeRow);
+		entryInfo.appendChild(entryInfoDescriptionRow);
+			
+		document.body.appendChild(entryInfo);
+		entryInfo.setAttribute('class', entryInfoStyleClass);
+	}
+
+	function setBehaviourOnListRows(){
+		$$('div.'+entryListRowStyleClass).each(
+			function(element) {
+//				entryInfo.
+				element.onmouseover = function(e) {
+					createInfoTable(entriesToList[element.id].entryName, 
+						entriesToList[element.id].entryDate.substring(0,10), 
+						entriesToList[element.id].entryDate.substring(11,16),
+						entriesToList[element.id].entryEndDate.substring(11,16),
+						entriesToList[element.id].entryTypeName,
+						entriesToList[element.id].entryDescription
+					);
+
+					var currentRow = null;
+					var entryId = element.id;
+					currentRow = document.getElementById(element.id);
+					
+					entryInfo.style.display = 'block';
+					dragDrop_x = e.clientX/1 + document.body.scrollLeft;
+					dragDrop_y = e.clientY/1 + document.documentElement.scrollTop;	
+
+					dragDrop_x = 400;
+					
+					entryInfo.style.left = dragDrop_x + 'px';
+					entryInfo.style.top = dragDrop_y + 'px';				
+					
+//					entryInfo.appendChild(document.createTextNode(entryId));
+//				drawInfoTable(e); 
+
+				}
+				element.onmouseout = function(){
+//					entryInfo.style.display = 'none';
+					removeChildren(entryInfo);
+				}
+	    	}
+	    );	
+	}
+
+	function drawInfoTable(e){
+		var scheduleLayer = document.getElementById('calendarViewerScheduleId');
+
+			dragDrop_x = e.clientX/1 + document.body.scrollLeft;
+			dragDrop_y = e.clientY/1 + document.documentElement.scrollTop;	
+
+			dragDrop_x = 400;
+
+			entryInfo.style.left = dragDrop_x + 'px';
+			entryInfo.style.top = dragDrop_y + 'px';
+
+			entryInfo.appendChild(testTable);
+
+	}
+		
 	function createEmptySchedule(result){
 		var scheduleLayer = document.getElementById('calendarViewerScheduleId');
 		var scheduleEntries = document.getElementById(scheduleEntryTableId);
@@ -510,7 +554,6 @@ function displayCalendarAttributes(calendars){
 				element.onclick = function() {
 					getNext();					
 				}
-//				ScheduleSession.getNext(displayEntries);
 	    	}
 	    );		
 		$$('input.schedulePreviousButtonStyleClass').each(
@@ -518,20 +561,17 @@ function displayCalendarAttributes(calendars){
 				element.onclick = function() {				
 					getPrevious();
 				}
-//				ScheduleSession.getPrevious(displayEntries);
 	    	}
 	    );		
 	    $$('input.scheduleDayButtonStyleClass').each(
 			function(element) {
 				element.onclick = function() {
-//				ScheduleSession.changeModeToDay(displayEntries);
 					changeModeToDay();
 				}
 	    	}
 	    );		
 	    $$('input.scheduleWorkweekButtonStyleClass').each(
 			function(element) {
-//				ScheduleSession.changeModeToWorkweek(displayEntries);
 				element.onclick = function() {
 					changeModeToWorkweek();	
 				}
@@ -539,7 +579,6 @@ function displayCalendarAttributes(calendars){
 	    );		
 	    $$('input.scheduleWeekButtonStyleClass').each(
 			function(element) {
-//				ScheduleSession.changeModeToWeek(displayEntries);
 				element.onclick = function() {
 					changeModeToWeek();
 				}
@@ -548,7 +587,6 @@ function displayCalendarAttributes(calendars){
 	    $$('input.scheduleMonthButtonStyleClass').each(
 			function(element) {
 				element.onclick = function() {				
-//				ScheduleSession.changeModeToMonth(displayEntries);
 					changeModeToMonth();	
 				}
 	    	}
@@ -563,23 +601,8 @@ function displayCalendarAttributes(calendars){
 				getEntries(result.remoteMode, result.server, result.login, result.password, result.calendarAttributes);
 			}
 		});
-//		getEntries(calendarProperties.remoteMode, calendarProperties.server, calendarProperties.login, result.password, result.calendarAttributes);
 	}
-/*	
-	function getGroupsWithValues(loadingMsg, server, login, password, id, canNotConnectMsg, failedLoginMsg, noGroupsMsg, needsDecode, selectedGroups, styleClass) {
-	showLoadingMessage(loadingMsg);
-	if (needsDecode) {
-		password = decode64(password);
-	}
-	GroupService.canUseRemoteServer(server, {
-		callback: function(result) {
-			canUseRemoteCallback(result, server, login, password, id, canNotConnectMsg, failedLoginMsg, noGroupsMsg, selectedGroups, styleClass);
-		}
-	});
-}
-*/	
 	
-//	function getCalendarParameters(groupId){
 	function prepareDwrForGettingCalendarParameters(groupId){
 		
 		groups_and_calendar_chooser_helper = new ChooserHelper();
@@ -600,8 +623,6 @@ function displayCalendarAttributes(calendars){
 			groups_and_calendar_chooser_helper.addAdvancedProperty('isRemoteMode', 'true');			
 			canUseRemoteCalendar(groupId);
 		}
-
-		
 	}
 	
 	function getLocalCalendarParameters(groupId){
@@ -621,7 +642,6 @@ function displayCalendarAttributes(calendars){
 	function canUseRemoteCalendarCallback(canUse, groupUniqueId){
 		if(canUse){
 			prepareDwr(CalService, SERVER + DEFAULT_DWR_PATH);
-		
 			//	Getting info from remote server
 			CalService.getRemoteCalendarParameters(groupUniqueId, LOGIN, PASSWORD, displayCalendarAttributes);		
 		}
@@ -634,14 +654,6 @@ function displayCalendarAttributes(calendars){
 	}
 	
 	function getEntries(isRemoteMode, server, login, password, calendarAttributes){
-//	function getEntries(){
-/*
-		var isRemoteMode = calendarProperties.remoteMode;
-		var server = calendarProperties.server;		
-		var login = calendarProperties.login;
-		var password = calendarProperties.password;
-		var calendarAttributes = calendarProperties.calendarAttributes;
-*/		
 		if(isRemoteMode == true){
 			showLoadingMessage(loadingMsg);
 			CalService.canUseRemoteServer(server, {
@@ -655,21 +667,6 @@ function displayCalendarAttributes(calendars){
 		}
 	}
 	
-/*
-	function getEntries(isRemoteMode, calendarAttributes){
-		if(isRemoteMode == 'true'){
-			showLoadingMessage(loadingMsg);
-			CalService.getCalendarConnectionProperties(server, {
-				callback: function(result) {
-					getEntriesCallback(result, server, login, password, calendarAttributes);
-				}
-			});
-		}
-		else{
-			CalService.getEntries(calendarAttributes, getScheduleWithEntries);		
-		}
-	}
-*/
 	function getCalendarConnectionPropertiesCallback(){
 		CalService.canUseRemoteServer(server, {
 			callback: function(result) {
@@ -689,13 +686,7 @@ function displayCalendarAttributes(calendars){
 			return false;
 		}
 	}
-/*	
-	function emtpyCallback(result){
-		
-	}
-*/	
 	function addEntriesCallback(result){
-//		entriesPackageSize = 3;
 		packageIndex += entriesPackageSize;
 		packageEndIndex += entriesPackageSize;
 		packageOfEntries = new Array();
@@ -707,23 +698,19 @@ function displayCalendarAttributes(calendars){
 			}
 			packageOfEntries.push(entriesToCalendar[index]);
 		}
-//		if (packageOfEntries.length != 0){
 			ScheduleSession.addEntries(packageOfEntries, scheduleId, false, function(result){
 				if(reachedEnd == false){
 					addEntriesCallback(result);
 				}
 				else{
 					if(showEntriesAsList){
-//						displayEntriesAsList(entriesToCalendar);
 						ScheduleSession.getListOfEntries(scheduleId, displayEntriesAsList);
 					}
 					else{
-//						ScheduleSession.getScheduleDOM(entries, scheduleId, displayEntries);
 						ScheduleSession.getScheduleDOM(scheduleId, displayEntries);
 					}
 				}
 			});
-//		}	
 	}
 	
 	function addEntriesToListOrSchedule(entries){
@@ -742,87 +729,3 @@ function displayCalendarAttributes(calendars){
 		}
 		ScheduleSession.addEntries(packageOfEntries, scheduleId, true, addEntriesCallback);		
 	}
-/*		
-		if(showEntriesAsList){
-
-		}
-		else{
-			prepareDwr(ScheduleSession, getDefaultDwrPath());
-			var packageOfEntries = new Array();
-			var maxPackageSize = 3;
-			for(var index=0; index<entries.length; index++) {
-				if(index % maxPackageSize == 0){
-					ScheduleSession.addEntries(packageOfEntries, scheduleId, emptyCallback);
-					packageOfEntries = new Array();
-				}
-			}			
-			ScheduleSession.addEntries(packageOfEntries, scheduleId, emptyCallback);
-			DWREngine.setOrdered(false);
-			ScheduleSession.getScheduleDOM(entries, scheduleId, displayEntries);
-		}
-*/ 
-//	}
-
-//	function testDisplayEntriesAsList(result){
-//	}
-		
-//		prepareDwr(ScheduleSession, server + DEFAULT_DWR_PATH);
-		
-//		showLoadingMessage(loadingMsg);
-/*		
-		if(SERVER != null){
-			prepareDwr(ScheduleSession, SERVER + getDefaultDwrPath());
-			getRemoteCalendarParameters(groupId, login, password);
-		}
-		else{
-			prepareDwr(ScheduleSession, getDefaultDwrPath());
-			getLocalCalendarParameters(groupId);			
-		}
-		*/ 
-/*	
-	function saveProperties(){
-		groups_and_calendar_chooser_helper = new ChooserHelper();
-		groups_and_calendar_chooser_helper.removeAllAdvancedProperties();
-		for(var index=0; index<arrayOfParameters.length; index++) {
-			groups_and_calendar_chooser_helper.addAdvancedProperty(arrayOfParameters[index].id, arrayOfParameters[index].id);
-		}
-	}
-*/
-/*
-		if (arrayOfEntryIds)
-			clearPreviousEntries();
-		arrayOfEntryIds = new Array();
-		for(var i = 0; i < result.length; i++){
-			var entry = result[i];
-			addEntryToCalendar(entry.entryName, entry.entryDate, entry.entryEndDate, entry.entryTime, entry.entryEndTime);
-		}
-*/
-
-/*	
-	function addEntryToCalendar(entryName, entryDate, entryEndDate, entryTime, entryEndTime){
-		var entryCell = document.getElementById('_id0_body_'+entryDate);	
-		if (entryCell){
-			arrayOfEntryIds.push('_id0_body_'+entryDate);
-			var entryTable = entryCell.getElementsByTagName('table')[0];
-			var trElement =  document.createElement('tr');
-			var tdElement = document.createElement('td');
-			var entryName = document.createTextNode(entryName+' '+entryTime+'-'+entryEndTime);
-			tdElement.appendChild(entryName);
-			trElement.appendChild(tdElement);
-			entryTable.appendChild(trElement);
-		}
-	}
-	
-	function clearPreviousEntries(){
-		for(var i = 0; i < arrayOfEntryIds.length; i++){
-			var entryDiv = document.getElementById(arrayOfEntryIds[i])
-			var entryTable = entryDiv.childNodes[0];
-
-			for (var j = 0; j < entryTable.childNodes.length; j++){
-				entryTable.removeChild(entryTable.childNodes[j]);
-			}
-
-//			var entryParent = entry.parentNode;
-		}
-	}
-*/

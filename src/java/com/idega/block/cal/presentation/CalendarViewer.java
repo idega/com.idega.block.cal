@@ -35,6 +35,8 @@ public class CalendarViewer extends Block{
 	private boolean isRemoteMode = false;	
 	private List<String> calendarAttributes = null;
 	
+	private boolean showTime = false;
+	
 	public void main(IWContext iwc) {
 		Layer main = new Layer();
 		main.setId(CALENDAR_VIEWER_SCHEDULE_ID);
@@ -123,9 +125,12 @@ public class CalendarViewer extends Block{
 		StringBuffer action = new StringBuffer("registerEvent(window, 'load', function() {"+
 				"");
 			action.append("scheduleId = '"+this.getId()+"';");
+			action.append("entryIdPrefix = '"+CalendarConstants.ENTRY_ID_PREFIX+"';");
 			action.append("showEntriesAsList = "+showEntriesAsList+";");
 			action.append("hideMenu = "+hideMenu+";");
 			action.append("hidePreviousAndNext = "+hidePreviousAndNext+";");
+			action.append("showTime = "+showTime+";");
+			action.append("entryInScheduleStyleClass = '"+CalendarConstants.SCHEDULE_ENTRY_STYLE_CLASS+"';");			
 			action.append("getCalendarProperties();");
 			action.append("});");
 			
@@ -141,6 +146,10 @@ public class CalendarViewer extends Block{
 	}
 	
 //	PropertiesBean bean
+	
+	public void setShowTime(boolean showTime){
+		this.showTime = showTime;
+	}
 	
 	public void setShowEntriesAsList(boolean showEntriesAsList){
 		this.showEntriesAsList = showEntriesAsList;

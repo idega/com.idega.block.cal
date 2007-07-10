@@ -9,11 +9,14 @@ var scheduleId = null;
 var arrayOfCheckedCalendarParameters = new Array();
 var groups_and_calendar_chooser_helper = null;
 
+var entryIdPrefix = null;
+
 var loadingMsg = 'Loading...';
 
 var showEntriesAsList = false;
 var hideMenu = false;
 var hidePreviousAndNext = false;
+var showTime = false;
 
 var entryNumber = 'Number';
 var entryName = 'Name';
@@ -39,6 +42,7 @@ var entryInfoDateStyleClass = 'entryInfoDate';
 var entryInfoTimeStyleClass = 'entryInfoTime';
 var entryInfoTypeStyleClass = 'entryInfoType';
 var entryInfoDescriptionStyleClass = 'entryInfoDescription';
+var entryInScheduleStyleClass = null;
 
 var calendarProperties = null;
 
@@ -219,23 +223,79 @@ function displayCalendarAttributes(calendars){
 		}
 		return  scheduleButtonsLayer;	
 	}
+	
+	function getNext(){	
+		ScheduleSession.switchToNextAndGetListOfEntries(scheduleId, function(result){
+			if(showEntriesAsList){			
+				displayEntriesAsList(result);
+			}
+			else{
+				entriesToList = result;
+				ScheduleSession.getScheduleDOM(scheduleId, displayEntries);
+			}
+		});
 
-	function getNext(){
-		if(showEntriesAsList){
-			ScheduleSession.switchToNextAndGetListOfEntries(scheduleId, displayEntriesAsList);
-		}	
-		else{
-			ScheduleSession.switchToNextAndGetScheduleDOM(scheduleId, displayEntries);
-		}
 	}
-	function getPrevious(){
-		if(showEntriesAsList){
-			ScheduleSession.switchToPreviousAndGetListOfEntries(scheduleId, displayEntriesAsList);
-		}	
-		else{
-			ScheduleSession.switchToPreviousAndGetScheduleDOM(scheduleId, displayEntries);
-		}		
+	function getPrevious(){	
+		ScheduleSession.switchToPreviousAndGetListOfEntries(scheduleId, function(result){
+			if(showEntriesAsList){			
+				displayEntriesAsList(result);
+			}
+			else{
+				entriesToList = result;
+				ScheduleSession.getScheduleDOM(scheduleId, displayEntries);
+			}
+		});
 	}
+	
+	function changeModeToDay(){
+		ScheduleSession.changeModeToDayAndGetListOfEntries(scheduleId, function(result){
+			if(showEntriesAsList){			
+				displayEntriesAsList(result);
+			}
+			else{
+				entriesToList = result;
+				ScheduleSession.getScheduleDOM(scheduleId, displayEntries);
+			}
+		});	
+	}
+
+	function changeModeToWorkweek(){
+		ScheduleSession.changeModeToWorkweekAndGetListOfEntries(scheduleId, function(result){
+			if(showEntriesAsList){			
+				displayEntriesAsList(result);
+			}
+			else{
+				entriesToList = result;
+				ScheduleSession.getScheduleDOM(scheduleId, displayEntries);
+			}
+		});	
+	}	
+	
+	function changeModeToWeek(){
+		ScheduleSession.changeModeToWeekAndGetListOfEntries(scheduleId, function(result){
+			if(showEntriesAsList){			
+				displayEntriesAsList(result);
+			}
+			else{
+				entriesToList = result;
+				ScheduleSession.getScheduleDOM(scheduleId, displayEntries);
+			}
+		});	
+	}		
+
+	function changeModeToMonth(){
+		ScheduleSession.changeModeToMonthAndGetListOfEntries(scheduleId, function(result){
+			if(showEntriesAsList){			
+				displayEntriesAsList(result);
+			}
+			else{
+				entriesToList = result;
+				ScheduleSession.getScheduleDOM(scheduleId, displayEntries);
+			}
+		});	
+	}		
+/*	
 	function changeModeToDay(){
 		if(showEntriesAsList){
 			ScheduleSession.changeModeToDayAndGetListOfEntries(scheduleId, displayEntriesAsList);
@@ -268,12 +328,12 @@ function displayCalendarAttributes(calendars){
 		}	
 		else{
 			ScheduleSession.changeModeToMonthAndGetScheduleDOM(scheduleId, displayEntries);
-		}		
-		
+		}				
 	}
-	
+*/	
 	function displayEntries(result){			//inserting schedule DOM object
 
+//		entriesToList = entries;
 		var scheduleLayer = document.getElementById('calendarViewerScheduleId');
 		var scheduleEntries = document.getElementById(scheduleEntryTableId);
 		if(scheduleEntries){
@@ -287,6 +347,7 @@ function displayCalendarAttributes(calendars){
 			setBehaviourToScheduleButtons();
 		}
 		insertNodesToContainer(result, scheduleEntries);
+		setBehaviourOnScheduleEntries();
 		closeLoadingMessage();		
 	}
 	
@@ -384,6 +445,9 @@ function displayCalendarAttributes(calendars){
 			dateOfEntry.setAttribute('class',entryListElementStyleClass);
 			var timeOfEntry=document.createElement('div');	
 			timeOfEntry.setAttribute('class',entryListElementTimeStyleClass);
+			if(showTime){
+				timeOfEntry.style.display = 'inline';
+			}
 			
 //			var endDateOfEntry=document.createElement('div');	
 //			endDateOfEntry.setAttribute('class',entryListElementStyleClass);
@@ -527,32 +591,72 @@ function displayCalendarAttributes(calendars){
 				}
 	    	}
 	    );	
+	}
+
+	function setBehaviourOnScheduleEntries(){
+		$$('a.'+entryInScheduleStyleClass).each(
+			function(element) {
+				element.onmouseover = function(e) {
+					displayEntryInfo(element, e);
+				}
+				element.onmouseout = function(){
+					removeChildren(entryInfo);
+				}
+	    	}
+	    );		
+		$$('a.entry').each(
+			function(element) {
+				element.onmouseover = function(e) {
+					displayEntryInfo(element, e);
+				}
+				element.onmouseout = function(){
+					removeChildren(entryInfo);
+				}
+	    	}
+	    );		
 
 	}
 
 	function displayEntryInfo(element, e){
-		createInfoTable(entriesToList[element.id].entryName, 
-			entriesToList[element.id].entryDate.substring(0,10), 
-			entriesToList[element.id].entryDate.substring(11,16),
-			entriesToList[element.id].entryEndDate.substring(11,16),
-			entriesToList[element.id].entryTypeName,
-			entriesToList[element.id].entryDescription
-		);
-
-		var currentRow = null;
-		var entryId = element.id;
-		currentRow = document.getElementById(element.id);
-					
-		entryInfo.style.display = 'block';
-		dragDrop_x = e.clientX/1 + document.body.scrollLeft;
-		dragDrop_y = e.clientY/1 + document.documentElement.scrollTop;	
-
-		dragDrop_x = 400;
-					
-		entryInfo.style.left = dragDrop_x + 'px';
-		entryInfo.style.top = dragDrop_y + 'px';		
+		var entryElement = null;
+		var idOfSelectedEntry = element.id.substring(entryIdPrefix.length);
+		if (showEntriesAsList){
+			entryElement = entriesToList[idOfSelectedEntry];
+		}
+		else{	
+			for(var index=0; index<entriesToList.length; index++) {
+				if(entriesToList[index].id == idOfSelectedEntry.toString()){
+			
+					entryElement = entriesToList[index];
+					break;
+				}				
+			}
+		}
+		
+		if(entryElement != null){
+			createInfoTable(entryElement.entryName, 
+				entryElement.entryDate.substring(0,10), 
+				entryElement.entryDate.substring(11,16),
+				entryElement.entryEndDate.substring(11,16),
+				entryElement.entryTypeName,
+				entryElement.entryDescription
+			);
+	
+			var currentRow = null;
+			var entryId = element.id;
+			currentRow = document.getElementById(element.id);
+						
+			entryInfo.style.display = 'block';
+			dragDrop_x = e.clientX/1 + document.body.scrollLeft;
+			dragDrop_y = e.clientY/1 + document.documentElement.scrollTop;	
+	
+			dragDrop_x = 400;
+						
+			entryInfo.style.left = dragDrop_x + 'px';
+			entryInfo.style.top = dragDrop_y + 'px';	
+		}	
 	}
-
+/*	
 	function drawInfoTable(e){
 		var scheduleLayer = document.getElementById('calendarViewerScheduleId');
 
@@ -565,9 +669,8 @@ function displayCalendarAttributes(calendars){
 			entryInfo.style.top = dragDrop_y + 'px';
 
 			entryInfo.appendChild(testTable);
-
 	}
-		
+*/		
 	function createEmptySchedule(result){
 		var scheduleLayer = document.getElementById('calendarViewerScheduleId');
 		var scheduleEntries = document.getElementById(scheduleEntryTableId);
@@ -576,9 +679,7 @@ function displayCalendarAttributes(calendars){
 		scheduleLayer.appendChild(scheduleEntries);
 		scheduleLayer.appendChild(getScheduleButtons());
 		insertNodesToContainer(result, scheduleEntries);
-
 	}
-	
 
 	function setBehaviourToScheduleButtons(){
 		$$('input.scheduleNextButtonStyleClass').each(
@@ -735,14 +836,27 @@ function displayCalendarAttributes(calendars){
 					addEntriesCallback(result);
 				}
 				else{
-					if(showEntriesAsList){
-						ScheduleSession.getListOfEntries(scheduleId, displayEntriesAsList);
+//					if(showEntriesAsList){
+//						ScheduleSession.getListOfEntries(scheduleId, displayEntriesAsList);
+						ScheduleSession.getListOfEntries(scheduleId, setEntries);
+/*
 					}
 					else{
 						ScheduleSession.getScheduleDOM(scheduleId, displayEntries);
 					}
+*/
 				}
 			});
+	}
+	
+	function setEntries(entries){
+		entriesToList = entries;
+		if(showEntriesAsList){
+			displayEntriesAsList(entries);
+		}
+		else{
+			ScheduleSession.getScheduleDOM(scheduleId, displayEntries);
+		}
 	}
 	
 	function addEntriesToListOrSchedule(entries){

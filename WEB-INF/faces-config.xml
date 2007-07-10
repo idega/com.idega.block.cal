@@ -10,4 +10,20 @@
 		<managed-bean-class>com.idega.block.cal.data.CalendarManagerBean</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 	</managed-bean>
+
+	<component>
+		<component-type>com.idega.block.cal.Schedule</component-type>
+		<component-class>com.idega.block.cal.business.HtmlSchedule</component-class>
+	</component>
+
+	<render-kit>
+	   <renderer>
+	       	<component-family>javax.faces.Panel</component-family>
+	       	<renderer-type>com.idega.block.cal.Schedule</renderer-type>
+	       	<renderer-class>
+	       		com.idega.block.cal.renderer.ScheduleDelegatingRenderer
+	       	</renderer-class>
+	   </renderer>
+	</render-kit>
 </faces-config>
+

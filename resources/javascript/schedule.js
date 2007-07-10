@@ -30,7 +30,8 @@ function fireScheduleDateClicked(obj, e, formId, scheduleId) {
 }
 
 function fireEntrySelected(formId, scheduleId, entryId) {
-	document.forms[formId][scheduleId].value = entryId;
-	document.forms[formId].submit();
-	return true;
+//	document.forms[formId][scheduleId].value = entryId;
+//	document.forms[formId].submit();
+//	return true;
+	return false;
 }

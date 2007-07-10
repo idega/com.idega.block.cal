@@ -103,6 +103,16 @@ div.entryList{
 	background: #DDD;
 }
 
+.entryInSchedule{
+  background-color: rgb(255,255,255);
+  text-align: center;
+  font-family: Verdana, Arial, Helvetica, Sans-Serif;
+  font-size: 11px;
+  vertical-align: middle;
+  border-color: rgb(153,153,153);
+  text-decoration: none;
+}
+
 .calendarsLayerStyleClass{
 /*	width: 49.5%;
 	float: right;

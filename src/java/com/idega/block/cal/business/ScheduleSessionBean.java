@@ -11,7 +11,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.myfaces.custom.schedule.HtmlSchedule;
+//import org.apache.myfaces.custom.schedule.HtmlSchedule;
 import org.apache.myfaces.custom.schedule.model.DefaultScheduleEntry;
 import org.apache.myfaces.custom.schedule.model.ScheduleModel;
 import org.apache.myfaces.custom.schedule.model.SimpleScheduleModel;
@@ -19,7 +19,7 @@ import org.jdom.Document;
 
 import com.idega.business.IBOSessionBean;
 import com.idega.core.builder.business.BuilderService;
-import com.idega.core.builder.business.BuilderServiceFactory;
+import com.idega.core.builder.business.BuilderServiceFactory; 
 import com.idega.presentation.IWContext;
 import com.idega.presentation.Layer;
 import com.idega.util.CoreUtil;
@@ -300,44 +300,58 @@ public class ScheduleSessionBean extends IBOSessionBean implements ScheduleSessi
 			e.printStackTrace();
 			return null;
 		}
+
+		ScheduleModel scheduleModel = null;
+
 		if (htmlSchedules.get(id) == null){
 			htmlSchedules.put(id, new HtmlSchedule());
 		}
-		ScheduleModel scheduleModel = null;
-		
-		if(entriesInSchedule != null){
+		else{
 			scheduleModel = htmlSchedules.get(id).getModel();
 		}
-		else{ 
+		
+//		if(entriesInSchedule == null){
+//			scheduleModel = htmlSchedules.get(id).getModel();
+//		}
+//		else{ 
+		if(scheduleModel == null){
 			scheduleModel = new SimpleScheduleModel();
 			scheduleModel.setMode(DEFAULT_MODE);
-			for (int i = 0; i < entriesInSchedule.size(); i++) {
-				CalScheduleEntry entry = entriesInSchedule.get(i);
-				DefaultScheduleEntry defaultScheduleEntry = new DefaultScheduleEntry();
-				if (simpleDate == null){
-					simpleDate = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.S");
-				}
-				if (entry.getEntryDate() != null){
-					defaultScheduleEntry.setStartTime(simpleDate.parse(entry.getEntryDate(), new ParsePosition(0)));
-				}
-				if (entry.getEntryEndDate() != null){
-					defaultScheduleEntry.setEndTime(simpleDate.parse(entry.getEntryEndDate(), new ParsePosition(0)));
-				}
-				if (entry.getEntryName() != null){
-					defaultScheduleEntry.setTitle(entry.getEntryName());
-				}
-				try {
-					scheduleModel.addEntry(defaultScheduleEntry);
-				} catch (RuntimeException e) {
-					// TODO Auto-generated catch block
-//					e.printStackTrace();
-				}
-				
-			}			
+			if(entriesInSchedule != null){
+				for (int i = 0; i < entriesInSchedule.size(); i++) {
+					CalScheduleEntry entry = entriesInSchedule.get(i);
+					DefaultScheduleEntry defaultScheduleEntry = new DefaultScheduleEntry();
+					if (simpleDate == null){
+						simpleDate = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.S");
+					}
+					if (entry.getId() != null){
+						defaultScheduleEntry.setId(entry.getId());
+					}				
+					if (entry.getEntryDate() != null){
+						defaultScheduleEntry.setStartTime(simpleDate.parse(entry.getEntryDate(), new ParsePosition(0)));
+					}
+					if (entry.getEntryEndDate() != null){
+						defaultScheduleEntry.setEndTime(simpleDate.parse(entry.getEntryEndDate(), new ParsePosition(0)));
+					}
+					if (entry.getEntryName() != null){
+						defaultScheduleEntry.setTitle(entry.getEntryName());
+					}
+					if (entry.getEntryDescription() != null){
+						defaultScheduleEntry.setDescription(entry.getEntryName());
+					}
+					try {
+						scheduleModel.addEntry(defaultScheduleEntry);
+					} catch (RuntimeException e) {
+						// TODO Auto-generated catch block
+	//					e.printStackTrace();
+					}
+				}			
+			}
+			scheduleModel.refresh();
+			htmlSchedules.get(id).setModel(scheduleModel);			
 		}
-		scheduleModel.refresh();
-		htmlSchedules.get(id).setModel(scheduleModel);
-		htmlSchedules.get(id).setReadonly(true);
+//		htmlSchedules.get(id).setReadonly(true);
+		htmlSchedules.get(id).setReadonly(false);
 		Layer scheduleLayer = new Layer();
 		scheduleLayer.add(htmlSchedules.get(id));
 		return service.getRenderedComponent(iwc, scheduleLayer, false);
@@ -368,6 +382,9 @@ public class ScheduleSessionBean extends IBOSessionBean implements ScheduleSessi
 			if (simpleDate == null){
 				simpleDate = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.S");
 			}
+			if (entry.getId() != null){
+				defaultScheduleEntry.setId(entry.getId());
+			}
 			if (entry.getEntryDate() != null){
 				defaultScheduleEntry.setStartTime(simpleDate.parse(entry.getEntryDate(), new ParsePosition(0)));
 			}
@@ -377,6 +394,9 @@ public class ScheduleSessionBean extends IBOSessionBean implements ScheduleSessi
 			if (entry.getEntryName() != null){
 				defaultScheduleEntry.setTitle(entry.getEntryName());
 			}
+			if (entry.getEntryDescription() != null){
+				defaultScheduleEntry.setDescription(entry.getEntryName());
+			}			
 			scheduleModel.addEntry(defaultScheduleEntry);
 		}			
 	

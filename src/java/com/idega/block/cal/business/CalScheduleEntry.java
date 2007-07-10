@@ -1,6 +1,7 @@
 package com.idega.block.cal.business;
 
 public class CalScheduleEntry {
+	private String id = null;
 	private String entryName = null;
 	private String entryDate = null;
 	private String entryEndDate = null;	
@@ -57,5 +58,11 @@ public class CalScheduleEntry {
 	}
 	public void setEntryDescription(String entryDescription) {
 		this.entryDescription = entryDescription;
+	}
+	public String getId() {
+		return id;
+	}
+	public void setId(String id) {
+		this.id = id;
 	}
 }

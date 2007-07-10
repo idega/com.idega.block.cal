@@ -25,4 +25,8 @@ public class CalendarConstants {
 	public static final String IW_BUNDLE_IDENTIFIER = "com.idega.block.cal";
 	
 	public static final String CALENDAR_MANAGER_BEAN_ID = "CalendarManagerBean";
+	
+	public static final String ENTRY_ID_PREFIX = "entryInSchedule";
+	
+	public static final String SCHEDULE_ENTRY_STYLE_CLASS = "scheduleEntry";
 }

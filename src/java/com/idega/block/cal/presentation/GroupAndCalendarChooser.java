@@ -26,6 +26,10 @@ public class GroupAndCalendarChooser extends AbstractChooser {
 	private static final String chooserHelper = "groups_and_calendar_chooser_helper";
 	private List values = null;
 	
+	public GroupAndCalendarChooser(){
+		super();
+	}
+	
 	public GroupAndCalendarChooser(String instanceId, String method) {
 		super(false);
 		addForm(false);

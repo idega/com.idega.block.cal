@@ -9,7 +9,7 @@ var scheduleId = null;
 var arrayOfCheckedCalendarParameters = new Array();
 var groups_and_calendar_chooser_helper = null;
 
-var entryIdPrefix = null;
+var entryIdPrefix = '';
 
 var loadingMsg = 'Loading...';
 
@@ -434,7 +434,7 @@ function displayCalendarAttributes(calendars){
 			else{
 				listRow.setAttribute('class', entryListOddRowStyleClass);				
 			}
-			listRow.setAttribute('id', index);
+			listRow.setAttribute('id', entryIdPrefix+index);
 /*			
 			var tdNumber=document.createElement('td');
 			tdNumber.setAttribute('class',entryListTableStyleClass);

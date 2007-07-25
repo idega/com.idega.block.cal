@@ -16,12 +16,17 @@ div.entryListElementTime{
 /*	visibility: hidden;*/
 	display: none;
 }
-div.entryListEvenRow{
+
+#calendarViewerScheduleId{
+	position: relative;
+}
+
+#calendarViewerScheduleId div.entryListEvenRow{
 	background: #CCC;
 	padding: 2px;
 	display: block;
 }
-div.entryListOddRow{
+#calendarViewerScheduleId div.entryListOddRow{
 	background: #EEE;
 	padding: 2px;	
 	display: block;	
@@ -32,37 +37,39 @@ div.entryInfo{
 	position: absolute;
 	display: block;
 	width: 200px;
+	left: 250px;
 }
-div.entryInfoHeader{
+
+#calendarViewerScheduleId div.entryInfoHeader{
 	background: #AAA;
 	display: block;
 }
 
-div.entryInfoBody{
+#calendarViewerScheduleId div.entryInfoBody{
 	background: #EEE;
 }
 
-div.entryInfoRow{
+#calendarViewerScheduleId div.entryInfoRow{
 	display: table-row;
 }
-div.entryInfoName{
+#calendarViewerScheduleId div.entryInfoName{
 	text-align: center;
 	font-size:medium;
 	padding: 4px;
 }
 
-div.entryInfoDescription{
+#calendarViewerScheduleId div.entryInfoDescription{
 	padding: 4px;
 }
-div.entryInfoType{
+#calendarViewerScheduleId div.entryInfoType{
 	display: none;
 }
 
-div.entryInfoDate{
+#calendarViewerScheduleId div.entryInfoDate{
 	display: inline;
 	padding: 2px;
 }
-div.entryInfoTime{
+#calendarViewerScheduleId div.entryInfoTime{
 	display: inline;
 	padding: 2px;
 }

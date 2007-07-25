@@ -456,7 +456,8 @@ function displayCalendarAttributes(calendars){
 			
 //			var txtNumber=document.createTextNode(index+1);
 			var txtName=document.createTextNode(entries[index].entryName);
-			var txtDate=document.createTextNode(entries[index].entryDate.substring(0,10));		
+//			var txtDate=document.createTextNode(entries[index].entryDate.substring(0,10));		
+			var txtDate=document.createTextNode(entries[index].localizedEntryDate);		
 			var txtTime=document.createTextNode(entries[index].entryDate.substring(11,16)+'-'+
 				entries[index].entryEndDate.substring(11,16));	
 //			var txtEndDate=document.createTextNode(entries[index].entryEndDate.substring(0,16));		
@@ -565,8 +566,8 @@ function displayCalendarAttributes(calendars){
 		
 		entryInfo.appendChild(entryInfoHeader);
 		entryInfo.appendChild(entryInfoBody);
-			
-		document.body.appendChild(entryInfo);
+		document.getElementById(scheduleEntryTableId).appendChild(entryInfo);
+//		document.body.appendChild(entryInfo);
 		entryInfo.setAttribute('class', entryInfoStyleClass);
 	}
 
@@ -650,9 +651,13 @@ function displayCalendarAttributes(calendars){
 			dragDrop_x = e.clientX/1 + document.body.scrollLeft;
 			dragDrop_y = e.clientY/1 + document.documentElement.scrollTop;	
 	
-			dragDrop_x = 400;
+//			dragDrop_x = 400;
 						
-			entryInfo.style.left = dragDrop_x + 'px';
+//			entryInfo.style.left = dragDrop_x + 'px';
+			if(!showEntriesAsList)
+				if (dragDrop_x > 600)
+					dragDrop_x = dragDrop_x - 200;
+				entryInfo.style.left = dragDrop_x + 'px';
 			entryInfo.style.top = dragDrop_y + 'px';	
 		}	
 	}

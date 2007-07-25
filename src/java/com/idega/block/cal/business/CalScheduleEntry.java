@@ -4,7 +4,9 @@ public class CalScheduleEntry {
 	private String id = null;
 	private String entryName = null;
 	private String entryDate = null;
+	private String localizedEntryDate = null;
 	private String entryEndDate = null;	
+	private String localizedEntryEndDate = null;	
 	private String entryTime = null;
 	private String entryEndTime = null;
 	private String repeat = null;
@@ -64,5 +66,17 @@ public class CalScheduleEntry {
 	}
 	public void setId(String id) {
 		this.id = id;
+	}
+	public String getLocalizedEntryDate() {
+		return localizedEntryDate;
+	}
+	public void setLocalizedEntryDate(String localizedEntryDate) {
+		this.localizedEntryDate = localizedEntryDate;
+	}
+	public String getLocalizedEntryEndDate() {
+		return localizedEntryEndDate;
+	}
+	public void setLocalizedEntryEndDate(String localizedEntryEndDate) {
+		this.localizedEntryEndDate = localizedEntryEndDate;
 	}
 }

@@ -1,6 +1,7 @@
 package com.idega.block.cal.business;
 
 import java.rmi.RemoteException;
+import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.ParsePosition;
 import java.text.SimpleDateFormat;
@@ -9,6 +10,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 //import org.apache.myfaces.custom.schedule.HtmlSchedule;
@@ -26,9 +28,9 @@ import com.idega.util.CoreUtil;
 
 public class ScheduleSessionBean extends IBOSessionBean implements ScheduleSession{
 	private Map<String, HtmlSchedule> htmlSchedules = new HashMap<String, HtmlSchedule>();
-	private SimpleDateFormat simpleDate = null;
+	private SimpleDateFormat simpleDate = null;	
 	private List<CalScheduleEntry> entriesInSchedule = null;
-	
+	private SimpleDateFormat localizedDate = null;
 	private static final long DAY_IN_MILLISECONDS = 1000 * 60 * 60 * 24;
 	private static final long WEEK_IN_MILLISECONDS = DAY_IN_MILLISECONDS * 7;
 	private static final long MONTH_IN_MILLISECONDS = DAY_IN_MILLISECONDS * 31;	
@@ -378,6 +380,7 @@ public class ScheduleSessionBean extends IBOSessionBean implements ScheduleSessi
 		
 		for (int i = 0; i < entries.size(); i++) {
 			CalScheduleEntry entry = entries.get(i);
+			entry = setLocalizedDate(entry);
 			DefaultScheduleEntry defaultScheduleEntry = new DefaultScheduleEntry();
 			if (simpleDate == null){
 				simpleDate = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.S");
@@ -407,6 +410,22 @@ public class ScheduleSessionBean extends IBOSessionBean implements ScheduleSessi
 		htmlSchedules.get(id).setModel(scheduleModel);		
 		return 0;
 	}	
+	
+	private CalScheduleEntry setLocalizedDate(CalScheduleEntry entry){
+		IWContext iwc = IWContext.getInstance();
+		if (localizedDate == null)
+			localizedDate = (SimpleDateFormat)DateFormat.getDateInstance(DateFormat.DEFAULT, iwc.getLocale());
+		if (simpleDate == null){
+			simpleDate = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.S");
+		}
+		
+		Date date = simpleDate.parse(entry.getEntryDate(), new ParsePosition(0));
+		entry.setLocalizedEntryDate(localizedDate.format(date));
+		date = simpleDate.parse(entry.getEntryEndDate(), new ParsePosition(0));
+		entry.setLocalizedEntryEndDate(localizedDate.format(date));
+		
+		return entry;
+	}
 	
 	public List<CalScheduleEntry> getListOfEntries(String id){
 		return changeModeToMonthAndGetListOfEntries(id);

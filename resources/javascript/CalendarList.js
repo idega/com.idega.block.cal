@@ -4,46 +4,14 @@ var arrayOfEntryIds = null;
 var scheduleEntryTableId = 'scheduleEntryTableId';
 var scheduleButtonsId = 'scheduleButtonsId';
 var groups_and_calendar_chooser_helper = null;
-var serverErrorMessage = 'can\'t connect to:';
 var scheduleId = null;
 var arrayOfCheckedCalendarParameters = new Array();
 var groups_and_calendar_chooser_helper = null;
-
 var entryIdPrefix = '';
-
-var loadingMsg = 'Loading...';
-
 var showEntriesAsList = false;
 var hideMenu = false;
 var hidePreviousAndNext = false;
 var showTime = false;
-
-var entryNumber = 'Number';
-var entryName = 'Name';
-var entryBeginDate = 'Begin date';
-var entryEndDate = 'End date';
-var entryType = 'Type';
-var entryTime = 'Time';
-var entryDate = 'Date';
-var entryDescription = 'Description';
-
-var entryListTableStyleClass = 'entryList';
-var entryListCaptionStyleClass = 'entryListCaption';
-//var entryListRowStyleClass = 'entryListRow';
-var entryListEvenRowStyleClass = 'entryListEvenRow';
-var entryListOddRowStyleClass = 'entryListOddRow';
-var entryListElementStyleClass = 'entryListElement';
-var entryInfoStyleClass = 'entryInfo';
-//var entryInfoRow = 'entryInfoRow';
-//var entryInfoCell = 'entryInfoCell';
-var entryListElementTimeStyleClass = 'entryListElementTime';
-var entryInfoNameStyleClass = 'entryInfoName';
-var entryInfoDateStyleClass = 'entryInfoDate';
-var entryInfoTimeStyleClass = 'entryInfoTime';
-var entryInfoTypeStyleClass = 'entryInfoType';
-var entryInfoDescriptionStyleClass = 'entryInfoDescription';
-var entryInScheduleStyleClass = null;
-
 var calendarProperties = null;
 
 var entriesToCalendar = null;
@@ -51,8 +19,47 @@ var entriesToList = null;
 var entriesPackageSize = 5;
 var packageIndex = 0;
 var packageEndIndex = entriesPackageSize;
-var noEntries = 'There are no entries to display';
 var entryInfo = document.createElement('div');
+
+//Labels
+/*
+//var entryNumber = 'Number';
+var entryName = 'Name';
+//var entryBeginDate = 'Begin date';
+var entryEndDate = 'End date';
+var entryType = 'Type';
+var entryTime = 'Time';
+var entryDate = 'Date';
+//var entryDescription = 'Description';
+var noEntries = 'There are no entries to display';
+var serverErrorMessage = 'can\'t connect to:';
+var loadingMsg = 'Loading...';
+*/
+
+var entryName = null;
+var entryEndDate = null;
+var entryType = null;
+var entryTime = null;
+var entryDate = null;
+var noEntries = null;
+var serverErrorMessage = null;
+var loadingMsg = null;
+
+//CSS style classes
+
+var entryListTableStyleClass = 'entryList';
+var entryListCaptionStyleClass = 'entryListCaption';
+var entryListEvenRowStyleClass = 'entryListEvenRow';
+var entryListOddRowStyleClass = 'entryListOddRow';
+var entryListElementStyleClass = 'entryListElement';
+var entryInfoStyleClass = 'entryInfo';
+var entryListElementTimeStyleClass = 'entryListElementTime';
+var entryInfoNameStyleClass = 'entryInfoName';
+var entryInfoDateStyleClass = 'entryInfoDate';
+var entryInfoTimeStyleClass = 'entryInfoTime';
+var entryInfoTypeStyleClass = 'entryInfoType';
+var entryInfoDescriptionStyleClass = 'entryInfoDescription';
+var entryInScheduleStyleClass = null;
 
 function displayCalendarAttributes(calendars){
 	closeLoadingMessage();
@@ -374,6 +381,7 @@ function displayCalendarAttributes(calendars){
 //		var scheduleTable = document.createElement('table');
 		var scheduleList = document.createElement('div');
 		scheduleList.setAttribute('class', entryListTableStyleClass);
+		scheduleList.setAttribute('id', 'listOfEntries');
 		
 		
 //		var tr=document.createElement('tr');
@@ -626,8 +634,7 @@ function displayCalendarAttributes(calendars){
 		}
 		else{	
 			for(var index=0; index<entriesToList.length; index++) {
-				if(entriesToList[index].id == idOfSelectedEntry.toString()){
-			
+				if(entriesToList[index].id == idOfSelectedEntry.toString()){			
 					entryElement = entriesToList[index];
 					break;
 				}				
@@ -649,16 +656,26 @@ function displayCalendarAttributes(calendars){
 						
 			entryInfo.style.display = 'block';
 			dragDrop_x = e.clientX/1 + document.body.scrollLeft;
-			dragDrop_y = e.clientY/1 + document.documentElement.scrollTop;	
+//			dragDrop_y = e.clientY/1 + document.documentElement.scrollTop;	
+			dragDrop_y = e.clientY/1;				
+			
 	
 //			dragDrop_x = 400;
 						
 //			entryInfo.style.left = dragDrop_x + 'px';
-			if(!showEntriesAsList)
-				if (dragDrop_x > 600)
+			if(!showEntriesAsList){
+				if (dragDrop_x > 600){
 					dragDrop_x = dragDrop_x - 200;
-				entryInfo.style.left = dragDrop_x + 'px';
-			entryInfo.style.top = dragDrop_y + 'px';	
+				}
+				entryInfo.style.left = dragDrop_x + 5 + 'px';
+			}
+			else{
+				var groupListElement = $('listOfEntries');
+				var groupListElementXCoordinate = groupListElement.getPosition().x;
+				var groupListElementWidth = groupListElement.getCoordinates().width;
+				entryInfo.style.left = groupListElementXCoordinate +groupListElementWidth +10+ 'px';
+			}
+			entryInfo.style.top = dragDrop_y + 'px';
 		}	
 	}
 /*	
@@ -787,7 +804,7 @@ function displayCalendarAttributes(calendars){
 			//	Cannot use remote server
 			closeLoadingMessage();
 			alert(serverErrorMessage + ' ' + server);
-			return false;			
+			return false;
 		}
 	}
 	

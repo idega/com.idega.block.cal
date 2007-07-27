@@ -34,7 +34,7 @@ div.entryListElementTime{
 
 div.entryInfo{
 /*	background: #DDD;*/
-	position: absolute;
+	position: fixed;
 	display: block;
 	width: 200px;
 	left: 250px;

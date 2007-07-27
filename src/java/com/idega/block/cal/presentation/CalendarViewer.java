@@ -12,6 +12,7 @@ import com.idega.block.web2.business.Web2Business;
 import com.idega.business.SpringBeanLookup;
 import com.idega.idegaweb.IWApplicationContext;
 import com.idega.idegaweb.IWBundle;
+import com.idega.idegaweb.IWResourceBundle;
 import com.idega.presentation.Block;
 import com.idega.presentation.IWContext;
 import com.idega.presentation.Layer;
@@ -121,7 +122,7 @@ public class CalendarViewer extends Block{
 
 		
 //		//	Actions to be performed on page loaded event
-		
+		IWResourceBundle iwrb = getResourceBundle(iwc);
 		StringBuffer action = new StringBuffer("registerEvent(window, 'load', function() {"+
 				"");
 			action.append("scheduleId = '"+this.getId()+"';");
@@ -130,7 +131,24 @@ public class CalendarViewer extends Block{
 			action.append("hideMenu = "+hideMenu+";");
 			action.append("hidePreviousAndNext = "+hidePreviousAndNext+";");
 			action.append("showTime = "+showTime+";");
-			action.append("entryInScheduleStyleClass = '"+CalendarConstants.SCHEDULE_ENTRY_STYLE_CLASS+"';");			
+			action.append("entryInScheduleStyleClass = '"+CalendarConstants.SCHEDULE_ENTRY_STYLE_CLASS+"'; ");			
+//			action.append("entryName = 'Name'; ");			
+//			action.append("entryEndDate = 'End date'; ");
+//			action.append("entryType = 'Type'; ");			
+//			action.append("entryTime = 'Time'; ");			
+//			action.append("entryDate = 'Date'; ");
+//			action.append("noEntries = 'There are no entries to display'; ");			
+//			action.append("serverErrorMessage = 'can\\'t connect to:'; ");	
+//			action.append("loadingMsg = 'Loading...';");			
+			action.append("entryName = '"+iwrb.getLocalizedString("name", "Name")+"'; ");			
+			action.append("entryEndDate = '"+iwrb.getLocalizedString("endDate", "End date")+"'; ");
+			action.append("entryType = '"+iwrb.getLocalizedString("type", "Type")+"'; ");			
+			action.append("entryTime = '"+iwrb.getLocalizedString("time", "Time")+"'; ");			
+			action.append("entryDate = '"+iwrb.getLocalizedString("date", "Date")+"'; ");
+			action.append("noEntries = '"+iwrb.getLocalizedString("noEntriesToDisplay", "There are no entries to display")+"'; ");			
+			action.append("serverErrorMessage = '"+iwrb.getLocalizedString("cantConnectTo", "can\\'t connect to:")+"'; ");	
+			action.append("loadingMsg = '"+iwrb.getLocalizedString("loadingMsg", "Loading...")+"';");			
+
 			action.append("getCalendarProperties();");
 			action.append("});");
 			

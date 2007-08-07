@@ -21,6 +21,21 @@ var packageIndex = 0;
 var packageEndIndex = entriesPackageSize;
 var entryInfo = document.createElement('div');
 
+var previousHeight = null;
+var previousElement = null;
+
+var resizedElements = null;
+var classNamesForExpanding = null;
+
+var dayMode = 'DAY';
+var weekMode = 'WEEK';
+var workweekMode = 'WORKWEEK';
+var monthMode = 'MONTH';
+
+var defaultMode = monthMode;
+
+var currentMode = defaultMode;
+
 //Labels
 /*
 //var entryNumber = 'Number';
@@ -45,6 +60,13 @@ var noEntries = null;
 var serverErrorMessage = null;
 var loadingMsg = null;
 
+var previousLabel = null;
+var nextLabel = null;
+var dayLabel = null;
+var weekLabel = null;
+var workweekLabel = null;
+var monthLabel = null;
+
 //CSS style classes
 
 var entryListTableStyleClass = 'entryList';
@@ -61,106 +83,108 @@ var entryInfoTypeStyleClass = 'entryInfoType';
 var entryInfoDescriptionStyleClass = 'entryInfoDescription';
 var entryInScheduleStyleClass = null;
 
-function displayCalendarAttributes(calendars){
-	closeLoadingMessage();
-	arrayOfParameters = new Array();	
-	var parentOfList = document.getElementById('calendar_list_container_id');
-	removeChildren(parentOfList);
-	var ledgersList = document.createElement('div');
-	var entryTypesList = document.createElement('div');
-	var tableOfParameters = document.createElement('table');
-	var trLedgers = document.createElement('tr');
-	var trTypes = document.createElement('tr');
-	
-	var tdLedgersCaption = document.createElement('td');
-	var tdLedgersList = document.createElement('td');
-	var tdTypesCaption = document.createElement('td');
-	var tdTypesList = document.createElement('td');
+// displays calendar entry types and ledgers
+
+	function displayCalendarAttributes(calendars){
+		closeLoadingMessage();
+		arrayOfParameters = new Array();	
+		var parentOfList = document.getElementById('calendar_list_container_id');
+		removeChildren(parentOfList);
+		var ledgersList = document.createElement('div');
+		var entryTypesList = document.createElement('div');
+		var tableOfParameters = document.createElement('table');
+		var trLedgers = document.createElement('tr');
+		var trTypes = document.createElement('tr');
 		
-	tdLedgersCaption.appendChild(document.createTextNode('Ledgers:'));
-	tdTypesCaption.appendChild(document.createTextNode('Types:'));
-		
-	var element = null;
-	var getEntriesButton = null;
-	var addLedgerList = false;
-	var addEntryTypesList = false;
-	for (var i = 0; i < calendars.length; i++){
-		element = calendars[i];
-		if(element.type == 'L'){
-			var ledgerElement = document.createElement('input');
-			ledgerElement.setAttribute('id', element.type + element.id);									
-			ledgerElement.setAttribute('elementId',element.id);			
-			ledgerElement.setAttribute('name',element.name);
-			ledgerElement.setAttribute('elementType',element.type);			
-			ledgerElement.setAttribute('type','checkbox');		
-			ledgerElement.setAttribute('class','calendarCheckbox');
-			var ledgerCaption = document.createTextNode(element.name); 
-			ledgersList.appendChild(ledgerElement);
-			ledgersList.appendChild(ledgerCaption);
+		var tdLedgersCaption = document.createElement('td');
+		var tdLedgersList = document.createElement('td');
+		var tdTypesCaption = document.createElement('td');
+		var tdTypesList = document.createElement('td');
 			
-			arrayOfParameters.push(element.type + element.id);
-			addLedgerList = true;
-		}	
-		if(element.type == 'T'){
-			var typeElement = document.createElement('input');
-			typeElement.setAttribute('id', element.type + element.id);												
-			typeElement.setAttribute('elementId',element.id);			
-			typeElement.setAttribute('name',element.name);
-			typeElement.setAttribute('elementType',element.type);			
-			typeElement.setAttribute('type','checkbox');				
-			typeElement.setAttribute('class','calendarCheckbox');			
-			var typeCaption = document.createTextNode(element.name); 					
-			entryTypesList.appendChild(typeElement);
-			entryTypesList.appendChild(typeCaption);
+		tdLedgersCaption.appendChild(document.createTextNode('Ledgers:'));
+		tdTypesCaption.appendChild(document.createTextNode('Types:'));
 			
-			arrayOfParameters.push(element.type + element.id);
-			addEntryTypesList = true;
-		}	
-	if (addLedgerList == true){
-		tdLedgersList.appendChild(ledgersList);
-		trLedgers.appendChild(tdLedgersCaption);
-		trLedgers.appendChild(tdLedgersList);
-	}	
-	
-	if (addEntryTypesList == true){
-		tdTypesList.appendChild(entryTypesList);
-		trTypes.appendChild(tdTypesCaption);
-		trTypes.appendChild(tdTypesList);
-	}
-	tableOfParameters.appendChild(trLedgers);
-	tableOfParameters.appendChild(trTypes);
+		var element = null;
+		var getEntriesButton = null;
+		var addLedgerList = false;
+		var addEntryTypesList = false;
+		for (var i = 0; i < calendars.length; i++){
+			element = calendars[i];
+			if(element.type == 'L'){
+				var ledgerElement = document.createElement('input');
+				ledgerElement.setAttribute('id', element.type + element.id);									
+				ledgerElement.setAttribute('elementId',element.id);			
+				ledgerElement.setAttribute('name',element.name);
+				ledgerElement.setAttribute('elementType',element.type);			
+				ledgerElement.setAttribute('type','checkbox');		
+				ledgerElement.setAttribute('class','calendarCheckbox');
+				var ledgerCaption = document.createTextNode(element.name); 
+				ledgersList.appendChild(ledgerElement);
+				ledgersList.appendChild(ledgerCaption);
 				
-	}
+				arrayOfParameters.push(element.type + element.id);
+				addLedgerList = true;
+			}	
+			if(element.type == 'T'){
+				var typeElement = document.createElement('input');
+				typeElement.setAttribute('id', element.type + element.id);												
+				typeElement.setAttribute('elementId',element.id);			
+				typeElement.setAttribute('name',element.name);
+				typeElement.setAttribute('elementType',element.type);			
+				typeElement.setAttribute('type','checkbox');				
+				typeElement.setAttribute('class','calendarCheckbox');			
+				var typeCaption = document.createTextNode(element.name); 					
+				entryTypesList.appendChild(typeElement);
+				entryTypesList.appendChild(typeCaption);
+				
+				arrayOfParameters.push(element.type + element.id);
+				addEntryTypesList = true;
+			}	
+			if (addLedgerList == true){
+				tdLedgersList.appendChild(ledgersList);
+				trLedgers.appendChild(tdLedgersCaption);
+				trLedgers.appendChild(tdLedgersList);
+			}	
+		
+			if (addEntryTypesList == true){
+				tdTypesList.appendChild(entryTypesList);
+				trTypes.appendChild(tdTypesCaption);
+				trTypes.appendChild(tdTypesList);
+			}
+			tableOfParameters.appendChild(trLedgers);
+			tableOfParameters.appendChild(trTypes);				
+		}
 		getEntriesButton = document.createElement('input');
 		getEntriesButton.setAttribute('type', 'button');
 		getEntriesButton.setAttribute('class', 'calendarButtonStyleClass');	
 		getEntriesButton.setAttribute('value', 'Get entries');		
-	parentOfList.appendChild(tableOfParameters);
-	addButtonBehaviour();
-	
-}
+		parentOfList.appendChild(tableOfParameters);
+		addButtonBehaviour();
+	}
+
+// adds behaviour on 'Refresh' button and checkboxes in ledgers and types list
 
 	function addButtonBehaviour(){
 	    $$('input.calendarButtonStyleClass').each(
-    	function(element) {
-			element.onclick = function() {
-				arrayOfCheckedParameters = new Array();
-				for(var i = 0; i < arrayOfParameters.length; i++){					
-					var element = document.getElementById(arrayOfParameters[i]);
-					if (element.checked)
-						arrayOfCheckedParameters.push(arrayOfParameters[i]);
+		   	function(element) {
+				element.onclick = function() {
+					arrayOfCheckedParameters = new Array();
+					for(var i = 0; i < arrayOfParameters.length; i++){					
+						var element = document.getElementById(arrayOfParameters[i]);
+						if (element.checked){
+							arrayOfCheckedParameters.push(arrayOfParameters[i]);
+						}
+					}
+					groups_and_calendar_chooser_helper = new ChooserHelper();
+					groups_and_calendar_chooser_helper.removeAllAdvancedProperties();
+					for(var index=0; index<arrayOfCheckedParameters.length; index++) {
+						groups_and_calendar_chooser_helper.addAdvancedProperty(arrayOfCheckedParameters[index].id, arrayOfCheckedParameters[index]);
+					}
+					CalService.setCheckedParameters(arrayOfCheckedParameters, displayEntries);	
 				}
-
-				groups_and_calendar_chooser_helper = new ChooserHelper();
-				groups_and_calendar_chooser_helper.removeAllAdvancedProperties();
-				for(var index=0; index<arrayOfCheckedParameters.length; index++) {
-					groups_and_calendar_chooser_helper.addAdvancedProperty(arrayOfCheckedParameters[index].id, arrayOfCheckedParameters[index]);
-				}
-				CalService.setCheckedParameters(arrayOfCheckedParameters, displayEntries);	
-			}
-    	}
-    	);
-    	$$('input.calendarCheckbox').each(
+	   		}
+	   	);
+	   	$$('input.calendarCheckbox').each(
 	    	function(element) {
 	    		element.onclick = function(){
 	    			if(element.checked == false){
@@ -175,47 +199,50 @@ function displayCalendarAttributes(calendars){
 	    	}
 	    );
 	};
-	
-	function addBehaviour(){
-	    $$('li.groupNode').each(
+/*	
+function addBehaviour(){
+    $$('li.groupNode').each(
     	function(element) {
 			element.onclick = function() {
 				CalService.getCalendarParameters(element.id, displayCalendarAttributes);
 			}
     	}
-    	);
-	}	
-	
+   	);
+}	
+*/	
+
+// returns layer with schedule buttons (previous, next, day...)
+
 	function getScheduleButtons(){
 		var scheduleNextButton = document.createElement('input');
 		scheduleNextButton.setAttribute('type', 'button');
 		scheduleNextButton.setAttribute('class', 'scheduleNextButtonStyleClass');	
-		scheduleNextButton.setAttribute('value', 'Next');
+		scheduleNextButton.setAttribute('value', nextLabel);
 		
 		var schedulePreviousButton = document.createElement('input');
 		schedulePreviousButton.setAttribute('type', 'button');
 		schedulePreviousButton.setAttribute('class', 'schedulePreviousButtonStyleClass');	
-		schedulePreviousButton.setAttribute('value', 'Previous');	
+		schedulePreviousButton.setAttribute('value', previousLabel);	
 		
 		var scheduleDayButton = document.createElement('input');
 		scheduleDayButton.setAttribute('type', 'button');
 		scheduleDayButton.setAttribute('class', 'scheduleDayButtonStyleClass');	
-		scheduleDayButton.setAttribute('value', 'Day');	
+		scheduleDayButton.setAttribute('value', dayLabel);	
 		
 		var scheduleWeekButton = document.createElement('input');
 		scheduleWeekButton.setAttribute('type', 'button');
 		scheduleWeekButton.setAttribute('class', 'scheduleWeekButtonStyleClass');	
-		scheduleWeekButton.setAttribute('value', 'Week');	
+		scheduleWeekButton.setAttribute('value', weekLabel);	
 		
 		var scheduleWorkweekButton = document.createElement('input');
 		scheduleWorkweekButton.setAttribute('type', 'button');
 		scheduleWorkweekButton.setAttribute('class', 'scheduleWorkweekButtonStyleClass');	
-		scheduleWorkweekButton.setAttribute('value', 'Workweek');	
+		scheduleWorkweekButton.setAttribute('value', workweekLabel);	
 		
 		var scheduleMonthButton = document.createElement('input');
 		scheduleMonthButton.setAttribute('type', 'button');
 		scheduleMonthButton.setAttribute('class', 'scheduleMonthButtonStyleClass');	
-		scheduleMonthButton.setAttribute('value', 'Month');	
+		scheduleMonthButton.setAttribute('value', monthLabel);	
 
 		var scheduleButtonsLayer = document.createElement('div');
 		if(hideMenu == false){
@@ -231,7 +258,9 @@ function displayCalendarAttributes(calendars){
 		return  scheduleButtonsLayer;	
 	}
 	
-	function getNext(){	
+//	switches schedule to next	
+	
+	function getNext(){
 		ScheduleSession.switchToNextAndGetListOfEntries(scheduleId, function(result){
 			if(showEntriesAsList){			
 				displayEntriesAsList(result);
@@ -243,6 +272,9 @@ function displayCalendarAttributes(calendars){
 		});
 
 	}
+	
+// switches schedule to previous	
+	
 	function getPrevious(){	
 		ScheduleSession.switchToPreviousAndGetListOfEntries(scheduleId, function(result){
 			if(showEntriesAsList){			
@@ -255,7 +287,10 @@ function displayCalendarAttributes(calendars){
 		});
 	}
 	
+// changes mode to day	
+	
 	function changeModeToDay(){
+		currentMode = dayMode;
 		ScheduleSession.changeModeToDayAndGetListOfEntries(scheduleId, function(result){
 			if(showEntriesAsList){			
 				displayEntriesAsList(result);
@@ -267,7 +302,10 @@ function displayCalendarAttributes(calendars){
 		});	
 	}
 
+// changes mode to workweek		
+
 	function changeModeToWorkweek(){
+		currentMode = workweekMode;
 		ScheduleSession.changeModeToWorkweekAndGetListOfEntries(scheduleId, function(result){
 			if(showEntriesAsList){			
 				displayEntriesAsList(result);
@@ -279,7 +317,10 @@ function displayCalendarAttributes(calendars){
 		});	
 	}	
 	
+// changes mode to week	
+	
 	function changeModeToWeek(){
+		currentMode = weekMode;
 		ScheduleSession.changeModeToWeekAndGetListOfEntries(scheduleId, function(result){
 			if(showEntriesAsList){			
 				displayEntriesAsList(result);
@@ -291,7 +332,10 @@ function displayCalendarAttributes(calendars){
 		});	
 	}		
 
+// changes mode to month	
+	
 	function changeModeToMonth(){
+		currentMode = monthMode;
 		ScheduleSession.changeModeToMonthAndGetListOfEntries(scheduleId, function(result){
 			if(showEntriesAsList){			
 				displayEntriesAsList(result);
@@ -338,9 +382,11 @@ function displayCalendarAttributes(calendars){
 		}				
 	}
 */	
-	function displayEntries(result){			//inserting schedule DOM object
 
-//		entriesToList = entries;
+//	inserts schedule DOM object
+
+	function displayEntries(result){			
+
 		var scheduleLayer = document.getElementById('calendarViewerScheduleId');
 		var scheduleEntries = document.getElementById(scheduleEntryTableId);
 		if(scheduleEntries){
@@ -357,6 +403,8 @@ function displayCalendarAttributes(calendars){
 		setBehaviourOnScheduleEntries();
 		closeLoadingMessage();		
 	}
+	
+	//inserts entry list
 	
 	function displayEntriesAsList(entries){	
 		entriesToList = entries;
@@ -378,75 +426,44 @@ function displayCalendarAttributes(calendars){
 			return;
 		}
 		
-//		var scheduleTable = document.createElement('table');
 		var scheduleList = document.createElement('div');
 		scheduleList.setAttribute('class', entryListTableStyleClass);
 		scheduleList.setAttribute('id', 'listOfEntries');
 		
 		
-//		var tr=document.createElement('tr');
-//		tr.setAttribute('class',entryListTableCaptionStyleClass);	
-
 		var listCaptionRow = document.createElement('div');
 		listCaptionRow.setAttribute('class', entryListCaptionStyleClass);
 		
-/*		
-		var tdNumber=document.createElement('td');
-		tdNumber.setAttribute('class',entryListTableCaptionStyleClass);
-*/		
 		var nameOfEntry=document.createElement('div');
 		nameOfEntry.setAttribute('class',entryListElementStyleClass);		
 		var dateOfEntry=document.createElement('div');
 		dateOfEntry.setAttribute('class',entryListElementStyleClass);		
-//		var endDateOfEntry=document.createElement('div');
-//		endDateOfEntry.setAttribute('class',entryListElementStyleClass);		
-//		var typeOfEntry=document.createElement('div');	
-//		typeOfEntry.setAttribute('class',entryListElementStyleClass);
 		var timeOfEntry=document.createElement('div');
 		timeOfEntry.setAttribute('class',entryListElementStyleClass);
 		
-//		var txtNumber=document.createTextNode(entryNumber);
 		var txtName=document.createTextNode(entryName);
 		var txtDate=document.createTextNode(entryDate);		
-//		var txtEndDate=document.createTextNode(entryEndDate);		
-//		var txtType=document.createTextNode(entryType);	
 		var txtTime=document.createTextNode(entryTime);	
 							
-//		tdNumber.appendChild(txtNumber);
 		nameOfEntry.appendChild(txtName);
 		dateOfEntry.appendChild(txtDate);
 		timeOfEntry.appendChild(txtTime);		
-//		endDateOfEntry.appendChild(txtEndDate);
-//		typeOfEntry.appendChild(txtType);		
 				  	
-//		tr.appendChild(tdNumber);
-/*
-		listCaptionRow.appendChild(nameOfEntry);
-		listCaptionRow.appendChild(dateOfEntry);
-		listCaptionRow.appendChild(endDateOfEntry);
-		listCaptionRow.appendChild(typeOfEntry);		
-*/
 		listCaptionRow.appendChild(dateOfEntry);
 		listCaptionRow.appendChild(timeOfEntry);
 		listCaptionRow.appendChild(nameOfEntry);
 
-
 		scheduleList.appendChild(listCaptionRow);
 		testTable = listCaptionRow;
-		for(var index=0; index<entries.length; index++) {
-			
+		for(var index=0; index<entries.length; index++) {	
 			var listRow=document.createElement('div');
 			if(index % 2 == 0){
-				listRow.setAttribute('class', entryListEvenRowStyleClass);
+				listRow.setAttribute('class', entryListEvenRowStyleClass+' '+entries[index].entryTypeName);
 			}
 			else{
-				listRow.setAttribute('class', entryListOddRowStyleClass);				
+				listRow.setAttribute('class', entryListOddRowStyleClass+' '+entries[index].entryTypeName);				
 			}
 			listRow.setAttribute('id', entryIdPrefix+index);
-/*			
-			var tdNumber=document.createElement('td');
-			tdNumber.setAttribute('class',entryListTableStyleClass);
-*/
 			var nameOfEntry=document.createElement('div');
 			nameOfEntry.setAttribute('class',entryListElementStyleClass);
 			var dateOfEntry=document.createElement('div');		
@@ -457,53 +474,32 @@ function displayCalendarAttributes(calendars){
 				timeOfEntry.style.display = 'inline';
 			}
 			
-//			var endDateOfEntry=document.createElement('div');	
-//			endDateOfEntry.setAttribute('class',entryListElementStyleClass);
-//			var typeOfEntry=document.createElement('div');	
-//			typeOfEntry.setAttribute('class',entryListElementStyleClass);
-			
-//			var txtNumber=document.createTextNode(index+1);
 			var txtName=document.createTextNode(entries[index].entryName);
-//			var txtDate=document.createTextNode(entries[index].entryDate.substring(0,10));		
 			var txtDate=document.createTextNode(entries[index].localizedEntryDate);		
 			var txtTime=document.createTextNode(entries[index].entryDate.substring(11,16)+'-'+
 				entries[index].entryEndDate.substring(11,16));	
-//			var txtEndDate=document.createTextNode(entries[index].entryEndDate.substring(0,16));		
-//			var txtType=document.createTextNode(entries[index].entryTypeName);	
-			
-//			tdNumber.appendChild(txtNumber);
 			nameOfEntry.appendChild(txtName);
 			dateOfEntry.appendChild(txtDate);
 			timeOfEntry.appendChild(txtTime);		
-//			endDateOfEntry.appendChild(txtEndDate);
-//			typeOfEntry.appendChild(txtType);		
 					  	
-//			tr.appendChild(tdNumber);
 			listRow.appendChild(dateOfEntry);
 			listRow.appendChild(timeOfEntry);
 			listRow.appendChild(nameOfEntry);
-//			listRow.appendChild(endDateOfEntry);
-//			listRow.appendChild(typeOfEntry);		
 			scheduleList.appendChild(listRow);
 		}
-
 		scheduleEntries.appendChild(scheduleList);
 		setBehaviourOnListRows();
 		closeLoadingMessage();
 	}
+
+//	creates entry info table
+
 	function createInfoTable(entryNameValue, entryDateValue, entryTimeValue, entryEndTimeValue, entryTypeValue, entryDescriptionValue){
 		var txtName=document.createTextNode(entryNameValue);
 		var txtDate=document.createTextNode(entryDateValue);		
 		var txtTime=document.createTextNode(entryTimeValue+'-'+entryEndTimeValue);	
 		var txtType=document.createTextNode(entryTypeValue);		
 		var txtDescription=document.createTextNode(entryDescriptionValue);		
-/*
-		var txtNameCaption=document.createTextNode(entryName+':');
-		var txtDateCaption=document.createTextNode(entryDate+':');		
-		var txtTimeCaption=document.createTextNode(entryTime+':');	
-		var txtTypeCaption=document.createTextNode(entryType+':');	
-		var txtDescriptionCaption=document.createTextNode(entryDescription+':');	
-*/
 		
 		var nameOfEntry=document.createElement('div');
 		nameOfEntry.appendChild(txtName);
@@ -520,46 +516,6 @@ function displayCalendarAttributes(calendars){
 		var descriptionOfEntry=document.createElement('div');			
 		descriptionOfEntry.appendChild(txtDescription);			
 		descriptionOfEntry.setAttribute('class', entryInfoDescriptionStyleClass);
-/*
-		var nameCaption=document.createElement('div');
-		nameCaption.appendChild(txtNameCaption);
-		nameCaption.setAttribute('class', entryInfoCell);
-		var dateCaption=document.createElement('div');			
-		dateCaption.appendChild(txtDateCaption);			
-		dateCaption.setAttribute('class', entryInfoCell);
-		var timeCaption=document.createElement('div');			
-		timeCaption.appendChild(txtTimeCaption);			
-		timeCaption.setAttribute('class', entryInfoCell);
-		var typeCaption=document.createElement('div');			
-		typeCaption.appendChild(txtTypeCaption);			
-		typeCaption.setAttribute('class', entryInfoCell);
-		var descriptionCaption=document.createElement('div');			
-		descriptionCaption.appendChild(txtDescriptionCaption);			
-		descriptionCaption.setAttribute('class', entryInfoCell);
-*/		
-/*
-		var entryInfoNameRow = document.createElement('div');
-		entryInfoNameRow.setAttribute('class', entryInfoRow);
-		entryInfoNameRow.appendChild(nameCaption);
-		entryInfoNameRow.appendChild(nameOfEntry);
-		var entryInfoDateRow = document.createElement('div');
-		entryInfoDateRow.setAttribute('class', entryInfoRow);
-		entryInfoDateRow.appendChild(dateCaption);
-		entryInfoDateRow.appendChild(dateOfEntry);
-		var entryInfoTimeRow = document.createElement('div');
-		entryInfoTimeRow.setAttribute('class', entryInfoRow);
-		entryInfoTimeRow.appendChild(timeCaption);
-		entryInfoTimeRow.appendChild(timeOfEntry);
-		var entryInfoTypeRow = document.createElement('div');
-		entryInfoTypeRow.setAttribute('class', entryInfoRow);
-		entryInfoTypeRow.appendChild(typeCaption);
-		entryInfoTypeRow.appendChild(typeOfEntry);
-		
-		var entryInfoDescriptionRow = document.createElement('div');
-		entryInfoDescriptionRow.setAttribute('class', entryInfoRow);
-		entryInfoDescriptionRow.appendChild(descriptionCaption);
-		entryInfoDescriptionRow.appendChild(descriptionOfEntry);
-*/								
 
 		var entryInfoHeader = document.createElement('div');
 		entryInfoHeader.setAttribute('class', 'entryInfoHeader');
@@ -575,9 +531,10 @@ function displayCalendarAttributes(calendars){
 		entryInfo.appendChild(entryInfoHeader);
 		entryInfo.appendChild(entryInfoBody);
 		document.getElementById(scheduleEntryTableId).appendChild(entryInfo);
-//		document.body.appendChild(entryInfo);
 		entryInfo.setAttribute('class', entryInfoStyleClass);
 	}
+
+//	sets behaviour on entry list rows
 
 	function setBehaviourOnListRows(){
 		$$('div.'+entryListEvenRowStyleClass).each(
@@ -602,6 +559,8 @@ function displayCalendarAttributes(calendars){
 	    );	
 	}
 
+	//setting behaviour on entries in schedule
+
 	function setBehaviourOnScheduleEntries(){
 		$$('a.'+entryInScheduleStyleClass).each(
 			function(element) {
@@ -622,9 +581,223 @@ function displayCalendarAttributes(calendars){
 					removeChildren(entryInfo);
 				}
 	    	}
-	    );		
-
+	    );
+	    if(currentMode == monthMode){
+		    $$('td.content').each(
+		    	function(element){
+					element.onclick = function(){
+						var d = new Date();
+	//console.log(d.getTime());
+						var beginOfFunction = d.getTime();
+	
+						if(resizedElements){
+							for(var index=0; index<resizedElements.length; index++) {
+								resizedElements[index].removeClass(classNamesForExpanding[index]);
+								if(index < 5){
+									resizedElements[index].addClass('workdayCollapsed');
+								}
+								else{
+									resizedElements[index].addClass('weekendCollapsed');
+								}
+							}
+						}
+						var dd = new Date();
+						var after = dd.getTime();
+/*						
+	console.log(after);					
+	console.log(beginOfFunction);
+	console.log('cycle for resized elements:');					
+	console.log(after - beginOfFunction);					
+*/
+						resizedElements = new Array();
+						classNamesForExpanding = new Array();
+						var trElement = element.parentNode;
+						var tableElement = trElement.parentNode;
+						var tdDay = tableElement.parentNode;
+	//					tdDay.addClass('selectedDay'); 
+						var trParent = tdDay.parentNode;
+						var tbody = trParent.parentNode;
+						var isSunday = false;
+						
+						if (trParent.getChildren().length == 1)
+							isSunday = true;
+						for(var i=0; i<tbody.getChildren().length; i++) {
+							trParent = tbody.getChildren()[i];
+							if(isSunday){
+								if(i % 2 != 0){
+									trParent.getChildren()[0].removeClass('notSelectedDay');
+									trParent.getChildren()[0].addClass('selectedDay');								
+								}		
+								else{
+									for(var index=0; index<trParent.getChildren().length; index++) {
+										trParent.getChildren()[index].removeClass('selectedDay');
+										trParent.getChildren()[index].addClass('notSelectedDay'); 
+									}								
+								}	
+							}		//workday or saturday
+							else{
+								if(i % 2 == 0){
+									for(var index=0; index<trParent.getChildren().length; index++) {
+										if(trParent.getChildren()[index] != tdDay){
+											trParent.getChildren()[index].removeClass('selectedDay');
+											trParent.getChildren()[index].addClass('notSelectedDay'); 
+										}
+										else{
+											trParent.getChildren()[index].removeClass('notSelectedDay');										
+											trParent.getChildren()[index].addClass('selectedDay'); 
+										}			 
+									}							
+								}
+								else{
+									trParent.getChildren()[0].removeClass('selectedDay');								
+									trParent.getChildren()[0].addClass('notSelectedDay');
+								}
+							}
+						}
+					
+						trParent = tdDay.parentNode;
+	//					if (tdDay.getAttribute('class').substring(4,11) == 'workday'){			//WORKDAY
+						if (tdDay.getAttribute('class').match('workday')){			//WORKDAY
+							resizedElements.push(element);
+							classNamesForExpanding.push('workdayExpanded');
+							element.removeClass('workdayCollapsed');
+							element.addClass('workdayExpanded');
+							var tdElements = trParent.getElementsByTagName('td');
+							var dayNumber = 0;
+							for(var index=0; index<tdElements.length; index++) {
+								var currentTdElement = tdElements[index];
+								if(currentTdElement.getAttribute('class')){
+	/*
+									if((currentTdElement.getAttribute('class').toString() == 'content') 
+										||(currentTdElement.getAttribute('class').toString() == 'content workdayExpanded')
+										||(currentTdElement.getAttribute('class').toString() == 'content workdayCollapsed')
+										||(currentTdElement.getAttribute('class').toString() == 'content weekendCollapsed')) {
+	*/
+									if(currentTdElement.getAttribute('class').toString().match('content')){
+	
+										dayNumber++;
+										if(dayNumber != 6){
+											if(element != tdElements[index]){
+												resizedElements.push(tdElements[index]);
+												classNamesForExpanding.push('workdayExpanded');
+												tdElements[index].removeClass('workdayCollapsed');
+												tdElements[index].addClass('workdayExpanded');
+											}
+										}
+										else{
+											resizedElements.push(tdElements[index]);
+											classNamesForExpanding.push('weekendOnExpandedWorkday');
+											tdElements[index].removeClass('weekendCollapsed');										
+											tdElements[index].addClass('weekendOnExpandedWorkday');
+										}
+									}
+								}
+							}	
+							trParent = trParent.getNext();
+							tdElements = trParent.getElementsByTagName('td');
+							for(var index=0; index<tdElements.length; index++) {
+								var currentTdElement = tdElements[index];
+								if(currentTdElement.getAttribute('class')){
+	//								if((currentTdElement.getAttribute('class').toString() == 'content')||
+	//									(currentTdElement.getAttribute('class').toString() == 'content weekendCollapsed')){
+									if(currentTdElement.getAttribute('class').toString().match('content')){
+										resizedElements.push(tdElements[index]);
+										classNamesForExpanding.push('weekendOnExpandedWorkday');
+										tdElements[index].removeClass('weekendCollapsed');
+										tdElements[index].addClass('weekendOnExpandedWorkday');
+									}
+								}						
+							}						
+						}
+						else{
+							if (trParent.getChildren().length == 1){				//SUNDAY
+								trParent = trParent.getPrevious();
+								var tdElements = trParent.getElementsByTagName('td');
+								var dayNumber = 0;
+								for(var index=0; index<tdElements.length; index++) {
+									var currentTdElement = tdElements[index];
+									if(currentTdElement.getAttribute('class')){
+										if((currentTdElement.getAttribute('class').toString() == 'content')||
+											(currentTdElement.getAttribute('class').toString() == 'content weekendCollapsed')||
+											(currentTdElement.getAttribute('class').toString() == 'content workdayCollapsed')){
+											dayNumber++;
+											if(dayNumber != 6){
+												resizedElements.push(tdElements[index]);
+												classNamesForExpanding.push('workdayOnExpandedWeekend');
+												tdElements[index].removeClass('workdayCollapsed');
+												tdElements[index].addClass('workdayOnExpandedWeekend');
+											}
+										}
+									}
+								}
+								resizedElements.push(element);
+								classNamesForExpanding.push('weekendExpanded');							
+								element.removeClass('weekendCollapsed');
+								element.addClass('weekendExpanded');
+							}
+							else{	//SATURDAY
+								var tdElements = trParent.getElementsByTagName('td');
+								var dayNumber = 0;
+								for(var index=0; index<tdElements.length; index++) {
+									var currentTdElement = tdElements[index];
+									if(currentTdElement.getAttribute('class')){
+										if((currentTdElement.getAttribute('class').toString() == 'content')||
+											(currentTdElement.getAttribute('class').toString() == 'content weekendCollapsed')||
+											(currentTdElement.getAttribute('class').toString() == 'content workdayCollapsed')){
+											dayNumber++;
+											if(dayNumber != 6){
+												resizedElements.push(tdElements[index]);
+												classNamesForExpanding.push('workdayOnExpandedWeekend');
+												currentTdElement.removeClass('workdayCollapsed');
+												currentTdElement.addClass('workdayOnExpandedWeekend');
+											}
+											else{
+												resizedElements.push(currentTdElement);
+												classNamesForExpanding.push('weekendExpanded');
+												currentTdElement.removeClass('weekendCollapsed');
+												currentTdElement.addClass('weekendExpanded');
+	
+	//											tdElements[index].style.height = tdElements[index].getCoordinates().height+heightToAdd+'px';
+											}
+										}
+									}
+								}	
+								var trParent = trParent.getNext();
+								tdElements = trParent.getElementsByTagName('td');
+	/*							
+								for(var index=0; index<tdElements.length; index++) {
+									var currentTdElement = tdElements[index];
+									if(currentTdElement.getAttribute('class')){
+										if(currentTdElement.getAttribute('class').toString() == 'content'){
+	//										tdElements[index].style.height = ((currentHeight-18)/2)+'px';
+	//										tdElements[index].style.height = previousHeight+'px';
+										}	
+									}					
+								}
+	*/
+								resizedElements.push(element);
+								classNamesForExpanding.push('weekendExpanded');			
+								element.removeClass('weekendCollapsed');				
+								element.addClass('weekendExpanded');
+							}						
+							
+						}
+						var d2 = new Date();
+						var endOfFunction = d2.getTime();
+/*						
+	console.log('TOTAL TIME');					
+	console.log(endOfFunction - beginOfFunction);
+	console.log(d2.getTime());					
+*/						
+					}
+	//	    		var previousHeight = null;
+	    		
+		    	}
+		    );
+	    }
 	}
+
+//	displays entry info table
 
 	function displayEntryInfo(element, e){
 		var entryElement = null;
@@ -656,6 +829,7 @@ function displayCalendarAttributes(calendars){
 						
 			entryInfo.style.display = 'block';
 			dragDrop_x = e.clientX/1 + document.body.scrollLeft;
+			
 //			dragDrop_y = e.clientY/1 + document.documentElement.scrollTop;	
 			dragDrop_y = e.clientY/1;				
 			
@@ -693,6 +867,7 @@ function displayCalendarAttributes(calendars){
 			entryInfo.appendChild(testTable);
 	}
 */		
+/*
 	function createEmptySchedule(result){
 		var scheduleLayer = document.getElementById('calendarViewerScheduleId');
 		var scheduleEntries = document.getElementById(scheduleEntryTableId);
@@ -702,6 +877,9 @@ function displayCalendarAttributes(calendars){
 		scheduleLayer.appendChild(getScheduleButtons());
 		insertNodesToContainer(result, scheduleEntries);
 	}
+*/
+
+// sets behaviour on schedule buttons (previous, next, day...)
 
 	function setBehaviourToScheduleButtons(){
 		$$('input.scheduleNextButtonStyleClass').each(
@@ -748,6 +926,8 @@ function displayCalendarAttributes(calendars){
 	    );		
 	}
 
+	// returns calendar properties bean
+
 	function getCalendarProperties(){
 		prepareDwr(CalService, getDefaultDwrPath());
 		CalService.getCalendarProperties(scheduleId, {
@@ -758,8 +938,9 @@ function displayCalendarAttributes(calendars){
 		});
 	}
 	
+	// prepares DWR to get remote or local calendar parameters
+	
 	function prepareDwrForGettingCalendarParameters(groupId){
-		
 		groups_and_calendar_chooser_helper = new ChooserHelper();
 		groups_and_calendar_chooser_helper.removeAllAdvancedProperties();
 		groups_and_calendar_chooser_helper.addAdvancedProperty('server', SERVER);
@@ -780,11 +961,15 @@ function displayCalendarAttributes(calendars){
 		}
 	}
 	
+	//returns calendar parameters from local server
+	
 	function getLocalCalendarParameters(groupId){
 		showLoadingMessage(loadingMsg);
 		prepareDwr(CalService, getDefaultDwrPath());
 		CalService.getCalendarParameters(groupId, displayCalendarAttributes);
 	}
+		
+//checks if remote server can be reached	
 		
 	function canUseRemoteCalendar(groupId){
 		showLoadingMessage(loadingMsg);
@@ -794,6 +979,9 @@ function displayCalendarAttributes(calendars){
 			}
 		});
 	}
+	
+//returns calendar parameters from remote server
+	
 	function canUseRemoteCalendarCallback(canUse, groupUniqueId){
 		if(canUse){
 			prepareDwr(CalService, SERVER + DEFAULT_DWR_PATH);
@@ -807,6 +995,8 @@ function displayCalendarAttributes(calendars){
 			return false;
 		}
 	}
+	
+// get entries from local server or checks connection with remote server
 	
 	function getEntries(isRemoteMode, server, login, password, calendarAttributes){
 		if(isRemoteMode == true){
@@ -822,6 +1012,7 @@ function displayCalendarAttributes(calendars){
 		}
 	}
 	
+/*	
 	function getCalendarConnectionPropertiesCallback(){
 		CalService.canUseRemoteServer(server, {
 			callback: function(result) {
@@ -829,6 +1020,9 @@ function displayCalendarAttributes(calendars){
 			}
 		});		
 	}
+*/
+	
+	//gets entries from remote server
 	
 	function getEntriesCallback(canUse, server, login, password, calendarAttributes){
 		if(canUse){
@@ -841,6 +1035,9 @@ function displayCalendarAttributes(calendars){
 			return false;
 		}
 	}
+	
+	//sends package of entries to server side
+	
 	function addEntriesCallback(result){
 		packageIndex += entriesPackageSize;
 		packageEndIndex += entriesPackageSize;
@@ -853,23 +1050,25 @@ function displayCalendarAttributes(calendars){
 			}
 			packageOfEntries.push(entriesToCalendar[index]);
 		}
-			ScheduleSession.addEntries(packageOfEntries, scheduleId, false, function(result){
-				if(reachedEnd == false){
-					addEntriesCallback(result);
-				}
-				else{
+		ScheduleSession.addEntries(packageOfEntries, scheduleId, false, function(result){
+			if(reachedEnd == false){
+				addEntriesCallback(result);
+			}
+			else{
 //					if(showEntriesAsList){
 //						ScheduleSession.getListOfEntries(scheduleId, displayEntriesAsList);
-						ScheduleSession.getListOfEntries(scheduleId, setEntries);
+				ScheduleSession.getListOfEntries(scheduleId, setEntries);
 /*
 					}
 					else{
 						ScheduleSession.getScheduleDOM(scheduleId, displayEntries);
 					}
 */
-				}
-			});
+			}
+		});
 	}
+	
+	//entries are displayed as list or sent to server side to get schedule DOM object
 	
 	function setEntries(entries){
 		entriesToList = entries;
@@ -877,9 +1076,12 @@ function displayCalendarAttributes(calendars){
 			displayEntriesAsList(entries);
 		}
 		else{
+			currentMode = monthMode;
 			ScheduleSession.getScheduleDOM(scheduleId, displayEntries);
 		}
 	}
+	
+	//sends first package of entries to serverside
 	
 	function addEntriesToListOrSchedule(entries){
 		entriesToCalendar = entries;

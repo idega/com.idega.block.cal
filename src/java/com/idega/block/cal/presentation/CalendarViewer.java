@@ -139,7 +139,10 @@ public class CalendarViewer extends Block{
 //			action.append("entryDate = 'Date'; ");
 //			action.append("noEntries = 'There are no entries to display'; ");			
 //			action.append("serverErrorMessage = 'can\\'t connect to:'; ");	
-//			action.append("loadingMsg = 'Loading...';");			
+//			action.append("loadingMsg = 'Loading...';");
+			
+			//passing captions to JS
+			
 			action.append("entryName = '"+iwrb.getLocalizedString("name", "Name")+"'; ");			
 			action.append("entryEndDate = '"+iwrb.getLocalizedString("endDate", "End date")+"'; ");
 			action.append("entryType = '"+iwrb.getLocalizedString("type", "Type")+"'; ");			
@@ -149,6 +152,12 @@ public class CalendarViewer extends Block{
 			action.append("serverErrorMessage = '"+iwrb.getLocalizedString("cantConnectTo", "can\\'t connect to:")+"'; ");	
 			action.append("loadingMsg = '"+iwrb.getLocalizedString("loadingMsg", "Loading...")+"';");			
 
+			action.append("previousLabel = '"+iwrb.getLocalizedString("previousLabel", "Previous")+"';");
+			action.append("nextLabel = '"+iwrb.getLocalizedString("nextLabel", "Next")+"';");
+			action.append("dayLabel = '"+iwrb.getLocalizedString("dayLabel", "Day")+"';");
+			action.append("weekLabel = '"+iwrb.getLocalizedString("weekLabel", "Week")+"';");
+			action.append("workweekLabel = '"+iwrb.getLocalizedString("workweekLabel", "Workweek")+"';");
+			action.append("monthLabel = '"+iwrb.getLocalizedString("monthLabel", "Month")+"';");
 			action.append("getCalendarProperties();");
 			action.append("});");
 			

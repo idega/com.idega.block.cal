@@ -661,8 +661,6 @@ div.planner div.row div.entry {
   text-decoration: none;
 }
 
-
-
 /* PART IV: Tooltips */
 div.domTT {
     border: 1px solid #333366;
@@ -672,7 +670,7 @@ div.domTT .caption {
     font-family: Verdana, Helvetica;
     font-size: 10px;
     font-weight: bold;
-    color: #FFFFFF;
+    color: #FFFFFF;	
 }
 div.domTT .contents {
     font-size: 10px;
@@ -680,3 +678,55 @@ div.domTT .contents {
     padding: 2px;
     background-color: #F1F1FF;
 }
+/*
+.workday{
+	height: 100% !important;
+}
+*/
+/*
+.day{
+	height: 100% !important;
+}
+div.contentview {
+	overflow: hidden !important;
+}
+*/
+td.content {
+/*	height: 100% !important; */
+}
+
+.workdayCollapsed{
+	
+	height: 103px !important;
+}
+
+.workdayExpanded{
+	height: 206px !important;
+	width: 23.3333% !important;
+}
+
+.workdayOnExpandedWeekend{
+	height: 144px !important;
+}
+
+.weekendCollapsed{
+	height: 40px !important;
+}
+
+.weekendExpanded{
+	height: 82px !important;
+}
+
+.weekendOnExpandedWorkday{
+	height: 92px !important;
+}
+.selectedDay{	
+	width: 25% !important;
+/*	background-color: rgb(0,239,0); */
+}
+.notSelectedDay{
+	width: 15% !important;
+/*	background-color: rgb(0,0,255);	*/
+}
+
+

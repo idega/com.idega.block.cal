@@ -8,12 +8,8 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Locale;
-import java.util.Map;
 
-//import org.apache.myfaces.custom.schedule.HtmlSchedule;
 import org.apache.myfaces.custom.schedule.model.DefaultScheduleEntry;
 import org.apache.myfaces.custom.schedule.model.ScheduleModel;
 import org.apache.myfaces.custom.schedule.model.SimpleScheduleModel;
@@ -21,7 +17,7 @@ import org.jdom.Document;
 
 import com.idega.business.IBOSessionBean;
 import com.idega.core.builder.business.BuilderService;
-import com.idega.core.builder.business.BuilderServiceFactory; 
+import com.idega.core.builder.business.BuilderServiceFactory;
 import com.idega.presentation.IWContext;
 import com.idega.presentation.Layer;
 import com.idega.util.CoreUtil;

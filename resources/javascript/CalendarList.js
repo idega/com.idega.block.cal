@@ -16,7 +16,7 @@ var calendarProperties = null;
 
 var entriesToCalendar = null;
 var entriesToList = null;
-var entriesPackageSize = 5;
+var entriesPackageSize = 2;
 var packageIndex = 0;
 var packageEndIndex = entriesPackageSize;
 var entryInfo = document.createElement('div');
@@ -35,6 +35,8 @@ var monthMode = 'MONTH';
 var defaultMode = monthMode;
 
 var currentMode = defaultMode;
+
+var elements = [];
 
 //Labels
 /*
@@ -132,7 +134,8 @@ var entryInScheduleStyleClass = null;
 				typeElement.setAttribute('name',element.name);
 				typeElement.setAttribute('elementType',element.type);			
 				typeElement.setAttribute('type','checkbox');				
-				typeElement.setAttribute('class','calendarCheckbox');			
+//				typeElement.setAttribute('class','calendarCheckbox');
+				$(typeElement).addClass('calendarCheckbox');							
 				var typeCaption = document.createTextNode(element.name); 					
 				entryTypesList.appendChild(typeElement);
 				entryTypesList.appendChild(typeCaption);
@@ -156,7 +159,8 @@ var entryInScheduleStyleClass = null;
 		}
 		getEntriesButton = document.createElement('input');
 		getEntriesButton.setAttribute('type', 'button');
-		getEntriesButton.setAttribute('class', 'calendarButtonStyleClass');	
+//		getEntriesButton.setAttribute('class', 'calendarButtonStyleClass');	
+		$(getEntriesButton).addClass('calendarButtonStyleClass');
 		getEntriesButton.setAttribute('value', 'Get entries');		
 		parentOfList.appendChild(tableOfParameters);
 		addButtonBehaviour();
@@ -218,32 +222,44 @@ function addBehaviour(){
 		scheduleNextButton.setAttribute('type', 'button');
 		scheduleNextButton.setAttribute('class', 'scheduleNextButtonStyleClass');	
 		scheduleNextButton.setAttribute('value', nextLabel);
+
+		scheduleNextButton.setAttribute('onclick', getNext);
 		
 		var schedulePreviousButton = document.createElement('input');
 		schedulePreviousButton.setAttribute('type', 'button');
 		schedulePreviousButton.setAttribute('class', 'schedulePreviousButtonStyleClass');	
 		schedulePreviousButton.setAttribute('value', previousLabel);	
+
+		schedulePreviousButton.setAttribute('onclick', getPrevious);
 		
 		var scheduleDayButton = document.createElement('input');
 		scheduleDayButton.setAttribute('type', 'button');
 		scheduleDayButton.setAttribute('class', 'scheduleDayButtonStyleClass');	
 		scheduleDayButton.setAttribute('value', dayLabel);	
+
+		scheduleDayButton.setAttribute('onclick', changeModeToDay);
+
 		
 		var scheduleWeekButton = document.createElement('input');
 		scheduleWeekButton.setAttribute('type', 'button');
 		scheduleWeekButton.setAttribute('class', 'scheduleWeekButtonStyleClass');	
 		scheduleWeekButton.setAttribute('value', weekLabel);	
 		
+		scheduleWeekButton.setAttribute('onclick', changeModeToWeek);
+		
 		var scheduleWorkweekButton = document.createElement('input');
 		scheduleWorkweekButton.setAttribute('type', 'button');
 		scheduleWorkweekButton.setAttribute('class', 'scheduleWorkweekButtonStyleClass');	
 		scheduleWorkweekButton.setAttribute('value', workweekLabel);	
+
+		scheduleWorkweekButton.setAttribute('onclick', changeModeToWorkweek);
 		
 		var scheduleMonthButton = document.createElement('input');
 		scheduleMonthButton.setAttribute('type', 'button');
 		scheduleMonthButton.setAttribute('class', 'scheduleMonthButtonStyleClass');	
 		scheduleMonthButton.setAttribute('value', monthLabel);	
-
+		scheduleMonthButton.setAttribute('onclick', changeModeToMonth);
+		
 		var scheduleButtonsLayer = document.createElement('div');
 		if(hideMenu == false){
 			if (hidePreviousAndNext == false){
@@ -276,6 +292,7 @@ function addBehaviour(){
 // switches schedule to previous	
 	
 	function getPrevious(){	
+//alert('getPrevious');		
 		ScheduleSession.switchToPreviousAndGetListOfEntries(scheduleId, function(result){
 			if(showEntriesAsList){			
 				displayEntriesAsList(result);
@@ -400,6 +417,142 @@ function addBehaviour(){
 			setBehaviourToScheduleButtons();
 		}
 		insertNodesToContainer(result, scheduleEntries);
+	/*	
+var xmlParent = document.getElementById('scheduleEntryTableId');
+
+var xmlTag = xmlParent.getElementsByTagName('xml')[0];
+if(xmlTag == null){
+//	alert('null');
+	var hiddenParent = xmlParent.getElementsByTagName('div')[0];
+	var hiddenTags = hiddenParent.getElementsByTagName('input')[0];
+	
+	if(hiddenParent){
+		alert('hidden');
+		hiddenParent.removeChild(hiddenTags);
+	}
+	hiddenTags = hiddenParent.getElementsByTagName('input')[0];
+	if(hiddenParent){
+		hiddenParent.removeChild(hiddenTags);
+	}
+	hiddenTags = hiddenParent.getElementsByTagName('input')[0];
+	if(hiddenParent){
+		hiddenParent.removeChild(hiddenTags);
+	}		
+}
+else{
+//	alert('xml');
+	xmlParent.removeChild(xmlTag);
+	var hiddenParent = xmlParent.getElementsByTagName('div')[0];
+	var hiddenTags = hiddenParent.getElementsByTagName('input')[0];
+	if(hiddenParent){
+		hiddenParent.removeChild(hiddenTags);
+	}
+	hiddenTags = hiddenParent.getElementsByTagName('input')[0];
+	if(hiddenParent){
+		hiddenParent.removeChild(hiddenTags);
+	}	
+	hiddenTags = hiddenParent.getElementsByTagName('input')[0];
+	if(hiddenParent){
+		hiddenParent.removeChild(hiddenTags);
+	}	
+}
+var baseLayer = document.getElementById('scheduleEntryTableId');
+var scheduleLayerChild = baseLayer.getElementsByTagName('table')[0];
+//baseLayer.removeChild(scheduleLayerChild);
+//		scheduleLayerChild = scheduleLayer.getElementsByTagName('div')[0];
+//scheduleLayer.removeChild(scheduleLayerChild);f
+		//$(scheduleLayerChild).removeClass('schedule-compact-default');
+		$$('td.workday').each(
+			function(element) {
+				
+				$(element).setStyle('height', '121px');
+	  			$(element).setStyle('width', '16.6667%');	  	
+	  			if(window.ie){ 
+	  				element.removeAttribute('$included');	
+	  			}
+	  			var tableDay = element.getElementsByTagName('table')[0];
+	  			$(tableDay).setStyle('height','121px');
+	    	}
+	    );
+		$$('td.weekend').each(
+			function(element) {
+				
+				$(element).setStyle('height', '60px');
+	  			$(element).setStyle('width', '16.6667%');
+	  			if(window.ie){ 
+	  				element.removeAttribute('$included');	
+	  			}	  	
+	  			
+	  			var tableDay = element.getElementsByTagName('table')[0];
+	  			$(tableDay).setStyle('height','60px');	  				
+	    	}
+	    );
+		$$('td.header').each(
+			function(element) {
+				
+				$(element).setStyle('height', '18px');
+	  			$(element).setStyle('width', '16.6667%');	
+	  			if(window.ie){ 
+	  				element.removeAttribute('$included');	
+	  			}  		
+	    	}
+	    );
+	
+		$$('table.day').each(
+			function(element) {
+				
+//				$(element).setStyle('height', '121px');
+//	  			$(element).setStyle('width', '100%');	  	
+	  			if(window.ie){ 
+	  				element.removeAttribute('$included');	
+	  			}	
+	    	}
+	    );
+		
+		
+		
+		
+	for (var n = 0, d = elements.length; n < d; n++) {
+        	//new for IE 6 and IE 7
+	  	if(window.ie){ 
+	  		elements[n].removeAttribute('$included');
+//	  		$(elements[n]).setStyle('height', '103px');
+//	  		$(elements[n]).setStyle('width', '100%');	  		
+	  	}
+	  	else elements[n].$included=false;
+ 
+	 }		
+	
+	
+$$.unique = function(array){
+	var elements = [];
+ 
+	for (var i = 0, l = array.length; i < l; i++){
+		if (array[i].$included) continue;
+		var element = $(array[i]);
+ 
+		if (element && !element.$included){
+ 
+			element.$included = true;
+			elements.push(element);
+		}
+	}
+ 
+	for (var n = 0, d = elements.length; n < d; n++) {
+        	//new for IE 6 and IE 7
+	  	if(window.ie){
+	  		elements[n].removeAttribute('$included');
+//	  		$(elements[n]).setStyle('height', '103px');
+//	  		$(elements[n]).setStyle('width', '100%');	 
+	  	}
+	  	else elements[n].$included=false;
+ 
+	 }
+ 
+	return new Elements(elements);
+};
+*/
+//		
 		setBehaviourOnScheduleEntries();
 		closeLoadingMessage();		
 	}
@@ -408,7 +561,7 @@ function addBehaviour(){
 	
 	function displayEntriesAsList(entries){	
 		entriesToList = entries;
-		var scheduleLayer = document.getElementById('calendarViewerScheduleId');
+		var scheduleLayer = document.getElementById('calendarViewerScheduleId'); 	
 		var scheduleEntries = document.getElementById(scheduleEntryTableId);
 		if(scheduleEntries){
 			removeChildren(scheduleEntries);  //remove previous schedule DOM object
@@ -427,19 +580,24 @@ function addBehaviour(){
 		}
 		
 		var scheduleList = document.createElement('div');
-		scheduleList.setAttribute('class', entryListTableStyleClass);
+//		scheduleList.setAttribute('class', entryListTableStyleClass);
+		$(scheduleList).addClass(entryListTableStyleClass);
 		scheduleList.setAttribute('id', 'listOfEntries');
 		
 		
 		var listCaptionRow = document.createElement('div');
-		listCaptionRow.setAttribute('class', entryListCaptionStyleClass);
+//		listCaptionRow.setAttribute('class', entryListCaptionStyleClass);
+		$(listCaptionRow).addClass(entryListCaptionStyleClass);
 		
 		var nameOfEntry=document.createElement('div');
-		nameOfEntry.setAttribute('class',entryListElementStyleClass);		
+//		nameOfEntry.setAttribute('class',entryListElementStyleClass);		
+		$(nameOfEntry).addClass(entryListElementStyleClass);
 		var dateOfEntry=document.createElement('div');
-		dateOfEntry.setAttribute('class',entryListElementStyleClass);		
+//		dateOfEntry.setAttribute('class',entryListElementStyleClass);		
+		$(dateOfEntry).addClass(entryListElementStyleClass);
 		var timeOfEntry=document.createElement('div');
-		timeOfEntry.setAttribute('class',entryListElementStyleClass);
+//		timeOfEntry.setAttribute('class',entryListElementStyleClass);
+		$(timeOfEntry).addClass(entryListElementStyleClass);
 		
 		var txtName=document.createTextNode(entryName);
 		var txtDate=document.createTextNode(entryDate);		
@@ -458,18 +616,25 @@ function addBehaviour(){
 		for(var index=0; index<entries.length; index++) {	
 			var listRow=document.createElement('div');
 			if(index % 2 == 0){
-				listRow.setAttribute('class', entryListEvenRowStyleClass+' '+entries[index].entryTypeName);
+//				listRow.setAttribute('class', entryListEvenRowStyleClass+' '+entries[index].entryTypeName);
+				$(listRow).addClass(entryListEvenRowStyleClass);
+				$(listRow).addClass(entries[index].entryTypeName);
 			}
 			else{
-				listRow.setAttribute('class', entryListOddRowStyleClass+' '+entries[index].entryTypeName);				
+//				listRow.setAttribute('class', entryListOddRowStyleClass+' '+entries[index].entryTypeName);				
+				$(listRow).addClass(entryListOddRowStyleClass);
+				$(listRow).addClass(entries[index].entryTypeName);
 			}
 			listRow.setAttribute('id', entryIdPrefix+index);
 			var nameOfEntry=document.createElement('div');
-			nameOfEntry.setAttribute('class',entryListElementStyleClass);
+//			nameOfEntry.setAttribute('class',entryListElementStyleClass);
+			$(nameOfEntry).addClass(entryListElementStyleClass);
 			var dateOfEntry=document.createElement('div');		
-			dateOfEntry.setAttribute('class',entryListElementStyleClass);
+//			dateOfEntry.setAttribute('class',entryListElementStyleClass);
+			$(dateOfEntry).addClass(entryListElementStyleClass);
 			var timeOfEntry=document.createElement('div');	
-			timeOfEntry.setAttribute('class',entryListElementTimeStyleClass);
+//			timeOfEntry.setAttribute('class',entryListElementTimeStyleClass);
+			$(timeOfEntry).addClass(entryListElementTimeStyleClass);
 			if(showTime){
 				timeOfEntry.style.display = 'inline';
 			}
@@ -503,24 +668,30 @@ function addBehaviour(){
 		
 		var nameOfEntry=document.createElement('div');
 		nameOfEntry.appendChild(txtName);
-		nameOfEntry.setAttribute('class', entryInfoNameStyleClass);
+//		nameOfEntry.setAttribute('class', entryInfoNameStyleClass);
+		$(nameOfEntry).addClass(entryInfoNameStyleClass);
 		var dateOfEntry=document.createElement('div');			
 		dateOfEntry.appendChild(txtDate);			
-		dateOfEntry.setAttribute('class', entryInfoDateStyleClass);		
+//		dateOfEntry.setAttribute('class', entryInfoDateStyleClass);		
+		$(dateOfEntry).addClass(entryInfoDateStyleClass);
 		var timeOfEntry=document.createElement('div');			
 		timeOfEntry.appendChild(txtTime);			
-		timeOfEntry.setAttribute('class', entryInfoTimeStyleClass);
+//		timeOfEntry.setAttribute('class', entryInfoTimeStyleClass);
+		$(timeOfEntry).addClass(entryInfoTimeStyleClass);
 		var typeOfEntry=document.createElement('div');			
 		typeOfEntry.appendChild(txtType);			
-		typeOfEntry.setAttribute('class', entryInfoTypeStyleClass);
+//		typeOfEntry.setAttribute('class', entryInfoTypeStyleClass);
+		$(typeOfEntry).addClass(entryInfoTypeStyleClass);
 		var descriptionOfEntry=document.createElement('div');			
 		descriptionOfEntry.appendChild(txtDescription);			
-		descriptionOfEntry.setAttribute('class', entryInfoDescriptionStyleClass);
-
+//		descriptionOfEntry.setAttribute('class', entryInfoDescriptionStyleClass);
+		$(descriptionOfEntry).addClass(entryInfoDescriptionStyleClass);
 		var entryInfoHeader = document.createElement('div');
-		entryInfoHeader.setAttribute('class', 'entryInfoHeader');
+//		entryInfoHeader.setAttribute('class', 'entryInfoHeader');
+		$(entryInfoHeader).addClass('entryInfoHeader');		
 		var entryInfoBody = document.createElement('div');
-		entryInfoBody.setAttribute('class', 'entryInfoBody');
+//		entryInfoBody.setAttribute('class', 'entryInfoBody');
+		$(entryInfoBody).addClass('entryInfoBody');		
 		
 		entryInfoHeader.appendChild(dateOfEntry);
 		entryInfoHeader.appendChild(timeOfEntry);
@@ -530,8 +701,10 @@ function addBehaviour(){
 		
 		entryInfo.appendChild(entryInfoHeader);
 		entryInfo.appendChild(entryInfoBody);
-		document.getElementById(scheduleEntryTableId).appendChild(entryInfo);
-		entryInfo.setAttribute('class', entryInfoStyleClass);
+//		document.getElementById(scheduleEntryTableId).appendChild(entryInfo);
+		document.getElementsByTagName('body')[0].appendChild(entryInfo);
+//		entryInfo.setAttribute('class', entryInfoStyleClass);
+		$(entryInfo).addClass(entryInfoStyleClass);		
 	}
 
 //	sets behaviour on entry list rows
@@ -587,28 +760,22 @@ function addBehaviour(){
 		    	function(element){
 					element.onclick = function(){
 						var d = new Date();
-	//console.log(d.getTime());
 						var beginOfFunction = d.getTime();
 	
 						if(resizedElements){
 							for(var index=0; index<resizedElements.length; index++) {
 								resizedElements[index].removeClass(classNamesForExpanding[index]);
 								if(index < 5){
-									resizedElements[index].addClass('workdayCollapsed');
+//									resizedElements[index].addClass('workdayCollapsed');
+									resizedElements[index].addClass('collapsed');
 								}
 								else{
-									resizedElements[index].addClass('weekendCollapsed');
+									resizedElements[index].addClass('collapsed');
 								}
 							}
 						}
 						var dd = new Date();
 						var after = dd.getTime();
-/*						
-	console.log(after);					
-	console.log(beginOfFunction);
-	console.log('cycle for resized elements:');					
-	console.log(after - beginOfFunction);					
-*/
 						resizedElements = new Array();
 						classNamesForExpanding = new Array();
 						var trElement = element.parentNode;
@@ -627,14 +794,14 @@ function addBehaviour(){
 								if(i % 2 != 0){
 									trParent.getChildren()[0].removeClass('notSelectedDay');
 									trParent.getChildren()[0].addClass('selectedDay');								
-								}		
+								}
 								else{
 									for(var index=0; index<trParent.getChildren().length; index++) {
 										trParent.getChildren()[index].removeClass('selectedDay');
 										trParent.getChildren()[index].addClass('notSelectedDay'); 
-									}								
+									}
 								}	
-							}		//workday or saturday
+							}		//workday or saturday (not sunday)
 							else{
 								if(i % 2 == 0){
 									for(var index=0; index<trParent.getChildren().length; index++) {
@@ -649,17 +816,31 @@ function addBehaviour(){
 									}							
 								}
 								else{
-									trParent.getChildren()[0].removeClass('selectedDay');								
+									trParent.getChildren()[0].removeClass('selectedDay');
 									trParent.getChildren()[0].addClass('notSelectedDay');
 								}
 							}
 						}
-					
+/*				
+var widthTime = new Date();
+var afterExpandingWidth = widthTime.getTime();					
+*/ 
 						trParent = tdDay.parentNode;
-	//					if (tdDay.getAttribute('class').substring(4,11) == 'workday'){			//WORKDAY
+	//					if (tsesedDay.getAttribute('class').substring(4,11) == 'workday'){			//WORKDAY
 						if (tdDay.getAttribute('class').match('workday')){			//WORKDAY
+							resizedElements.push(trParent);
+							classNamesForExpanding.push('expandedWorkday');
+							trParent.removeClass('collapsed');
+							trParent.addClass('expandedWorkday');
+							trParent = trParent.getNext();
+							trParent.removeClass('collapsed');
+							trParent.addClass('expandedWorkday');
+							resizedElements.push(trParent);
+							classNamesForExpanding.push('expandedWorkday');
+							
+/*						
 							resizedElements.push(element);
-							classNamesForExpanding.push('workdayExpanded');
+							classNamesForExpanding.push('workdayExpanded');  
 							element.removeClass('workdayCollapsed');
 							element.addClass('workdayExpanded');
 							var tdElements = trParent.getElementsByTagName('td');
@@ -667,12 +848,6 @@ function addBehaviour(){
 							for(var index=0; index<tdElements.length; index++) {
 								var currentTdElement = tdElements[index];
 								if(currentTdElement.getAttribute('class')){
-	/*
-									if((currentTdElement.getAttribute('class').toString() == 'content') 
-										||(currentTdElement.getAttribute('class').toString() == 'content workdayExpanded')
-										||(currentTdElement.getAttribute('class').toString() == 'content workdayCollapsed')
-										||(currentTdElement.getAttribute('class').toString() == 'content weekendCollapsed')) {
-	*/
 									if(currentTdElement.getAttribute('class').toString().match('content')){
 	
 										dayNumber++;
@@ -707,19 +882,30 @@ function addBehaviour(){
 										tdElements[index].addClass('weekendOnExpandedWorkday');
 									}
 								}						
-							}						
+							}		
+*/											
 						}
 						else{
 							if (trParent.getChildren().length == 1){				//SUNDAY
 								trParent = trParent.getPrevious();
+								
+								trParent.removeClass('collapsed');
+								trParent.addClass('expandedSunday');
+								resizedElements.push(trParent);
+								classNamesForExpanding.push('expandedSunday');
+								trParent = trParent.getNext();
+								trParent.removeClass('collapsed');
+								trParent.addClass('expandedSunday');	
+								resizedElements.push(trParent);
+								classNamesForExpanding.push('expandedSunday');							
+								
 								var tdElements = trParent.getElementsByTagName('td');
 								var dayNumber = 0;
+/*								
 								for(var index=0; index<tdElements.length; index++) {
 									var currentTdElement = tdElements[index];
 									if(currentTdElement.getAttribute('class')){
-										if((currentTdElement.getAttribute('class').toString() == 'content')||
-											(currentTdElement.getAttribute('class').toString() == 'content weekendCollapsed')||
-											(currentTdElement.getAttribute('class').toString() == 'content workdayCollapsed')){
+										if((currentTdElement.getAttribute('class').toString() == 'content')){
 											dayNumber++;
 											if(dayNumber != 6){
 												resizedElements.push(tdElements[index]);
@@ -730,14 +916,29 @@ function addBehaviour(){
 										}
 									}
 								}
+*/								
+/*
 								resizedElements.push(element);
 								classNamesForExpanding.push('weekendExpanded');							
 								element.removeClass('weekendCollapsed');
 								element.addClass('weekendExpanded');
+*/								
 							}
 							else{	//SATURDAY
-								var tdElements = trParent.getElementsByTagName('td');
-								var dayNumber = 0;
+							
+								trParent.removeClass('collapsed');
+								trParent.addClass('expandedSaturday');
+								resizedElements.push(trParent);
+								classNamesForExpanding.push('expandedSaturday');
+								trParent = trParent.getNext();
+								trParent.removeClass('collapsed');
+								trParent.addClass('expandedSaturday');	
+								resizedElements.push(trParent);
+								classNamesForExpanding.push('expandedSaturday');
+								
+//								var tdElements = trParent.getElementsByTagName('td');
+//								var dayNumber = 0;
+/*								
 								for(var index=0; index<tdElements.length; index++) {
 									var currentTdElement = tdElements[index];
 									if(currentTdElement.getAttribute('class')){
@@ -761,9 +962,10 @@ function addBehaviour(){
 											}
 										}
 									}
-								}	
-								var trParent = trParent.getNext();
-								tdElements = trParent.getElementsByTagName('td');
+								}
+*/								
+//								var trParent = trParent.getNext();
+//								tdElements = trParent.getElementsByTagName('td');
 	/*							
 								for(var index=0; index<tdElements.length; index++) {
 									var currentTdElement = tdElements[index];
@@ -775,20 +977,17 @@ function addBehaviour(){
 									}					
 								}
 	*/
+/*
 								resizedElements.push(element);
 								classNamesForExpanding.push('weekendExpanded');			
 								element.removeClass('weekendCollapsed');				
 								element.addClass('weekendExpanded');
+*/
 							}						
 							
 						}
 						var d2 = new Date();
 						var endOfFunction = d2.getTime();
-/*						
-	console.log('TOTAL TIME');					
-	console.log(endOfFunction - beginOfFunction);
-	console.log(d2.getTime());					
-*/						
 					}
 	//	    		var previousHeight = null;
 	    		
@@ -800,6 +999,7 @@ function addBehaviour(){
 //	displays entry info table
 
 	function displayEntryInfo(element, e){
+//element.appendChild(entryInfo);
 		var entryElement = null;
 		var idOfSelectedEntry = element.id.substring(entryIdPrefix.length);
 		if (showEntriesAsList){
@@ -828,10 +1028,31 @@ function addBehaviour(){
 			currentRow = document.getElementById(element.id);
 						
 			entryInfo.style.display = 'block';
-			dragDrop_x = e.clientX/1 + document.body.scrollLeft;
+/*
+if(window.event.clientX == null){
+	alert('e.clientX == null');
+}
+else{
+	alert(window.event.clientX/1);
+}
+*/			
+//			dragDrop_x = e.clientX/1 + document.body.scrollLeft;
+//			dragDrop_x = window.event.clientX/1 + document.body.scrollLeft;
+var event = new Event(e);
+			dragDrop_x = event.page.x/1 + document.body.scrollLeft;
 			
 //			dragDrop_y = e.clientY/1 + document.documentElement.scrollTop;	
-			dragDrop_y = e.clientY/1;				
+//			dragDrop_y = event.page.y/1;
+//			dragDrop_y = e.clientY/1;
+//			dragDrop_y = event.page.y/1 -$('listOfEntries').getCoordinates().top;
+			dragDrop_y = event.client.y/1;
+			var clientY = event.client.y/1;
+			var pageY = event.page.y/1;
+//			var windPageY = window.event.clientY/1;
+//alert('event.client.y '+clientY+' event.page.y '+pageY+' windPageY '+windPageY);
+
+			// + document.documentElement.scrollTop;	
+//			dragDrop_y = e.clientY/1;				
 			
 	
 //			dragDrop_x = 400;
@@ -841,15 +1062,24 @@ function addBehaviour(){
 				if (dragDrop_x > 600){
 					dragDrop_x = dragDrop_x - 200;
 				}
-				entryInfo.style.left = dragDrop_x + 5 + 'px';
+//				entryInfo.style.left = dragDrop_x + 5 + 'px';
+				$(entryInfo).setStyle('left',dragDrop_x + 5 + 'px');
 			}
 			else{
 				var groupListElement = $('listOfEntries');
 				var groupListElementXCoordinate = groupListElement.getPosition().x;
 				var groupListElementWidth = groupListElement.getCoordinates().width;
-				entryInfo.style.left = groupListElementXCoordinate +groupListElementWidth +10+ 'px';
+				
+				$(entryInfo).setStyle('left',groupListElementXCoordinate +groupListElementWidth +10+ 'px');
+				
+//				entryInfo.style.left = groupListElementXCoordinate +groupListElementWidth +10+ 'px';
 			}
-			entryInfo.style.top = dragDrop_y + 'px';
+			
+			
+//			$(entryInfo).setStyle('top', dragDrop_y + 'px');
+			$(entryInfo).setStyle('top', element.getCoordinates().top + 'px');
+//			entryInfo.style.top = dragDrop_y + 'px';
+//alert(entryInfo.style.top);			
 		}	
 	}
 /*	
@@ -1099,3 +1329,4 @@ function addBehaviour(){
 		}
 		ScheduleSession.addEntries(packageOfEntries, scheduleId, true, addEntriesCallback);		
 	}
+	

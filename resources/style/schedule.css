@@ -694,7 +694,7 @@ div.contentview {
 td.content {
 /*	height: 100% !important; */
 }
-
+/*
 .workdayCollapsed{
 	
 	height: 103px !important;
@@ -720,13 +720,74 @@ td.content {
 .weekendOnExpandedWorkday{
 	height: 92px !important;
 }
-.selectedDay{	
+*/
+tr.expandedWorkday td.day td.workday td.selectedDay{
 	width: 25% !important;
 /*	background-color: rgb(0,239,0); */
 }
 .notSelectedDay{
-	width: 15% !important;
+/*	width: 15% !important;*/
 /*	background-color: rgb(0,0,255);	*/
 }
 
+tr.collapsed td.workday td.content{
+	height: 103px !important;
+}
 
+tr.collapsed td.weekend td.content{
+	height: 40px !important;
+}
+/*
+tr.expandedWeekend td.workday td.content{
+	height: 144px !important;
+}
+*/
+
+tr.expandedSaturday td.workday td.content{
+	height: 144px !important;
+}
+
+tr.expandedSunday td.workday td.content{
+	height: 144px !important;
+}
+/*
+tr.expandedWeekend td.weekend td.content{
+	height: 82px !important;
+}
+*/
+
+tr.expandedSaturday td.saturday td.content{
+	height: 82px !important;
+}
+
+tr.expandedSaturday td.sunday td.content{
+	height: 40px !important;
+}
+
+tr.expandedSunday td.saturday td.content{
+	height: 40px !important;
+}
+
+tr.expandedSunday td.sunday td.content{
+	height: 82px !important;
+}
+/*
+tr.expandedSunday td.weekend td.content{
+	height: 82px !important;
+}
+*/
+tr.expandedWorkday td.workday td.content{
+	height: 206px !important;
+}
+
+tr.expandedWorkday td.weekend td.content{
+	height: 92px !important;
+}
+
+tr.expandedWorkday td.workday{
+	width: 15% !important;
+}
+
+tr.expandedWorkday td.weekend{
+	width: 15% !important;
+}

@@ -25,51 +25,60 @@ div.entryListElementTime{
 	background: #CCC;
 	padding: 2px;
 	display: block;
+	position: relative;
+	left: 0px;
+	top: 0px;
 }
 #calendarViewerScheduleId div.entryListOddRow{
 	background: #EEE;
 	padding: 2px;	
 	display: block;	
+	position: relative;
+	left: 0px;
+	top: 0px;
 }
 
 div.entryInfo{
 /*	background: #DDD;*/
-	position: fixed;
+/*	z-index: 100;*/
+	position: absolute;
 	display: block;
 	width: 200px;
 	left: 250px;
 }
 
-#calendarViewerScheduleId div.entryInfoHeader{
+/*#calendarViewerScheduleId div.entryInfoHeader{*/
+
+div.entryInfoHeader{
 	background: #AAA;
 	display: block;
 }
 
-#calendarViewerScheduleId div.entryInfoBody{
+div.entryInfoBody{
 	background: #EEE;
 }
 
-#calendarViewerScheduleId div.entryInfoRow{
+div.entryInfoRow{
 	display: table-row;
 }
-#calendarViewerScheduleId div.entryInfoName{
+div.entryInfoName{
 	text-align: center;
 	font-size:medium;
 	padding: 4px;
 }
 
-#calendarViewerScheduleId div.entryInfoDescription{
+div.entryInfoDescription{
 	padding: 4px;
 }
-#calendarViewerScheduleId div.entryInfoType{
+div.entryInfoType{
 	display: none;
 }
 
-#calendarViewerScheduleId div.entryInfoDate{
+div.entryInfoDate{
 	display: inline;
 	padding: 2px;
 }
-#calendarViewerScheduleId div.entryInfoTime{
+div.entryInfoTime{
 	display: inline;
 	padding: 2px;
 }

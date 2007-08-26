@@ -266,9 +266,9 @@ function addBehaviour(){
 				scheduleButtonsLayer.appendChild(schedulePreviousButton);
 				scheduleButtonsLayer.appendChild(scheduleNextButton);				
 			}
-			scheduleButtonsLayer.appendChild(scheduleDayButton);		
+//			scheduleButtonsLayer.appendChild(scheduleDayButton);		
 			scheduleButtonsLayer.appendChild(scheduleWeekButton);
-			scheduleButtonsLayer.appendChild(scheduleWorkweekButton);		
+//			scheduleButtonsLayer.appendChild(scheduleWorkweekButton);		
 			scheduleButtonsLayer.appendChild(scheduleMonthButton);
 		}
 		return  scheduleButtonsLayer;	

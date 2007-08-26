@@ -49,7 +49,7 @@ import java.util.Map;
  *
  * @author Jurgen Lust (latest modification by $Author: justinas $)
  * @author Bruno Aranda (adaptation of Jurgen's code to myfaces)
- * @version $Revision: 1.1 $
+ * @version $Revision: 1.2 $
  */
 public abstract class AbstractScheduleRenderer extends Renderer implements
         Serializable
@@ -265,7 +265,8 @@ public abstract class AbstractScheduleRenderer extends Renderer implements
         Map attributes = component.getAttributes();
         String theme = (String) attributes.get("theme");
         if (theme == null || theme.length() < 1)
-            theme = "evolution";
+//            theme = "evolution";
+            theme = "default";
         return theme;
     }
 

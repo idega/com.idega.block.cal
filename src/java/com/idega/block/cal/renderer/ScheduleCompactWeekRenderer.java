@@ -41,7 +41,7 @@ import java.util.Iterator;
  *
  * @author Jurgen Lust (latest modification by $Author: justinas $)
  * @author Bruno Aranda (adaptation of Jurgen's code to myfaces)
- * @version $Revision: 1.1 $
+ * @version $Revision: 1.2 $
  */
 public class ScheduleCompactWeekRenderer
     extends AbstractCompactScheduleRenderer
@@ -78,6 +78,7 @@ public class ScheduleCompactWeekRenderer
         );
 
         writer.startElement(HTML.TABLE_ELEM, schedule);
+//        writer.startElement(HTML.DIV_ELEM, schedule);
         writer.writeAttribute(HTML.CLASS_ATTR, getStyleClass(schedule, "week"), null);
         writer.writeAttribute(
             HTML.STYLE_ATTR, "position: relative; left: 0px; top: 0px; width: 100%;",
@@ -88,6 +89,7 @@ public class ScheduleCompactWeekRenderer
         writer.writeAttribute("border", "0", null);
         writer.writeAttribute(HTML.WIDTH_ATTR, "100%", null);
         writer.startElement(HTML.TBODY_ELEM, schedule);
+//        writer.startElement(HTML.DIV_ELEM, schedule);
 
         Calendar cal = GregorianCalendar.getInstance();
 
@@ -107,10 +109,12 @@ public class ScheduleCompactWeekRenderer
             if (
                 (dayOfWeek == Calendar.MONDAY) ||
                     (dayOfWeek == Calendar.WEDNESDAY) ||
-                    (dayOfWeek == Calendar.FRIDAY) ||
-                    (dayOfWeek == Calendar.SUNDAY)
+                    (dayOfWeek == Calendar.FRIDAY)// ||
+//                    (dayOfWeek == Calendar.SUNDAY)
             ) {
                 writer.startElement(HTML.TR_ELEM, schedule);
+//                writer.startElement(HTML.DIV_ELEM, schedule);
+                writer.writeAttribute(HTML.CLASS_ATTR, "possibleweek", null);
             }
 
             writeDayCell(
@@ -121,16 +125,18 @@ public class ScheduleCompactWeekRenderer
             if (
                 (dayOfWeek == Calendar.TUESDAY) ||
                     (dayOfWeek == Calendar.THURSDAY) ||
-                    (dayOfWeek == Calendar.SATURDAY) ||
+//                    (dayOfWeek == Calendar.SATURDAY) ||
                     (dayOfWeek == Calendar.SUNDAY)
             ) {
                 writer.endElement(HTML.TR_ELEM);
+//                writer.endElement(HTML.DIV_ELEM);
             }
         }
 
         writer.endElement(HTML.TBODY_ELEM);
+//        writer.endElement(HTML.DIV_ELEM);
         writer.endElement(HTML.TABLE_ELEM);
-
+//        writer.endElement(HTML.DIV_ELEM);
         writer.endElement(HTML.DIV_ELEM);
     }
 

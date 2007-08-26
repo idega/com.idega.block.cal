@@ -115,14 +115,26 @@ div.schedule-compact-default {
 	position: relative;
 	width: 100%;
 	left: 0px;
-	background-color: rgb(153,153,153);
+/*	background-color: rgb(153,153,153);*/	
 }
 
 div.schedule-compact-default table.day {
   background-color: rgb(255,255,255);
 }
+div.schedule-compact-default div.day {
+  background-color: rgb(255,255,255);
+/*  display: inline;	*/
+}
 
 div.schedule-compact-default table.day td.header {
+  background-color: rgb(181,200,207);
+  font-family: Verdana, Arial, Helvetica, Sans-Serif;
+  font-size: 10px;
+  color: rgb(0,0,0);
+  text-align: left;
+  vertical-align: middle;
+}
+div.schedule-compact-default div.day div.header {
   background-color: rgb(181,200,207);
   font-family: Verdana, Arial, Helvetica, Sans-Serif;
   font-size: 10px;
@@ -135,6 +147,17 @@ div.schedule-compact-default td.content div {
 }
 
 div.schedule-compact-default td.content td {
+  background-color: rgb(255,255,255);
+  color: rgb(0,0,0);
+  text-align: left;
+  font-family: Verdana, Arial, Helvetica, Sans-Serif;
+  font-size: 11px;
+  padding: 1px;
+  border-color: rgb(255,255,255);
+  border-width: 1.0px;
+  border-style: solid;  
+}
+div.schedule-compact-default div.content div {
   background-color: rgb(255,255,255);
   color: rgb(0,0,0);
   text-align: left;
@@ -160,12 +183,26 @@ div.schedule-compact-default td.content td.selected {
   color: rgb(255,255,255);
 }
 
+div.schedule-compact-default div.content div.selected {
+  background-color: rgb(153,0,0);
+  border-color: rgb(153,0,0);
+  color: rgb(255,255,255);
+}
+
 div.schedule-compact-default td.inactive-day td.content {
+  background-color: rgb(221,221,221);
+  visibility: visible;
+}
+div.schedule-compact-default div.inactive-day div.content {
   background-color: rgb(221,221,221);
   visibility: visible;
 }
 
 div.schedule-compact-default td.inactive-day td.content td {
+  background-color: rgb(221,221,221);
+  border-color: rgb(221,221,221);
+}
+div.schedule-compact-default div.inactive-day div.content div {
   background-color: rgb(221,221,221);
   border-color: rgb(221,221,221);
 }
@@ -175,8 +212,17 @@ div.schedule-compact-default td.inactive-day td.content td.selected {
   border-color: rgb(153,0,0);
   color: rgb(255,255,255);
 }
+div.schedule-compact-default div.inactive-day div.content div.selected {
+  background-color: rgb(153,0,0);
+  border-color: rgb(153,0,0);
+  color: rgb(255,255,255);
+}
 
 div.schedule-compact-default td.inactive-day td.header {
+  background-color: rgb(221,221,221);
+  visibility: visible;
+}
+div.schedule-compact-default div.inactive-day div.header {
   background-color: rgb(221,221,221);
   visibility: visible;
 }
@@ -678,6 +724,74 @@ div.domTT .contents {
     padding: 2px;
     background-color: #F1F1FF;
 }
+ div.workdayContentWeekMode{
+	height: 103px;
+	width: 200px;
+	
+/*	width: 200px; */
+}
+
+ div.workdayContent{
+	height: 103px;
+	width: 74px;
+	
+/*	width: 200px; */
+}
+div.weekendContent{
+	height: 41px;
+	
+}
+div.weekendContentWeekMode{
+	height: 41px;
+	width: 200px;
+}
+
+div.content{
+	overflow-x: auto;
+	overflow-y: auto;
+}
+
+td.workdaytest{
+/*	display: inline; */
+/*	float:left; */
+/*	
+	width: 75px !important;
+*/	
+}
+.daysOfWeek{
+	display: block;
+}
+.weekTest{
+/*	width: 200px;*/
+}
+.possibleweek{
+	display: block;
+/*	width: 400px;*/
+}
+
+.monthMode{
+	width: 75px; 
+	
+}
+.week{
+	width: 400px;
+}
+.weekMode {
+	width: 200px; 
+}
+.day{
+	
+/*	
+	width: 75px; 
+*/	
+/*	float: left;*/
+}
+.saturdayAndSunday{
+	height: 121px;
+	width: 16.6667%;
+/*	float:left;*/
+}
+
 /*
 .workday{
 	height: 100% !important;
@@ -790,4 +904,7 @@ tr.expandedWorkday td.workday{
 
 tr.expandedWorkday td.weekend{
 	width: 15% !important;
+}
+.saturday{
+/*	float:left;*/
 }

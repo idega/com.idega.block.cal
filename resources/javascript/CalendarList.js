@@ -417,7 +417,107 @@ function addBehaviour(){
 			setBehaviourToScheduleButtons();
 		}
 		insertNodesToContainer(result, scheduleEntries);
-	/*	
+/*
+	var firstMonth = scheduleEntries.getElementsByTagName('table')[0];
+	
+	var daysOfMonth = firstMonth.getElementsByTagName('table');
+	
+	var firstDay = firstMonth.getElementsByTagName('table')[0];
+
+	var emptyTable = result.getElementsByTagName('table')[1];
+ 
+ 	var newTable = new Element('table');
+	var newDiv = new Element('div');
+	var newTBody = new Element('tbody');	
+*/	
+	
+	
+	
+/*	
+	for(var index=0; index<daysOfMonth.length; index++) {
+		var dayOfMonth = firstMonth.getElementsByTagName('table')[0];
+//		var parentOfDay = dayOfMonth.parentNode;
+//		console.log(daysOfMonth[index]);
+//		result.removeChild(daysOfMonth[index]);
+		$(dayOfMonth).remove();
+//		parentOfDay.
+	}
+*/
+/*
+	while(true){
+		var dayOfMonth = firstMonth.getElementsByTagName('tr')[1];
+		if(dayOfMonth){
+			$(dayOfMonth).remove();
+		}
+		else{
+			break;
+		}
+	}
+	*/ 
+//	$('scheduleEntryTableId').remove();
+//	removeChildren($('scheduleEntryTableId'));
+	
+
+//console.log(newTable);	
+//	$(newTable).injectInside(firstDay);
+
+//	newTable.appendChild(firstDay);
+
+
+//	$(newTable).injectInside(firstDay);
+//	newDiv.appendChild(newTable);
+
+//	insertNodesToContainer(firstDay, newTable);
+//	insertNodesToContainer(newTable, newDiv);
+	
+//console.log(newTable);	
+//	newTable.appendChild(firstDay);
+//	var scheduleLayerParent = scheduleLayer.parentNode();
+//	$(scheduleLayer).injectInside(newTable);
+
+
+//	insertNodesToContainer(newDiv, scheduleLayer);
+//	firstDay.remble
+//firstDay = makeValidCopyOfDayNode(firstDay);
+//var placeForDay = firstMonth.getElementsByTagName('td')[0];
+//placeForDay.appendChild(firstDay);
+
+//insertNodesToContainer(firstDay, firstMonth.getElementsByTagName('td')[0]);
+
+
+
+//newTable.appendChild(newTBody);
+//	function removeEmptyAttributes(trTags){
+/*
+		var trTags = newTBody.getElementsByTagName('tr');
+		removeEmptyAttributes(trTags);
+		var tdTags = newTBody.getElementsByTagName('td');
+		removeEmptyAttributes(tdTags);
+		var divTags = newTBody.getElementsByTagName('div');
+		removeEmptyAttributes(divTags);
+		var tableTags = newTBody.getElementsByTagName('table');
+		removeEmptyAttributes(tableTags);
+		var aTags = newTBody.getElementsByTagName('a');
+		removeEmptyAttributes(aTags);
+*/
+
+//$(scheduleLayer)
+
+
+//scheduleLayer.appendChild(newTable);
+
+
+//	scheduleLayer.appendChild(firstDay);
+
+//	var secondTr = newTBody.getElementsByTagName('tr')[1];
+//	$(secondTr).remove();
+
+//	firstDay.removeChild(secondTr);
+//console.log(scheduleLayer);	
+//console.log(result);
+//console.log(firstDay);
+	
+
 var xmlParent = document.getElementById('scheduleEntryTableId');
 
 var xmlTag = xmlParent.getElementsByTagName('xml')[0];
@@ -427,7 +527,6 @@ if(xmlTag == null){
 	var hiddenTags = hiddenParent.getElementsByTagName('input')[0];
 	
 	if(hiddenParent){
-		alert('hidden');
 		hiddenParent.removeChild(hiddenTags);
 	}
 	hiddenTags = hiddenParent.getElementsByTagName('input')[0];
@@ -438,6 +537,9 @@ if(xmlTag == null){
 	if(hiddenParent){
 		hiddenParent.removeChild(hiddenTags);
 	}		
+
+//	insertNodesToContainer(result, firstDay);
+	
 }
 else{
 //	alert('xml');
@@ -456,27 +558,33 @@ else{
 		hiddenParent.removeChild(hiddenTags);
 	}	
 }
+
+/* 
 var baseLayer = document.getElementById('scheduleEntryTableId');
 var scheduleLayerChild = baseLayer.getElementsByTagName('table')[0];
+*/ 
 //baseLayer.removeChild(scheduleLayerChild);
 //		scheduleLayerChild = scheduleLayer.getElementsByTagName('div')[0];
 //scheduleLayer.removeChild(scheduleLayerChild);f
 		//$(scheduleLayerChild).removeClass('schedule-compact-default');
+		
 		$$('td.workday').each(
 			function(element) {
-				
+				if(!element) return;
 				$(element).setStyle('height', '121px');
 	  			$(element).setStyle('width', '16.6667%');	  	
 	  			if(window.ie){ 
 	  				element.removeAttribute('$included');	
 	  			}
 	  			var tableDay = element.getElementsByTagName('table')[0];
+	  			if(!tableDay) return;
 	  			$(tableDay).setStyle('height','121px');
 	    	}
 	    );
+	    
 		$$('td.weekend').each(
 			function(element) {
-				
+				if(!element) return;				
 				$(element).setStyle('height', '60px');
 	  			$(element).setStyle('width', '16.6667%');
 	  			if(window.ie){ 
@@ -484,9 +592,11 @@ var scheduleLayerChild = baseLayer.getElementsByTagName('table')[0];
 	  			}	  	
 	  			
 	  			var tableDay = element.getElementsByTagName('table')[0];
+	  			if(!tableDay) return;
 	  			$(tableDay).setStyle('height','60px');	  				
 	    	}
 	    );
+
 		$$('td.header').each(
 			function(element) {
 				
@@ -510,7 +620,7 @@ var scheduleLayerChild = baseLayer.getElementsByTagName('table')[0];
 	    );
 		
 		
-		
+/*		
 		
 	for (var n = 0, d = elements.length; n < d; n++) {
         	//new for IE 6 and IE 7
@@ -522,7 +632,7 @@ var scheduleLayerChild = baseLayer.getElementsByTagName('table')[0];
 	  	else elements[n].$included=false;
  
 	 }		
-	
+*/	
 	
 $$.unique = function(array){
 	var elements = [];
@@ -551,13 +661,216 @@ $$.unique = function(array){
  
 	return new Elements(elements);
 };
-*/
+
 //		
 		setBehaviourOnScheduleEntries();
 		closeLoadingMessage();		
 	}
 	
+//	firstDay = makeValidCopyOfDayNode(firstDay);
+	function makeValidCopyOfDayNode(firstDay){
+
+
+//	return firstDay;
+
+//		var tableEl = new Element('table');
+		var tableEl = document.createElement('div');
+		var tbodyEl = new Element('div');
+		var trHeader = new Element('div');
+		var trHeader2 = document.createElement('tr');
+		var tdHeader2 = document.createElement('td');
+		$(trHeader2).removeProperty('language');
+		
+		
+		
+//	trHeader2.appendChild(tdHeader2);
+//		tableEl.appendChild(trHeader2);
+//		$(trHeader2).injectInside(tableEl);
+//		tableEl.appendChild(tbodyEl);
+//		return tableEl;
+
+		var oldTrHeader = firstDay.getElementsByTagName('tr')[0];		
+
+		var tdHeader = document.createElement('div');
+		var oldTdHeader = oldTrHeader.getElementsByTagName('td')[0];
+		tdHeader.setAttribute('id',oldTdHeader.id);
+		tdHeader.setAttribute('class',oldTdHeader.getAttribute('class'));
+		tdHeader.setAttribute('style',oldTdHeader.getAttribute('style'));
+		tdHeader.appendChild(oldTdHeader.childNodes[0]);
+		trHeader.appendChild(tdHeader);
+		tableEl.appendChild(trHeader);
+		
+		var trContent = new Element('div');
+		var oldTrContent = firstDay.getElementsByTagName('tr')[1];		
+//console.log(oldTrContent);
+		var tdContent = new Element('div');
+		var oldTdContent = oldTrContent.getElementsByTagName('td')[0];		
+		
+		var oldFirstDiv = oldTdContent.getElementsByTagName('div')[0];
+		
+//console.log(oldTdContent.childNodes[0]);		
+		$(tdContent).addClass(oldTdContent.getAttribute('class'));
+		$(tdContent).setProperty('style',$(oldTdContent).getProperty('style'));
+
+		var firstDiv = new Element('div');
+//		$(firstDiv).addClass(oldFirstDiv.getAttribute('class'));
+$(firstDiv).addClass('content');
+		$(firstDiv).setProperty('style',$(oldFirstDiv).getProperty('style'));		
+		var oldSecondDiv = oldFirstDiv.getElementsByTagName('div')[0];
+		var secondDiv = new Element('div');
+//		$(secondDiv).addClass(oldSecondDiv.getAttribute('class'));		
+		$(secondDiv).setProperty('style',$(oldSecondDiv).getProperty('style'));
+		secondDiv.setAttribute('id', oldSecondDiv.getAttribute('id'));
+//		var tdText=document.createTextNode('Drop templates here'); 
+//		var oldInnerTable = $(secondDiv).getFirst();
+		var oldInnerTable = oldSecondDiv.getElementsByTagName('table')[0];
+//console.log(secondDiv.childNodes);		
+		var innerTable = new Element('div');
+		$(innerTable).setProperty('style',$(oldInnerTable).getProperty('style'));
+		
+		var oldInnerTrTags = oldInnerTable.getElementsByTagName('tr');
+		for(var index=0; index<oldInnerTrTags.length; index++) {
+			
+			var innerDivTag = new Element('div');
+			
+			var innerTrTag = new Element('div');
+			var oldInnerTrTag = oldInnerTrTags[index];
+			var innerTdTag = new Element('div');
+			var oldInnerTdTag = $(oldInnerTrTag).getFirst();
+			$(innerTdTag).setProperty('style',$(oldInnerTdTag).getProperty('style'));
+			var innerATag = new Element('a');
+			var oldInnerATag = $(oldInnerTdTag).getFirst();
+			$(innerATag).setProperty('id',$(oldInnerATag).getProperty('id'));
+			$(innerATag).setProperty('href',$(oldInnerATag).getProperty('href'));
+			
+			$(innerATag).addClass(oldInnerATag.getAttribute('class'));
+//			innerATag.appendChild(oldInnerATag.childNodes[0]);
+//			innerTdTag.appendChild(oldInnerATag.childNodes[0]);
+			innerTdTag.appendChild(innerATag);
+			innerTrTag.appendChild(innerTdTag);			
+			innerTable.appendChild(innerTrTag);
+			
+			innerDivTag.appendChild(oldInnerATag.childNodes[0]);
+			secondDiv.appendChild(innerDivTag);
+		}
+		
+		
+//		secondDiv.appendChild(innerTable);
+		firstDiv.appendChild(secondDiv);
+		tdContent.appendChild(firstDiv);
+		trContent.appendChild(tdContent);
+		tableEl.appendChild(trContent);
+//		tbodyEl.appendChild(trContent)
+//		tableEl.appendChild(tbodyEl);
+//console.log(oldTdHeader.childNodes[0]);		
+//		return firstDay;
+//		return tableEl;
+		return tableEl;
+	}
+	
 	//inserts entry list
+	
+	function removeEmptyAttributes(trTags){
+//		var trTags = newTBody.getElementsByTagName('tr');
+		for(var index=0; index<trTags.length; index++) {
+			var trTag = trTags[index];
+		
+			if($(trTag).getProperty('language') == null ||$(trTag).getProperty('language') == ""){
+				$(trTag).removeProperty('language');
+			}
+			if($(trTag).getProperty('class') == null ||$(trTag).getProperty('class') == ""){
+				$(trTag).removeProperty('class');
+			}
+			if($(trTag).getProperty('lang') == null ||$(trTag).getProperty('lang') == ""){
+				$(trTag).removeProperty('lang');
+			}
+			if($(trTag).getProperty('title') == null ||$(trTag).getProperty('title') == ""){
+				$(trTag).removeProperty('title');
+			}
+			if($(trTag).getProperty('urn') == null ||$(trTag).getProperty('urn') == ""){
+				$(trTag).removeProperty('urn');
+			}
+			if($(trTag).getProperty('dataSrc') == null ||$(trTag).getProperty('dataSrc') == ""){
+				$(trTag).removeProperty('dataSrc');
+			}
+//			if(($(trTag).getProperty('dataFormatAs') == "null") || ($(trTag).getProperty('dataFormatAs') == "") ||
+//				($(trTag).getProperty('dataFormatAs') == null)){
+				$(trTag).removeProperty('dataFormatAs');
+				$(trTag).removeProperty('dataFormatAs');
+				
+//			}
+			if($(trTag).getProperty('accessKey') == null ||$(trTag).getProperty('accessKey') == ""){
+				$(trTag).removeProperty('accessKey');
+			}
+			if($(trTag).getProperty('chOff') == null ||$(trTag).getProperty('chOff') == ""){
+				$(trTag).removeProperty('chOff');
+			}
+			if($(trTag).getProperty('ch') == null ||$(trTag).getProperty('ch') == ""){
+				$(trTag).removeProperty('ch');
+			}
+			if($(trTag).getProperty('dataFld') == null ||$(trTag).getProperty('dataFld') == ""){
+				$(trTag).removeProperty('dataFld');
+			}
+			if($(trTag).getProperty('implementation') == null ||$(trTag).getProperty('implementation') == ""){
+				$(trTag).removeProperty('implementation');
+			}
+			if($(trTag).getProperty('abbr') == null ||$(trTag).getProperty('abbr') == ""){
+				$(trTag).removeProperty('abbr');
+			}
+			if($(trTag).getProperty('axis') == null ||$(trTag).getProperty('axis') == ""){
+				$(trTag).removeProperty('axis');
+			}
+			if($(trTag).getProperty('headers') == null ||$(trTag).getProperty('headers') == ""){
+				$(trTag).removeProperty('headers');
+			}
+			if($(trTag).getProperty('scope') == null ||$(trTag).getProperty('scope') == ""){
+				$(trTag).removeProperty('scope');
+			}
+			if($(trTag).getProperty('background') == null ||$(trTag).getProperty('background') == ""){
+				$(trTag).removeProperty('background');
+			}
+			if($(trTag).getProperty('target') == null ||$(trTag).getProperty('target') == ""){
+				$(trTag).removeProperty('target');
+			}
+			if($(trTag).getProperty('rev') == null ||$(trTag).getProperty('rev') == ""){
+				$(trTag).removeProperty('rev');
+			}
+			if($(trTag).getProperty('hreflang') == null ||$(trTag).getProperty('hreflang') == ""){
+				$(trTag).removeProperty('hreflang');
+			}
+			if($(trTag).getProperty('shape') == null ||$(trTag).getProperty('shape') == ""){
+				$(trTag).removeProperty('shape');
+			}
+			if($(trTag).getProperty('type') == null ||$(trTag).getProperty('type') == ""){
+				$(trTag).removeProperty('type');
+			}
+			if($(trTag).getProperty('coords') == null ||$(trTag).getProperty('coords') == ""){
+				$(trTag).removeProperty('coords');
+			}
+			if($(trTag).getProperty('rel') == null ||$(trTag).getProperty('rel') == ""){
+				$(trTag).removeProperty('rel');
+			}
+			if($(trTag).getProperty('charset') == null ||$(trTag).getProperty('charset') == ""){
+				$(trTag).removeProperty('charset');
+			}
+			if($(trTag).getProperty('tabIndex') == null ||$(trTag).getProperty('tabIndex') == ""){
+				$(trTag).removeProperty('tabIndex');
+			}
+			if($(trTag).getProperty('nofocusrect') == null ||$(trTag).getProperty('nofocusrect') == ""){
+				$(trTag).removeProperty('nofocusrect');
+			}
+			if($(trTag).getProperty('methods') == null ||$(trTag).getProperty('methods') == ""){
+				$(trTag).removeProperty('methods');
+			}
+			if($(trTag).getProperty('summary') == null ||$(trTag).getProperty('summary') == ""){
+				$(trTag).removeProperty('summary');
+			}
+
+		//	console.log($(trTag).getProperties());
+			
+		}	
+		
+	}
 	
 	function displayEntriesAsList(entries){	
 		entriesToList = entries;

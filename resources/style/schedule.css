@@ -780,7 +780,7 @@ td.workdaytest{
 	width: 200px; 
 }
 .month{
-	width: 450px;
+	width: 450px !important;
 }
 .day{
 	

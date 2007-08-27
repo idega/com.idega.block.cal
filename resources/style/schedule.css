@@ -731,6 +731,10 @@ div.domTT .contents {
 /*	width: 200px; */
 }
 
+div.headerForMonthDay{
+	height: 18px;
+}
+
  div.workdayContent{
 	height: 103px;
 	width: 74px;
@@ -739,6 +743,7 @@ div.domTT .contents {
 }
 div.weekendContent{
 	height: 41px;
+	width: 74px;	
 	
 }
 div.weekendContentWeekMode{

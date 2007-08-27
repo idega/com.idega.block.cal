@@ -45,7 +45,7 @@ import java.util.*;
  * 
  * @author Jurgen Lust (latest modification by $Author: justinas $)
  * @author Bruno Aranda (adaptation of Jurgen's code to myfaces)
- * @version $Revision: 1.2 $
+ * @version $Revision: 1.3 $
  */
 public abstract class AbstractCompactScheduleRenderer extends
         AbstractScheduleRenderer implements Serializable
@@ -153,11 +153,24 @@ public abstract class AbstractCompactScheduleRenderer extends
         final String dayHeaderId = clientId + "_header_" + ScheduleUtil.getDateId(day.getDate());
         final String dayBodyId = clientId + "_body_" + ScheduleUtil.getDateId(day.getDate());
         
-        if((dayOfWeek != Calendar.SUNDAY) && (cellWidth == 100f / 6)){
+        boolean isMonthMode = false;
+        boolean isWeekMode = false;
+        
+        if(cellWidth == 100f / 6){
+        	isMonthMode = true;
+        }
+        else if(cellWidth == 50f){
+        	isWeekMode = true;
+        }
+        
+//        if((dayOfWeek != Calendar.SUNDAY) && (cellWidth == 100f / 6)){
+        if((dayOfWeek != Calendar.SUNDAY) && isMonthMode){
+
 //        if((dayOfWeek != Calendar.SUNDAY)){
             writer.startElement(HTML.TD_ELEM, schedule);
         }
-        if((cellWidth == 50f) && (dayOfWeek != Calendar.SUNDAY)){
+//        if((cellWidth == 50f) && (dayOfWeek != Calendar.SUNDAY)){
+        if(isWeekMode && (dayOfWeek != Calendar.SUNDAY)){
         	writer.startElement(HTML.TD_ELEM, schedule);
         }
 //        writer.startElement(HTML.TD_ELEM, schedule);
@@ -172,7 +185,8 @@ public abstract class AbstractCompactScheduleRenderer extends
 
         
         String dayClass = null;
-        if(cellWidth == 50f){
+//        if(cellWidth == 50f){
+        if(isWeekMode){
 //	        dayClass = getStyleClass(schedule, isCurrentMonth ? "weekday" : "inactive-day") + 
 //			" " + getStyleClass(schedule, isWeekend ? "weekend" : "workday");
         	dayClass = "";
@@ -192,14 +206,16 @@ public abstract class AbstractCompactScheduleRenderer extends
         	dayClass += " saturday";
         }
         
-        if((dayOfWeek != Calendar.SUNDAY) && (cellWidth == 100f / 6)){
+//        if((dayOfWeek != Calendar.SUNDAY) && (cellWidth == 100f / 6)){
+        if((dayOfWeek != Calendar.SUNDAY) && isMonthMode){
 //        	writer.writeAttribute(HTML.CLASS_ATTR, dayClass+"test", null);
 //            writer.writeAttribute(HTML.STYLE_ATTR, "width: 75px;", null);
         	writer.writeAttribute(HTML.CLASS_ATTR, "workdaytest", null);
 //            writer.writeAttribute(HTML.WIDTH_ATTR, "75px", null);
 
         }
-        if((dayOfWeek != Calendar.SUNDAY) && (cellWidth == 50f)){
+//        if((dayOfWeek != Calendar.SUNDAY) && (cellWidth == 50f)){
+        if((dayOfWeek != Calendar.SUNDAY) && isWeekMode){
 //        	writer.writeAttribute(HTML.CLASS_ATTR, dayClass+"test", null);
 //            writer.writeAttribute(HTML.STYLE_ATTR, "width: 75px;", null);
         	writer.writeAttribute(HTML.CLASS_ATTR, "weekTest", null);
@@ -273,6 +289,17 @@ public abstract class AbstractCompactScheduleRenderer extends
         // day header
 //        writer.startElement(HTML.TR_ELEM, schedule);
         writer.startElement(HTML.DIV_ELEM, schedule);
+
+//        if(cellWidth != 50f){
+        if(isMonthMode){
+	        writer.writeAttribute(HTML.CLASS_ATTR,
+	                getStyleClass(schedule, "headerForMonthDay"), null);
+        }
+        else if(isWeekMode){
+	        writer.writeAttribute(HTML.CLASS_ATTR,
+	                getStyleClass(schedule, "headerForWeekDay"), null);        	
+        }
+        
 //        writer.startElement(HTML.TD_ELEM, schedule);
         writer.startElement(HTML.DIV_ELEM, schedule);
         writer.writeAttribute(HTML.CLASS_ATTR,
@@ -310,7 +337,8 @@ public abstract class AbstractCompactScheduleRenderer extends
 //                                                             "content"), null);
 
         
-        if(cellWidth != 50f){
+//        if(cellWidth != 50f){
+        if(isMonthMode){
         
 		      if((dayOfWeek == Calendar.SUNDAY) || (dayOfWeek == Calendar.SATURDAY)){  
 			      writer.writeAttribute(HTML.CLASS_ATTR, getStyleClass(schedule,
@@ -398,7 +426,8 @@ public abstract class AbstractCompactScheduleRenderer extends
 //        writer.endElement(HTML.TD_ELEM);
 //        writer.endElement(HTML.DIV_ELEM);
         
-        if((dayOfWeek != Calendar.SATURDAY)  && (cellWidth == 100f / 6)){
+//        if((dayOfWeek != Calendar.SATURDAY)  && (cellWidth == 100f / 6)){
+        if((dayOfWeek != Calendar.SATURDAY)  && isMonthMode){
 //        if((dayOfWeek != Calendar.SATURDAY)){
             writer.endElement(HTML.TD_ELEM);
         }

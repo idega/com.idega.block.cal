@@ -45,7 +45,7 @@ import java.util.*;
  * 
  * @author Jurgen Lust (latest modification by $Author: justinas $)
  * @author Bruno Aranda (adaptation of Jurgen's code to myfaces)
- * @version $Revision: 1.3 $
+ * @version $Revision: 1.4 $
  */
 public abstract class AbstractCompactScheduleRenderer extends
         AbstractScheduleRenderer implements Serializable
@@ -281,8 +281,8 @@ public abstract class AbstractCompactScheduleRenderer extends
         }
 //        writer.writeAttribute(HTML.STYLE_ATTR, styleBuffer.toString()
 //                                               + " width: 100%;", null);
-      writer.writeAttribute(HTML.STYLE_ATTR, styleBuffer.toString()
-      + "", null);
+//      writer.writeAttribute(HTML.STYLE_ATTR, styleBuffer.toString()
+//      + "", null);
         writer.writeAttribute(HTML.CELLPADDING_ATTR, "0", null);
         writer.writeAttribute(HTML.CELLSPACING_ATTR, "0", null);
 
@@ -330,6 +330,8 @@ public abstract class AbstractCompactScheduleRenderer extends
         // day content
 //        writer.startElement(HTML.TR_ELEM, schedule);
         writer.startElement(HTML.DIV_ELEM, schedule);
+        writer.writeAttribute(HTML.CLASS_ATTR,
+                getStyleClass(schedule, "contentForMonthDay"), null);
 //        writer.startElement(HTML.TD_ELEM, schedule);
         writer.startElement(HTML.DIV_ELEM, schedule);
 
@@ -390,7 +392,8 @@ public abstract class AbstractCompactScheduleRenderer extends
         writer
         .writeAttribute(
                 HTML.STYLE_ATTR,
-                "width: 100%; height: 100%; vertical-align: top;",
+//                "width: 100%; height: 100%; vertical-align: top;",
+                "height: 100%; vertical-align: top;",
                 null);
 
         writer.writeAttribute(HTML.ID_ATTR, dayBodyId, null);

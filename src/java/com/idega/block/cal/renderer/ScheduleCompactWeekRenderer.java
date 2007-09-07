@@ -41,7 +41,7 @@ import java.util.Iterator;
  *
  * @author Jurgen Lust (latest modification by $Author: justinas $)
  * @author Bruno Aranda (adaptation of Jurgen's code to myfaces)
- * @version $Revision: 1.2 $
+ * @version $Revision: 1.3 $
  */
 public class ScheduleCompactWeekRenderer
     extends AbstractCompactScheduleRenderer
@@ -85,7 +85,8 @@ public class ScheduleCompactWeekRenderer
             null
         );
         writer.writeAttribute(HTML.CELLPADDING_ATTR, "0", null);
-        writer.writeAttribute(HTML.CELLSPACING_ATTR, "1", null);
+//        writer.writeAttribute(HTML.CELLSPACING_ATTR, "1", null);
+        writer.writeAttribute(HTML.CELLSPACING_ATTR, "0", null);
         writer.writeAttribute("border", "0", null);
         writer.writeAttribute(HTML.WIDTH_ATTR, "100%", null);
         writer.startElement(HTML.TBODY_ELEM, schedule);

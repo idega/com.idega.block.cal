@@ -42,7 +42,7 @@ import org.apache.myfaces.shared_tomahawk.renderkit.html.HTML;
  *
  * @author Jurgen Lust (latest modification by $Author: justinas $)
  * @author Bruno Aranda (adaptation of Jurgen's code to myfaces)
- * @version $Revision: 1.2 $
+ * @version $Revision: 1.3 $
  */
 public class ScheduleCompactMonthRenderer
     extends AbstractCompactScheduleRenderer
@@ -87,7 +87,8 @@ public class ScheduleCompactMonthRenderer
             null
         );
         writer.writeAttribute(HTML.CELLPADDING_ATTR, "0", null);
-        writer.writeAttribute(HTML.CELLSPACING_ATTR, "1", null);
+//        writer.writeAttribute(HTML.CELLSPACING_ATTR, "1", null);
+        writer.writeAttribute(HTML.CELLSPACING_ATTR, "0", null);
         writer.writeAttribute("border", "0", null);
         writer.writeAttribute(HTML.WIDTH_ATTR, "100%", null);
         writer.startElement(HTML.TBODY_ELEM, schedule);
@@ -160,10 +161,7 @@ public class ScheduleCompactMonthRenderer
 //        if ((dayOfWeek == Calendar.MONDAY) || (dayOfWeek == Calendar.SUNDAY)) {
         if ((dayOfWeek == Calendar.MONDAY)) {
             writer.startElement(HTML.TR_ELEM, schedule);
-//            writer.startElement(HTML.DIV_ELEM, schedule);
-//            writer.writeAttribute(HTML.STYLE_ATTR, "display: block", null);
-//           writer.writeAttribute(HTML.CLASS_ATTR, "weekLine", null);
-
+            writer.writeAttribute(HTML.CLASS_ATTR, "monthModeRow", null);
         }
 
         super.writeDayCell(
@@ -174,7 +172,6 @@ public class ScheduleCompactMonthRenderer
 //        if ((dayOfWeek == Calendar.SATURDAY) || (dayOfWeek == Calendar.SUNDAY)) {
         if ((dayOfWeek == Calendar.SUNDAY)) {
             writer.endElement(HTML.TR_ELEM);
-//        	writer.endElement(HTML.DIV_ELEM);
         }
     }
 }

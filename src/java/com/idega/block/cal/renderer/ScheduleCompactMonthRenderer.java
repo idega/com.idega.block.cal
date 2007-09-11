@@ -1,5 +1,5 @@
 /*
- * Licensed to the Apache Software Foundation (ASF) under one
+ * Licensed to the ¤pache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
  * distributed with this work for additional information
  * regarding copyright ownership.  The ASF licenses this file
@@ -42,7 +42,7 @@ import org.apache.myfaces.shared_tomahawk.renderkit.html.HTML;
  *
  * @author Jurgen Lust (latest modification by $Author: justinas $)
  * @author Bruno Aranda (adaptation of Jurgen's code to myfaces)
- * @version $Revision: 1.3 $
+ * @version $Revision: 1.4 $
  */
 public class ScheduleCompactMonthRenderer
     extends AbstractCompactScheduleRenderer
@@ -79,11 +79,12 @@ public class ScheduleCompactMonthRenderer
             HTML.STYLE_ATTR, "border-style: none; overflow: hidden;", null
         );
 
-        writer.startElement(HTML.TABLE_ELEM, schedule);
-//        writer.startElement(HTML.DIV_ELEM, schedule);
+//        writer.startElement(HTML.TABLE_ELEM, schedule);
+        writer.startElement(HTML.DIV_ELEM, schedule);
         writer.writeAttribute(HTML.CLASS_ATTR, getStyleClass(schedule, "month"), null);
         writer.writeAttribute(
-            HTML.STYLE_ATTR, "position: relative; left: 0px; top: 0px; width: 100%;",
+//            HTML.STYLE_ATTR, "position: relative; left: 0px; top: 0px; width: 100%;",
+                HTML.STYLE_ATTR, "position: relative; left: 0px; top: 0px;",
             null
         );
         writer.writeAttribute(HTML.CELLPADDING_ATTR, "0", null);
@@ -91,7 +92,7 @@ public class ScheduleCompactMonthRenderer
         writer.writeAttribute(HTML.CELLSPACING_ATTR, "0", null);
         writer.writeAttribute("border", "0", null);
         writer.writeAttribute(HTML.WIDTH_ATTR, "100%", null);
-        writer.startElement(HTML.TBODY_ELEM, schedule);
+//        writer.startElement(HTML.TBODY_ELEM, schedule);
 
         Calendar cal = GregorianCalendar.getInstance();
         cal.setTime(schedule.getModel().getSelectedDate());
@@ -120,9 +121,9 @@ public class ScheduleCompactMonthRenderer
 
         }
 
-        writer.endElement(HTML.TBODY_ELEM);
-        writer.endElement(HTML.TABLE_ELEM);
-//        writer.endElement(HTML.DIV_ELEM);
+//        writer.endElement(HTML.TBODY_ELEM);
+//        writer.endElement(HTML.TABLE_ELEM);
+        writer.endElement(HTML.DIV_ELEM);
 
         writer.endElement(HTML.DIV_ELEM);
     }
@@ -160,7 +161,8 @@ public class ScheduleCompactMonthRenderer
     {
 //        if ((dayOfWeek == Calendar.MONDAY) || (dayOfWeek == Calendar.SUNDAY)) {
         if ((dayOfWeek == Calendar.MONDAY)) {
-            writer.startElement(HTML.TR_ELEM, schedule);
+//            writer.startElement(HTML.TR_ELEM, schedule);
+        	writer.startElement(HTML.DIV_ELEM, schedule);
             writer.writeAttribute(HTML.CLASS_ATTR, "monthModeRow", null);
         }
 
@@ -171,7 +173,8 @@ public class ScheduleCompactMonthRenderer
 
 //        if ((dayOfWeek == Calendar.SATURDAY) || (dayOfWeek == Calendar.SUNDAY)) {
         if ((dayOfWeek == Calendar.SUNDAY)) {
-            writer.endElement(HTML.TR_ELEM);
+//            writer.endElement(HTML.TR_ELEM);
+        	writer.endElement(HTML.DIV_ELEM);
         }
     }
 }

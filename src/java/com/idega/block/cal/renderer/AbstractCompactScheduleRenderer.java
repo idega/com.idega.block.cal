@@ -36,6 +36,8 @@ import javax.faces.context.FacesContext;
 import javax.faces.context.ResponseWriter;
 import java.io.IOException;
 import java.io.Serializable;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 /**
@@ -45,7 +47,7 @@ import java.util.*;
  * 
  * @author Jurgen Lust (latest modification by $Author: justinas $)
  * @author Bruno Aranda (adaptation of Jurgen's code to myfaces)
- * @version $Revision: 1.4 $
+ * @version $Revision: 1.5 $
  */
 public abstract class AbstractCompactScheduleRenderer extends
         AbstractScheduleRenderer implements Serializable
@@ -167,11 +169,13 @@ public abstract class AbstractCompactScheduleRenderer extends
         if((dayOfWeek != Calendar.SUNDAY) && isMonthMode){
 
 //        if((dayOfWeek != Calendar.SUNDAY)){
-            writer.startElement(HTML.TD_ELEM, schedule);
+//            writer.startElement(HTML.TD_ELEM, schedule);
+        	writer.startElement(HTML.DIV_ELEM, schedule);
         }
 //        if((cellWidth == 50f) && (dayOfWeek != Calendar.SUNDAY)){
         if(isWeekMode && (dayOfWeek != Calendar.SUNDAY)){
-        	writer.startElement(HTML.TD_ELEM, schedule);
+//        	writer.startElement(HTML.TD_ELEM, schedule);
+        	writer.startElement(HTML.DIV_ELEM, schedule);
         }
 //        writer.startElement(HTML.TD_ELEM, schedule);
 //        writer.startElement(HTML.DIV_ELEM, schedule);
@@ -432,10 +436,12 @@ public abstract class AbstractCompactScheduleRenderer extends
 //        if((dayOfWeek != Calendar.SATURDAY)  && (cellWidth == 100f / 6)){
         if((dayOfWeek != Calendar.SATURDAY)  && isMonthMode){
 //        if((dayOfWeek != Calendar.SATURDAY)){
-            writer.endElement(HTML.TD_ELEM);
+//            writer.endElement(HTML.TD_ELEM);
+            writer.endElement(HTML.DIV_ELEM);
         }
         if(cellWidth == 50f && dayOfWeek != Calendar.SATURDAY){
-        	writer.endElement(HTML.TD_ELEM);
+//        	writer.endElement(HTML.TD_ELEM);
+        	writer.endElement(HTML.DIV_ELEM);
         }
     }
 
@@ -510,11 +516,63 @@ public abstract class AbstractCompactScheduleRenderer extends
             if (!isSelected(schedule, entry) && !schedule.isReadonly())
             {
                 writer.startElement("a", schedule);
-                writer.writeAttribute("href", "#", null);
+//                writer.writeAttribute("href", "#", null);
                 
                 writer.writeAttribute("id", CalendarConstants.ENTRY_ID_PREFIX+entry.getId(), null);
 //                writer.writeAttribute("id", entry.getId(), null);
-                writer.writeAttribute(HTML.CLASS_ATTR, CalendarConstants.SCHEDULE_ENTRY_STYLE_CLASS, null);
+                writer.writeAttribute(HTML.CLASS_ATTR, CalendarConstants.SCHEDULE_ENTRY_STYLE_CLASS+" modulePropertiesLinkStyleClass", null);
+//                writer.writeAttribute(HTML.CLASS_ATTR, "modulePropertiesLinkStyleClass", null);
+                writer.writeAttribute(HTML.REL_ATTR, "moodalbox", null);
+//                writer.writeAttribute(HTML.HREF_ATTR, "/servlet/ObjectInstanciator?idegaweb_instance_class=com.idega.builder.presentation.EditModuleBlock&moduleName=NavigationBreadCrumbsList&ic_object_instance_id_par=uuid_ec6a2262-41be-47d4-9a7c-b6bb5d4e77d9&ib_page=6", null);
+
+//                
+                DateFormat format;
+                String pattern = null;
+
+                if ((pattern != null) && (pattern.length() > 0))
+                {
+                    format = new SimpleDateFormat(pattern);
+                }
+                else
+                {
+                    if (context.getApplication().getDefaultLocale() != null)
+                    {
+                        format = DateFormat.getDateInstance(DateFormat.MEDIUM, context
+                                .getApplication().getDefaultLocale());
+                    }
+                    else
+                    {
+                        format = DateFormat.getDateInstance(DateFormat.MEDIUM);
+                    }
+                }
+
+                String startTime = format.format(entry.getStartTime());
+                startTime += " ";
+                startTime += entry.getStartTime().getHours();
+                startTime += ":";
+                if(entry.getStartTime().getMinutes() < 10){
+                	startTime +="0";
+                	startTime +=entry.getStartTime().getMinutes();
+                }
+                else{
+                	startTime +=entry.getStartTime().getMinutes();
+                }
+                
+                String endTime = "";
+                endTime += entry.getEndTime().getHours();
+                endTime += ":";
+                if(entry.getEndTime().getMinutes() < 10){
+                	endTime +="0";
+                	endTime +=entry.getEndTime().getMinutes();
+                }
+                else{
+                	endTime +=entry.getEndTime().getMinutes();
+                }
+                
+//                startTime += entry.getStartTime().getMinutes();
+//
+                
+                writer.writeAttribute(HTML.HREF_ATTR, "/servlet/ObjectInstanciator?idegaweb_instance_class=com.idega.block.cal.presentation.EntryInfoBlock&entryName="+entry.getTitle()+"&entryStartTime="+startTime+"&entryEndTime="+endTime+"&entryDescription="+entry.getDescription(), null);
 //                writer.writeAttribute(
 //                        HTML.ONMOUSEUP_ATTR,
 //                        "fireEntrySelected('"

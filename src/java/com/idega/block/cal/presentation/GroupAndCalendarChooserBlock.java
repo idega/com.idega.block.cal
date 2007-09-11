@@ -14,6 +14,7 @@ public class GroupAndCalendarChooserBlock extends Block{
 //		"var groups_and_calendar_chooser_helper = new ChooserHelper();" +
 //		"groups_and_calendar_chooser_helper.removeAllAdvancedProperties();" +			
 		"prepareDwrForGettingCalendarParameters(this.id);" +
+//		"saveGroupName(this.value);" +
 //			"ScheduleSession.getCalendarParameters(this.id, displayCalendarAttributes);" +
 		"}";
 	

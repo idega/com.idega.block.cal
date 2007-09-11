@@ -128,6 +128,14 @@ div.entryList{
   border-color: rgb(153,153,153);
   text-decoration: none;
 }
+div#entryInfoHeader {
+background:#E6E6E6 none repeat scroll 0%;
+color:#000000;
+margin:0pt auto;
+padding:1px;
+text-align: center;
+}
+
 
 .calendarsLayerStyleClass{
 /*	width: 49.5%;

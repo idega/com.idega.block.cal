@@ -1328,6 +1328,9 @@ div.planner td.uneven {
 
 }
 
+div.header{
+	height: 100% !important;
+}
 
 td.even{
 	width: 65px;
@@ -1457,9 +1460,11 @@ div.domTT .contents {
 
 }
  div.workdayContentWeekMode{
-/*	height: 103px;*
-	width: 200px;
-	height: 100px;
+/*	height: 103px;*/
+/*	width: 200px;*/
+/*	height: 100px;*/
+height: 184px !important;
+/*height: 104px !important;*/
 	
 /*	width: 200px; */
 }
@@ -1525,6 +1530,7 @@ div.headerForWeekDay{
 
  div.workdayContent{
 	height: 104px !important;
+
 	
 /*	width: 74px;*/
 /*	width: 100%; */
@@ -1548,7 +1554,9 @@ div.header{
 }
 
 div.weekendContent{
-	height: 41px;
+	height: 42px;
+
+
 /*	
 	border-style: solid;
 	border-width: 1px;
@@ -1559,8 +1567,10 @@ div.weekendContent{
 	width: 100%;
 }
 div.weekendContentWeekMode{
-	height: 41px;
-	width: 200px;
+/*	height: 80px !important;*/
+/*	width: 200px;*/
+height: 81px !important;
+/*height: 41px !important;*/
 }
 
 div.background{
@@ -1580,26 +1590,30 @@ div.content{
 */	
 }
 
-td.workdaytest{
+div.workdaytest{
+
 /*
 	border-style: solid;
 	border-width: 1px;
 	border-color: rgb(0,0,0);
 */	
-	
-/*	margin: -1px;*/
+/*	
+	margin: 0px;
+*/
 /*	width: 16%;*/
 
-/*	display: inline; */
-/*	float:left; */
-	
-	width: 75px !important;
-	
+/*	display: inline; */ 
+	float:left; 
+/*
+	width: 120px !important;
+*/
+	width: 16% !important;
+
 }
-tr.monthModeRow{
-	float: left;
-/*	width: 100%;*/
-	width: 450px !important;
+div.monthModeRow{
+	width: 100% !important;
+/*	width: 450px !important;*/
+/*	width: 720px !important;*/
 }
 
 .daysOfWeek{
@@ -1607,6 +1621,8 @@ tr.monthModeRow{
 }
 .weekTest{
 /*	width: 200px;*/
+float: left;
+width: 50%;
 }
 
 tr.weekLine{
@@ -1614,8 +1630,9 @@ tr.weekLine{
 }
 
 .possibleweek{
-	display: block;
+/*	display: block;*/
 /*	width: 400px;*/
+	width: 100%;
 }
 
 .monthMode{
@@ -1623,18 +1640,21 @@ tr.weekLine{
 
 }
 .week{
-	width: 400px;
+/*	width: 400px;*/
 }
 .weekMode {
-	width: 200px; 
+/*	width: 200px; */
+	width: 100%;
 /*	border-style: solid;
 	border-width: 1px;
 	border-color: rgb(0,0,0);*/
 }
 .month{
 
-	width: 450px !important;
-
+/*	width: 450px !important;*/
+/*	width: 720px !important;*/
+/*width: 720px;*/
+width: 100%:
 }
 .day{
 /*	width: 100%;*/

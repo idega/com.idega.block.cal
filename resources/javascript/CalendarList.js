@@ -36,6 +36,11 @@ var defaultMode = monthMode;
 
 var currentMode = defaultMode;
 
+var ledgersName = '';
+
+var groupName = '';
+
+
 var elements = [];
 
 //Labels
@@ -117,6 +122,7 @@ var entryInScheduleStyleClass = null;
 				ledgerElement.setAttribute('id', element.type + element.id);									
 				ledgerElement.setAttribute('elementId',element.id);			
 				ledgerElement.setAttribute('name',element.name);
+				ledgersName += ' '+element.name;
 				ledgerElement.setAttribute('elementType',element.type);			
 				ledgerElement.setAttribute('type','checkbox');		
 				ledgerElement.setAttribute('class','calendarCheckbox');
@@ -215,6 +221,10 @@ function addBehaviour(){
 }	
 */	
 
+	function saveGroupName(name){
+		groupName = name;
+	}
+
 // returns layer with schedule buttons (previous, next, day...)
 
 	function getScheduleButtons(){
@@ -238,7 +248,6 @@ function addBehaviour(){
 		scheduleDayButton.setAttribute('value', dayLabel);	
 
 		scheduleDayButton.setAttribute('onclick', changeModeToDay);
-
 		
 		var scheduleWeekButton = document.createElement('input');
 		scheduleWeekButton.setAttribute('type', 'button');
@@ -250,7 +259,7 @@ function addBehaviour(){
 		var scheduleWorkweekButton = document.createElement('input');
 		scheduleWorkweekButton.setAttribute('type', 'button');
 		scheduleWorkweekButton.setAttribute('class', 'scheduleWorkweekButtonStyleClass');	
-		scheduleWorkweekButton.setAttribute('value', workweekLabel);	
+		scheduleWorkweekButton.setAttribute('value', workweekLabel);
 
 		scheduleWorkweekButton.setAttribute('onclick', changeModeToWorkweek);
 		
@@ -416,7 +425,16 @@ function addBehaviour(){
 			scheduleLayer.appendChild(getScheduleButtons());		
 			setBehaviourToScheduleButtons();
 		}
+		
+		var tdText=document.createTextNode('Group: '+groupName+' Ledger:'+ledgersName); 
+		scheduleEntries.appendChild(tdText);
+		
+//		scheduleEntries.ap
 		insertNodesToContainer(result, scheduleEntries);
+		
+		Window.onDomReady(MOOdalBox.init.bind(MOOdalBox));
+//		MOOdalBox.init.bind(MOOdalBox);
+		
 /*
 	var firstMonth = scheduleEntries.getElementsByTagName('table')[0];
 	
@@ -769,7 +787,7 @@ $(firstDiv).addClass('content');
 	}
 	
 	//inserts entry list
-	
+/*	
 	function removeEmptyAttributes(trTags){
 //		var trTags = newTBody.getElementsByTagName('tr');
 		for(var index=0; index<trTags.length; index++) {
@@ -871,7 +889,7 @@ $(firstDiv).addClass('content');
 		}	
 		
 	}
-	
+*/	
 	function displayEntriesAsList(entries){	
 		entriesToList = entries;
 		var scheduleLayer = document.getElementById('calendarViewerScheduleId'); 	
@@ -1026,17 +1044,17 @@ $(firstDiv).addClass('content');
 		$$('div.'+entryListEvenRowStyleClass).each(
 			function(element) {
 				element.onmouseover = function(e) {
-					displayEntryInfo(element, e);
+//					displayEntryInfo(element, e);
 				}
 				element.onmouseout = function(){
-					removeChildren(entryInfo);
+//					removeChildren(entryInfo);
 				}
 	    	}
 	    );	
 		$$('div.'+entryListOddRowStyleClass).each(
 			function(element) {
 				element.onmouseover = function(e) {
-					displayEntryInfo(element, e);
+//					displayEntryInfo(element, e);
 				}
 				element.onmouseout = function(){
 					removeChildren(entryInfo);
@@ -1051,12 +1069,46 @@ $(firstDiv).addClass('content');
 		$$('a.'+entryInScheduleStyleClass).each(
 			function(element) {
 				element.onmouseover = function(e) {
-					displayEntryInfo(element, e);
+//					displayEntryInfo(element, e);
 				}
 				element.onmouseout = function(){
 					removeChildren(entryInfo);
 				}
-	    	}
+/*
+				element.onclick = function(){
+
+					var entryElement = null;
+					var idOfSelectedEntry = element.id.substring(entryIdPrefix.length);
+					if (showEntriesAsList){
+						entryElement = entriesToList[idOfSelectedEntry];
+					}
+					else{	
+						for(var index=0; index<entriesToList.length; index++) {
+							if(entriesToList[index].id == idOfSelectedEntry.toString()){			
+								entryElement = entriesToList[index];
+								break;
+							}				
+						}
+					}
+					
+					if(entryElement != null){
+						createInfoTable(entryElement.entryName, 
+							entryElement.entryDate.substring(0,10), 
+							entryElement.entryDate.substring(11,16),
+							entryElement.entryEndDate.substring(11,16),
+							entryElement.entryTypeName,
+							entryElement.entryDescription
+						);
+					}
+
+					var entryInfoParent = document.getElementById('mb_contents');
+					if(entryInfoParent){
+						entryInfoParent.appendChild(entryInfo);
+					}
+
+				}
+*/
+    	}
 	    );		
 		$$('a.entry').each(
 			function(element) {

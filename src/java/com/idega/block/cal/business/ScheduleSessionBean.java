@@ -370,7 +370,7 @@ public class ScheduleSessionBean extends IBOSessionBean implements ScheduleSessi
 						defaultScheduleEntry.setTitle(entry.getEntryName());
 					}
 					if (entry.getEntryDescription() != null){
-						defaultScheduleEntry.setDescription(entry.getEntryName());
+						defaultScheduleEntry.setDescription(entry.getEntryDescription());
 					}
 					try {
 						scheduleModel.addEntry(defaultScheduleEntry);
@@ -393,7 +393,31 @@ public class ScheduleSessionBean extends IBOSessionBean implements ScheduleSessi
 		return service.getRenderedComponent(iwc, scheduleLayer, false);
 	}
 
+/*	
+	private List setTestEntries(){
+		List<CalScheduleEntry> entries = new ArrayList<CalScheduleEntry>();
+		for(int i = 1; i <= 3; i++){
+			CalScheduleEntry entry = new CalScheduleEntry();
+			
+			entry.setEntryDate("2007-09-08 "+(i*2+12)+":00:00.0");
+			entry.setEntryEndDate("2007-09-08 "+(i*2+13)+":00:00.0");
+			entry.setEntryName(i+"st entry name");
+			entry.setEntryDescription(i+"st entry description");
+			entry.setId(i+"st_entry_id");
+			entries.add(entry);
+		}
+		return entries;
+	}
+*/	
 	public int addEntries(List<CalScheduleEntry> entries, String id, boolean clearPreviousEntries){
+/*		
+		if(entries == null || entries.isEmpty()){
+			entries = setTestEntries();
+		}
+		
+		
+		
+*/		
 		ScheduleModel scheduleModel = null;
 		
 //		if (htmlSchedules.get(id) == null){
@@ -436,7 +460,7 @@ public class ScheduleSessionBean extends IBOSessionBean implements ScheduleSessi
 				defaultScheduleEntry.setTitle(entry.getEntryName());
 			}
 			if (entry.getEntryDescription() != null){
-				defaultScheduleEntry.setDescription(entry.getEntryName());
+				defaultScheduleEntry.setDescription(entry.getEntryDescription());
 			}			
 			scheduleModel.addEntry(defaultScheduleEntry);
 		}			

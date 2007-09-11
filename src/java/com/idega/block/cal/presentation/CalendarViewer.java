@@ -98,6 +98,10 @@ public class CalendarViewer extends Block{
 			try {
 //				resourceAdder.addJavaScriptAtPosition(iwc, AddResource.HEADER_BEGIN,web2_business.getBundleURIToBehaviourLib());
 				resourceAdder.addJavaScriptAtPosition(iwc, AddResource.HEADER_BEGIN,web2_business.getBundleURIToMootoolsLib());
+//				resourceAdder.addJavaScriptAtPosition(iwc, AddResource.HEADER_BEGIN,web2_business.getMoodalboxScriptFilePath(true));
+				resourceAdder.addJavaScriptAtPosition(iwc, AddResource.HEADER_BEGIN,web2_business.getMoodalboxScriptFilePath(false));
+				
+				resourceAdder.addStyleSheet(iwc, AddResource.HEADER_BEGIN, web2_business.getMoodalboxStyleFilePath());
 			} catch (RemoteException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();

@@ -39,7 +39,7 @@ import org.apache.myfaces.shared_tomahawk.renderkit.html.HTML;
  * The default implementation of the ScheduleEntryRenderer
  * 
  * @author Jurgen Lust (latest modification by $Author: justinas $)
- * @version $Revision: 1.1 $
+ * @version $Revision: 1.2 $
  */
 public class DefaultScheduleEntryRenderer implements ScheduleEntryRenderer,
         Serializable
@@ -107,10 +107,24 @@ public class DefaultScheduleEntryRenderer implements ScheduleEntryRenderer,
         if (!entry.isAllDay())
         {
         	DateFormat format = DateFormat.getTimeInstance(DateFormat.SHORT);
-        	text.append(format.format(startTime));
+        	text.append(startTime.getHours()+":");
+        	if(startTime.getMinutes() < 10){
+        		text.append("0"+startTime.getMinutes());
+        	}
+        	else{
+        		text.append(startTime.getMinutes());
+        	}
+        		
         	if (!startTime.equals(endTime)) {
         		text.append("-");
-        		text.append(format.format(endTime));
+//        		text.append(format.format(endTime));
+            	text.append(endTime.getHours()+":");
+            	if(endTime.getMinutes() < 10){
+            		text.append("0"+endTime.getMinutes());
+            	}
+            	else{
+            		text.append(endTime.getMinutes());
+            	}
         	}
         	text.append(": ");
         }

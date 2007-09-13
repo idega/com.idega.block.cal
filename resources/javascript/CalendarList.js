@@ -275,7 +275,7 @@ function addBehaviour(){
 				scheduleButtonsLayer.appendChild(schedulePreviousButton);
 				scheduleButtonsLayer.appendChild(scheduleNextButton);				
 			}
-//			scheduleButtonsLayer.appendChild(scheduleDayButton);		
+			scheduleButtonsLayer.appendChild(scheduleDayButton);		
 			scheduleButtonsLayer.appendChild(scheduleWeekButton);
 //			scheduleButtonsLayer.appendChild(scheduleWorkweekButton);		
 			scheduleButtonsLayer.appendChild(scheduleMonthButton);
@@ -427,7 +427,7 @@ function addBehaviour(){
 		}
 		
 		var tdText=document.createTextNode('Group: '+groupName+' Ledger:'+ledgersName); 
-		scheduleEntries.appendChild(tdText);
+//		scheduleEntries.appendChild(tdText);
 		
 //		scheduleEntries.ap
 		insertNodesToContainer(result, scheduleEntries);

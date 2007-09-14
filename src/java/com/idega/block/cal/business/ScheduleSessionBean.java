@@ -8,7 +8,9 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.myfaces.custom.schedule.model.DefaultScheduleEntry;
 import org.apache.myfaces.custom.schedule.model.ScheduleModel;
@@ -23,7 +25,7 @@ import com.idega.presentation.Layer;
 import com.idega.util.CoreUtil;
 
 public class ScheduleSessionBean extends IBOSessionBean implements ScheduleSession{
-//	private Map<String, HtmlSchedule> htmlSchedules = new HashMap<String, HtmlSchedule>();
+	private Map<String, HtmlSchedule> htmlSchedules = new HashMap<String, HtmlSchedule>();
 	HtmlSchedule htmlSchedule = null;
 	private SimpleDateFormat simpleDate = null;	
 	private List<CalScheduleEntry> entriesInSchedule = null;
@@ -35,10 +37,10 @@ public class ScheduleSessionBean extends IBOSessionBean implements ScheduleSessi
 	private static final int DEFAULT_MODE = ScheduleModel.MONTH;
 	
 	private void changeMode(String id, int mode){
-//		htmlSchedules.get(id).getModel().setMode(mode);
-//		htmlSchedules.get(id).getModel().refresh();		
-		htmlSchedule.getModel().setMode(mode);
-		htmlSchedule.getModel().refresh();		
+		htmlSchedules.get(id).getModel().setMode(mode);
+		htmlSchedules.get(id).getModel().refresh();		
+//		htmlSchedule.getModel().setMode(mode);
+//		htmlSchedule.getModel().refresh();		
 
 	}
 
@@ -51,8 +53,8 @@ public class ScheduleSessionBean extends IBOSessionBean implements ScheduleSessi
 		changeMode(id, ScheduleModel.DAY);
 		Calendar calendar = Calendar.getInstance();
 		Calendar currentDate = Calendar.getInstance();
-//		currentDate.setTime(htmlSchedules.get(id).getModel().getSelectedDate());
-		currentDate.setTime(htmlSchedule.getModel().getSelectedDate());
+		currentDate.setTime(htmlSchedules.get(id).getModel().getSelectedDate());
+//		currentDate.setTime(htmlSchedule.getModel().getSelectedDate());
 		
 		List<CalScheduleEntry> entriesOfSelectedDay = new ArrayList<CalScheduleEntry>();
 		
@@ -87,8 +89,8 @@ public class ScheduleSessionBean extends IBOSessionBean implements ScheduleSessi
 		changeMode(id, ScheduleModel.MONTH);
 		Calendar calendar = Calendar.getInstance();
 		Calendar currentDate = Calendar.getInstance();
-//		currentDate.setTime(htmlSchedules.get(id).getModel().getSelectedDate());
-		currentDate.setTime(htmlSchedule.getModel().getSelectedDate());
+		currentDate.setTime(htmlSchedules.get(id).getModel().getSelectedDate());
+//		currentDate.setTime(htmlSchedule.getModel().getSelectedDate());
 		
 		List<CalScheduleEntry> entriesOfSelectedMonth = new ArrayList<CalScheduleEntry>();
 		
@@ -135,8 +137,8 @@ public class ScheduleSessionBean extends IBOSessionBean implements ScheduleSessi
 		Calendar calendar = Calendar.getInstance();
 		
 		Calendar beginingOfTheWeek = Calendar.getInstance();
-//		beginingOfTheWeek.setTime(htmlSchedules.get(id).getModel().getSelectedDate());
-		beginingOfTheWeek.setTime(htmlSchedule.getModel().getSelectedDate());
+		beginingOfTheWeek.setTime(htmlSchedules.get(id).getModel().getSelectedDate());
+//		beginingOfTheWeek.setTime(htmlSchedule.getModel().getSelectedDate());
 		beginingOfTheWeek.set(Calendar.DAY_OF_WEEK, Calendar.MONDAY);
 		beginingOfTheWeek.set(Calendar.HOUR_OF_DAY, 0);
 		beginingOfTheWeek.set(Calendar.MINUTE, 0);
@@ -144,20 +146,20 @@ public class ScheduleSessionBean extends IBOSessionBean implements ScheduleSessi
 		beginingOfTheWeek.set(Calendar.MILLISECOND, 0);
 		
 		Calendar endOfTheWeek = Calendar.getInstance();
-//		endOfTheWeek.setTime(htmlSchedules.get(id).getModel().getSelectedDate());
-		endOfTheWeek.setTime(htmlSchedule.getModel().getSelectedDate());
+		endOfTheWeek.setTime(htmlSchedules.get(id).getModel().getSelectedDate());
+//		endOfTheWeek.setTime(htmlSchedule.getModel().getSelectedDate());
 		if (workdaysOnly){
-//			htmlSchedules.get(id).getModel().setMode(ScheduleModel.WORKWEEK);
-//			htmlSchedules.get(id).getModel().refresh();
-			htmlSchedule.getModel().setMode(ScheduleModel.WORKWEEK);
-			htmlSchedule.getModel().refresh();
+			htmlSchedules.get(id).getModel().setMode(ScheduleModel.WORKWEEK);
+			htmlSchedules.get(id).getModel().refresh();
+//			htmlSchedule.getModel().setMode(ScheduleModel.WORKWEEK);
+//			htmlSchedule.getModel().refresh();
 			endOfTheWeek.set(Calendar.DAY_OF_WEEK, Calendar.SATURDAY);
 		}
 		else{
-//			htmlSchedules.get(id).getModel().setMode(ScheduleModel.WEEK);
-//			htmlSchedules.get(id).getModel().refresh();
-			htmlSchedule.getModel().setMode(ScheduleModel.WEEK);
-			htmlSchedule.getModel().refresh();
+			htmlSchedules.get(id).getModel().setMode(ScheduleModel.WEEK);
+			htmlSchedules.get(id).getModel().refresh();
+//			htmlSchedule.getModel().setMode(ScheduleModel.WEEK);
+//			htmlSchedule.getModel().refresh();
 			endOfTheWeek.setTimeInMillis(endOfTheWeek.getTimeInMillis()+WEEK_IN_MILLISECONDS);
 			endOfTheWeek.set(Calendar.DAY_OF_WEEK, Calendar.MONDAY);
 		}
@@ -192,8 +194,8 @@ public class ScheduleSessionBean extends IBOSessionBean implements ScheduleSessi
 	}
 	
 	public Document switchToNextAndGetScheduleDOM(String id){
-//		ScheduleModel model = htmlSchedules.get(id).getModel();		
-		ScheduleModel model = htmlSchedule.getModel();		
+		ScheduleModel model = htmlSchedules.get(id).getModel();		
+//		ScheduleModel model = htmlSchedule.getModel();		
 		switch (model.getMode()){
 			case ScheduleModel.DAY: setSelectedDateToNextDay(id); break;
 			case ScheduleModel.WORKWEEK: setSelectedDateToNextWeek(id); break;
@@ -204,8 +206,8 @@ public class ScheduleSessionBean extends IBOSessionBean implements ScheduleSessi
 	}	
 
 	public List<CalScheduleEntry> switchToNextAndGetListOfEntries(String id){
-//		ScheduleModel model = htmlSchedules.get(id).getModel();
-		ScheduleModel model = htmlSchedule.getModel();
+		ScheduleModel model = htmlSchedules.get(id).getModel();
+//		ScheduleModel model = htmlSchedule.getModel();
 		switch (model.getMode()){
 			case ScheduleModel.DAY: 
 				setSelectedDateToNextDay(id);
@@ -224,8 +226,8 @@ public class ScheduleSessionBean extends IBOSessionBean implements ScheduleSessi
 	}	
 	
 	public Document switchToPreviousAndGetScheduleDOM(String id){		
-//		ScheduleModel model = htmlSchedules.get(id).getModel();
-		ScheduleModel model = htmlSchedule.getModel();
+		ScheduleModel model = htmlSchedules.get(id).getModel();
+//		ScheduleModel model = htmlSchedule.getModel();
 		switch (model.getMode()){
 			case ScheduleModel.DAY: setSelectedDateToPreviousDay(id); break;
 			case ScheduleModel.WORKWEEK: setSelectedDateToPreviousWeek(id); break;
@@ -236,8 +238,8 @@ public class ScheduleSessionBean extends IBOSessionBean implements ScheduleSessi
 	}
 
 	public List<CalScheduleEntry> switchToPreviousAndGetListOfEntries(String id){
-//		ScheduleModel model = htmlSchedules.get(id).getModel();
-		ScheduleModel model = htmlSchedule.getModel();
+		ScheduleModel model = htmlSchedules.get(id).getModel();
+//		ScheduleModel model = htmlSchedule.getModel();
 		switch (model.getMode()){
 			case ScheduleModel.DAY: 
 				setSelectedDateToPreviousDay(id);
@@ -256,65 +258,66 @@ public class ScheduleSessionBean extends IBOSessionBean implements ScheduleSessi
 	}		
 	
 	private void setSelectedDateToNextDay(String id){
-//		ScheduleModel model = htmlSchedules.get(id).getModel();
-		ScheduleModel model = htmlSchedule.getModel();
+		ScheduleModel model = htmlSchedules.get(id).getModel();
+//		ScheduleModel model = htmlSchedule.getModel();
 		Date date = model.getSelectedDate();
 		date.setTime(date.getTime()+DAY_IN_MILLISECONDS);
 		model.setSelectedDate(date);
-//		htmlSchedules.get(id).setModel(model);
-		htmlSchedule.setModel(model);
+		htmlSchedules.get(id).setModel(model);
+//		htmlSchedule.setModel(model);
 	}
 	
 	private void setSelectedDateToNextWeek(String id){
-//		ScheduleModel model = htmlSchedules.get(id).getModel();
-		ScheduleModel model = htmlSchedule.getModel();
+		ScheduleModel model = htmlSchedules.get(id).getModel();
+//		ScheduleModel model = htmlSchedule.getModel();
 		Date date = model.getSelectedDate();
 		date.setTime(date.getTime()+WEEK_IN_MILLISECONDS);
 		model.setSelectedDate(date);
-//		htmlSchedules.get(id).setModel(model);
-		htmlSchedule.setModel(model);
+		htmlSchedules.get(id).setModel(model);
+//		htmlSchedule.setModel(model);
 	}
 	
 	private void setSelectedDateToNextMonth(String id){
-//		ScheduleModel model = htmlSchedules.get(id).getModel();
-		ScheduleModel model = htmlSchedule.getModel();
+		ScheduleModel model = htmlSchedules.get(id).getModel();
+//		ScheduleModel model = htmlSchedule.getModel();
 		Date date = model.getSelectedDate();
 		date.setTime(date.getTime()+MONTH_IN_MILLISECONDS);
 		model.setSelectedDate(date);
-//		htmlSchedules.get(id).setModel(model);
-		htmlSchedule.setModel(model);
+		htmlSchedules.get(id).setModel(model);
+//		htmlSchedule.setModel(model);
 	}
 
 	private void setSelectedDateToPreviousDay(String id){
-//		ScheduleModel model = htmlSchedules.get(id).getModel();
-		ScheduleModel model = htmlSchedule.getModel();		
+		ScheduleModel model = htmlSchedules.get(id).getModel();
+//		ScheduleModel model = htmlSchedule.getModel();		
 		Date date = model.getSelectedDate();
 		date.setTime(date.getTime()-DAY_IN_MILLISECONDS);
 		model.setSelectedDate(date);
-//		htmlSchedules.get(id).setModel(model);
-		htmlSchedule.setModel(model);
+		htmlSchedules.get(id).setModel(model);
+//		htmlSchedule.setModel(model);
 	}
 	
 	private void setSelectedDateToPreviousWeek(String id){
-//		ScheduleModel model = htmlSchedules.get(id).getModel();
-		ScheduleModel model = htmlSchedule.getModel();
+		ScheduleModel model = htmlSchedules.get(id).getModel();
+//		ScheduleModel model = htmlSchedule.getModel();
 		Date date = model.getSelectedDate();
 		date.setTime(date.getTime()-WEEK_IN_MILLISECONDS);
 		model.setSelectedDate(date);
-//		htmlSchedules.get(id).setModel(model);
-		htmlSchedule.setModel(model);
+		htmlSchedules.get(id).setModel(model);
+//		htmlSchedule.setModel(model);
 	}
 	
 	private void setSelectedDateToPreviousMonth(String id){
-//		ScheduleModel model = htmlSchedules.get(id).getModel();
-		ScheduleModel model = htmlSchedule.getModel();
+		ScheduleModel model = htmlSchedules.get(id).getModel();
+//		ScheduleModel model = htmlSchedule.getModel();
 		Date date = model.getSelectedDate();
 		date.setTime(date.getTime()-MONTH_IN_MILLISECONDS);
 		model.setSelectedDate(date);
-//		htmlSchedules.get(id).setModel(model);	
-		htmlSchedule.setModel(model);	
+		htmlSchedules.get(id).setModel(model);	
+//		htmlSchedule.setModel(model);	
 	}
 	public Document getScheduleDOM(String id){
+		
 		
 		IWContext iwc = CoreUtil.getIWContext();
 		BuilderService service = null;
@@ -328,19 +331,19 @@ public class ScheduleSessionBean extends IBOSessionBean implements ScheduleSessi
 
 		ScheduleModel scheduleModel = null;
 
-//		if (htmlSchedules.get(id) == null){
-//			htmlSchedules.put(id, new HtmlSchedule());
-//		}
-//		else{
-//			scheduleModel = htmlSchedules.get(id).getModel();
-//		}
-
-		if(htmlSchedule == null){
-			htmlSchedule = new HtmlSchedule();
+		if (htmlSchedules.get(id) == null){
+			htmlSchedules.put(id, new HtmlSchedule());
 		}
 		else{
-			scheduleModel = htmlSchedule.getModel();
+			scheduleModel = htmlSchedules.get(id).getModel();
 		}
+
+//		if(htmlSchedule == null){
+//			htmlSchedule = new HtmlSchedule();
+//		}
+//		else{
+//			scheduleModel = htmlSchedule.getModel();
+//		}
 		
 		
 //		if(entriesInSchedule == null){
@@ -381,15 +384,15 @@ public class ScheduleSessionBean extends IBOSessionBean implements ScheduleSessi
 				}			
 			}
 			scheduleModel.refresh();
-//			htmlSchedules.get(id).setModel(scheduleModel);			
-			htmlSchedule.setModel(scheduleModel);
+			htmlSchedules.get(id).setModel(scheduleModel);			
+//			htmlSchedule.setModel(scheduleModel);
 		}
 //		htmlSchedules.get(id).setReadonly(true);
-//		htmlSchedules.get(id).setReadonly(false);
-		htmlSchedule.setReadonly(false);
+		htmlSchedules.get(id).setReadonly(false);
+//		htmlSchedule.setReadonly(false);
 		Layer scheduleLayer = new Layer();
-//		scheduleLayer.add(htmlSchedules.get(id));
-		scheduleLayer.add(htmlSchedule);
+		scheduleLayer.add(htmlSchedules.get(id));
+//		scheduleLayer.add(htmlSchedule);
 		return service.getRenderedComponent(iwc, scheduleLayer, false);
 	}
 
@@ -420,14 +423,14 @@ public class ScheduleSessionBean extends IBOSessionBean implements ScheduleSessi
 */		
 		ScheduleModel scheduleModel = null;
 		
-//		if (htmlSchedules.get(id) == null){
-		if (htmlSchedule == null){			
-//			htmlSchedules.put(id, new HtmlSchedule());
-			htmlSchedule = new HtmlSchedule();
+		if (htmlSchedules.get(id) == null){
+//		if (htmlSchedule == null){			
+			htmlSchedules.put(id, new HtmlSchedule());
+//			htmlSchedule = new HtmlSchedule();
 		}
 		
-//		scheduleModel = htmlSchedules.get(id).getModel();
-		scheduleModel = htmlSchedule.getModel();		
+		scheduleModel = htmlSchedules.get(id).getModel();
+//		scheduleModel = htmlSchedule.getModel();		
 		
 		if (entriesInSchedule == null){
 			entriesInSchedule = new ArrayList<CalScheduleEntry>();
@@ -466,13 +469,13 @@ public class ScheduleSessionBean extends IBOSessionBean implements ScheduleSessi
 		}			
 	
 		scheduleModel.refresh();
-//		if (htmlSchedules.get(id) == null){
-		if (htmlSchedule == null){		
-//			htmlSchedules.put(id, new HtmlSchedule());			
-			htmlSchedule = new HtmlSchedule();
+		if (htmlSchedules.get(id) == null){
+//		if (htmlSchedule == null){		
+			htmlSchedules.put(id, new HtmlSchedule());			
+//			htmlSchedule = new HtmlSchedule();
 		}
-//		htmlSchedules.get(id).setModel(scheduleModel);		
-		htmlSchedule.setModel(scheduleModel);		
+		htmlSchedules.get(id).setModel(scheduleModel);		
+//		htmlSchedule.setModel(scheduleModel);		
 		return 0;
 	}	
 	

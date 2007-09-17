@@ -42,7 +42,7 @@ import org.apache.myfaces.shared_tomahawk.renderkit.html.HTML;
  *
  * @author Jurgen Lust (latest modification by $Author: justinas $)
  * @author Bruno Aranda (adaptation of Jurgen's code to myfaces)
- * @version $Revision: 1.4 $
+ * @version $Revision: 1.5 $
  */
 public class ScheduleCompactMonthRenderer
     extends AbstractCompactScheduleRenderer
@@ -75,23 +75,23 @@ public class ScheduleCompactMonthRenderer
         //container div for the schedule grid
         writer.startElement(HTML.DIV_ELEM, schedule);
         writer.writeAttribute(HTML.CLASS_ATTR, "schedule-compact-" + getTheme(schedule), null);
-        writer.writeAttribute(
-            HTML.STYLE_ATTR, "border-style: none; overflow: hidden;", null
-        );
+//        writer.writeAttribute(
+//            HTML.STYLE_ATTR, "border-style: none; overflow: hidden;", null
+//        );
 
 //        writer.startElement(HTML.TABLE_ELEM, schedule);
         writer.startElement(HTML.DIV_ELEM, schedule);
         writer.writeAttribute(HTML.CLASS_ATTR, getStyleClass(schedule, "month"), null);
-        writer.writeAttribute(
-//            HTML.STYLE_ATTR, "position: relative; left: 0px; top: 0px; width: 100%;",
-                HTML.STYLE_ATTR, "position: relative; left: 0px; top: 0px;",
-            null
-        );
-        writer.writeAttribute(HTML.CELLPADDING_ATTR, "0", null);
+//        writer.writeAttribute(
+////            HTML.STYLE_ATTR, "position: relative; left: 0px; top: 0px; width: 100%;",
+//                HTML.STYLE_ATTR, "position: relative; left: 0px; top: 0px;",
+//            null
+//        );
+//        writer.writeAttribute(HTML.CELLPADDING_ATTR, "0", null);
 //        writer.writeAttribute(HTML.CELLSPACING_ATTR, "1", null);
-        writer.writeAttribute(HTML.CELLSPACING_ATTR, "0", null);
-        writer.writeAttribute("border", "0", null);
-        writer.writeAttribute(HTML.WIDTH_ATTR, "100%", null);
+//        writer.writeAttribute(HTML.CELLSPACING_ATTR, "0", null);
+//        writer.writeAttribute("border", "0", null);
+//        writer.writeAttribute(HTML.WIDTH_ATTR, "100%", null);
 //        writer.startElement(HTML.TBODY_ELEM, schedule);
 
         Calendar cal = GregorianCalendar.getInstance();

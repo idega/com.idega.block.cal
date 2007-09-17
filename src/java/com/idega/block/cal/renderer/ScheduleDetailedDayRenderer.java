@@ -46,7 +46,7 @@ import java.util.*;
  *
  * @author Jurgen Lust (latest modification by $Author: justinas $)
  * @author Bruno Aranda (adaptation of Jurgen's code to myfaces)
- * @version $Revision: 1.2 $
+ * @version $Revision: 1.3 $
  */
 public class ScheduleDetailedDayRenderer extends AbstractScheduleRenderer
         implements Serializable
@@ -56,6 +56,7 @@ public class ScheduleDetailedDayRenderer extends AbstractScheduleRenderer
 
     //~ Instance fields --------------------------------------------------------
 
+//    private final int defaultRowHeightInPixels = 22;
     private final int defaultRowHeightInPixels = 22;
 
     //~ Methods ----------------------------------------------------------------
@@ -88,7 +89,7 @@ public class ScheduleDetailedDayRenderer extends AbstractScheduleRenderer
 
         //container div for the schedule grid
         writer.startElement(HTML.DIV_ELEM, schedule);
-        writer.writeAttribute(HTML.CLASS_ATTR, "schedule-detailed-"
+        writer.writeAttribute(HTML.CLASS_ATTR, "dayModeSchedule schedule-detailed-"
                 + getTheme(schedule), null);
         writer.writeAttribute(HTML.STYLE_ATTR, "height: "
                 + String.valueOf(gridHeight) + "px; overflow: hidden;", null);
@@ -172,8 +173,8 @@ public class ScheduleDetailedDayRenderer extends AbstractScheduleRenderer
 
     protected String getCellClass(HtmlSchedule schedule, int column, int row, int hour)
     {
-//        String cellClass = "td_free";
-    	String cellClass = "free";
+        String cellClass = "td_free";
+//    	String cellClass = "free";
         ScheduleDay day = (ScheduleDay) schedule.getModel().get(column);
 
         if (!day.isWorkingDay())
@@ -184,7 +185,7 @@ public class ScheduleDetailedDayRenderer extends AbstractScheduleRenderer
         if (hour >= schedule.getWorkingStartHour()
                 && hour < schedule.getWorkingEndHour())
         {
-            cellClass = ((row % 2) == 0) ? "even" : "uneven";
+            cellClass = ((row % 2) == 0) ? "td_even" : "td_uneven";
         }
 
         return getStyleClass(schedule, cellClass);
@@ -269,29 +270,30 @@ public class ScheduleDetailedDayRenderer extends AbstractScheduleRenderer
                         null);
 
         //background table for the schedule grid
-        writer.startElement(HTML.TABLE_ELEM, schedule);
-//        writer.startElement(HTML.DIV_ELEM, schedule);
+//        writer.startElement(HTML.TABLE_ELEM, schedule);
+        writer.startElement(HTML.DIV_ELEM, schedule);
         writer.writeAttribute(HTML.CLASS_ATTR, getStyleClass(schedule,
 //                "table_background"), null);
-        	"background"), null);
+        	"table_background"), null);
         writer.writeAttribute(HTML.CELLPADDING_ATTR, "0", null);
-        writer.writeAttribute(HTML.CELLSPACING_ATTR, "1", null);
+//        writer.writeAttribute(HTML.CELLSPACING_ATTR, "1", null);
+        writer.writeAttribute(HTML.CELLSPACING_ATTR, "0", null);
         writer.writeAttribute(HTML.STYLE_ATTR, "width: 100%; height: 100%",
                 null);
-        writer.startElement(HTML.TBODY_ELEM, schedule);
+//        writer.startElement(HTML.TBODY_ELEM, schedule);
 
         //header row, containing the column names
 //        writer.startElement(HTML.TR_ELEM, schedule);
-        writer.startElement(HTML.TR_ELEM, schedule);
-//        writer.startElement(HTML.DIV_ELEM, schedule);
+//        writer.startElement(HTML.TR_ELEM, schedule);
+        writer.startElement(HTML.DIV_ELEM, schedule);
         writer.writeAttribute(HTML.CLASS_ATTR,
 //                getStyleClass(schedule, "tr_day"), null);
         		getStyleClass(schedule, "day"), null);
-        writer.startElement(HTML.TD_ELEM, schedule);
-//        writer.startElement(HTML.DIV_ELEM, schedule);
+//        writer.startElement(HTML.TD_ELEM, schedule);
+        writer.startElement(HTML.DIV_ELEM, schedule);
         writer.writeAttribute(HTML.CLASS_ATTR,
-//                getStyleClass(schedule, "td_gutter"), null);
-        		getStyleClass(schedule, "gutter"), null);
+                getStyleClass(schedule, "td_gutter emptyGutter"), null);
+//        		getStyleClass(schedule, "gutter"), null);
         writer
                 .writeAttribute(
                         HTML.STYLE_ATTR,
@@ -305,8 +307,8 @@ public class ScheduleDetailedDayRenderer extends AbstractScheduleRenderer
                 .writeAttribute(HTML.STYLE_ATTR, "height: 1px; width: 56px",
                         null);
         writer.endElement(HTML.DIV_ELEM);
-        writer.endElement(HTML.TD_ELEM);
-//        writer.endElement(HTML.DIV_ELEM);
+//        writer.endElement(HTML.TD_ELEM);
+        writer.endElement(HTML.DIV_ELEM);
 
         float columnWidth = (schedule.getModel().size() == 0) ? 100
                 : (100 / schedule.getModel().size());
@@ -315,12 +317,12 @@ public class ScheduleDetailedDayRenderer extends AbstractScheduleRenderer
                 .hasNext();)
         {
             ScheduleDay day = (ScheduleDay) dayIterator.next();
-            writer.startElement(HTML.TD_ELEM, schedule);
-//            writer.startElement(HTML.DIV_ELEM, schedule);
+//            writer.startElement(HTML.TD_ELEM, schedule);
+            writer.startElement(HTML.DIV_ELEM, schedule);
             writer.writeAttribute(HTML.CLASS_ATTR, getStyleClass(schedule,
 //                    "backgroundHeader"), null);
 //            "td_header backgroundHeader"), null);
-            "header backgroundHeader"), null);
+            "td_header backgroundHeader"), null);
             writer
                     .writeAttribute(
                             HTML.STYLE_ATTR,
@@ -369,12 +371,12 @@ public class ScheduleDetailedDayRenderer extends AbstractScheduleRenderer
             }
 
             writer.endElement(HTML.DIV_ELEM);
-            writer.endElement(HTML.TD_ELEM);
-//            writer.endElement(HTML.DIV_ELEM);
+//            writer.endElement(HTML.TD_ELEM);
+            writer.endElement(HTML.DIV_ELEM);
         }
 
-        writer.endElement(HTML.TR_ELEM);
-//        writer.endElement(HTML.DIV_ELEM);
+//        writer.endElement(HTML.TR_ELEM);
+        writer.endElement(HTML.DIV_ELEM);
 
         int startHour = getRenderedStartHour(schedule);
         int endHour = getRenderedEndHour(schedule);
@@ -382,8 +384,8 @@ public class ScheduleDetailedDayRenderer extends AbstractScheduleRenderer
 
         for (int row = 0; row < numberOfRows; row++)
         {
-            writer.startElement(HTML.TR_ELEM, schedule);
-//        	writer.startElement(HTML.DIV_ELEM, schedule);
+//            writer.startElement(HTML.TR_ELEM, schedule);
+        	writer.startElement(HTML.DIV_ELEM, schedule);
             writer.writeAttribute(HTML.CLASS_ATTR, getStyleClass(schedule,
 //                    "tr_day"), null);
             	"day"), null);
@@ -392,11 +394,11 @@ public class ScheduleDetailedDayRenderer extends AbstractScheduleRenderer
             //this only happens on even rows, or every hour
             if ((row % 2) == 0)
             {
-                writer.startElement(HTML.TD_ELEM, schedule);
-//            	writer.startElement(HTML.DIV_ELEM, schedule);
+//                writer.startElement(HTML.TD_ELEM, schedule);
+            	writer.startElement(HTML.DIV_ELEM, schedule);
                 writer.writeAttribute(HTML.CLASS_ATTR, getStyleClass(schedule,
-//                        "td_gutter"), null);
-                "gutter"), null);
+                        "td_gutter notEmptyGutter"), null);
+//                "gutter"), null);
                 writer
                         .writeAttribute(
                                 HTML.STYLE_ATTR,
@@ -421,15 +423,15 @@ public class ScheduleDetailedDayRenderer extends AbstractScheduleRenderer
                         null);
                 writer.writeText("00", null);
                 writer.endElement(HTML.SPAN_ELEM);
-                writer.endElement(HTML.TD_ELEM);
-//                writer.endElement(HTML.DIV_ELEM);
+//                writer.endElement(HTML.TD_ELEM);
+                writer.endElement(HTML.DIV_ELEM);
             }
 
             //write the cells of the day columns on this row
             for (int column = 0; column < schedule.getModel().size(); column++)
             {
-                writer.startElement(HTML.TD_ELEM, schedule);
-//            	writer.startElement(HTML.DIV_ELEM, schedule);
+//                writer.startElement(HTML.TD_ELEM, schedule);
+            	writer.startElement(HTML.DIV_ELEM, schedule);
                 writer.writeAttribute(HTML.CLASS_ATTR, getCellClass(schedule,
                         column, row, startHour + (row / 2)), null);
                 writer.writeAttribute(HTML.STYLE_ATTR,
@@ -438,17 +440,17 @@ public class ScheduleDetailedDayRenderer extends AbstractScheduleRenderer
                         .valueOf(columnWidth)
                         + "%", null);
                 writer.write(HTML.NBSP_ENTITY);
-                writer.endElement(HTML.TD_ELEM);
-//                writer.endElement(HTML.DIV_ELEM);
+//                writer.endElement(HTML.TD_ELEM);
+                writer.endElement(HTML.DIV_ELEM);
             }
 
-            writer.endElement(HTML.TR_ELEM);
-//            writer.endElement(HTML.DIV_ELEM);
+//            writer.endElement(HTML.TR_ELEM);
+            writer.endElement(HTML.DIV_ELEM);
         }
 
-        writer.endElement(HTML.TBODY_ELEM);
-        writer.endElement(HTML.TABLE_ELEM);
-//        writer.endElement(HTML.DIV_ELEM);
+//        writer.endElement(HTML.TBODY_ELEM);
+//        writer.endElement(HTML.TABLE_ELEM);
+        writer.endElement(HTML.DIV_ELEM);
         writer.endElement(HTML.DIV_ELEM);
     }
 
@@ -648,7 +650,6 @@ public class ScheduleDetailedDayRenderer extends AbstractScheduleRenderer
                                       HtmlSchedule schedule, ResponseWriter writer) throws IOException
     {
         final int rowHeight = getRowHeight(schedule.getAttributes()) - 1;
-System.out.println("foreground "+rowHeight);
         final int headerHeight = rowHeight + 10;
         final String clientId = schedule.getClientId(context);
         FormInfo parentFormInfo = RendererUtils.findNestingForm(schedule, context);
@@ -676,17 +677,17 @@ System.out.println("foreground "+rowHeight);
 //        writer.startElement(HTML.TR_ELEM, schedule);
         writer.startElement(HTML.DIV_ELEM, schedule);
 //        writer.startElement(HTML.TD_ELEM, schedule);
-        writer.startElement(HTML.DIV_ELEM, schedule);
-        
-//        writer.writeAttribute(HTML.CLASS_ATTR, "dayModeTimeColumn", null);
-        
-        writer.startElement(HTML.DIV_ELEM, schedule);
-        writer
-                .writeAttribute(HTML.STYLE_ATTR, "height: 1px; width: 56px",
-                        null);
-        writer.endElement(HTML.DIV_ELEM);
-//        writer.endElement(HTML.TD_ELEM);
-        writer.endElement(HTML.DIV_ELEM);
+//        writer.startElement(HTML.DIV_ELEM, schedule);
+//        
+////        writer.writeAttribute(HTML.CLASS_ATTR, "dayModeTimeColumn", null);
+//        
+////        writer.startElement(HTML.DIV_ELEM, schedule);
+////        writer
+////                .writeAttribute(HTML.STYLE_ATTR, "height: 1px; width: 56px",
+////                        null);
+////        writer.endElement(HTML.DIV_ELEM);
+////        writer.endElement(HTML.TD_ELEM);
+//        writer.endElement(HTML.DIV_ELEM);
 
         float columnWidth = (schedule.getModel().size() == 0) ? 100
                 : (100 / schedule.getModel().size());
@@ -700,7 +701,7 @@ System.out.println("foreground "+rowHeight);
             writer.startElement(HTML.DIV_ELEM, schedule);
             writer.writeAttribute(HTML.ID_ATTR, dayHeaderId, null);
             writer.writeAttribute(HTML.CLASS_ATTR, getStyleClass(schedule,
-                    "header"), null);
+                    "td_header"), null);
             writer
                     .writeAttribute(
                             HTML.STYLE_ATTR,
@@ -737,7 +738,7 @@ System.out.println("foreground "+rowHeight);
 
         writer.startElement(HTML.DIV_ELEM, schedule);
         writer
-                .writeAttribute(HTML.STYLE_ATTR, "height: 1px; width: 56px",
+                .writeAttribute(HTML.STYLE_ATTR, "height: 21px; width: 56px",
                         null);
         writer.endElement(HTML.DIV_ELEM);
 //        writer.endElement(HTML.TD_ELEM);
@@ -961,7 +962,8 @@ System.out.println("foreground "+rowHeight);
             endMillis = day.equalsDate(entry.getEndTime()) ? Math.min(
                     endMillis, visibleEndMillis) : visibleEndMillis;
 
-            int top = (int) (((startMillis - visibleStartMillis) * rowHeight) / HALF_HOUR);
+//            int top = (int) (((startMillis - visibleStartMillis) * rowHeight) / HALF_HOUR);
+            int top = (int) (((startMillis - visibleStartMillis) * 21) / HALF_HOUR);
             int height = (int) (((endMillis - startMillis) * rowHeight) / HALF_HOUR);
             StringBuffer buffer = new StringBuffer();
 

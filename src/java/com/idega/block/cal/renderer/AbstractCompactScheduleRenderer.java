@@ -47,7 +47,7 @@ import java.util.*;
  * 
  * @author Jurgen Lust (latest modification by $Author: justinas $)
  * @author Bruno Aranda (adaptation of Jurgen's code to myfaces)
- * @version $Revision: 1.6 $
+ * @version $Revision: 1.7 $
  */
 public abstract class AbstractCompactScheduleRenderer extends
         AbstractScheduleRenderer implements Serializable
@@ -165,34 +165,14 @@ public abstract class AbstractCompactScheduleRenderer extends
         	isWeekMode = true;
         }
         
-//        if((dayOfWeek != Calendar.SUNDAY) && (cellWidth == 100f / 6)){
         if((dayOfWeek != Calendar.SUNDAY) && isMonthMode){
-
-//        if((dayOfWeek != Calendar.SUNDAY)){
-//            writer.startElement(HTML.TD_ELEM, schedule);
         	writer.startElement(HTML.DIV_ELEM, schedule);
         }
-//        if((cellWidth == 50f) && (dayOfWeek != Calendar.SUNDAY)){
         if(isWeekMode && (dayOfWeek != Calendar.SUNDAY)){
-//        	writer.startElement(HTML.TD_ELEM, schedule);
         	writer.startElement(HTML.DIV_ELEM, schedule);
         }
-//        writer.startElement(HTML.TD_ELEM, schedule);
-//        writer.startElement(HTML.DIV_ELEM, schedule);
-//        writer.writeAttribute(HTML.STYLE_ATTR, "display: inline", null);
-//        writer.writeAttribute("rowspan", String.valueOf(rowspan), null);
-
-//        writer.writeAttribute("rowspan", String.valueOf(rowspan), null);
-
-//        String dayClass = getStyleClass(schedule, isCurrentMonth ? "day" : "inactive-day") + 
-//        		" " + getStyleClass(schedule, isWeekend ? "weekend" : "workday");
-
-        
         String dayClass = null;
-//        if(cellWidth == 50f){
         if(isWeekMode){
-//	        dayClass = getStyleClass(schedule, isCurrentMonth ? "weekday" : "inactive-day") + 
-//			" " + getStyleClass(schedule, isWeekend ? "weekend" : "workday");
         	dayClass = "";
         }
         else{
@@ -200,7 +180,7 @@ public abstract class AbstractCompactScheduleRenderer extends
 			" " + getStyleClass(schedule, isWeekend ? "weekend" : "workday");
         }
         
-// add class for sunday
+        // add class for sunday
         
         if(dayOfWeek == Calendar.SUNDAY){
         	dayClass += " sunday";
@@ -210,24 +190,14 @@ public abstract class AbstractCompactScheduleRenderer extends
         	dayClass += " saturday";
         }
         
-//        if((dayOfWeek != Calendar.SUNDAY) && (cellWidth == 100f / 6)){
         if((dayOfWeek != Calendar.SUNDAY) && isMonthMode){
-//        	writer.writeAttribute(HTML.CLASS_ATTR, dayClass+"test", null);
-//            writer.writeAttribute(HTML.STYLE_ATTR, "width: 75px;", null);
         	writer.writeAttribute(HTML.CLASS_ATTR, "workdaytest", null);
-//            writer.writeAttribute(HTML.WIDTH_ATTR, "75px", null);
 
         }
-//        if((dayOfWeek != Calendar.SUNDAY) && (cellWidth == 50f)){
         if((dayOfWeek != Calendar.SUNDAY) && isWeekMode){
-//        	writer.writeAttribute(HTML.CLASS_ATTR, dayClass+"test", null);
-//            writer.writeAttribute(HTML.STYLE_ATTR, "width: 75px;", null);
         	writer.writeAttribute(HTML.CLASS_ATTR, "weekTest", null);
-//            writer.writeAttribute(HTML.WIDTH_ATTR, "75px", null);
         }
         
-//        writer.writeAttribute(HTML.CLASS_ATTR, dayClass, null);
-
         // determine the height of the day in pixels
         StringBuffer styleBuffer = new StringBuffer();
 
@@ -235,45 +205,25 @@ public abstract class AbstractCompactScheduleRenderer extends
         String myRowHeight = "height: ";
         String myContentHeight = "height: ";
 
-        if (rowHeight > 0)
-        {
-            if (isWeekend)
-            {
+        if (rowHeight > 0){
+            if (isWeekend){
                 myRowHeight += (rowHeight / 2) + "px;";
                 myContentHeight += ((rowHeight / 2) - 19) + "px;";
             }
-            else
-            {
+            else{
                 myRowHeight += (rowHeight + 1) + "px;"; //need to add 1 to get the weekends right
                 myContentHeight += ((rowHeight + 1) - 18) + "px;"; //18 instead of 19, to get the weekends right
             }
          }
-        else
-        {
+        else{
             myRowHeight += "100%;";
             myContentHeight += "100%;";
         }
 
         styleBuffer.append(myRowHeight);
 
-        if(dayOfWeek != Calendar.SUNDAY){
-//            writer.writeAttribute(HTML.STYLE_ATTR, styleBuffer.toString()
-//            		+ " width: " + cellWidth + "%;", null);
-//            writer.writeAttribute(HTML.STYLE_ATTR, styleBuffer.toString()
-//            		+ " width: 75px;", null);
-        	
-        }
-        
-        
-//        writer.writeAttribute(HTML.STYLE_ATTR, styleBuffer.toString()
-//                                               + " width: " + cellWidth + "%;", null);
-
-//        writer.startElement(HTML.TABLE_ELEM, schedule);
         writer.startElement(HTML.DIV_ELEM, schedule);
 
-//        writer.writeAttribute(HTML.CLASS_ATTR, getStyleClass(schedule, "day"),
-//                              null);
-        
         if(cellWidth == 50f){
             writer.writeAttribute(HTML.CLASS_ATTR, getStyleClass(schedule, "day weekMode"),
                     null);        	
@@ -282,18 +232,10 @@ public abstract class AbstractCompactScheduleRenderer extends
             writer.writeAttribute(HTML.CLASS_ATTR, getStyleClass(schedule, "day monthMode"),
                     null);
         }
-//        writer.writeAttribute(HTML.STYLE_ATTR, styleBuffer.toString()
-//                                               + " width: 100%;", null);
-//      writer.writeAttribute(HTML.STYLE_ATTR, styleBuffer.toString()
-//      + "", null);
-//        writer.writeAttribute(HTML.CELLPADDING_ATTR, "0", null);
-//        writer.writeAttribute(HTML.CELLSPACING_ATTR, "0", null);
 
         // day header
-//        writer.startElement(HTML.TR_ELEM, schedule);
         writer.startElement(HTML.DIV_ELEM, schedule);
 
-//        if(cellWidth != 50f){
         if(isMonthMode){
 	        writer.writeAttribute(HTML.CLASS_ATTR,
 	                getStyleClass(schedule, "headerForMonthDay"), null);
@@ -303,7 +245,6 @@ public abstract class AbstractCompactScheduleRenderer extends
 	                getStyleClass(schedule, "headerForWeekDay"), null);        	
         }
         
-//        writer.startElement(HTML.TD_ELEM, schedule);
         writer.startElement(HTML.DIV_ELEM, schedule);
         writer.writeAttribute(HTML.CLASS_ATTR,
                               getStyleClass(schedule, "header"), null);
@@ -325,24 +266,14 @@ public abstract class AbstractCompactScheduleRenderer extends
 
 
         writer.writeText(getDateString(context, schedule, day.getDate()), null);
-//        writer.endElement(HTML.TD_ELEM);
         writer.endElement(HTML.DIV_ELEM);
-//        writer.endElement(HTML.TR_ELEM);
         writer.endElement(HTML.DIV_ELEM);
 
         // day content
-//        writer.startElement(HTML.TR_ELEM, schedule);
         writer.startElement(HTML.DIV_ELEM, schedule);
         writer.writeAttribute(HTML.CLASS_ATTR,
                 getStyleClass(schedule, "contentForMonthDay"), null);
-//        writer.startElement(HTML.TD_ELEM, schedule);
         writer.startElement(HTML.DIV_ELEM, schedule);
-
-//        writer.writeAttribute(HTML.CLASS_ATTR, getStyleClass(schedule,
-//                                                             "content"), null);
-
-        
-//        if(cellWidth != 50f){
         if(isMonthMode){
         
 		      if((dayOfWeek == Calendar.SUNDAY) || (dayOfWeek == Calendar.SATURDAY)){  
@@ -377,25 +308,12 @@ public abstract class AbstractCompactScheduleRenderer extends
         writer.writeAttribute(HTML.CLASS_ATTR, 
         		getStyleClass(schedule, "contentview"), null);
 
-        
-//        writer
-//                .writeAttribute(
-//                        HTML.STYLE_ATTR,
-//                        "width: 100%; height: 100%; overflow: auto; vertical-align: top;",
-//                        null);
-
-
-        
-        
-        
-        
         //this extra div is required, because when a scrollbar is visible and
         //it is clicked, the fireScheduleTimeClicked() method is fired.
         writer.startElement(HTML.DIV_ELEM, schedule);
         writer
         .writeAttribute(
                 HTML.STYLE_ATTR,
-//                "width: 100%; height: 100%; vertical-align: top;",
                 "height: 100%; vertical-align: top;",
                 null);
 
@@ -413,33 +331,22 @@ public abstract class AbstractCompactScheduleRenderer extends
                     null);
         }
 
-//        writer.startElement(HTML.TABLE_ELEM, schedule);
         writer.startElement(HTML.DIV_ELEM, schedule);
         writer.writeAttribute(HTML.STYLE_ATTR, "width: 100%;", null);
 
         writeEntries(context, schedule, day, writer);
 
-//        writer.endElement(HTML.TABLE_ELEM);
         writer.endElement(HTML.DIV_ELEM);
         writer.endElement(HTML.DIV_ELEM);
         writer.endElement(HTML.DIV_ELEM);
-//        writer.endElement(HTML.TD_ELEM);
         writer.endElement(HTML.DIV_ELEM);
-//        writer.endElement(HTML.TR_ELEM);
         writer.endElement(HTML.DIV_ELEM);
-//        writer.endElement(HTML.TABLE_ELEM);
         writer.endElement(HTML.DIV_ELEM);
-//        writer.endElement(HTML.TD_ELEM);
-//        writer.endElement(HTML.DIV_ELEM);
         
-//        if((dayOfWeek != Calendar.SATURDAY)  && (cellWidth == 100f / 6)){
         if((dayOfWeek != Calendar.SATURDAY)  && isMonthMode){
-//        if((dayOfWeek != Calendar.SATURDAY)){
-//            writer.endElement(HTML.TD_ELEM);
             writer.endElement(HTML.DIV_ELEM);
         }
         if(cellWidth == 50f && dayOfWeek != Calendar.SATURDAY){
-//        	writer.endElement(HTML.TD_ELEM);
         	writer.endElement(HTML.DIV_ELEM);
         }
     }

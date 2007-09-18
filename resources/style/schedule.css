@@ -1332,11 +1332,7 @@ table.foreground{
 	height: 650px !important;
 	background-color: red;
 }
-/*
-table.foreground{
-	z-index: 4;
-}
-*/
+
 a.entry{
 	display: block;
 	border-bottom-style:solid;
@@ -1460,14 +1456,7 @@ height: 184px !important;
 	
 /*	width: 200px; */
 }
-/*
-div.day{
-	border-style: solid;
-	border-width: 1px;
-	border-color: rgb(0,0,0);
 
-}
-*/
 div.table_background{
 	width: 100%;
 }
@@ -1504,7 +1493,7 @@ div.headerForMonthDay{
 	border-width: 0.5px;
 	border-color: black;
 	border-style: solid;
-	*/
+
 */	
 /*	
 	border-style: solid;
@@ -1579,7 +1568,7 @@ div.content{
 	border-color: black;
 	border-style: thin;
 /*	height: 100px !important;*/
-*/	
+
 }
 
 div.workdaytest{

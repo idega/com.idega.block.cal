@@ -21,7 +21,9 @@ div.entryListElementTime{
 	position: relative;
 }
 
-#calendarViewerScheduleId div.entryListEvenRow{
+#calendarViewerScheduleId a.entryListEvenRow{
+	text-decoration: none;
+	color: black;
 	background: #CCC;
 	padding: 2px;
 	display: block;
@@ -29,7 +31,9 @@ div.entryListElementTime{
 	left: 0px;
 	top: 0px;
 }
-#calendarViewerScheduleId div.entryListOddRow{
+#calendarViewerScheduleId a.entryListOddRow{
+	text-decoration: none;
+	color: black;
 	background: #EEE;
 	padding: 2px;	
 	display: block;	

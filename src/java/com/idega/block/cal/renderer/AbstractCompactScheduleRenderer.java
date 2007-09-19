@@ -47,7 +47,7 @@ import java.util.*;
  * 
  * @author Jurgen Lust (latest modification by $Author: justinas $)
  * @author Bruno Aranda (adaptation of Jurgen's code to myfaces)
- * @version $Revision: 1.7 $
+ * @version $Revision: 1.8 $
  */
 public abstract class AbstractCompactScheduleRenderer extends
         AbstractScheduleRenderer implements Serializable
@@ -158,6 +158,8 @@ public abstract class AbstractCompactScheduleRenderer extends
         boolean isMonthMode = false;
         boolean isWeekMode = false;
         
+        boolean isFirstInARow = false;
+        
         if(cellWidth == 100f / 6){
         	isMonthMode = true;
         }
@@ -182,6 +184,14 @@ public abstract class AbstractCompactScheduleRenderer extends
         
         // add class for sunday
         
+        if ((dayOfWeek == Calendar.MONDAY) ||
+            (dayOfWeek == Calendar.WEDNESDAY) ||
+            (dayOfWeek == Calendar.FRIDAY)// ||
+           ) {
+        	isFirstInARow = true;
+        }
+        
+        
         if(dayOfWeek == Calendar.SUNDAY){
         	dayClass += " sunday";
         }
@@ -195,7 +205,12 @@ public abstract class AbstractCompactScheduleRenderer extends
 
         }
         if((dayOfWeek != Calendar.SUNDAY) && isWeekMode){
-        	writer.writeAttribute(HTML.CLASS_ATTR, "weekTest", null);
+        	if(isFirstInARow){
+        		writer.writeAttribute(HTML.CLASS_ATTR, "weekTest firstInAWeekRow", null);
+        	}
+        	else{
+        		writer.writeAttribute(HTML.CLASS_ATTR, "weekTest secondInAWeekRow", null);
+        	}
         }
         
         // determine the height of the day in pixels
@@ -478,6 +493,7 @@ public abstract class AbstractCompactScheduleRenderer extends
 //                startTime += entry.getStartTime().getMinutes();
 //
                 
+//                writer.writeAttribute(HTML.HREF_ATTR, "/servlet/ObjectInstanciator?idegaweb_instance_class=com.idega.block.cal.presentation.EntryInfoBlock&entryName="+entry.getTitle()+"&entryStartTime="+startTime+"&entryEndTime="+endTime+"&entryDescription="+entry.getDescription(), null);
                 writer.writeAttribute(HTML.HREF_ATTR, "/servlet/ObjectInstanciator?idegaweb_instance_class=com.idega.block.cal.presentation.EntryInfoBlock&entryName="+entry.getTitle()+"&entryStartTime="+startTime+"&entryEndTime="+endTime+"&entryDescription="+entry.getDescription(), null);
 //                writer.writeAttribute(
 //                        HTML.ONMOUSEUP_ATTR,

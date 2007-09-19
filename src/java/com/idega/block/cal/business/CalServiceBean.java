@@ -34,6 +34,7 @@ public class CalServiceBean implements CalService {
 	
 	private LoginTableHome loginHome = null;
 	private LoginBusinessBean loginBean = null;
+	public static final String SCHEDULE_SESSION_DWR_INTERFACE_SCRIPT = "/dwr/interface/ScheduleSession.js";
 //	private ScheduleModel scheduleModel = null;
 	
 	public void setConnectionData(String serverName, String login,
@@ -268,7 +269,7 @@ public class CalServiceBean implements CalService {
 		}
 		
 		String engineScript = new StringBuffer(server).append("/dwr/engine.js").toString();
-		String interfaceScript = new StringBuffer(server).append(CoreConstants.SCHEDULE_SESSION_DWR_INTERFACE_SCRIPT).toString();
+		String interfaceScript = new StringBuffer(server).append(SCHEDULE_SESSION_DWR_INTERFACE_SCRIPT).toString();
 		
 		return (existsFileOnRemoteServer(engineScript) && existsFileOnRemoteServer(interfaceScript));
 	}

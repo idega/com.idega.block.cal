@@ -277,7 +277,7 @@ function addBehaviour(){
 			}
 			scheduleButtonsLayer.appendChild(scheduleDayButton);		
 			scheduleButtonsLayer.appendChild(scheduleWeekButton);
-//			scheduleButtonsLayer.appendChild(scheduleWorkweekButton);		
+			scheduleButtonsLayer.appendChild(scheduleWorkweekButton);		
 			scheduleButtonsLayer.appendChild(scheduleMonthButton);
 		}
 		return  scheduleButtonsLayer;	
@@ -907,6 +907,7 @@ $(firstDiv).addClass('content');
 		if (entries.length == 0){
 			var txtEntries=document.createTextNode(noEntries);
 			scheduleEntries.appendChild(txtEntries);
+			closeLoadingMessage();
 			return;
 		}
 		
@@ -914,7 +915,6 @@ $(firstDiv).addClass('content');
 //		scheduleList.setAttribute('class', entryListTableStyleClass);
 		$(scheduleList).addClass(entryListTableStyleClass);
 		scheduleList.setAttribute('id', 'listOfEntries');
-		
 		
 		var listCaptionRow = document.createElement('div');
 //		listCaptionRow.setAttribute('class', entryListCaptionStyleClass);
@@ -944,8 +944,8 @@ $(firstDiv).addClass('content');
 
 		scheduleList.appendChild(listCaptionRow);
 		testTable = listCaptionRow;
-		for(var index=0; index<entries.length; index++) {	
-			var listRow=document.createElement('div');
+		for(var index=0; index<entries.length; index++) {
+			var listRow=document.createElement('a');
 			if(index % 2 == 0){
 //				listRow.setAttribute('class', entryListEvenRowStyleClass+' '+entries[index].entryTypeName);
 				$(listRow).addClass(entryListEvenRowStyleClass);
@@ -957,6 +957,8 @@ $(firstDiv).addClass('content');
 				$(listRow).addClass(entries[index].entryTypeName);
 			}
 			listRow.setAttribute('id', entryIdPrefix+index);
+			$(listRow).setProperty('rel', 'moodalbox');
+			$(listRow).setProperty('href', '/servlet/ObjectInstanciator?idegaweb_instance_class=com.idega.block.cal.presentation.EntryInfoBlock&entryName='+entries[index].entryName+'&entryStartTime='+entries[index].localizedEntryDate+' '+entries[index].entryDate.substring(11,16)+ '&entryEndTime='+entries[index].entryEndDate.substring(11,16)+'&entryDescription='+entries[index].entryDescription);
 			var nameOfEntry=document.createElement('div');
 //			nameOfEntry.setAttribute('class',entryListElementStyleClass);
 			$(nameOfEntry).addClass(entryListElementStyleClass);
@@ -985,6 +987,7 @@ $(firstDiv).addClass('content');
 		}
 		scheduleEntries.appendChild(scheduleList);
 		setBehaviourOnListRows();
+		Window.onDomReady(MOOdalBox.init.bind(MOOdalBox));
 		closeLoadingMessage();
 	}
 
@@ -1113,7 +1116,7 @@ $(firstDiv).addClass('content');
 		$$('a.entry').each(
 			function(element) {
 				element.onmouseover = function(e) {
-					displayEntryInfo(element, e);
+//					displayEntryInfo(element, e);
 				}
 				element.onmouseout = function(){
 					removeChildren(entryInfo);

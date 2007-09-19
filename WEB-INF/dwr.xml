@@ -7,7 +7,7 @@
 		<convert converter="bean" match="com.idega.block.cal.business.CalendarLedgersAndTypes" />
 		<convert converter="bean" match="com.idega.block.cal.business.CalScheduleEntry" />
 		
-		<create creator="ibo" javascript="CalService">
+		<create creator="ibo" javascript="CalService" scope="application">
 	    	<param name="class" value="com.idega.block.cal.business.CalService" />
     	</create>
     	

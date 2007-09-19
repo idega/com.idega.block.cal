@@ -1,9 +1,13 @@
 package com.idega.block.cal.business;
 
-import java.util.Collection;
+import java.util.List;
 
-import com.idega.business.IBOService;
+public interface CalService {
+	
+	public List getCalendarParameters(String id);
+	public List getRemoteCalendarParameters(String id, String login, String password);
+	public List getEntries(List calendarAttributes);
+	public List getRemoteEntries(List calendarAttributes, String login, String password);
 
-public interface CalService extends IBOService{
-	public void setConnectionData(String serverName, String login, String password);
+	
 }

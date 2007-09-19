@@ -1,10 +1,28 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE dwr PUBLIC "-//GetAhead Limited//DTD Direct Web Remoting 1.0//EN" "http://www.getahead.ltd.uk/dwr/dwr10.dtd">
+<!DOCTYPE dwr PUBLIC "-//GetAhead Limited//DTD Direct Web Remoting 2.0//EN" "http://www.getahead.ltd.uk/dwr//dwr20.dtd">
 
 <dwr>
-  <allow>
-    <create creator="ibo" javascript="CalService" scope="application">
-      <param name="class" value="com.idega.block.cal.business.CalService"/>
-    </create>
-  </allow>
+	<allow>
+	
+		<convert converter="bean" match="com.idega.block.cal.business.CalendarLedgersAndTypes" />
+		<convert converter="bean" match="com.idega.block.cal.business.CalScheduleEntry" />
+		
+		<create creator="jsf" javascript="CalService">
+	    	<param name="managedBeanName" value="calendar" />
+	    	<param name="class" value="com.idega.block.cal.business.CalServiceBean" />
+    	</create>
+
+	</allow>
+	<signatures>
+		<![CDATA[
+  			import java.util.List;
+  			import org.jdom.Document;
+	  		import com.idega.block.cal.business.CalendarLedgersAndTypes;
+	  
+			CalService.getEntries(List<String>);
+			CalService.getRemoteEntries(List<String>, String, String);
+			CalService.getRemoteCalendarParameters(String, String, String);
+			CalService.getCalendarProperties(String);
+  		]]>
+	</signatures>	
 </dwr>

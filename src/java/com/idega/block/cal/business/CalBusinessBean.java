@@ -13,9 +13,11 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.Iterator;
 import java.util.List;
+
 import javax.ejb.CreateException;
 import javax.ejb.FinderException;
 import javax.ejb.RemoveException;
+
 import com.idega.block.cal.data.AttendanceEntity;
 import com.idega.block.cal.data.AttendanceEntityHome;
 import com.idega.block.cal.data.AttendanceMark;
@@ -136,7 +138,6 @@ public class CalBusinessBean extends IBOServiceBean implements CalBusiness,UserG
 			}
 			
 		}
-//		System.out.println("list: " + list.toString());
 		return list;
 	}
 	public Collection getPracticesByLedIDandMonth(int ledgerID, int month, int year) {
@@ -482,7 +483,6 @@ public class CalBusinessBean extends IBOServiceBean implements CalBusiness,UserG
 			type.store();			
 		}
 		catch(Exception e) {
-//			System.out.println("Couldn't add type: " + typeName);
 			return false;
 		}
 		return true;
@@ -1163,4 +1163,43 @@ public class CalBusinessBean extends IBOServiceBean implements CalBusiness,UserG
 	public String canCreateSubGroup(Group group, String groupTypeOfSubGroup) throws RemoteException {
 		return null;
 	}
+	
+public List getLedgersByGroupId(String groupId){
+		List ledgers = null;
+		try {
+			CalendarLedgerHome ledgerHome = (CalendarLedgerHome) getIDOHome(CalendarLedger.class);
+			ledgers = new ArrayList(ledgerHome.findLedgersByGroupId(groupId)); 
+		}catch(Exception e) {
+			e.printStackTrace();
+		}
+		return ledgers;
+	}
+
+/*	
+	public List getAllEntryTypes() {
+		List types = null;
+		try {
+			CalendarEntryTypeHome typeHome = (CalendarEntryTypeHome) getIDOHome(CalendarEntryType.class);
+			types = new ArrayList(typeHome.findTypes());
+		} catch(Exception e) {
+			e.printStackTrace();
+		}
+		return types;
+	}
+*/
+//	public List getTypesByGroupId(String groupId){
+//		return null;
+//	}
+	
+	public List getEntriesByLedgersAndEntryTypes(List listOfEntryTypesIds, List listOfLedgerIds){
+		List list = null; 
+		try {
+			CalendarEntryHome entryHome = (CalendarEntryHome) getIDOHome(CalendarEntry.class);
+			list = new ArrayList(entryHome.findEntriesByLedgerId(listOfLedgerIds));
+		} catch(Exception e) {
+			e.printStackTrace();
+		}
+		return list;		
+	}
+	
 }

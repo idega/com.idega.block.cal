@@ -32,6 +32,12 @@ public class CalendarLedgerHomeImpl extends com.idega.data.IDOFactory implements
  	
  }
  
+ public java.util.Collection findLedgersByGroupId(String id)throws javax.ejb.FinderException{
+	 	com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
+	 	java.util.Collection ids = ((CalendarLedgerBMPBean)entity).ejbFindLedgersByGroupId(id);
+	 	this.idoCheckInPooledEntity(entity);
+	 	return this.getEntityCollectionForPrimaryKeys(ids);
+	 }
 
 
 }

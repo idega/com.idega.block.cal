@@ -90,7 +90,7 @@ var entryInfoTypeStyleClass = 'entryInfoType';
 var entryInfoDescriptionStyleClass = 'entryInfoDescription';
 var entryInScheduleStyleClass = null;
 
-// displays calendar entry types and ledgers
+// displays calendar entry types and ledgers. This is used while selecting group, ledgers and types
 
 	function displayCalendarAttributes(calendars){
 		closeLoadingMessage();
@@ -225,7 +225,7 @@ function addBehaviour(){
 		groupName = name;
 	}
 
-// returns layer with schedule buttons (previous, next, day...)
+// returns layer with schedule buttons (previous, next, day...). Those buttons swithches to next or previous day/workweek/week/month, or changes view mode.
 
 	function getScheduleButtons(){
 		var scheduleNextButton = document.createElement('input');
@@ -786,7 +786,7 @@ $(firstDiv).addClass('content');
 		return tableEl;
 	}
 	
-	//inserts entry list
+	//inserts entry list into DOM
 /*	
 	function removeEmptyAttributes(trTags){
 //		var trTags = newTBody.getElementsByTagName('tr');

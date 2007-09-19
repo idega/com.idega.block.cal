@@ -133,6 +133,13 @@ div.schedule-detailed-default div.table_background div.td_uneven {
     color: rgb(240,240,240);
 
 }
+div.schedule-detailed-default div.table_background div.td_unevenWorkweek {
+
+    background-color: rgb(240,240,240);
+
+    color: rgb(240,240,240);
+
+}
 
 
 
@@ -144,6 +151,13 @@ div.schedule-detailed-default div.table_background div.td_even {
 
 }
 
+div.schedule-detailed-default div.table_background div.td_evenWorkweek {
+
+    background-color: rgb(235,235,235);
+
+    color: rgb(235,235,235);
+
+}
 
 
 div.schedule-detailed-default div.table_background div.td_free {
@@ -174,6 +188,23 @@ div.schedule-detailed-default .entry, div.schedule-detailed-default div.entry-se
 
 }
 
+div.schedule-detailed-default .workweekEntry, div.schedule-detailed-default div.entry-selected {
+
+  background-color: rgb(255,255,255);
+
+  text-align: center;
+
+  font-family: Verdana, Arial, Helvetica, Sans-Serif;
+
+  font-size: 11px;
+
+  vertical-align: middle;
+
+  border-color: rgb(153,153,153);
+
+  text-decoration: none;
+
+}
 
 
 div.schedule-detailed-default a.entry:hover,
@@ -1359,6 +1390,32 @@ a.entry{
 	top: 60px;
 /*	z-index: 4;*/
 }
+a.workweekEntry{
+	display: block;
+	border-bottom-style:solid;
+	border-bottom-width:1px;
+	border-left-style:solid;
+	border-left-width:1px;
+	border-right-style:solid;
+	border-right-width:1px;
+	border-top-style:solid;
+	border-top-width:1px;
+	height:44px;
+	left:0%;
+	overflow-x:hidden;
+	overflow-y:hidden;
+	padding-bottom:0px;
+	padding-left:0px;
+	padding-right:0px;
+	padding-top:0px;
+	position:absolute;
+/*	width:99.5%;	*/
+	width: 17% !important;
+	float: right;
+	margin-left:15%;
+	top: 60px;
+/*	z-index: 4;*/
+}
 
 div.foreground{
 	left: 0px;
@@ -1477,6 +1534,10 @@ div.tr_day{
 /*	float: right;*/
 }
 
+.workweekBackgroundHeader{
+	width: 17% !important;
+}
+
 div.td_header{
 /*	display: inline;*/
 }
@@ -1586,14 +1647,14 @@ div.monthModeRow{
 .weekTest{
 /*	width: 200px;*/
 float: left;
-width: 50%;
+width: 49%;
 }
 
 tr.weekLine{
 	display: block;
 }
 
-.possibleweek{
+div.possibleweek{
 /*	display: block;*/
 /*	width: 400px;*/
 	width: 100%;
@@ -1654,9 +1715,20 @@ div.td_even{
 	float: left;
 	height: 21px;
 }
+div.td_evenWorkweek{
+	width: 17% !important;
+	float: left;
+	height: 21px;
+}
+
 div.td_uneven{
 /*	width: 15% !important;*/
 	width: 85% !important;
+	float: left;
+	height: 21px;
+}
+div.td_unevenWorkweek{
+	width: 17% !important;
 	float: left;
 	height: 21px;
 }
@@ -1807,7 +1879,9 @@ tr.expandedWorkday td.weekend{
 div.td_header{
 	float: left;
 }
-
+div.emptyGutter{
+	height: 21px;
+}
 div.emptyGutter div.td_gutter{
 	height: 21px;
 }
@@ -1818,4 +1892,18 @@ div.notEmptyGutter{
 
 div.dayModeSchedule{
 	height: 600px !important;
+}
+/*
+div.firstInAWeekRow{
+	float: left;
+}
+div.secondInAWeekRow{
+	float: right !important;
+}
+*/
+
+div.rowForWorkweekColumns{
+	position: relative;
+	top: 0px;
+	left: 0px;
 }

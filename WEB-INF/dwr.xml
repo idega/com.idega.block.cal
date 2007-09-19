@@ -7,11 +7,10 @@
 		<convert converter="bean" match="com.idega.block.cal.business.CalendarLedgersAndTypes" />
 		<convert converter="bean" match="com.idega.block.cal.business.CalScheduleEntry" />
 		
-		<create creator="jsf" javascript="CalService">
-	    	<param name="managedBeanName" value="calendar" />
-	    	<param name="class" value="com.idega.block.cal.business.CalServiceBean" />
+		<create creator="ibo" javascript="CalService">
+	    	<param name="class" value="com.idega.block.cal.business.CalService" />
     	</create>
-
+    	
 	</allow>
 	<signatures>
 		<![CDATA[

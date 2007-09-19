@@ -8,6 +8,7 @@ import javax.ejb.FinderException;
 import com.idega.block.cal.data.CalendarEntryBMPBean;
 import com.idega.block.cal.data.CalendarEntryTypeBMPBean;
 import com.idega.block.cal.data.CalendarLedgerBMPBean;
+import com.idega.business.IBOServiceBean;
 import com.idega.core.accesscontrol.business.LoginBusinessBean;
 import com.idega.core.accesscontrol.data.LoginTable;
 import com.idega.core.accesscontrol.data.LoginTableHome;
@@ -17,35 +18,20 @@ import com.idega.presentation.IWContext;
 import com.idega.user.data.User;
 import com.idega.util.CoreUtil;
 
-public class CalServiceBean implements CalService {
+public class CalServiceBean extends IBOServiceBean implements CalService {
 
-//	private HtmlSchedule schedule = null;
-//	private SimpleDateFormat simpleDate = null;
-//	private int dateMode = -1;
-//	private static final int DAY_IN_MILLISECONDS = 1000 * 60 * 60 * 24;
-//	private static final int WEEK_IN_MILLISECONDS = DAY_IN_MILLISECONDS * 7;
-//	private static final int MONTH_IN_MILLISECONDS = DAY_IN_MILLISECONDS * 30;
-	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -7981985773110524965L;
 	private LoginTableHome loginHome = null;
 	private LoginBusinessBean loginBean = null;
-//	private ScheduleModel scheduleModel = null;
 	
 	public void setConnectionData(String serverName, String login,
 			String password) {
 		// TODO Auto-generated method stub
 	}
 	
-//	public List<ScheduleEntryBMPBean> getEntriesToDisplay(List<String> listOfEntryTypesIds, List<String> listOfLedgerIds){
-//		return null;
-//	}
-//	
-//	public List<CalendarLedgerBMPBean> getLedgersByGroupId(String id){
-//		return null;
-//	}
-//	
-//	public List<ScheduleEntryTypeBMPBean> getAllEntryTypes(){
-//		return null;
-//	}
 	public List getCalendarParameters(String id){
 
 		List calendarParameters = new ArrayList();

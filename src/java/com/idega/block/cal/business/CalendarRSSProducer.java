@@ -68,10 +68,12 @@ public class CalendarRSSProducer  extends RSSAbstractProducer implements RSSProd
 		
 	public void handleRSSRequest(RSSRequest rssRequest) throws IOException {
 		String extraURI = rssRequest.getExtraUri();
-		if(extraURI == null)
+		if(extraURI == null) {
 			extraURI = "";
-		if((!extraURI.endsWith("/")) && (extraURI.length() != 0))
+		}
+		if((!extraURI.endsWith("/")) && (extraURI.length() != 0)) {
 			extraURI = extraURI.concat("/");
+		}
 		
 		try {
 			IWContext iwc = getIWContext(rssRequest);
@@ -135,8 +137,9 @@ public class CalendarRSSProducer  extends RSSAbstractProducer implements RSSProd
 		String uri = extraURI.substring("period/".length(), extraURI.length());
 		String feedFile = "period_"+getName(uri)+iwc.getLocale().getLanguage()+".xml";
 
-		if(rssFileURIsCacheList.contains(feedFile))
+		if(rssFileURIsCacheList.contains(feedFile)) {
 			return PATH_TO_FEED_PARENT_FOLDER + feedFile;
+		}
 		
 		String period = extraURI.substring("period/".length());
 		String fromStr = period.substring(0, DATE_LENGTH);
@@ -144,13 +147,15 @@ public class CalendarRSSProducer  extends RSSAbstractProducer implements RSSProd
 		Timestamp fromTmst = getTimeStampFromString(fromStr);
 		Timestamp toTmst = getTimeStampFromString(toStr);
 	
-		if(toTmst.before(fromTmst))
+		if(toTmst.before(fromTmst)) {
 			return getFeed(INCORRECT_PERIOD_TITLE, INCORRECT_PERIOD_FILE, null, rssRequest, iwc);
+		}
 		CalBusiness calendar = new CalBusinessBean();
 
 		Collection entries = calendar.getEntriesBetweenTimestamps(fromTmst, toTmst);
-		if(entries.isEmpty())
+		if(entries.isEmpty()) {
 			return getFeed(NO_ENTRIES_FOUND_TITLE, NO_ENTRIES_FOUND_FILE, null, rssRequest, iwc);
+		}
 		String title = fromStr+"-"+toStr;
 
 		return getFeed(title, feedFile, entries, rssRequest, iwc);
@@ -161,8 +166,9 @@ public class CalendarRSSProducer  extends RSSAbstractProducer implements RSSProd
 		String uri = extraURI.substring("group/".length(), extraURI.length());
 		String feedFile = "group_"+getName(uri)+getPeriod(uri)+iwc.getLocale().getLanguage()+".xml";
 
-		if(rssFileURIsCacheList.contains(feedFile))
+		if(rssFileURIsCacheList.contains(feedFile)) {
 			return PATH_TO_FEED_PARENT_FOLDER + feedFile;
+		}
 		String group = extraURI.substring("group/".length());
 		String groupID = group.substring(0, group.indexOf("/"));
 		String groupPeriod = group.substring(groupID.length()+1, group.length());
@@ -199,8 +205,9 @@ public class CalendarRSSProducer  extends RSSAbstractProducer implements RSSProd
 			String toStr = groupPeriod.substring(DATE_LENGTH+1, groupPeriod.length()-1);
 			from = getTimeStampFromString(fromStr);
 			to = getTimeStampFromString(toStr);
-			if(to.before(from))
+			if(to.before(from)) {
 				return getFeed(INCORRECT_PERIOD_TITLE, INCORRECT_PERIOD_FILE, null, rssRequest, iwc);
+			}
 			title = title + " " + fromStr + "-" + toStr;
 			Collection coll = calendar.getEntriesBetweenTimestamps(from, to);
 			entries = new ArrayList();
@@ -210,11 +217,13 @@ public class CalendarRSSProducer  extends RSSAbstractProducer implements RSSProd
 					entries.add(element);
 				}				
 			}
-		}		
-		else 
+		}
+		else {
 			entries = new ArrayList(calendar.getEntriesByICGroup(entryGroupID));
-		if(entries.isEmpty())
+		}
+		if(entries.isEmpty()) {
 			return getFeed(NO_ENTRIES_FOUND_TITLE, NO_ENTRIES_FOUND_FILE, null, rssRequest, iwc);
+		}
 		else{
 			return getFeed(title, feedFile, entries, rssRequest, iwc);
 		}
@@ -225,8 +234,9 @@ public class CalendarRSSProducer  extends RSSAbstractProducer implements RSSProd
 //		String feedFile = "ledger_"+extraURI.substring("ledger/".length(), extraURI.length()-1)+"_"+iwc.getLocale().getLanguage()+".xml";
 		String uri = extraURI.substring("ledger/".length(), extraURI.length());
 		String feedFile = "ledger_"+getName(uri)+getPeriod(uri)+"_"+iwc.getLocale().getLanguage()+".xml";
-		if(rssFileURIsCacheList.contains(feedFile))
+		if(rssFileURIsCacheList.contains(feedFile)) {
 			return PATH_TO_FEED_PARENT_FOLDER + feedFile;
+		}
 		String ledger = extraURI.substring("ledger/".length());
 		String ledgerID = ledger.substring(0, ledger.indexOf("/"));
 		String ledgerPeriod = ledger.substring(ledgerID.length()+1, ledger.length());
@@ -251,8 +261,9 @@ public class CalendarRSSProducer  extends RSSAbstractProducer implements RSSProd
 			String toStr = ledgerPeriod.substring(DATE_LENGTH+1, ledgerPeriod.length()-1);
 			from = getTimeStampFromString(fromStr);
 			to = getTimeStampFromString(toStr);
-			if(to.before(from))
+			if(to.before(from)) {
 				return getFeed(INCORRECT_PERIOD_TITLE, INCORRECT_PERIOD_FILE, null, rssRequest, iwc);
+			}
 			title = title + " " + fromStr + "-" + toStr;
 			Collection coll = calendar.getEntriesBetweenTimestamps(from, to);
 			entries = new ArrayList();
@@ -263,10 +274,12 @@ public class CalendarRSSProducer  extends RSSAbstractProducer implements RSSProd
 				}				
 			}
 		}
-		else 
+		else {
 			entries = new ArrayList(calendar.getEntriesByLedgerID(ledgerIdInt));
-		if(entries.isEmpty())
+		}
+		if(entries.isEmpty()) {
 			return getFeed(NO_ENTRIES_FOUND_TITLE, NO_ENTRIES_FOUND_FILE, null, rssRequest, iwc);
+		}
 		else{
 			
 			return getFeed(title, feedFile, entries, rssRequest, iwc);
@@ -278,8 +291,9 @@ public class CalendarRSSProducer  extends RSSAbstractProducer implements RSSProd
 		String uri = extraURI.substring("group/".length(), extraURI.length());
 		String feedFile = "events_"+getTypesString(uri)+getPeriod(uri)+iwc.getLocale().getLanguage()+".xml";
 		
-		if(rssFileURIsCacheList.contains(feedFile))
+		if(rssFileURIsCacheList.contains(feedFile)) {
 			return feedFile;
+		}
 		String events = extraURI.substring("events/".length());
 		String eventsPeriod = null;
 		List eventsList = new ArrayList();
@@ -327,19 +341,22 @@ public class CalendarRSSProducer  extends RSSAbstractProducer implements RSSProd
 				}				
 			}
 		}
-		else 
+		else {
 			entries = new ArrayList(calendar.getEntriesByEvents(eventsList));
+		}
 		
-		if(entries.isEmpty())
+		if(entries.isEmpty()) {
 			return getFeed(NO_ENTRIES_FOUND_TITLE, NO_ENTRIES_FOUND_FILE, null, rssRequest, iwc);
+		}
 		else{
 			return getFeed(title, feedFile, entries, rssRequest, iwc);
 		}
 	}
 	
 	private String getFeed(String title, String feedFileName, Collection entries, RSSRequest rssRequest, IWContext iwc){
-		if(rssFileURIsCacheList.contains(feedFileName))
+		if(rssFileURIsCacheList.contains(feedFileName)) {
 			return PATH_TO_FEED_PARENT_FOLDER + feedFileName;
+		}
 		Date now = new Date();
 		RSSBusiness rss = null;
 		try {
@@ -354,13 +371,14 @@ public class CalendarRSSProducer  extends RSSAbstractProducer implements RSSProd
 			
 		feed = rss.createNewFeed(title, serverName , FEED_DESCRIPTION, "atom_1.0", iwc.getCurrentLocale().toString(), new Timestamp(now.getTime()));
 			 
-		if(entries != null)
+		if(entries != null) {
 			feed.setEntries(getFeedEntries(entries));
+		}
 			
 		try {
 			String feedContent = rss.convertFeedToAtomXMLString(feed);
 			IWSlideService service = this.getIWSlideService(rssRequest);
-			service.uploadFileAndCreateFoldersFromStringAsRoot(PATH_TO_FEED_PARENT_FOLDER, feedFileName, feedContent, this.RSS_CONTENT_TYPE, true);
+			service.uploadFileAndCreateFoldersFromStringAsRoot(PATH_TO_FEED_PARENT_FOLDER, feedFileName, feedContent, RSSAbstractProducer.RSS_CONTENT_TYPE, true);
 			rssFileURIsCacheList.add(feedFileName);
 		} catch (RemoteException e) {
 				// TODO Auto-generated catch block
@@ -412,14 +430,19 @@ public class CalendarRSSProducer  extends RSSAbstractProducer implements RSSProd
 	}
 
 	private String getPeriod(String uri){
-		if(uri.length() == 0)
+		if(uri.length() == 0) {
 			return "";
+		}
 		String period = uri.substring(uri.indexOf("/")+1);		
-		if(period.length() == 0)
+		if(period.length() == 0) {
 			return "";
-		if(period.startsWith("/"))
+		}
+		if(period.startsWith("/")) {
 			return period.substring(1, period.length()-1)+"_";
-		else return period.substring(0, period.length()-1)+"_";
+		}
+		else {
+			return period.substring(0, period.length()-1)+"_";
+		}
 	}
 
 	private String getName(String extraURI){
@@ -474,16 +497,21 @@ public class CalendarRSSProducer  extends RSSAbstractProducer implements RSSProd
 		String entryType = parameters[4];
 		String entryRepeat = parameters[5];
 		
-		if (entryRepeat.equals("none"))
+		if (entryRepeat.equals("none")) {
 			clearPeriodList(entryDate, entryDate);
-		else
+		}
+		else {
 			clearPeriodList(entryDate, entryEndDate);
-		if(!entryLedger.equals("-1"))
+		}
+		if(!entryLedger.equals("-1")) {
 			rssFileURIsCacheListByLedger.clear();
-		if(entryAttendees.length() != 0)
+		}
+		if(entryAttendees.length() != 0) {
 			rssFileURIsCacheListByGroup.clear();
-		if(entryType.length() != 0)
+		}
+		if(entryType.length() != 0) {
 			rssFileURIsCacheListByEvents.clear();
+		}
 	}
 	
 	public void clearPeriodList(String entryBeginDate, String entryEndDate){

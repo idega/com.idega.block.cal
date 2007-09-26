@@ -18,7 +18,6 @@ import com.idega.block.cal.data.CalendarLedger;
 import com.idega.block.rss.business.NoSuchRSSProducerException;
 import com.idega.block.rss.business.RSSProducer;
 import com.idega.block.rss.business.RSSProducerRegistry;
-import com.idega.block.rss.data.RSSRequest;
 import com.idega.idegaweb.IWApplicationContext;
 import com.idega.idegaweb.IWResourceBundle;
 import com.idega.idegaweb.presentation.CalendarParameters;
@@ -127,8 +126,8 @@ public class CalendarEntryCreator extends Form{
 	//fields
 	private TextInput headlineField;
 	private DropdownMenu typeField;
-	private SelectOption generalField;
-	private SelectOption practiceField;
+	//private SelectOption generalField;
+	//private SelectOption practiceField;
 	private DropdownMenu repeatField;
 	private SelectOption noRepeatField;
 	private SelectOption dailyField;
@@ -229,8 +228,8 @@ public class CalendarEntryCreator extends Form{
 				
 		this.headlineField = new TextInput(headlineFieldParameterName);
 		
-		this.practiceField =new SelectOption(this.practiceText.toString(),generalFieldParameterName);
-		this.generalField =new SelectOption(this.generalText.toString(),practiceFieldParameterName);
+		//this.practiceField =new SelectOption(this.practiceText.toString(),generalFieldParameterName);
+		//this.generalField =new SelectOption(this.generalText.toString(),practiceFieldParameterName);
 		
 		
 		this.typeField = new DropdownMenu(typeFieldParameterName);

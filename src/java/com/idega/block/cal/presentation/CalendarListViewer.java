@@ -8,7 +8,6 @@ import com.idega.idegaweb.IWBundle;
 import com.idega.presentation.Block;
 import com.idega.presentation.IWContext;
 import com.idega.presentation.Layer;
-import com.idega.user.business.UserConstants;
 
 public class CalendarListViewer extends Block {
 	

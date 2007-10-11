@@ -8,7 +8,7 @@ public class CalendarChooser  extends AbstractChooser{
 		return CalendarChooserBlock.class;
 	}
 	@Override
-	protected String getChooserHelperVarName() {
+	public String getChooserHelperVarName() {
 		// TODO Auto-generated method stub
 		return null;
 	}

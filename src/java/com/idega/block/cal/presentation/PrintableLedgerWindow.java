@@ -341,6 +341,7 @@ public class PrintableLedgerWindow extends Window{
 		String styleSheetName = "CalStyle.css"; 
 		styleSrc = styleSrc + "/" + styleSheetName;
 		parentPage.addStyleSheetURL(styleSrc);
+		parentPage.addStyleSheetURLForPrint(styleSrc);
 		
 		initializeTexts(iwc);
 		initializeFields(iwc);

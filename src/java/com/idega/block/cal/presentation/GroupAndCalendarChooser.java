@@ -18,7 +18,7 @@ import com.idega.presentation.ui.AbstractChooser;
 public class GroupAndCalendarChooser extends AbstractChooser {
 
 	private String chooserHelper = "groups_chooser_helper";
-	private List values = null;
+	private List<String> values = null;
 	
 	public GroupAndCalendarChooser(){
 		super();

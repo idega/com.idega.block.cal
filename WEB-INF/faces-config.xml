@@ -7,7 +7,7 @@
 <faces-config>
 	<managed-bean>
 		<managed-bean-name>CalendarManagerBean</managed-bean-name>
-		<managed-bean-class>com.idega.block.cal.data.CalendarManagerBean</managed-bean-class>
+		<managed-bean-class>com.idega.block.cal.bean.CalendarManagerBean</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 	</managed-bean>
 

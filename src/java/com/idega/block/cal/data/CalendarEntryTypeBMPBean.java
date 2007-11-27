@@ -109,4 +109,8 @@ public class CalendarEntryTypeBMPBean extends com.idega.data.GenericEntity imple
 		super.delete();
 	}
 
+	public String getId() {
+		return getStringColumnValue(getColumnNameCalendarTypeID());
+	}
+
 }

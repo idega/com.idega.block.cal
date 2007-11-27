@@ -8,72 +8,70 @@ import java.util.List;
 import javax.ejb.FinderException;
 
 import com.idega.block.cal.data.CalendarEntryBMPBean;
+import com.idega.block.cal.data.CalendarEntryType;
 import com.idega.block.cal.data.CalendarEntryTypeBMPBean;
 import com.idega.block.cal.data.CalendarLedgerBMPBean;
 import com.idega.block.cal.data.CalendarManagerBean;
+import com.idega.builder.bean.AdvancedProperty;
+import com.idega.business.IBOLookup;
+import com.idega.cal.bean.CalendarPropertiesBean;
 import com.idega.core.accesscontrol.business.LoginBusinessBean;
 import com.idega.core.accesscontrol.data.LoginTable;
 import com.idega.core.accesscontrol.data.LoginTableHome;
 import com.idega.data.IDOLookup;
 import com.idega.data.IDOLookupException;
+import com.idega.idegaweb.IWApplicationContext;
 import com.idega.presentation.IWContext;
-import com.idega.user.bean.GroupsAndCalendarPropertiesBean;
 import com.idega.user.data.User;
-import com.idega.util.CoreConstants;
 import com.idega.util.CoreUtil;
 import com.idega.webface.WFUtil;
 
 public class CalServiceBean implements CalService {
-
-//	private HtmlSchedule schedule = null;
-//	private SimpleDateFormat simpleDate = null;
-//	private int dateMode = -1;
-//	private static final int DAY_IN_MILLISECONDS = 1000 * 60 * 60 * 24;
-//	private static final int WEEK_IN_MILLISECONDS = DAY_IN_MILLISECONDS * 7;
-//	private static final int MONTH_IN_MILLISECONDS = DAY_IN_MILLISECONDS * 30;
 	
 	private LoginTableHome loginHome = null;
 	private LoginBusinessBean loginBean = null;
-	public static final String SCHEDULE_SESSION_DWR_INTERFACE_SCRIPT = "/dwr/interface/ScheduleSession.js";
-//	private ScheduleModel scheduleModel = null;
+	private CalBusiness calBusiness = null;
 	
-	public void setConnectionData(String serverName, String login,
-			String password) {
-		// TODO Auto-generated method stub
+	public void setConnectionData(String serverName, String login, String password) {
 	}
 	
-//	public List<ScheduleEntryBMPBean> getEntriesToDisplay(List<String> listOfEntryTypesIds, List<String> listOfLedgerIds){
-//		return null;
-//	}
-//	
-//	public List<CalendarLedgerBMPBean> getLedgersByGroupId(String id){
-//		return null;
-//	}
-//	
-//	public List<ScheduleEntryTypeBMPBean> getAllEntryTypes(){
-//		return null;
-//	}
+	@SuppressWarnings("unchecked")
 	public List<CalendarLedgersAndTypes> getCalendarParameters(String id){
-
 		List<CalendarLedgersAndTypes> calendarParameters = new ArrayList<CalendarLedgersAndTypes>();
 		
-		IWContext iwc = IWContext.getInstance();
-		LedgerVariationsHandler ledgerVariationsHandler = new DefaultLedgerVariationsHandler();
-		
-		CalBusiness calBusiness = ((DefaultLedgerVariationsHandler)ledgerVariationsHandler).getCalBusiness(iwc);
-		
-		List ledgersByGroupId = calBusiness.getLedgersByGroupId(id);
-		
-		List allEntryTypes = calBusiness.getAllEntryTypes();
-		
-		for (int i = 0; i < ledgersByGroupId.size(); i++) {
-			CalendarLedgerBMPBean ledger = (CalendarLedgerBMPBean)ledgersByGroupId.get(i);
-			calendarParameters.add(new CalendarLedgersAndTypes(""+ledger.getID(), ledger.getName(), "L"));
+		IWContext iwc = CoreUtil.getIWContext();
+		if (iwc == null) {
+			return calendarParameters;
 		}
 		
-		for (int i = 0; i < allEntryTypes.size(); i++) {
-			CalendarEntryTypeBMPBean entryType = (CalendarEntryTypeBMPBean)allEntryTypes.get(i);
-			calendarParameters.add(new CalendarLedgersAndTypes(""+entryType.getID(), entryType.getName(), "T"));
+		CalBusiness calBusiness = getCalBusiness(iwc);
+		if (calBusiness == null) {
+			return calendarParameters;
+		}
+	
+		
+		List ledgersByGroupId = calBusiness.getLedgersByGroupId(id);
+		List allEntryTypes = calBusiness.getAllEntryTypes();
+		
+		Object o = null;
+		if (ledgersByGroupId != null) {
+			for (int i = 0; i < ledgersByGroupId.size(); i++) {
+				o = ledgersByGroupId.get(i);
+				if (o instanceof CalendarLedgerBMPBean) {
+					CalendarLedgerBMPBean ledger = (CalendarLedgerBMPBean) o;
+					calendarParameters.add(new CalendarLedgersAndTypes(String.valueOf(ledger.getID()), ledger.getName(), "L"));
+				}
+			}
+		}
+		
+		if (allEntryTypes != null) {
+			for (int i = 0; i < allEntryTypes.size(); i++) {
+				o = allEntryTypes.get(i);
+				if (o instanceof CalendarEntryTypeBMPBean) {
+					CalendarEntryTypeBMPBean entryType = (CalendarEntryTypeBMPBean) o;
+					calendarParameters.add(new CalendarLedgersAndTypes(String.valueOf(entryType.getID()), entryType.getName(), "T"));
+				}
+			}
 		}
 				
 		return calendarParameters;
@@ -174,7 +172,7 @@ public class CalServiceBean implements CalService {
 		return loginHome;
 	}
 	
-	public List<CalScheduleEntry> getRemoteEntries(List<String> attributes, String login, String password){
+	public List<CalScheduleEntry> getRemoteEntries(List<String> attributes, String login, String password) {
 		if (login == null || password == null) {
 			return null;
 		}
@@ -195,11 +193,17 @@ public class CalServiceBean implements CalService {
 		return null;
 	}
 	
-	public List<CalScheduleEntry> getEntries(List<String> attributes){
-		IWContext iwc = IWContext.getInstance();
+	@SuppressWarnings("unchecked")
+	public List<CalScheduleEntry> getEntries(List<String> attributes) {
+		List<CalScheduleEntry> result = new ArrayList<CalScheduleEntry>();
+		
+		IWContext iwc = CoreUtil.getIWContext();
+		if (iwc == null) {
+			return result;
+		}
+		
 		String parameter = null;
 		LedgerVariationsHandler ledgerVariationsHandler = new DefaultLedgerVariationsHandler();
-		List<CalScheduleEntry> result = new ArrayList<CalScheduleEntry>();
 		
 		List<String> listOfLedgerIds = new ArrayList<String>(); 
 		List<String> listOfEntryTypesIds = new ArrayList<String>();
@@ -220,18 +224,17 @@ public class CalServiceBean implements CalService {
 		CalBusiness calBusiness = ((DefaultLedgerVariationsHandler)ledgerVariationsHandler).getCalBusiness(iwc);
 		
 		List entriesToDisplay = calBusiness.getEntriesByLedgersAndEntryTypes(listOfEntryTypesIds, listOfLedgerIds);
-
+		if (entriesToDisplay == null) {
+			return result;
+		}
+		
 		for (int i = 0; i < entriesToDisplay.size(); i++) {
-//		for (int i = 0; i < 15; i++) {
 			CalendarEntryBMPBean entry = (CalendarEntryBMPBean)entriesToDisplay.get(i);
-			if(checkIfTypeIsCorrect(entry, listOfEntryTypesIds)){
-//				result.add(new ScheduleEntry(entry.getStringColumnValue("CAL_ENTRY_NAME"), getDate(entry.getStringColumnValue("CAL_ENTRY_DATE")), getDate(entry.getStringColumnValue("CAL_ENTRY_END_DATE")),getTime(entry.getStringColumnValue("CAL_ENTRY_DATE")), getTime(entry.getStringColumnValue("CAL_ENTRY_END_DATE")), entry.getStringColumnValue("CAL_ENTRY_REPEAT"), entry.getStringColumnValue("CAL_TYPE_NAME")));
+			if (checkIfTypeIsCorrect(entry, listOfEntryTypesIds)) {
 				CalScheduleEntry calEntry = new CalScheduleEntry();
 				calEntry.setId(entry.getStringColumnValue("CAL_ENTRY_ID"));
 				calEntry.setEntryName(entry.getStringColumnValue("CAL_ENTRY_NAME"));
 				
-//				calEntry.setEntryDate(getDate(entry.getStringColumnValue("CAL_ENTRY_DATE")));
-//				calEntry.setEntryEndDate(getDate(entry.getStringColumnValue("CAL_ENTRY_END_DATE")));
 				calEntry.setEntryDate(entry.getStringColumnValue("CAL_ENTRY_DATE"));
 				calEntry.setEntryEndDate(entry.getStringColumnValue("CAL_ENTRY_END_DATE"));
 				
@@ -241,13 +244,12 @@ public class CalServiceBean implements CalService {
 				calEntry.setRepeat(entry.getStringColumnValue("CAL_ENTRY_REPEAT"));
 				calEntry.setEntryDescription(entry.getStringColumnValue("CAL_ENTRY_DESCRIPTION"));
 				result.add(calEntry);
-//				result.add(new ScheduleEntry(entry.getStringColumnValue("CAL_ENTRY_NAME"), entry.getStringColumnValue("CAL_ENTRY_DATE"), entry.getStringColumnValue("CAL_ENTRY_END_DATE"), entry.getStringColumnValue("CAL_ENTRY_REPEAT"), entry.getStringColumnValue("CAL_TYPE_NAME")));
 			}
 		}
-//		dateMode.put(id, ScheduleModel.MONTH);
 		return result;
 	}
-	private boolean checkIfTypeIsCorrect(CalendarEntryBMPBean entry, List<String> entryTypesIds){
+	
+	private boolean checkIfTypeIsCorrect(CalendarEntryBMPBean entry, List<String> entryTypesIds) {
 		String typeId = entry.getStringColumnValue("CAL_TYPE_ID");
 		for (int i = 0; i < entryTypesIds.size(); i++) {
 			if(entryTypesIds.get(i).equals(typeId))
@@ -269,10 +271,11 @@ public class CalServiceBean implements CalService {
 		}
 		
 		String engineScript = new StringBuffer(server).append("/dwr/engine.js").toString();
-		String interfaceScript = new StringBuffer(server).append(SCHEDULE_SESSION_DWR_INTERFACE_SCRIPT).toString();
+		String interfaceScript = new StringBuffer(server).append(CalendarConstants.CALENDAR_SERVICE_DWR_INTERFACE_SCRIPT).toString();
 		
 		return (existsFileOnRemoteServer(engineScript) && existsFileOnRemoteServer(interfaceScript));
 	}
+	
 	/**
 	 * Checks if file exists on server
 	 * @param urlToFile
@@ -297,30 +300,7 @@ public class CalServiceBean implements CalService {
 		} catch (Exception e) {}
 		
 		return true;
-	}	
-	
-//	public List getCalendarParametersList(){
-//		
-//		List <CalendarLedgersAndTypes>calendarParameters = new ArrayList<CalendarLedgersAndTypes>();
-//		
-//		IWContext iwc = IWContext.getInstance();
-//		LedgerVariationsHandler ledgerVariationsHandler = new DefaultLedgerVariationsHandler();
-//		List <CalendarLedgerBMPBean>allLedgers = ((DefaultLedgerVariationsHandler)ledgerVariationsHandler).getCalBusiness(iwc).getAllLedgers();
-//		
-//		List <ScheduleEntryTypeBMPBean>allEntryTypes = ((DefaultLedgerVariationsHandler)ledgerVariationsHandler).getCalBusiness(iwc).getAllEntryTypes();
-//		
-//		for (int i = 0; i < allLedgers.size(); i++) {
-//			CalendarLedgerBMPBean ledger = allLedgers.get(i);
-//			calendarParameters.add(new CalendarLedgersAndTypes(""+ledger.getID(), ledger.getName(), "L"));
-//		}
-//		
-//		for (int i = 0; i < allEntryTypes.size(); i++) {
-//			ScheduleEntryTypeBMPBean entryType = allEntryTypes.get(i);
-//			calendarParameters.add(new CalendarLedgersAndTypes(""+entryType.getID(), entryType.getName(), "T"));
-//		}
-//
-//		return calendarParameters;
-//	}
+	}
 	
 	private CalendarManagerBean getBean() {
 		Object o = WFUtil.getBeanInstance(CalendarConstants.CALENDAR_MANAGER_BEAN_ID);
@@ -330,7 +310,7 @@ public class CalServiceBean implements CalService {
 		return (CalendarManagerBean) o;
 	}
 	
-	public GroupsAndCalendarPropertiesBean getCalendarProperties(String instanceId){
+	public CalendarPropertiesBean getCalendarProperties(String instanceId) {
 		if (instanceId == null) {
 			return null;
 		}
@@ -339,22 +319,63 @@ public class CalServiceBean implements CalService {
 			return null;
 		}
 		
-		GroupsAndCalendarPropertiesBean properties = bean.getCalendarProperties(instanceId);
-		if (properties == null) {
-			return null;
-		}		
+		CalendarPropertiesBean properties = bean.getCalendarProperties(instanceId);	
 		return properties;
 	}
-	
-//	private String getDate(String entryDate){
-//		String date = entryDate.substring(0, 10);
-//		return date.replaceAll("-", "");
-//	}
 
 	private String getTime(String entryDate){
 		return entryDate.substring(11,16);
 	}
 	
-
-
+	@SuppressWarnings("unchecked")
+	public List<AdvancedProperty> getAvailableCalendarEventTypes(List<String> eventTypes) {
+		IWContext iwc = CoreUtil.getIWContext();
+		if (iwc == null) {
+			return null;
+		}
+		
+		CalBusiness calBusiness = getCalBusiness(iwc);
+		if (calBusiness == null) {
+			return null;
+		}
+		
+		List eventsTypes = null;
+		try {
+			eventsTypes = calBusiness.getAllEntryTypes();
+		} catch (Exception e) {
+			e.printStackTrace();
+			return null;
+		}
+		
+		if (eventsTypes == null) {
+			return null;
+		}
+		
+		List<AdvancedProperty> types = new ArrayList<AdvancedProperty>();
+		Object o = null;
+		CalendarEntryType calendarEntryType = null;
+		for (int i = 0; i < eventsTypes.size(); i++) {
+			o = eventsTypes.get(i);
+			System.out.println("Object in calendar: " + o);
+			if (o instanceof CalendarEntryType) {
+				calendarEntryType = (CalendarEntryType) o;
+				types.add(new AdvancedProperty(calendarEntryType.getId(), calendarEntryType.getName()));
+			}
+		}
+		
+		
+		return types;
+	}
+	
+	private CalBusiness getCalBusiness(IWApplicationContext iwac) {
+		if (calBusiness == null) {
+			try {
+				calBusiness = (CalBusiness) IBOLookup.getServiceInstance(iwac, CalBusiness.class);
+			} catch (Exception e) {
+				e.printStackTrace();
+				return null;
+			}
+		}
+		return calBusiness;
+	}
 }

@@ -40,6 +40,7 @@ import com.idega.user.business.UserBusiness;
 import com.idega.user.business.UserGroupPlugInBusiness;
 import com.idega.user.data.Group;
 import com.idega.user.data.User;
+import com.idega.util.CoreUtil;
 import com.idega.util.IWTimestamp;
 
 /**
@@ -899,7 +900,7 @@ public class CalBusinessBean extends IBOServiceBean implements CalBusiness,UserG
 		}					
 	}
 	public void createNewLedger(String name, int groupID, String coachName, String date,int coachGroupID) {
-		IWContext iwc = IWContext.getInstance();
+		IWContext iwc = CoreUtil.getIWContext();
 		Collection users = null;
 		Group group = null;
 		User user = null;

@@ -20,4 +20,6 @@ public interface CalService {
 	public CalendarPropertiesBean getCalendarProperties(String instanceId);
 	
 	public List<AdvancedProperty> getAvailableCalendarEventTypes();
+	
+	public List<AdvancedProperty> getAvailableCalendarEventTypesWithLogin(String login, String password);
 }

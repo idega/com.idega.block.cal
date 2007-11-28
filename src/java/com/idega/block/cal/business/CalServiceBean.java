@@ -1,11 +1,7 @@
 package com.idega.block.cal.business;
 
-import java.io.InputStream;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
-
-import javax.ejb.FinderException;
 
 import com.idega.block.cal.bean.CalendarManagerBean;
 import com.idega.block.cal.data.CalendarEntryBMPBean;
@@ -15,22 +11,16 @@ import com.idega.block.cal.data.CalendarLedgerBMPBean;
 import com.idega.builder.bean.AdvancedProperty;
 import com.idega.business.IBOLookup;
 import com.idega.cal.bean.CalendarPropertiesBean;
-import com.idega.core.accesscontrol.business.LoginBusinessBean;
-import com.idega.core.accesscontrol.data.LoginTable;
-import com.idega.core.accesscontrol.data.LoginTableHome;
-import com.idega.data.IDOLookup;
-import com.idega.data.IDOLookupException;
 import com.idega.idegaweb.IWApplicationContext;
 import com.idega.presentation.IWContext;
-import com.idega.user.data.User;
+import com.idega.user.business.GroupService;
 import com.idega.util.CoreUtil;
 import com.idega.webface.WFUtil;
 
 public class CalServiceBean implements CalService {
 	
-	private LoginTableHome loginHome = null;
-	private LoginBusinessBean loginBean = null;
 	private CalBusiness calBusiness = null;
+	private GroupService groupService = null;
 	
 	public void setConnectionData(String serverName, String login, String password) {
 	}
@@ -86,90 +76,20 @@ public class CalServiceBean implements CalService {
 			return null;
 		}
 		
-		if (isLoggedUser(iwc, login)) {
+		GroupService groupService = getGroupService(iwc);
+		if (groupService == null) {
+			return null;
+		}
+		
+		if (groupService.isLoggedUser(iwc, login)) {
 			return getCalendarParameters(id);
 		}
 		
-		if (logInUser(iwc, login, password)) {
+		if (groupService.logInUser(iwc, login, password)) {
 			return getCalendarParameters(id);
 		}
 		
 		return null;
-	}
-	
-	private boolean isLoggedUser(IWContext iwc, String userName) {
-		if (iwc == null || userName == null) {
-			return false;
-		}
-		
-		//	Geting current user
-		User current = null;
-		try {
-			current = iwc.getCurrentUser();
-		} catch (Exception e) {
-			e.printStackTrace();
-			return false;
-		}
-		if (current == null) {	//	Not logged
-			return false;
-		}
-		
-		LoginTableHome loginHome = getLoginHome();
-		if (loginHome == null) {
-			return false;
-		}
-		
-		int userId = 0;
-		try {
-			userId = Integer.valueOf(current.getId());
-		} catch (NumberFormatException e) {
-			e.printStackTrace();
-			return false;
-		}
-		
-		//	Checking if current user is making request
-		LoginTable login = null;
-		try {
-			login = loginHome.findLoginForUser(userId);
-		} catch (FinderException e) {
-			e.printStackTrace();
-			return false;
-		}
-		if (userName.equals(login.getUserLogin())) {
-			return true;
-		}
-		
-		return false;
-	}		
-	
-	private boolean logInUser(IWContext iwc, String login, String password) {
-		if (iwc == null || login == null || password == null) {
-			return false;
-		}
-
-		return getLoginBean(iwc).logInUser(iwc.getRequest(), login, password);
-	}	
-	
-	private synchronized LoginBusinessBean getLoginBean(IWContext iwc) {
-		if (loginBean == null) {
-			try {
-				loginBean = LoginBusinessBean.getLoginBusinessBean(iwc.getApplicationContext());
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-		}
-		return loginBean;
-	}
-	
-	private synchronized LoginTableHome getLoginHome() {
-		if (loginHome == null) {
-			try {
-				loginHome = (LoginTableHome) IDOLookup.getHome(LoginTable.class);
-			} catch (IDOLookupException e) {
-				e.printStackTrace();
-			}
-		}
-		return loginHome;
 	}
 	
 	public List<CalScheduleEntry> getRemoteEntries(List<String> attributes, String login, String password) {
@@ -182,11 +102,16 @@ public class CalServiceBean implements CalService {
 			return null;
 		}
 		
-		if (isLoggedUser(iwc, login)) {
+		GroupService groupService = getGroupService(iwc);
+		if (groupService == null) {
+			return null;
+		}
+		
+		if (groupService.isLoggedUser(iwc, login)) {
 			return getEntries(attributes);
 		}
 		
-		if (logInUser(iwc, login, password)) {
+		if (groupService.logInUser(iwc, login, password)) {
 			return getEntries(attributes);
 		}
 		
@@ -256,50 +181,27 @@ public class CalServiceBean implements CalService {
 				return true;
 		}
 		return false;
-	}	
-
+	}
+	
 	/**
 	 * Checks if can use DWR on remote server
 	 */
 	public boolean canUseRemoteServer(String server) {
-		if (server == null) {
+		IWContext iwc = CoreUtil.getIWContext();
+		if (iwc == null) {
 			return false;
 		}
 		
-		if (server.endsWith("/")) {
-			server = server.substring(0, server.lastIndexOf("/"));
+		GroupService groupService = getGroupService(iwc);
+		if (groupService == null) {
+			return false;
 		}
-		
-		String engineScript = new StringBuffer(server).append("/dwr/engine.js").toString();
-		String interfaceScript = new StringBuffer(server).append(CalendarConstants.CALENDAR_SERVICE_DWR_INTERFACE_SCRIPT).toString();
-		
-		return (existsFileOnRemoteServer(engineScript) && existsFileOnRemoteServer(interfaceScript));
-	}
 	
-	/**
-	 * Checks if file exists on server
-	 * @param urlToFile
-	 * @return
-	 */
-	private boolean existsFileOnRemoteServer(String urlToFile) {
-		InputStream streamToFile = null;
+		List<String> scripts = new ArrayList<String>();
+		scripts.add("/dwr/engine.js");
+		scripts.add(CalendarConstants.CALENDAR_SERVICE_DWR_INTERFACE_SCRIPT);
 		
-		try {
-			URL dwr = new URL(urlToFile);
-			streamToFile = dwr.openStream();
-		} catch (Exception e) {
-			e.printStackTrace();
-			return false;
-		}
-		
-		if (streamToFile == null) {
-			return false;
-		}
-		try {
-			streamToFile.close();
-		} catch (Exception e) {}
-		
-		return true;
+		return groupService.canMakeCallToServerAndScript(server, scripts);
 	}
 	
 	private CalendarManagerBean getBean() {
@@ -366,6 +268,29 @@ public class CalServiceBean implements CalService {
 		return types;
 	}
 	
+	public List<AdvancedProperty> getAvailableCalendarEventTypesWithLogin(String login, String password) {
+		if (login == null || password == null) {
+			return null;
+		}
+		
+		IWContext iwc = CoreUtil.getIWContext();
+		if (iwc == null) {
+			return null;
+		}
+		
+		GroupService groupService = getGroupService(iwc);
+		if (groupService == null) {
+			return null;
+		}
+		if (!groupService.isLoggedUser(iwc, login)) {
+			if (!groupService.logInUser(iwc, login, password)) {
+				return null;
+			}
+		}
+		
+		return getAvailableCalendarEventTypes();
+	}
+	
 	private CalBusiness getCalBusiness(IWApplicationContext iwac) {
 		if (calBusiness == null) {
 			try {
@@ -376,5 +301,17 @@ public class CalServiceBean implements CalService {
 			}
 		}
 		return calBusiness;
+	}
+	
+	private GroupService getGroupService(IWApplicationContext iwac) {
+		if (groupService == null) {
+			try {
+				groupService = (GroupService) IBOLookup.getServiceInstance(iwac, GroupService.class);
+			} catch (Exception e) {
+				e.printStackTrace();
+				return null;
+			}
+		}
+		return groupService;
 	}
 }

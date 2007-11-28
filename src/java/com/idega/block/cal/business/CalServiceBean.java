@@ -7,11 +7,11 @@ import java.util.List;
 
 import javax.ejb.FinderException;
 
+import com.idega.block.cal.bean.CalendarManagerBean;
 import com.idega.block.cal.data.CalendarEntryBMPBean;
 import com.idega.block.cal.data.CalendarEntryType;
 import com.idega.block.cal.data.CalendarEntryTypeBMPBean;
 import com.idega.block.cal.data.CalendarLedgerBMPBean;
-import com.idega.block.cal.data.CalendarManagerBean;
 import com.idega.builder.bean.AdvancedProperty;
 import com.idega.business.IBOLookup;
 import com.idega.cal.bean.CalendarPropertiesBean;
@@ -328,7 +328,7 @@ public class CalServiceBean implements CalService {
 	}
 	
 	@SuppressWarnings("unchecked")
-	public List<AdvancedProperty> getAvailableCalendarEventTypes(List<String> eventTypes) {
+	public List<AdvancedProperty> getAvailableCalendarEventTypes() {
 		IWContext iwc = CoreUtil.getIWContext();
 		if (iwc == null) {
 			return null;
@@ -356,7 +356,6 @@ public class CalServiceBean implements CalService {
 		CalendarEntryType calendarEntryType = null;
 		for (int i = 0; i < eventsTypes.size(); i++) {
 			o = eventsTypes.get(i);
-			System.out.println("Object in calendar: " + o);
 			if (o instanceof CalendarEntryType) {
 				calendarEntryType = (CalendarEntryType) o;
 				types.add(new AdvancedProperty(calendarEntryType.getId(), calendarEntryType.getName()));

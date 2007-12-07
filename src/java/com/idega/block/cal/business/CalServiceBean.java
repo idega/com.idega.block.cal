@@ -7,11 +7,14 @@ import com.idega.block.cal.bean.CalendarManagerBean;
 import com.idega.block.cal.data.CalendarEntryBMPBean;
 import com.idega.block.cal.data.CalendarEntryType;
 import com.idega.block.cal.data.CalendarEntryTypeBMPBean;
+import com.idega.block.cal.data.CalendarLedger;
 import com.idega.block.cal.data.CalendarLedgerBMPBean;
 import com.idega.builder.bean.AdvancedProperty;
 import com.idega.business.IBOLookup;
 import com.idega.cal.bean.CalendarPropertiesBean;
 import com.idega.idegaweb.IWApplicationContext;
+import com.idega.idegaweb.IWBundle;
+import com.idega.idegaweb.IWResourceBundle;
 import com.idega.presentation.IWContext;
 import com.idega.user.business.GroupService;
 import com.idega.util.CoreUtil;
@@ -21,6 +24,10 @@ public class CalServiceBean implements CalService {
 	
 	private CalBusiness calBusiness = null;
 	private GroupService groupService = null;
+	
+	private String calendarCacheName = "calendarViewersUniqueIdsCache";
+	private String ledgersCacheName = "ledgersForCalendarViewersUniqueIdsCache";
+	private String eventsCacheName = "eventsForCalendarViewersUniqueIdsCache";
 	
 	public void setConnectionData(String serverName, String login, String password) {
 	}
@@ -183,6 +190,8 @@ public class CalServiceBean implements CalService {
 		return false;
 	}
 	
+	/*-----------------------------------------------------------*/
+	
 	/**
 	 * Checks if can use DWR on remote server
 	 */
@@ -221,8 +230,7 @@ public class CalServiceBean implements CalService {
 			return null;
 		}
 		
-		CalendarPropertiesBean properties = bean.getCalendarProperties(instanceId);	
-		return properties;
+		return bean.getCalendarProperties(instanceId);
 	}
 
 	private String getTime(String entryDate){
@@ -264,7 +272,6 @@ public class CalServiceBean implements CalService {
 			}
 		}
 		
-		
 		return types;
 	}
 	
@@ -291,6 +298,67 @@ public class CalServiceBean implements CalService {
 		return getAvailableCalendarEventTypes();
 	}
 	
+	@SuppressWarnings("unchecked")
+	public List<AdvancedProperty> getAvailableLedgers() {
+		IWContext iwc = CoreUtil.getIWContext();
+		if (iwc == null) {
+			return null;
+		}
+		
+		CalBusiness calBusiness = getCalBusiness(iwc);
+		if (calBusiness == null) {
+			return null;
+		}
+		
+		List allLedgers = null;
+		try {
+			allLedgers = calBusiness.getAllLedgers();
+		} catch (Exception e) {
+			e.printStackTrace();
+			return null;
+		}
+		if (allLedgers == null) {
+			return null;
+		}
+		
+		List<AdvancedProperty> ledgers = new ArrayList<AdvancedProperty>();
+		
+		Object o = null;
+		CalendarLedger ledger = null;
+		for (int i = 0; i < allLedgers.size(); i++) {
+			o = allLedgers.get(i);
+			if (o instanceof CalendarLedger) {
+				ledger = (CalendarLedger) o;
+				ledgers.add(new AdvancedProperty(String.valueOf(ledger.getLedgerID()), ledger.getName()));
+			}
+		}
+		
+		return ledgers;
+	}
+	
+	public List<AdvancedProperty> getAvailableLedgersWithLogin(String login, String password) {
+		if (login == null || password == null) {
+			return null;
+		}
+		
+		IWContext iwc = CoreUtil.getIWContext();
+		if (iwc == null) {
+			return null;
+		}
+		
+		GroupService groupService = getGroupService(iwc);
+		if (groupService == null) {
+			return null;
+		}
+		if (!groupService.isLoggedUser(iwc, login)) {
+			if (!groupService.logInUser(iwc, login, password)) {
+				return null;
+			}
+		}
+		
+		return getAvailableLedgers();
+	}
+	
 	private CalBusiness getCalBusiness(IWApplicationContext iwac) {
 		if (calBusiness == null) {
 			try {
@@ -313,5 +381,131 @@ public class CalServiceBean implements CalService {
 			}
 		}
 		return groupService;
+	}
+	
+	private GroupService getGroupService() {
+		if (groupService == null) {
+			return getGroupService(CoreUtil.getIWContext());
+		}
+		return groupService;
+	}
+
+	public List<String> getCalendarInformation() {
+		IWContext iwc = CoreUtil.getIWContext();
+		if (iwc == null) {
+			return null;
+		}
+		
+		IWBundle bundle = null;
+		try {
+			bundle = iwc.getIWMainApplication().getBundle(CalendarConstants.IW_BUNDLE_IDENTIFIER);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return null;
+		}
+		
+		IWResourceBundle iwrb = bundle.getResourceBundle(iwc);
+		if (iwrb == null) {
+			return null;
+		}
+		
+		List<String> info = new ArrayList<String>();
+		
+		//	TODO: return localization
+		
+		return info;
+	}
+	
+	public boolean addUniqueIdsForCalendarGroups(String instanceId, List<String> ids) {
+		GroupService groupService = getGroupService();
+		if (groupService == null) {
+			return false;
+		}
+		
+		return groupService.addUniqueIds(calendarCacheName, instanceId, ids);
+	}
+	
+	public boolean addUniqueIdsForCalendarLedgers(String instanceId, List<String> ids) {
+		if (ids == null || ids.size() == 0) {
+			return true;
+		}
+		
+		GroupService groupService = getGroupService();
+		if (groupService == null) {
+			return false;
+		}
+		
+		return groupService.addUniqueIds(ledgersCacheName, instanceId, ids);
+	}
+	
+	public boolean addUniqueIdsForCalendarEvents(String instanceId, List<String> ids) {
+		if (ids == null || ids.size() == 0) {
+			return true;
+		}
+		
+		GroupService groupService = getGroupService();
+		if (groupService == null) {
+			return false;
+		}
+		
+		return groupService.addUniqueIds(eventsCacheName, instanceId, ids);
+	}
+	
+	public List<CalScheduleEntry> getCalendarEntries(String login, String password, String instanceId, Integer cacheTime, boolean remoteMode) {
+		if (instanceId == null) {
+			return null;
+		}
+		
+		if (remoteMode && (login == null || password == null)) {
+			return null;
+		}
+		
+		IWContext iwc = CoreUtil.getIWContext();
+		if (iwc == null) {
+			return null;
+		}
+		
+		GroupService groupService = getGroupService(iwc);
+		if (groupService == null) {
+			return null;
+		}
+		
+		if (remoteMode && !groupService.isUserLoggedOn(iwc, login, password)) {
+			return null;
+		}
+		
+		List<String> groupsIds = null;
+		try {
+			groupsIds = groupService.getUniqueIds(calendarCacheName).get(instanceId);
+		} catch(Exception e) {
+			e.printStackTrace();
+			return null;
+		}
+		
+		List<String> ledgersIds = null;
+		try {
+			ledgersIds = groupService.getUniqueIds(ledgersCacheName).get(instanceId);
+		} catch(Exception e) {
+			e.printStackTrace();
+			return null;
+		}
+		
+		List<String> eventsIds = null;
+		try {
+			eventsIds = groupService.getUniqueIds(eventsCacheName).get(instanceId);
+		} catch(Exception e) {
+			e.printStackTrace();
+			return null;
+		}
+		
+		if (groupsIds == null) {
+			return null;
+		}
+		
+		boolean useCache = cacheTime == null ? false : true;
+		
+		//	TODO: get info
+		
+		return null;
 	}
 }

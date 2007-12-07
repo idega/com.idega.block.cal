@@ -22,4 +22,18 @@ public interface CalService {
 	public List<AdvancedProperty> getAvailableCalendarEventTypes();
 	
 	public List<AdvancedProperty> getAvailableCalendarEventTypesWithLogin(String login, String password);
+	
+	public List<String> getCalendarInformation();
+	
+	public boolean addUniqueIdsForCalendarGroups(String instanceId, List<String> ids);
+	
+	public boolean addUniqueIdsForCalendarLedgers(String instanceId, List<String> ids);
+	
+	public boolean addUniqueIdsForCalendarEvents(String instanceId, List<String> ids);
+	
+	public List<CalScheduleEntry> getCalendarEntries(String login, String password, String instanceId, Integer cacheTime, boolean remoteMode);
+	
+	public List<AdvancedProperty> getAvailableLedgers();
+	
+	public List<AdvancedProperty> getAvailableLedgersWithLogin(String login, String password);
 }

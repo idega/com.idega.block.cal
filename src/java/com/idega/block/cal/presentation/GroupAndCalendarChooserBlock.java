@@ -30,7 +30,7 @@ public class GroupAndCalendarChooserBlock extends Block{
 		
 		groupsAndCalendarsLayer.add(groupsChooser);
 		
-		CoreUtil.addJavaSciptForChooser(iwc);
+		CoreUtil.addJavaScriptForChooser(iwc);
 		
 		CalendarChooserBlock calendarChooserBlock = new CalendarChooserBlock();
 		calendarChooserBlock.setStyleClass(CALENDAR_STYLE_CLASS);

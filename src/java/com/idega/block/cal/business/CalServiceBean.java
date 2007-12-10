@@ -539,7 +539,7 @@ public class CalServiceBean implements CalService {
 		List<CalendarEntry> entriesByGroup = new ArrayList<CalendarEntry>();
 		Group group = null;
 		Collection groupEntries = null;
-		for (int i = 0; i < entriesByGroup.size(); i++) {
+		for (int i = 0; i < groupsIds.size(); i++) {
 			group = null;
 			groupEntries = null;
 			

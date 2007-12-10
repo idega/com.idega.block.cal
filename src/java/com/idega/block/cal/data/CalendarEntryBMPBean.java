@@ -18,6 +18,8 @@ import com.idega.user.data.User;
 
 public class CalendarEntryBMPBean extends GenericEntity implements com.idega.block.cal.data.CalendarEntry {
 
+	private static final long serialVersionUID = 8762106863386057912L;
+	
 	public CalendarEntryBMPBean(){
 		super();
 	}
@@ -191,9 +193,14 @@ public class CalendarEntryBMPBean extends GenericEntity implements com.idega.blo
   	} 
   }
   
-//  public void setCategoryID(int ic_category_id){
-//  	setColumn(getColumnCategoryId(),ic_category_id);
-//  }
+  public Collection<CalendarEntry> getEntriesByEventsIds(List<String> eventsIds) {
+	  try {
+		return ejbFindEntriesByEventsIds(eventsIds);
+	  } catch (Exception e) {
+		e.printStackTrace();
+		return null;
+	  }
+  }
   
   //ejbFind...
   public Collection ejbFindEntries() throws FinderException{
@@ -247,6 +254,16 @@ public class CalendarEntryBMPBean extends GenericEntity implements com.idega.blo
 	  	return super.idoFindPKsByQuery(query);
   }
 
+  @SuppressWarnings("unchecked")
+  private Collection<CalendarEntry> ejbFindEntriesByEventsIds(List<String> eventsIds) throws Exception {
+	  	IDOQuery query = idoQueryGetSelect();	  	
+	  	query.appendWhereEquals(getColumnNameEntryTypeID(), eventsIds.get(0));
+	  	for (int i = 1; i < eventsIds.size(); i++) {
+	  		query.appendOrEquals(getColumnNameEntryTypeID(), eventsIds.get(i));
+		}
+	  	return super.idoFindPKsByQuery(query);
+  }
+  
   //DELETE
 	public void delete() throws SQLException{
     removeFrom(GenericEntity.getStaticInstance(LocalizedText.class));

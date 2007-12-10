@@ -1,6 +1,11 @@
 package com.idega.block.cal.data;
 
+import java.util.Collection;
 import java.util.List;
+
+import javax.ejb.FinderException;
+
+import com.idega.data.IDOEntity;
 
 
 
@@ -67,6 +72,19 @@ public java.util.Collection findEntriesByEvents(List eventsList) throws javax.ej
 	this.idoCheckInPooledEntity(entity);
 	return this.getEntityCollectionForPrimaryKeys(ids);	
 	 
+ }
+ 
+ @SuppressWarnings("unchecked")
+ public Collection<CalendarEntry> getEntriesByEventsIds(List<String> eventsIds) {
+	 IDOEntity entity = this.idoCheckOutPooledEntity();
+	 Collection<CalendarEntry> ids = ((CalendarEntryBMPBean)entity).getEntriesByEventsIds(eventsIds);
+	 this.idoCheckInPooledEntity(entity);
+	 try {
+		return this.getEntityCollectionForPrimaryKeys(ids);
+	 } catch (Exception e) {
+		e.printStackTrace();
+		return null;
+	 }	
  }
 
 

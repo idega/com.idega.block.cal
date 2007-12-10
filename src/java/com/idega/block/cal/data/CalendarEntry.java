@@ -2,6 +2,7 @@ package com.idega.block.cal.data;
 
 import java.sql.Timestamp;
 import java.util.Collection;
+import java.util.List;
 
 
 public interface CalendarEntry extends com.idega.data.IDOEntity
@@ -34,4 +35,6 @@ public interface CalendarEntry extends com.idega.data.IDOEntity
  public void setRepeat(String p0);
  public void setUserID(int p0);
  public void setEntryGroupID(int p0);
+ 
+ public Collection<CalendarEntry> getEntriesByEventsIds(List<String> eventsIds);
 }

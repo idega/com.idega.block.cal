@@ -569,7 +569,7 @@ public class CalServiceBean implements CalService {
 		if (eventsIds != null) {
 			Collection entries = null;
 			try {
-				entries = calBusiness.getEntriesByEvents(eventsIds);
+				entries = calBusiness.getEntriesByEventsIds(eventsIds);
 			} catch(Exception e) {
 				e.printStackTrace();
 			}

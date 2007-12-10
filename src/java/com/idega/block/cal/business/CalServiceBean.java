@@ -1,9 +1,15 @@
 package com.idega.block.cal.business;
 
+import java.rmi.RemoteException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
+import java.util.Locale;
+
+import javax.ejb.FinderException;
 
 import com.idega.block.cal.bean.CalendarManagerBean;
+import com.idega.block.cal.data.CalendarEntry;
 import com.idega.block.cal.data.CalendarEntryBMPBean;
 import com.idega.block.cal.data.CalendarEntryType;
 import com.idega.block.cal.data.CalendarEntryTypeBMPBean;
@@ -12,18 +18,23 @@ import com.idega.block.cal.data.CalendarLedgerBMPBean;
 import com.idega.builder.bean.AdvancedProperty;
 import com.idega.business.IBOLookup;
 import com.idega.cal.bean.CalendarPropertiesBean;
+import com.idega.core.builder.business.ICBuilderConstants;
 import com.idega.idegaweb.IWApplicationContext;
 import com.idega.idegaweb.IWBundle;
 import com.idega.idegaweb.IWResourceBundle;
 import com.idega.presentation.IWContext;
+import com.idega.user.business.GroupBusiness;
 import com.idega.user.business.GroupService;
+import com.idega.user.data.Group;
 import com.idega.util.CoreUtil;
+import com.idega.util.IWTimestamp;
 import com.idega.webface.WFUtil;
 
 public class CalServiceBean implements CalService {
 	
 	private CalBusiness calBusiness = null;
 	private GroupService groupService = null;
+	private GroupBusiness groupBusiness = null;
 	
 	private String calendarCacheName = "calendarViewersUniqueIdsCache";
 	private String ledgersCacheName = "ledgersForCalendarViewersUniqueIdsCache";
@@ -135,7 +146,6 @@ public class CalServiceBean implements CalService {
 		}
 		
 		String parameter = null;
-		LedgerVariationsHandler ledgerVariationsHandler = new DefaultLedgerVariationsHandler();
 		
 		List<String> listOfLedgerIds = new ArrayList<String>(); 
 		List<String> listOfEntryTypesIds = new ArrayList<String>();
@@ -153,7 +163,7 @@ public class CalServiceBean implements CalService {
 			}			
 		}
 		
-		CalBusiness calBusiness = ((DefaultLedgerVariationsHandler)ledgerVariationsHandler).getCalBusiness(iwc);
+		CalBusiness calBusiness = getCalBusiness(iwc);
 		
 		List entriesToDisplay = calBusiness.getEntriesByLedgersAndEntryTypes(listOfEntryTypesIds, listOfLedgerIds);
 		if (entriesToDisplay == null) {
@@ -170,8 +180,8 @@ public class CalServiceBean implements CalService {
 				calEntry.setEntryDate(entry.getStringColumnValue("CAL_ENTRY_DATE"));
 				calEntry.setEntryEndDate(entry.getStringColumnValue("CAL_ENTRY_END_DATE"));
 				
-				calEntry.setEntryTime(getTime(entry.getStringColumnValue("CAL_ENTRY_DATE")));
-				calEntry.setEntryTime(getTime(entry.getStringColumnValue("CAL_ENTRY_END_DATE")));
+//				calEntry.setEntryTime(getTime(entry.getStringColumnValue("CAL_ENTRY_DATE")));
+//				calEntry.setEntryTime(getTime(entry.getStringColumnValue("CAL_ENTRY_END_DATE")));
 				calEntry.setEntryTypeName(entry.getStringColumnValue("CAL_TYPE_NAME"));
 				calEntry.setRepeat(entry.getStringColumnValue("CAL_ENTRY_REPEAT"));
 				calEntry.setEntryDescription(entry.getStringColumnValue("CAL_ENTRY_DESCRIPTION"));
@@ -231,10 +241,6 @@ public class CalServiceBean implements CalService {
 		}
 		
 		return bean.getCalendarProperties(instanceId);
-	}
-
-	private String getTime(String entryDate){
-		return entryDate.substring(11,16);
 	}
 	
 	@SuppressWarnings("unchecked")
@@ -371,6 +377,18 @@ public class CalServiceBean implements CalService {
 		return calBusiness;
 	}
 	
+	private GroupBusiness getGroupBusiness(IWApplicationContext iwac) {
+		if (groupBusiness == null) {
+			try {
+				groupBusiness = (GroupBusiness) IBOLookup.getServiceInstance(iwac, GroupBusiness.class);
+			} catch (Exception e) {
+				e.printStackTrace();
+				return null;
+			}
+		}
+		return groupBusiness;
+	}
+	
 	private GroupService getGroupService(IWApplicationContext iwac) {
 		if (groupService == null) {
 			try {
@@ -411,7 +429,10 @@ public class CalServiceBean implements CalService {
 		
 		List<String> info = new ArrayList<String>();
 		
-		//	TODO: return localization
+		info.add(ICBuilderConstants.CALENDAR_EVENTS_ADVANCED_PROPERTY_KEY);								//	0
+		info.add(ICBuilderConstants.CALENDAR_LEDGERS_ADVANCED_PROPERTY_KEY);							//	1
+		info.add(iwrb.getLocalizedString("no_events_exist", "Sorry, there are no events created."));	//	2
+		info.add(iwrb.getLocalizedString("no_ledgers_exist", "Sorry, there are no ledgers created."));	//	3
 		
 		return info;
 	}
@@ -451,6 +472,7 @@ public class CalServiceBean implements CalService {
 		return groupService.addUniqueIds(eventsCacheName, instanceId, ids);
 	}
 	
+	@SuppressWarnings("unchecked")
 	public List<CalScheduleEntry> getCalendarEntries(String login, String password, String instanceId, Integer cacheTime, boolean remoteMode) {
 		if (instanceId == null) {
 			return null;
@@ -504,8 +526,133 @@ public class CalServiceBean implements CalService {
 		
 		boolean useCache = cacheTime == null ? false : true;
 		
-		//	TODO: get info
+		CalBusiness calBusiness = getCalBusiness(iwc);
+		if (calBusiness == null) {
+			return null;
+		}
+		GroupBusiness groupBusiness = getGroupBusiness(iwc);
+		if (groupBusiness == null) {
+			return null;
+		}
 		
-		return null;
+		//	Events by group(s)
+		List<CalendarEntry> entriesByGroup = new ArrayList<CalendarEntry>();
+		Group group = null;
+		Collection groupEntries = null;
+		for (int i = 0; i < entriesByGroup.size(); i++) {
+			group = null;
+			groupEntries = null;
+			
+			try {
+				group = groupBusiness.getGroupByUniqueId(groupsIds.get(i));
+			} catch (RemoteException e) {
+				e.printStackTrace();
+			} catch (FinderException e) {
+				e.printStackTrace();
+			}
+			
+			if (group != null) {
+				try {
+					groupEntries = calBusiness.getEntriesByICGroup(Integer.valueOf(group.getId()).intValue());
+				} catch(Exception e) {
+					e.printStackTrace();
+				}
+			}
+			
+			if (groupEntries != null) {
+				entriesByGroup.addAll(groupEntries);
+			}
+		}
+		
+		//	Events by type(s)
+		List<CalendarEntry> entriesByEvents = null;
+		if (eventsIds != null) {
+			Collection entries = calBusiness.getEntriesByEvents(eventsIds);
+			if (entries != null) {
+				entriesByEvents.addAll(entries);
+			}
+		}
+		
+		//	Events by ledger(s)
+		List<CalendarEntry> entriesByLedgers = null;
+		if (ledgersIds != null) {
+			Collection entries = null;
+			for (int i = 0; i < ledgersIds.size(); i++) {
+				entries = null;
+				
+				try {
+					entries = calBusiness.getEntriesByLedgerID(Integer.valueOf(ledgersIds.get(i)).intValue());
+				} catch(Exception e) {
+					e.printStackTrace();
+				}
+				
+				if (entries != null) {
+					entriesByLedgers.addAll(entries);
+				}
+			}
+		}
+		
+		List<CalendarEntry> allEntries = new ArrayList<CalendarEntry>();
+		allEntries.addAll(entriesByGroup);
+		
+		allEntries = getFilteredEntries(entriesByEvents, allEntries);
+		allEntries = getFilteredEntries(entriesByLedgers, allEntries);
+		
+		return getConvertedEntries(allEntries, iwc.getCurrentLocale());
+	}
+	
+	private List<CalendarEntry> getFilteredEntries(List<CalendarEntry> source, List<CalendarEntry> destination) {
+		if (source != null) {
+			for (int i = 0; i < source.size(); i++) {
+				if (!(destination.contains(source.get(i)))) {
+					destination.add(source.get(i));
+				}
+			}
+		}
+		
+		return destination;
+	}
+	
+	private List<CalScheduleEntry> getConvertedEntries(List<CalendarEntry> entries, Locale locale) {
+		if (entries == null) {
+			return null;
+		}
+		
+		if (locale == null) {
+			IWContext iwc = CoreUtil.getIWContext();
+			if (iwc == null) {
+				locale = Locale.ENGLISH;
+			}
+			else {
+				locale = iwc.getCurrentLocale();
+			}
+		}
+		
+		List<CalScheduleEntry> convertedEntries = new ArrayList<CalScheduleEntry>();
+		CalendarEntry entry = null;
+		for (int i = 0; i < entries.size(); i++) {
+			entry = entries.get(i);
+			CalScheduleEntry calEntry = new CalScheduleEntry();
+			
+			IWTimestamp date = new IWTimestamp(entry.getDate());
+			IWTimestamp endDate = new IWTimestamp(entry.getEndDate());
+			
+			calEntry.setId(String.valueOf(entry.getEntryID()));
+			calEntry.setEntryName(entry.getName());
+			
+			calEntry.setEntryDate(date.getLocaleDate(locale));
+			calEntry.setEntryEndDate(endDate.getLocaleDate(locale));
+			
+			calEntry.setEntryTime(date.getLocaleTime(locale));
+			calEntry.setEntryEndTime(endDate.getLocaleTime(locale));
+			
+			calEntry.setEntryTypeName(entry.getEntryTypeName());
+			calEntry.setRepeat(entry.getRepeat());
+			calEntry.setEntryDescription(entry.getDescription());
+			
+			convertedEntries.add(calEntry);
+		}
+		
+		return convertedEntries;
 	}
 }

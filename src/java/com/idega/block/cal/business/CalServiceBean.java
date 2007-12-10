@@ -565,16 +565,21 @@ public class CalServiceBean implements CalService {
 		}
 		
 		//	Events by type(s)
-		List<CalendarEntry> entriesByEvents = null;
+		List<CalendarEntry> entriesByEvents = new ArrayList<CalendarEntry>();
 		if (eventsIds != null) {
-			Collection entries = calBusiness.getEntriesByEvents(eventsIds);
+			Collection entries = null;
+			try {
+				entries = calBusiness.getEntriesByEvents(eventsIds);
+			} catch(Exception e) {
+				e.printStackTrace();
+			}
 			if (entries != null) {
 				entriesByEvents.addAll(entries);
 			}
 		}
 		
 		//	Events by ledger(s)
-		List<CalendarEntry> entriesByLedgers = null;
+		List<CalendarEntry> entriesByLedgers = new ArrayList<CalendarEntry>();
 		if (ledgersIds != null) {
 			Collection entries = null;
 			for (int i = 0; i < ledgersIds.size(); i++) {

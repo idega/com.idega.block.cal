@@ -439,7 +439,13 @@ public class CalServiceBean implements CalService {
 			return null;
 		}
 		
-//		boolean useCache = cacheTime == null ? false : true;
+		boolean useCache = cacheTime == null ? false : true;
+		if (useCache) {
+			List<CalScheduleEntry> entriesFromCache = getCalendarEntriesFromCache(iwc, instanceId);
+			if (entriesFromCache != null) {
+				return entriesFromCache;
+			}
+		}
 		
 		CalBusiness calBusiness = getCalBusiness(iwc);
 		if (calBusiness == null) {
@@ -503,7 +509,12 @@ public class CalServiceBean implements CalService {
 		
 		allEntries = getFilteredEntries(entriesByLedgers, allEntries);
 		
-		return getConvertedEntries(allEntries, iwc.getCurrentLocale());
+		List<CalScheduleEntry> entries =getConvertedEntries(allEntries, iwc.getCurrentLocale());
+		if (useCache) {
+			addCalendarEntriesToCache(iwc, instanceId, entries);
+		}
+		
+		return entries;
 	}
 	
 	@SuppressWarnings("unchecked")
@@ -546,6 +557,20 @@ public class CalServiceBean implements CalService {
 		}
 		
 		return true;
+	}
+	
+	private List<CalScheduleEntry> getCalendarEntriesFromCache(IWContext iwc, String instanceId) {
+		if (instanceId == null) {
+			return null;
+		}
+		
+		try {
+			return getCalendarCache(iwc).get(instanceId);
+		} catch(Exception e) {
+			e.printStackTrace();
+		}
+		
+		return null;
 	}
 	
 	public boolean removeCelandarEntriesFromCache(String instanceId) {

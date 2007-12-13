@@ -5,20 +5,24 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 import javax.ejb.FinderException;
 
+import org.apache.myfaces.custom.schedule.model.ScheduleModel;
+
 import com.idega.block.cal.bean.CalendarManagerBean;
 import com.idega.block.cal.data.CalendarEntry;
-import com.idega.block.cal.data.CalendarEntryBMPBean;
 import com.idega.block.cal.data.CalendarEntryType;
-import com.idega.block.cal.data.CalendarEntryTypeBMPBean;
 import com.idega.block.cal.data.CalendarLedger;
-import com.idega.block.cal.data.CalendarLedgerBMPBean;
+import com.idega.block.cal.presentation.EntryInfoBlock;
 import com.idega.builder.bean.AdvancedProperty;
+import com.idega.builder.business.BuilderLogic;
 import com.idega.business.IBOLookup;
+import com.idega.business.chooser.helper.CalendarsChooserHelper;
 import com.idega.cal.bean.CalendarPropertiesBean;
 import com.idega.core.builder.business.ICBuilderConstants;
+import com.idega.core.cache.IWCacheManager2;
 import com.idega.idegaweb.IWApplicationContext;
 import com.idega.idegaweb.IWBundle;
 import com.idega.idegaweb.IWResourceBundle;
@@ -37,170 +41,8 @@ public class CalServiceBean implements CalService {
 	private GroupBusiness groupBusiness = null;
 	
 	private String calendarCacheName = "calendarViewersUniqueIdsCache";
-	private String ledgersCacheName = "ledgersForCalendarViewersUniqueIdsCache";
 	private String eventsCacheName = "eventsForCalendarViewersUniqueIdsCache";
-	
-	public void setConnectionData(String serverName, String login, String password) {
-	}
-	
-	@SuppressWarnings("unchecked")
-	public List<CalendarLedgersAndTypes> getCalendarParameters(String id){
-		List<CalendarLedgersAndTypes> calendarParameters = new ArrayList<CalendarLedgersAndTypes>();
-		
-		IWContext iwc = CoreUtil.getIWContext();
-		if (iwc == null) {
-			return calendarParameters;
-		}
-		
-		CalBusiness calBusiness = getCalBusiness(iwc);
-		if (calBusiness == null) {
-			return calendarParameters;
-		}
-	
-		
-		List ledgersByGroupId = calBusiness.getLedgersByGroupId(id);
-		List allEntryTypes = calBusiness.getAllEntryTypes();
-		
-		Object o = null;
-		if (ledgersByGroupId != null) {
-			for (int i = 0; i < ledgersByGroupId.size(); i++) {
-				o = ledgersByGroupId.get(i);
-				if (o instanceof CalendarLedgerBMPBean) {
-					CalendarLedgerBMPBean ledger = (CalendarLedgerBMPBean) o;
-					calendarParameters.add(new CalendarLedgersAndTypes(String.valueOf(ledger.getID()), ledger.getName(), "L"));
-				}
-			}
-		}
-		
-		if (allEntryTypes != null) {
-			for (int i = 0; i < allEntryTypes.size(); i++) {
-				o = allEntryTypes.get(i);
-				if (o instanceof CalendarEntryTypeBMPBean) {
-					CalendarEntryTypeBMPBean entryType = (CalendarEntryTypeBMPBean) o;
-					calendarParameters.add(new CalendarLedgersAndTypes(String.valueOf(entryType.getID()), entryType.getName(), "T"));
-				}
-			}
-		}
-				
-		return calendarParameters;
-	}
-	public List<CalendarLedgersAndTypes> getRemoteCalendarParameters(String id, String login, String password){
-		if (login == null || password == null) {
-			return null;
-		}
-
-		IWContext iwc = CoreUtil.getIWContext();
-		if (iwc == null) {
-			return null;
-		}
-		
-		GroupService groupService = getGroupService(iwc);
-		if (groupService == null) {
-			return null;
-		}
-		
-		if (groupService.isLoggedUser(iwc, login)) {
-			return getCalendarParameters(id);
-		}
-		
-		if (groupService.logInUser(iwc, login, password)) {
-			return getCalendarParameters(id);
-		}
-		
-		return null;
-	}
-	
-	public List<CalScheduleEntry> getRemoteEntries(List<String> attributes, String login, String password) {
-		if (login == null || password == null) {
-			return null;
-		}
-
-		IWContext iwc = CoreUtil.getIWContext();
-		if (iwc == null) {
-			return null;
-		}
-		
-		GroupService groupService = getGroupService(iwc);
-		if (groupService == null) {
-			return null;
-		}
-		
-		if (groupService.isLoggedUser(iwc, login)) {
-			return getEntries(attributes);
-		}
-		
-		if (groupService.logInUser(iwc, login, password)) {
-			return getEntries(attributes);
-		}
-		
-		return null;
-	}
-	
-	@SuppressWarnings("unchecked")
-	public List<CalScheduleEntry> getEntries(List<String> attributes) {
-		List<CalScheduleEntry> result = new ArrayList<CalScheduleEntry>();
-		
-		IWContext iwc = CoreUtil.getIWContext();
-		if (iwc == null) {
-			return result;
-		}
-		
-		String parameter = null;
-		
-		List<String> listOfLedgerIds = new ArrayList<String>(); 
-		List<String> listOfEntryTypesIds = new ArrayList<String>();
-		
-		if (attributes == null)
-			return result;
-		
-		for (int i = 0; i < attributes.size(); i++) {
-			parameter = (String)(attributes.get(i));
-			if(parameter.substring(0, 1).equals("L")){
-				listOfLedgerIds.add(parameter.substring(1));
-			}
-			if(parameter.substring(0, 1).equals("T")){
-				listOfEntryTypesIds.add(parameter.substring(1));
-			}			
-		}
-		
-		CalBusiness calBusiness = getCalBusiness(iwc);
-		
-		List entriesToDisplay = calBusiness.getEntriesByLedgersAndEntryTypes(listOfEntryTypesIds, listOfLedgerIds);
-		if (entriesToDisplay == null) {
-			return result;
-		}
-		
-		for (int i = 0; i < entriesToDisplay.size(); i++) {
-			CalendarEntryBMPBean entry = (CalendarEntryBMPBean)entriesToDisplay.get(i);
-			if (checkIfTypeIsCorrect(entry, listOfEntryTypesIds)) {
-				CalScheduleEntry calEntry = new CalScheduleEntry();
-				calEntry.setId(entry.getStringColumnValue("CAL_ENTRY_ID"));
-				calEntry.setEntryName(entry.getStringColumnValue("CAL_ENTRY_NAME"));
-				
-				calEntry.setEntryDate(entry.getStringColumnValue("CAL_ENTRY_DATE"));
-				calEntry.setEntryEndDate(entry.getStringColumnValue("CAL_ENTRY_END_DATE"));
-				
-//				calEntry.setEntryTime(getTime(entry.getStringColumnValue("CAL_ENTRY_DATE")));
-//				calEntry.setEntryTime(getTime(entry.getStringColumnValue("CAL_ENTRY_END_DATE")));
-				calEntry.setEntryTypeName(entry.getStringColumnValue("CAL_TYPE_NAME"));
-				calEntry.setRepeat(entry.getStringColumnValue("CAL_ENTRY_REPEAT"));
-				calEntry.setEntryDescription(entry.getStringColumnValue("CAL_ENTRY_DESCRIPTION"));
-				result.add(calEntry);
-			}
-		}
-		return result;
-	}
-	
-	private boolean checkIfTypeIsCorrect(CalendarEntryBMPBean entry, List<String> entryTypesIds) {
-		String typeId = entry.getStringColumnValue("CAL_TYPE_ID");
-		for (int i = 0; i < entryTypesIds.size(); i++) {
-			if(entryTypesIds.get(i).equals(typeId))
-				return true;
-		}
-		return false;
-	}
-	
-	/*-----------------------------------------------------------*/
+	private String ledgersCacheName = "ledgersForCalendarViewersUniqueIdsCache";
 	
 	/**
 	 * Checks if can use DWR on remote server
@@ -431,8 +273,41 @@ public class CalServiceBean implements CalService {
 		
 		info.add(ICBuilderConstants.CALENDAR_EVENTS_ADVANCED_PROPERTY_KEY);								//	0
 		info.add(ICBuilderConstants.CALENDAR_LEDGERS_ADVANCED_PROPERTY_KEY);							//	1
+		
 		info.add(iwrb.getLocalizedString("no_events_exist", "Sorry, there are no events created."));	//	2
 		info.add(iwrb.getLocalizedString("no_ledgers_exist", "Sorry, there are no ledgers created."));	//	3
+		
+		info.add(calendarCacheName);																	//	4
+		info.add(eventsCacheName);																		//	5
+		info.add(ledgersCacheName);																		//	6
+		
+		info.add(String.valueOf(ScheduleModel.MONTH));													//	7
+		info.add(String.valueOf(ScheduleModel.DAY));													//	8
+		info.add(String.valueOf(ScheduleModel.WEEK));													//	9
+		info.add(String.valueOf(ScheduleModel.WORKWEEK));												//	10
+		
+		info.add(iwrb.getLocalizedString("name", "Name"));												//	11
+		info.add(iwrb.getLocalizedString("endDate", "End date"));										//	12
+		info.add(iwrb.getLocalizedString("type", "Type"));												//	13
+		info.add(iwrb.getLocalizedString("time", "Time"));												//	14
+		info.add(iwrb.getLocalizedString("date", "Date"));												//	15
+		info.add(iwrb.getLocalizedString("noEntriesToDisplay", "There are no entries to display"));		//	16
+		info.add(iwrb.getLocalizedString("cantConnectTo", "can not connect to:"));						//	17
+		info.add(iwrb.getLocalizedString("loadingMsg", "Loading..."));									//	18
+		
+		info.add(iwrb.getLocalizedString("previousLabel", "Previous"));									//	19
+		info.add(iwrb.getLocalizedString("nextLabel", "Next"));											//	20
+		info.add(iwrb.getLocalizedString("dayLabel", "Day"));											//	21
+		info.add(iwrb.getLocalizedString("weekLabel", "Week"));											//	22
+		info.add(iwrb.getLocalizedString("workweekLabel", "Work week"));								//	23
+		info.add(iwrb.getLocalizedString("monthLabel", "Month"));										//	24
+		
+		info.add(CalendarConstants.SCHEDULE_ENTRY_STYLE_CLASS);											//	25
+		
+		BuilderLogic builder = BuilderLogic.getInstance();
+		info.add(builder.getUriToObject(EntryInfoBlock.class));											//	26
+		
+		info.add(iwrb.getLocalizedString("calendar_entry_info", "Calendar entry information"));			//	27
 		
 		return info;
 	}
@@ -470,6 +345,46 @@ public class CalServiceBean implements CalService {
 		}
 		
 		return groupService.addUniqueIds(eventsCacheName, instanceId, ids);
+	}
+	
+	public CalendarPropertiesBean reloadProperties(String instanceId) {
+		if (instanceId == null) {
+			return null;
+		}
+		
+		IWContext iwc = CoreUtil.getIWContext();
+		if (iwc == null) {
+			return null;
+		}
+		
+		BuilderLogic builder = BuilderLogic.getInstance();
+		String pageKey = builder.getCurrentIBPage(iwc);
+		
+		String propertyName = new StringBuffer(":method:1:implied:void:setCalendarProperties:").append(CalendarPropertiesBean.class.getName()).append(":").toString();
+		String values[] = builder.getPropertyValues(iwc.getIWMainApplication(), pageKey, instanceId, propertyName, null, true);
+		if (values == null) {
+			return null;
+		}
+		if (values.length == 0) {
+			return null;
+		}
+		
+		CalendarsChooserHelper helper = new CalendarsChooserHelper();
+		CalendarPropertiesBean bean = helper.getExtractedPropertiesFromString(values[0]);
+		
+		if (bean == null) {
+			return null;
+		}
+		Object[] parameters = new Object[2];
+		parameters[0] = instanceId;
+		parameters[1] = bean;
+		
+		Class<?>[] classes = new Class[2];
+		classes[0] = String.class;
+		classes[1] = CalendarPropertiesBean.class;
+		
+		WFUtil.invoke(CalendarConstants.CALENDAR_MANAGER_BEAN_ID, "addCalendarProperties", parameters, classes);
+		return bean;
 	}
 	
 	@SuppressWarnings("unchecked")
@@ -604,6 +519,67 @@ public class CalServiceBean implements CalService {
 		allEntries = getFilteredEntries(entriesByLedgers, allEntries);
 		
 		return getConvertedEntries(allEntries, iwc.getCurrentLocale());
+	}
+	
+	@SuppressWarnings("unchecked")
+	private Map<String, List<CalScheduleEntry>> getCalendarCache(IWContext iwc) {
+		if (iwc == null) {
+			return null;
+		}
+		
+		IWCacheManager2 cacheManager = IWCacheManager2.getInstance(iwc.getIWMainApplication());
+		if (cacheManager == null) {
+			return null;
+		}
+		
+		Object o = null;
+		
+		try {
+			cacheManager.getCache("cacheForCalendarViewerCalScheduleEntries");
+		} catch(Exception e) {
+			e.printStackTrace();
+			return null;
+		}
+		
+		if (o instanceof Map) {
+			return (Map) o;
+		}
+		
+		return null;
+	}
+	
+	private boolean addCalendarEntriesToCache(IWContext iwc, String instanceId, List<CalScheduleEntry> entries) {
+		if (instanceId == null || entries == null) {
+			return false;
+		}
+		
+		try {
+			getCalendarCache(iwc).put(instanceId, entries);
+		} catch(Exception e) {
+			e.printStackTrace();
+			return false;
+		}
+		
+		return true;
+	}
+	
+	public boolean removeCelandarEntriesFromCache(String instanceId) {
+		if (instanceId == null) {
+			return false;
+		}
+		
+		try {
+			Map<String, List<CalScheduleEntry>> cache = getCalendarCache(CoreUtil.getIWContext());
+			if (cache == null) {
+				return true;
+			}
+			cache.remove(instanceId);
+		} catch(Exception e) {
+			e.printStackTrace();
+			return false;
+		}
+		
+		return true;
 	}
 	
 	private List<CalendarEntry> getFilteredEntries(List<CalendarEntry> source, List<CalendarEntry> destination) {

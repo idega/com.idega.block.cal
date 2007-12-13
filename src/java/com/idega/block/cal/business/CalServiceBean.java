@@ -631,8 +631,8 @@ public class CalServiceBean implements CalService {
 			calEntry.setId(String.valueOf(entry.getEntryID()));
 			calEntry.setEntryName(entry.getName());
 			
-			calEntry.setEntryDate(date.getLocaleDate(locale));
-			calEntry.setEntryEndDate(endDate.getLocaleDate(locale));
+			calEntry.setEntryDate(date.getDateString(CalendarConstants.DATE_PATTERN));
+			calEntry.setEntryEndDate(endDate.getDateString(CalendarConstants.DATE_PATTERN));
 			
 			calEntry.setEntryTime(date.getLocaleTime(locale));
 			calEntry.setEntryEndTime(endDate.getLocaleTime(locale));

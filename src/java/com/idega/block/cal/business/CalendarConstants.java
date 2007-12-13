@@ -2,7 +2,7 @@ package com.idega.block.cal.business;
 
 public class CalendarConstants {
 	
-	public static final String BUNDLE_IDENTIFIER = "com.idega.block.cal";
+	public static final String IW_BUNDLE_IDENTIFIER = "com.idega.block.cal";
 	public static final String tableID = "connectionData";
 	public static final String serverNameFieldId = "serverNameFieldId";
 	public static final String loginFieldId = "loginFieldId";
@@ -22,11 +22,13 @@ public class CalendarConstants {
 
 	public static final String CALENDAR_SERVICE_DWR_INTERFACE_SCRIPT = "/dwr/interface/CalService.js";
 	
-	public static final String IW_BUNDLE_IDENTIFIER = "com.idega.block.cal";
-	
 	public static final String CALENDAR_MANAGER_BEAN_ID = "CalendarManagerBean";
 	
 	public static final String ENTRY_ID_PREFIX = "entryInSchedule";
 	
 	public static final String SCHEDULE_ENTRY_STYLE_CLASS = "scheduleEntry";
+	
+	public static final String CALENDAR_VIEWER_MAIN_CONTAINER_ID_ENDING = "_calendarViewerMainContainerIdEnding";
+	
+	public static final String DATE_PATTERN = "yyyy-MM-dd HH:mm:ss.S";
 }

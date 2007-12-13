@@ -264,6 +264,52 @@ public class CalendarEntryBMPBean extends GenericEntity implements com.idega.blo
 	  	return super.idoFindPKsByQuery(query);
   }
   
+  private Collection<CalendarEntry> ejbFindEntriesByEventsIdsAndGroupsIds(List<String> eventsIds, List<String> groupsIds) throws Exception {
+	  IDOQuery query = idoQueryGetSelect();	
+	  
+	  query.append(" where (");
+	  for (int i = 0; i < groupsIds.size(); i++) {
+		  query.append(getColumnNameGroupID()).append(" = ").append(groupsIds.get(i));
+		  
+		  if ((i + 1) < groupsIds.size()) {
+			  query.append(" or ");
+		  }
+	  }
+	  query.append(") and (");
+	  for (int i = 0; i < eventsIds.size(); i++) {
+		  query.append(getColumnNameEntryTypeID()).append(" = ").append(eventsIds.get(i));
+		  
+		  if ((i + 1) < eventsIds.size()) {
+			  query.append(" or ");
+		  }
+	  }
+	  
+	  return super.idoFindPKsByQuery(query);
+  }
+  
+  private Collection<CalendarEntry> ejbFindEntriesByLedgerIdsAndGroupsIds(List<String> ledgersIds, List<String> groupsIds) throws Exception {
+	  IDOQuery query = idoQueryGetSelect();	
+	  
+	  query.append(" where (");
+	  for (int i = 0; i < groupsIds.size(); i++) {
+		  query.append(getColumnNameGroupID()).append(" = ").append(groupsIds.get(i));
+		  
+		  if ((i + 1) < groupsIds.size()) {
+			  query.append(" or ");
+		  }
+	  }
+	  query.append(") and (");
+	  for (int i = 0; i < ledgersIds.size(); i++) {
+		  query.append(getColumnNameLedgerID()).append(" = ").append(ledgersIds.get(i));
+		  
+		  if ((i + 1) < ledgersIds.size()) {
+			  query.append(" or ");
+		  }
+	  }
+	  
+	  return super.idoFindPKsByQuery(query);
+  }
+  
   //DELETE
 	public void delete() throws SQLException{
     removeFrom(GenericEntity.getStaticInstance(LocalizedText.class));
@@ -293,5 +339,25 @@ public class CalendarEntryBMPBean extends GenericEntity implements com.idega.blo
 		e.printStackTrace();
 		return new ArrayList();
 	}
+  }
+
+  public Collection<CalendarEntry> getEntriesByEventsIdsAndGroupsIds(List<String> eventsIds, List<String> groupsIds) {
+	  try {
+		  return ejbFindEntriesByEventsIdsAndGroupsIds(eventsIds, groupsIds);
+	  } catch (Exception e) {
+		  e.printStackTrace();
+	  }
+
+	  return null;
+  }
+
+  public Collection<CalendarEntry> getEntriesByLedgersIdsAndGroupsIds(List<String> ledgersIds, List<String> groupsIds) {
+	try {
+		  return ejbFindEntriesByLedgerIdsAndGroupsIds(ledgersIds, groupsIds);
+	  } catch (Exception e) {
+		  e.printStackTrace();
+	  }
+
+	  return null;
   }
 }

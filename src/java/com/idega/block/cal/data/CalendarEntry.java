@@ -37,4 +37,8 @@ public interface CalendarEntry extends com.idega.data.IDOEntity
  public void setEntryGroupID(int p0);
  
  public Collection<CalendarEntry> getEntriesByEventsIds(List<String> eventsIds);
+ 
+ public Collection<CalendarEntry> getEntriesByEventsIdsAndGroupsIds(List<String> eventsIds, List<String> groupsIds);
+ 
+ public Collection<CalendarEntry> getEntriesByLedgersIdsAndGroupsIds(List<String> ledgersIds, List<String> groupsIds);
 }

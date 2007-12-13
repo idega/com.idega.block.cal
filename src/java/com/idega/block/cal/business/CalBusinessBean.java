@@ -51,6 +51,8 @@ import com.idega.util.IWTimestamp;
  */
 public class CalBusinessBean extends IBOServiceBean implements CalBusiness,UserGroupPlugInBusiness{
 
+	private static final long serialVersionUID = 3817371057903141346L;
+	
 	//GET methods for Entries
 	/**
 	 * @return a calendar entry with the specific entryID
@@ -1185,24 +1187,9 @@ public class CalBusinessBean extends IBOServiceBean implements CalBusiness,UserG
 		}catch(Exception e) {
 			e.printStackTrace();
 		}
+		
 		return ledgers;
 	}
-
-/*	
-	public List getAllEntryTypes() {
-		List types = null;
-		try {
-			CalendarEntryTypeHome typeHome = (CalendarEntryTypeHome) getIDOHome(CalendarEntryType.class);
-			types = new ArrayList(typeHome.findTypes());
-		} catch(Exception e) {
-			e.printStackTrace();
-		}
-		return types;
-	}
-*/
-//	public List getTypesByGroupId(String groupId){
-//		return null;
-//	}
 	
 	public List getEntriesByLedgersAndEntryTypes(List<String> listOfEntryTypesIds, List<String> listOfLedgerIds){
 		List list = null; 
@@ -1212,7 +1199,32 @@ public class CalBusinessBean extends IBOServiceBean implements CalBusiness,UserG
 		} catch(Exception e) {
 			e.printStackTrace();
 		}
+		
 		return list;		
+	}
+	
+	public List<CalendarEntry> getEntriesByEventsIdsAndGroupsIds(List<String> eventsIds, List<String> groupsIds) {
+		List list = null; 
+		try {
+			CalendarEntryHome entryHome = (CalendarEntryHome) getIDOHome(CalendarEntry.class);
+			list = new ArrayList(entryHome.getEntriesByEventsIdsAndGroupsIds(eventsIds, groupsIds));
+		} catch(Exception e) {
+			e.printStackTrace();
+		}
+		
+		return list;
+	}
+	
+	public List<CalendarEntry> getEntriesByLedgersIdsAndGroupsIds(List<String> ledgersIds, List<String> groupsIds) {
+		List list = null; 
+		try {
+			CalendarEntryHome entryHome = (CalendarEntryHome) getIDOHome(CalendarEntry.class);
+			list = new ArrayList(entryHome.getEntriesByLedgersIdsAndGroupsIds(ledgersIds, groupsIds));
+		} catch(Exception e) {
+			e.printStackTrace();
+		}
+		
+		return list;
 	}
 	
 }

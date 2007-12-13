@@ -267,23 +267,28 @@ public class CalendarEntryBMPBean extends GenericEntity implements com.idega.blo
   private Collection<CalendarEntry> ejbFindEntriesByEventsIdsAndGroupsIds(List<String> eventsIds, List<String> groupsIds) throws Exception {
 	  IDOQuery query = idoQueryGetSelect();	
 	  
-	  query.append(" where (");
+	  query.appendWhere();
+	  query.appendLeftParenthesis();
 	  for (int i = 0; i < groupsIds.size(); i++) {
-		  query.append(getColumnNameGroupID()).append(" = ").append(groupsIds.get(i));
+		  query.appendEquals(getColumnNameGroupID(), groupsIds.get(i));
 		  
 		  if ((i + 1) < groupsIds.size()) {
-			  query.append(" or ");
+			  query.appendOr();
 		  }
 	  }
-	  query.append(") and (");
+	  
+	  query.appendRightParenthesis();
+	  query.appendAnd();
+	  query.appendLeftParenthesis();
+	  
 	  for (int i = 0; i < eventsIds.size(); i++) {
-		  query.append(getColumnNameEntryTypeID()).append(" = ").append(eventsIds.get(i));
+		  query.appendEquals(getColumnNameEntryTypeID(), eventsIds.get(i));
 		  
 		  if ((i + 1) < eventsIds.size()) {
-			  query.append(" or ");
+			  query.appendOr();
 		  }
 	  }
-	  query.append(")");
+	  query.appendRightParenthesis();
 	  
 	  return super.idoFindPKsByQuery(query);
   }
@@ -291,23 +296,28 @@ public class CalendarEntryBMPBean extends GenericEntity implements com.idega.blo
   private Collection<CalendarEntry> ejbFindEntriesByLedgerIdsAndGroupsIds(List<String> ledgersIds, List<String> groupsIds) throws Exception {
 	  IDOQuery query = idoQueryGetSelect();	
 	  
-	  query.append(" where (");
+	  query.appendWhere();
+	  query.appendLeftParenthesis();
 	  for (int i = 0; i < groupsIds.size(); i++) {
-		  query.append(getColumnNameGroupID()).append(" = ").append(groupsIds.get(i));
+		  query.appendEquals(getColumnNameGroupID(), groupsIds.get(i));
 		  
 		  if ((i + 1) < groupsIds.size()) {
-			  query.append(" or ");
+			  query.appendOr();
 		  }
 	  }
-	  query.append(") and (");
+
+	  query.appendRightParenthesis();
+	  query.appendAnd();
+	  query.appendLeftParenthesis();
+	  
 	  for (int i = 0; i < ledgersIds.size(); i++) {
-		  query.append(getColumnNameLedgerID()).append(" = ").append(ledgersIds.get(i));
+		  query.appendEquals(getColumnNameLedgerID(), ledgersIds.get(i));
 		  
 		  if ((i + 1) < ledgersIds.size()) {
-			  query.append(" or ");
+			  query.appendOr();
 		  }
 	  }
-	  query.append(")");
+	  query.appendRightParenthesis();
 	  
 	  return super.idoFindPKsByQuery(query);
   }

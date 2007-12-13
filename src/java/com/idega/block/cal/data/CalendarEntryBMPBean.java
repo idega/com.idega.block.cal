@@ -283,6 +283,7 @@ public class CalendarEntryBMPBean extends GenericEntity implements com.idega.blo
 			  query.append(" or ");
 		  }
 	  }
+	  query.append(")");
 	  
 	  return super.idoFindPKsByQuery(query);
   }
@@ -306,6 +307,7 @@ public class CalendarEntryBMPBean extends GenericEntity implements com.idega.blo
 			  query.append(" or ");
 		  }
 	  }
+	  query.append(")");
 	  
 	  return super.idoFindPKsByQuery(query);
   }

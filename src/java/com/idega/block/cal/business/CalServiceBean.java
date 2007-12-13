@@ -411,9 +411,9 @@ public class CalServiceBean implements CalService {
 			return null;
 		}
 		
-		List<String> groupsIds = null;
+		List<String> groupsUniqueIds = null;
 		try {
-			groupsIds = groupService.getUniqueIds(calendarCacheName).get(instanceId);
+			groupsUniqueIds = groupService.getUniqueIds(calendarCacheName).get(instanceId);
 		} catch(Exception e) {
 			e.printStackTrace();
 			return null;
@@ -435,11 +435,11 @@ public class CalServiceBean implements CalService {
 			return null;
 		}
 		
-		if (groupsIds == null) {
+		if (groupsUniqueIds == null) {
 			return null;
 		}
 		
-		boolean useCache = cacheTime == null ? false : true;
+//		boolean useCache = cacheTime == null ? false : true;
 		
 		CalBusiness calBusiness = getCalBusiness(iwc);
 		if (calBusiness == null) {
@@ -450,16 +450,14 @@ public class CalServiceBean implements CalService {
 			return null;
 		}
 		
-		//	Events by group(s)
-		List<CalendarEntry> entriesByGroup = new ArrayList<CalendarEntry>();
+		//	Getting ids for groups from unique ids
+		List<String> groupsIds = new ArrayList<String>();
 		Group group = null;
-		Collection groupEntries = null;
-		for (int i = 0; i < groupsIds.size(); i++) {
+		for (int i = 0; i < groupsUniqueIds.size(); i++) {
 			group = null;
-			groupEntries = null;
 			
 			try {
-				group = groupBusiness.getGroupByUniqueId(groupsIds.get(i));
+				group = groupBusiness.getGroupByUniqueId(groupsUniqueIds.get(i));
 			} catch (RemoteException e) {
 				e.printStackTrace();
 			} catch (FinderException e) {
@@ -467,24 +465,16 @@ public class CalServiceBean implements CalService {
 			}
 			
 			if (group != null) {
-				try {
-					groupEntries = calBusiness.getEntriesByICGroup(Integer.valueOf(group.getId()).intValue());
-				} catch(Exception e) {
-					e.printStackTrace();
-				}
-			}
-			
-			if (groupEntries != null) {
-				entriesByGroup.addAll(groupEntries);
+				groupsIds.add(group.getId());
 			}
 		}
 		
 		//	Events by type(s)
 		List<CalendarEntry> entriesByEvents = new ArrayList<CalendarEntry>();
-		if (eventsIds != null) {
+		if (eventsIds != null && eventsIds.size() > 0) {
 			Collection entries = null;
 			try {
-				entries = calBusiness.getEntriesByEventsIds(eventsIds);
+				entries = calBusiness.getEntriesByEventsIdsAndGroupsIds(eventsIds, groupsIds);
 			} catch(Exception e) {
 				e.printStackTrace();
 			}
@@ -495,27 +485,22 @@ public class CalServiceBean implements CalService {
 		
 		//	Events by ledger(s)
 		List<CalendarEntry> entriesByLedgers = new ArrayList<CalendarEntry>();
-		if (ledgersIds != null) {
+		if (ledgersIds != null && ledgersIds.size() > 0) {
 			Collection entries = null;
-			for (int i = 0; i < ledgersIds.size(); i++) {
-				entries = null;
-				
-				try {
-					entries = calBusiness.getEntriesByLedgerID(Integer.valueOf(ledgersIds.get(i)).intValue());
-				} catch(Exception e) {
-					e.printStackTrace();
-				}
-				
-				if (entries != null) {
-					entriesByLedgers.addAll(entries);
-				}
+			try {
+				entries = calBusiness.getEntriesByLedgersIdsAndGroupsIds(ledgersIds, groupsIds);
+			} catch(Exception e) {
+				e.printStackTrace();
+			}
+			
+			if (entries != null) {
+				entriesByLedgers.addAll(entries);
 			}
 		}
 		
 		List<CalendarEntry> allEntries = new ArrayList<CalendarEntry>();
-		allEntries.addAll(entriesByGroup);
+		allEntries.addAll(entriesByEvents);
 		
-		allEntries = getFilteredEntries(entriesByEvents, allEntries);
 		allEntries = getFilteredEntries(entriesByLedgers, allEntries);
 		
 		return getConvertedEntries(allEntries, iwc.getCurrentLocale());

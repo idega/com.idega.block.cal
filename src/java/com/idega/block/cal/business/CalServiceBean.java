@@ -531,7 +531,7 @@ public class CalServiceBean implements CalService {
 		Object o = null;
 		
 		try {
-			cacheManager.getCache("cacheForCalendarViewerCalScheduleEntries");
+			o = cacheManager.getCache("cacheForCalendarViewerCalScheduleEntries");
 		} catch(Exception e) {
 			e.printStackTrace();
 			return null;

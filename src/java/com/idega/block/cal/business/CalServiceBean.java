@@ -440,14 +440,6 @@ public class CalServiceBean implements CalService {
 			return null;
 		}
 		
-		/*boolean useCache = cacheTime == null ? false : true;
-		if (useCache) {
-			List<CalScheduleEntry> entriesFromCache = getCalendarEntriesFromCache(iwc, instanceId);
-			if (entriesFromCache != null) {
-				return entriesFromCache;
-			}
-		}*/
-		
 		CalBusiness calBusiness = getCalBusiness(iwc);
 		if (calBusiness == null) {
 			return null;
@@ -510,12 +502,7 @@ public class CalServiceBean implements CalService {
 		
 		allEntries = getFilteredEntries(entriesByLedgers, allEntries);
 		
-		List<CalScheduleEntry> entries = getConvertedEntries(allEntries, iwc.getCurrentLocale());
-		/*if (useCache) {
-			addCalendarEntriesToCache(iwc, instanceId, entries);
-		}*/
-		
-		return entries;
+		return getConvertedEntries(allEntries, iwc.getCurrentLocale());
 	}
 	
 	@SuppressWarnings("unchecked")
@@ -540,35 +527,6 @@ public class CalServiceBean implements CalService {
 		
 		if (o instanceof Map) {
 			return (Map) o;
-		}
-		
-		return null;
-	}
-	
-	private boolean addCalendarEntriesToCache(IWContext iwc, String instanceId, List<CalScheduleEntry> entries) {
-		if (instanceId == null || entries == null) {
-			return false;
-		}
-		
-		try {
-			getCalendarCache(iwc).put(instanceId, entries);
-		} catch(Exception e) {
-			e.printStackTrace();
-			return false;
-		}
-		
-		return true;
-	}
-	
-	private List<CalScheduleEntry> getCalendarEntriesFromCache(IWContext iwc, String instanceId) {
-		if (instanceId == null) {
-			return null;
-		}
-		
-		try {
-			return getCalendarCache(iwc).get(instanceId);
-		} catch(Exception e) {
-			e.printStackTrace();
 		}
 		
 		return null;

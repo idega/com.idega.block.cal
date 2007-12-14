@@ -171,9 +171,14 @@ var ENTRY_IN_SCHEDULE_STYLE_CLASS = 'scheduleEntry';
 			return false;
 		}
 		
+		var viewer = $(extendedProperties.containerId);
+		var loadingLayer = $(setLoadingLayerForElement(viewer.id, false, viewer.getSize(), viewer.getPosition()));
+		
 		ScheduleSession.switchToNextAndGetListOfEntries(extendedProperties.properties.instanceId, {
 			callback: function(entries) {
 				calendarChangeModeCallback(entries, extendedProperties);
+				
+				loadingLayer.remove();
 			}
 		});
 
@@ -186,9 +191,14 @@ var ENTRY_IN_SCHEDULE_STYLE_CLASS = 'scheduleEntry';
 			return false;
 		}
 		
+		var viewer = $(extendedProperties.containerId);
+		var loadingLayer = $(setLoadingLayerForElement(viewer.id, false, viewer.getSize(), viewer.getPosition()));
+		
 		ScheduleSession.switchToPreviousAndGetListOfEntries(extendedProperties.properties.instanceId, {
 			callback: function(entries) {
 				calendarChangeModeCallback(entries, extendedProperties);
+				
+				loadingLayer.remove();
 			}
 		});
 	}
@@ -203,9 +213,14 @@ var ENTRY_IN_SCHEDULE_STYLE_CLASS = 'scheduleEntry';
 		extendedProperties.currentMode = CALENDAR_DAY_MODE;
 		addExtendedCalendarViewerPropertiesBean(extendedProperties);
 		
+		var viewer = $(extendedProperties.containerId);
+		var loadingLayer = $(setLoadingLayerForElement(viewer.id, false, viewer.getSize(), viewer.getPosition()));
+		
 		ScheduleSession.changeModeToDayAndGetListOfEntries(extendedProperties.properties.instanceId, {
 			callback: function(entries) {
 				calendarChangeModeCallback(entries, extendedProperties);
+				
+				loadingLayer.remove();
 			}
 		});
 	}
@@ -220,9 +235,14 @@ var ENTRY_IN_SCHEDULE_STYLE_CLASS = 'scheduleEntry';
 		extendedProperties.currentMode = CALENDAR_WORK_WEEK_MODE;
 		addExtendedCalendarViewerPropertiesBean(extendedProperties);
 		
+		var viewer = $(extendedProperties.containerId);
+		var loadingLayer = $(setLoadingLayerForElement(viewer.id, false, viewer.getSize(), viewer.getPosition()));
+		
 		ScheduleSession.changeModeToWorkweekAndGetListOfEntries(extendedProperties.properties.instanceId, {
 			callback: function(entries) {
 				calendarChangeModeCallback(entries, extendedProperties);
+				
+				loadingLayer.remove();
 			}
 		});
 	}	
@@ -237,9 +257,14 @@ var ENTRY_IN_SCHEDULE_STYLE_CLASS = 'scheduleEntry';
 		extendedProperties.currentMode = CALENDAR_WEEK_MODE;
 		addExtendedCalendarViewerPropertiesBean(extendedProperties);
 		
+		var viewer = $(extendedProperties.containerId);
+		var loadingLayer = $(setLoadingLayerForElement(viewer.id, false, viewer.getSize(), viewer.getPosition()));
+		
 		ScheduleSession.changeModeToWeekAndGetListOfEntries(extendedProperties.properties.instanceId, {
 			callback: function(entries) {
 				calendarChangeModeCallback(entries, extendedProperties);
+				
+				loadingLayer.remove();
 			}
 		});
 	}		
@@ -254,9 +279,14 @@ var ENTRY_IN_SCHEDULE_STYLE_CLASS = 'scheduleEntry';
 		extendedProperties.currentMode = CALENDAR_MONTH_MODE;
 		addExtendedCalendarViewerPropertiesBean(extendedProperties);
 		
+		var viewer = $(extendedProperties.containerId);
+		var loadingLayer = $(setLoadingLayerForElement(viewer.id, false, viewer.getSize(), viewer.getPosition()));
+		
 		ScheduleSession.changeModeToMonthAndGetListOfEntries(extendedProperties.properties.instanceId, {
 			callback: function(entries) {
 				calendarChangeModeCallback(entries, extendedProperties);
+				
+				loadingLayer.remove();
 			}
 		});
 	}
@@ -411,7 +441,7 @@ var ENTRY_IN_SCHEDULE_STYLE_CLASS = 'scheduleEntry';
 					
 					var link = CALENDAR_ENTRY_INFO_WINDOW_LINK + '&'+entryIdText+'=' + clickedEntryId;
 					MOOdalBox.init({resizeDuration: 50, evalScripts: true, animateCaption: false});
-					var result = MOOdalBox.open(link, CALENDAR_ENTRY_INFO_WINDOW_TITLE, '600 300');
+					var result = MOOdalBox.open(link, CALENDAR_ENTRY_INFO_WINDOW_TITLE, '700 300');
 				}
 			});
 		});
@@ -503,7 +533,6 @@ var ENTRY_IN_SCHEDULE_STYLE_CLASS = 'scheduleEntry';
 					pack.push(entries[i]);
 				}
 			}
-			//lala
 			else {
 				for (var i = 0; i < entries.length; i++) {
 					pack.push(entries[i]);

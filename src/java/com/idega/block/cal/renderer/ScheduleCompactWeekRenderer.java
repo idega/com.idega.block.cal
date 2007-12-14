@@ -39,9 +39,9 @@ import java.util.Iterator;
  * Renderer for the week view of the UISchedule component
  * </p>
  *
- * @author Jurgen Lust (latest modification by $Author: justinas $)
+ * @author Jurgen Lust (latest modification by $Author: valdas $)
  * @author Bruno Aranda (adaptation of Jurgen's code to myfaces)
- * @version $Revision: 1.4 $
+ * @version $Revision: 1.5 $
  */
 public class ScheduleCompactWeekRenderer
     extends AbstractCompactScheduleRenderer
@@ -77,7 +77,6 @@ public class ScheduleCompactWeekRenderer
             HTML.STYLE_ATTR, "border-style: none; overflow: hidden;", null
         );
 
-//        writer.startElement(HTML.TABLE_ELEM, schedule);
         writer.startElement(HTML.DIV_ELEM, schedule);
         writer.writeAttribute(HTML.CLASS_ATTR, getStyleClass(schedule, "week"), null);
         writer.writeAttribute(
@@ -85,13 +84,9 @@ public class ScheduleCompactWeekRenderer
             null
         );
         writer.writeAttribute(HTML.CELLPADDING_ATTR, "0", null);
-//        writer.writeAttribute(HTML.CELLSPACING_ATTR, "1", null);
         writer.writeAttribute(HTML.CELLSPACING_ATTR, "0", null);
         writer.writeAttribute("border", "0", null);
         writer.writeAttribute(HTML.WIDTH_ATTR, "100%", null);
-//        writer.startElement(HTML.TBODY_ELEM, schedule);
-//        writer.startElement(HTML.DIV_ELEM, schedule);
-
         Calendar cal = GregorianCalendar.getInstance();
 
         for (
@@ -110,10 +105,8 @@ public class ScheduleCompactWeekRenderer
             if (
                 (dayOfWeek == Calendar.MONDAY) ||
                     (dayOfWeek == Calendar.WEDNESDAY) ||
-                    (dayOfWeek == Calendar.FRIDAY)// ||
-//                    (dayOfWeek == Calendar.SUNDAY)
+                    (dayOfWeek == Calendar.FRIDAY)
             ) {
-//                writer.startElement(HTML.TR_ELEM, schedule);
                 writer.startElement(HTML.DIV_ELEM, schedule);
                 writer.writeAttribute(HTML.CLASS_ATTR, "possibleweek", null);
             }
@@ -126,17 +119,12 @@ public class ScheduleCompactWeekRenderer
             if (
                 (dayOfWeek == Calendar.TUESDAY) ||
                     (dayOfWeek == Calendar.THURSDAY) ||
-//                    (dayOfWeek == Calendar.SATURDAY) ||
                     (dayOfWeek == Calendar.SUNDAY)
             ) {
-//                writer.endElement(HTML.TR_ELEM);
                 writer.endElement(HTML.DIV_ELEM);
             }
         }
 
-//        writer.endElement(HTML.TBODY_ELEM);
-//        writer.endElement(HTML.DIV_ELEM);
-//        writer.endElement(HTML.TABLE_ELEM);
         writer.endElement(HTML.DIV_ELEM);
         writer.endElement(HTML.DIV_ELEM);
     }

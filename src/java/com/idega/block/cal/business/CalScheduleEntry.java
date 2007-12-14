@@ -1,6 +1,7 @@
 package com.idega.block.cal.business;
 
 public class CalScheduleEntry {
+	
 	private String id = null;
 	private String entryName = null;
 	private String entryDate = null;

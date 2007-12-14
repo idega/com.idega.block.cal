@@ -6,36 +6,27 @@
 	
 		<convert converter="bean" match="com.idega.block.cal.business.CalendarLedgersAndTypes" />
 		<convert converter="bean" match="com.idega.block.cal.business.CalScheduleEntry" />
-		<convert converter="bean" match="com.idega.user.bean.GroupsAndCalendarPropertiesBean" />
-			
-		<create creator="ibo" javascript="ScheduleSession" scope="session">
-			<param name="class" value="com.idega.block.cal.business.ScheduleSession"/>
-		</create>
-<!--  		<create creator="ibo" javascript="CalService" scope="application">
-			<param name="class" value="com.idega.block.cal.business.CalService"/>
-		</create>
--->
+		<convert converter="bean" match="com.idega.cal.bean.CalendarPropertiesBean" />
 
 		<create creator="jsf" javascript="CalService">
 	    	<param name="managedBeanName" value="calendar" />
 	    	<param name="class" value="com.idega.block.cal.business.CalServiceBean" />
+    	</create>
+    	
+    	<create creator="jsf" javascript="ScheduleSession">
+	    	<param name="managedBeanName" value="calendarSchedule" />
+	    	<param name="class" value="com.idega.block.cal.business.ScheduleSessionBean" />
     	</create>
 
 	</allow>
 	<signatures>
 		<![CDATA[
   			import java.util.List;
-  			import org.jdom.Document;
-	  		import com.idega.block.cal.business.CalendarLedgersAndTypes;
-	  		import com.idega.bean.GroupsAndCalendarPropertiesBean;
+  			
 	  		import com.idega.block.cal.business.CalScheduleEntry;
 	  		
 			ScheduleSession.addEntries(List<CalScheduleEntry>, String, boolean);
-
-			CalService.getEntries(List<String>);
-			CalService.getRemoteEntries(List<String>, String, String);
-			CalService.getRemoteCalendarParameters(String, String, String);
-			CalService.getCalendarProperties(String);
+			ScheduleSession.addCalendarEntryForInfoWindow(CalScheduleEntry);
   		]]>
 	</signatures>	
 </dwr>

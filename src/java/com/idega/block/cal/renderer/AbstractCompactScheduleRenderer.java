@@ -45,9 +45,9 @@ import java.util.*;
  * Abstract superclass for the week and month view renderers.
  * </p>
  * 
- * @author Jurgen Lust (latest modification by $Author: justinas $)
+ * @author Jurgen Lust (latest modification by $Author: valdas $)
  * @author Bruno Aranda (adaptation of Jurgen's code to myfaces)
- * @version $Revision: 1.8 $
+ * @version $Revision: 1.9 $
  */
 public abstract class AbstractCompactScheduleRenderer extends
         AbstractScheduleRenderer implements Serializable
@@ -401,9 +401,7 @@ public abstract class AbstractCompactScheduleRenderer extends
                 .hasNext();)
         {
             ScheduleEntry entry = (ScheduleEntry) entryIterator.next();
-//            writer.startElement(HTML.TR_ELEM, schedule);
             writer.startElement(HTML.DIV_ELEM, schedule);
-//            writer.startElement(HTML.TD_ELEM, schedule);
             writer.startElement(HTML.DIV_ELEM, schedule);
 
             if (isSelected(schedule, entry))
@@ -437,16 +435,10 @@ public abstract class AbstractCompactScheduleRenderer extends
             if (!isSelected(schedule, entry) && !schedule.isReadonly())
             {
                 writer.startElement("a", schedule);
-//                writer.writeAttribute("href", "#", null);
+                writer.writeAttribute(HTML.CLASS_ATTR, CalendarConstants.SCHEDULE_ENTRY_STYLE_CLASS, null);
+                writer.writeAttribute(HTML.HREF_ATTR, "javascript:void(0)", null);
+                writer.writeAttribute("entryid", entry.getId(), null);
                 
-                writer.writeAttribute("id", CalendarConstants.ENTRY_ID_PREFIX+entry.getId(), null);
-//                writer.writeAttribute("id", entry.getId(), null);
-                writer.writeAttribute(HTML.CLASS_ATTR, CalendarConstants.SCHEDULE_ENTRY_STYLE_CLASS+" modulePropertiesLinkStyleClass", null);
-//                writer.writeAttribute(HTML.CLASS_ATTR, "modulePropertiesLinkStyleClass", null);
-                writer.writeAttribute(HTML.REL_ATTR, "moodalbox", null);
-//                writer.writeAttribute(HTML.HREF_ATTR, "/servlet/ObjectInstanciator?idegaweb_instance_class=com.idega.builder.presentation.EditModuleBlock&moduleName=NavigationBreadCrumbsList&ic_object_instance_id_par=uuid_ec6a2262-41be-47d4-9a7c-b6bb5d4e77d9&ib_page=6", null);
-
-//                
                 DateFormat format;
                 String pattern = null;
 
@@ -489,20 +481,6 @@ public abstract class AbstractCompactScheduleRenderer extends
                 else{
                 	endTime +=entry.getEndTime().getMinutes();
                 }
-                
-//                startTime += entry.getStartTime().getMinutes();
-//
-                
-//                writer.writeAttribute(HTML.HREF_ATTR, "/servlet/ObjectInstanciator?idegaweb_instance_class=com.idega.block.cal.presentation.EntryInfoBlock&entryName="+entry.getTitle()+"&entryStartTime="+startTime+"&entryEndTime="+endTime+"&entryDescription="+entry.getDescription(), null);
-                writer.writeAttribute(HTML.HREF_ATTR, "/servlet/ObjectInstanciator?idegaweb_instance_class=com.idega.block.cal.presentation.EntryInfoBlock&entryName="+entry.getTitle()+"&entryStartTime="+startTime+"&entryEndTime="+endTime+"&entryDescription="+entry.getDescription(), null);
-//                writer.writeAttribute(
-//                        HTML.ONMOUSEUP_ATTR,
-//                        "fireEntrySelected('"
-//                        + formId + "', '"
-//                        + clientId + "', '"
-//                        + entry.getId()
-//                        + "');",
-//                        null);
             }
 
             // draw the content
@@ -514,9 +492,7 @@ public abstract class AbstractCompactScheduleRenderer extends
                 writer.endElement("a");
             }
 
-//            writer.endElement(HTML.TD_ELEM);
             writer.endElement(HTML.DIV_ELEM);
-//            writer.endElement(HTML.TR_ELEM);
             writer.endElement(HTML.DIV_ELEM);
         }
     }

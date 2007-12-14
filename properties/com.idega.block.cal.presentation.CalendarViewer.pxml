@@ -184,7 +184,7 @@
             			<reload>true</reload>
           			</key>                 			
           			<key>
-            			<name>:method:1:implied:void:setCalendarEntries:java.util.List:</name>
+            			<name>:method:1:implied:void:setCalendarProperties:com.idega.cal.bean.CalendarPropertiesBean:</name>
             			<value>
               				<map>
                 				<key>
@@ -231,7 +231,7 @@
                 				<key>
                   					<name>iw_method_identifier</name>
                   					<type>java.lang.String</type>
-                  					<value>:method:1:implied:void:setCalendarEntries:java.util.List:</value>
+                  					<value>:method:1:implied:void:setCalendarProperties:com.idega.cal.bean.CalendarPropertiesBean:</value>
                 				</key>
               				</map>
             			</value>

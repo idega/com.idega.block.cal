@@ -371,6 +371,7 @@ public class CalServiceBean implements CalService {
 		
 		CalendarsChooserHelper helper = new CalendarsChooserHelper();
 		CalendarPropertiesBean bean = helper.getExtractedPropertiesFromString(values[0]);
+		bean.setInstanceId(instanceId);
 		
 		if (bean == null) {
 			return null;
@@ -509,7 +510,7 @@ public class CalServiceBean implements CalService {
 		
 		allEntries = getFilteredEntries(entriesByLedgers, allEntries);
 		
-		List<CalScheduleEntry> entries =getConvertedEntries(allEntries, iwc.getCurrentLocale());
+		List<CalScheduleEntry> entries = getConvertedEntries(allEntries, iwc.getCurrentLocale());
 		if (useCache) {
 			addCalendarEntriesToCache(iwc, instanceId, entries);
 		}

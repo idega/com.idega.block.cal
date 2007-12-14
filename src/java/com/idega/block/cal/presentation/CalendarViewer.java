@@ -4,264 +4,188 @@ import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.myfaces.renderkit.html.util.AddResource;
-import org.apache.myfaces.renderkit.html.util.AddResourceFactory;
-
 import com.idega.block.cal.business.CalendarConstants;
 import com.idega.block.web2.business.Web2Business;
+import com.idega.builder.business.BuilderLogic;
 import com.idega.business.SpringBeanLookup;
-import com.idega.idegaweb.IWApplicationContext;
+import com.idega.cal.bean.CalendarPropertiesBean;
 import com.idega.idegaweb.IWBundle;
-import com.idega.idegaweb.IWResourceBundle;
-import com.idega.presentation.Block;
 import com.idega.presentation.IWContext;
 import com.idega.presentation.Layer;
-import com.idega.user.bean.GroupsAndCalendarPropertiesBean;
+import com.idega.user.presentation.group.GroupViewer;
 import com.idega.webface.WFUtil;
 
-public class CalendarViewer extends Block{
-
-	private static final String CALENDAR_VIEWER_SCHEDULE_ID = "calendarViewerScheduleId";
-	
-	private String server = null;
-	private String user = null;
-	private String password = null;	
+public class CalendarViewer extends GroupViewer {
 	
 	private boolean showEntriesAsList = false;
 	private boolean hideMenu = false;
 	private boolean hidePreviousAndNext = false;
-	
-	private List<String> uniqueIds = null;
-	
-	private boolean isRemoteMode = false;	
-	private List<String> calendarAttributes = null;
-	
 	private boolean showTime = false;
 	
+	private List<String> events = null;
+	private List<String> ledgers = null;
+	
 	public void main(IWContext iwc) {
-		Layer main = new Layer();
-		main.setId(CALENDAR_VIEWER_SCHEDULE_ID);
-		Layer schedule = new Layer();
-		schedule.setId(this.getId());
+		super.main(iwc);
 		
-		main.add(schedule);
+		String instanceId = BuilderLogic.getInstance().getInstanceId(this);
 		
-		add(main);
-		setID();
-		addJavaScript(iwc);
-		setCalendarPropertiesBean(this.getId());
+		Layer container = new Layer();
+		String containerId = new StringBuffer(instanceId).append(CalendarConstants.CALENDAR_VIEWER_MAIN_CONTAINER_ID_ENDING).toString();
+		container.setId(containerId);
+		
+		addJavaScript(iwc, containerId, instanceId);
+		addCssFiles(iwc);
+		
+		setCalendarPropertiesBean(instanceId);
+		
+		add(container);
 	}
 	
-	public void setEntries(){
-		
-	}
 	private void setCalendarPropertiesBean(String instanceId){
-		GroupsAndCalendarPropertiesBean groupsAndCalendarPropertiesBean = new GroupsAndCalendarPropertiesBean();
+		CalendarPropertiesBean properties = new CalendarPropertiesBean();
+		setBasicProperties(properties, instanceId);
 		
-		groupsAndCalendarPropertiesBean.setCalendarAttributes(calendarAttributes);
-		groupsAndCalendarPropertiesBean.setLogin(user);
-		groupsAndCalendarPropertiesBean.setPassword(password);
-		groupsAndCalendarPropertiesBean.setRemoteMode(isRemoteMode);
-		groupsAndCalendarPropertiesBean.setServer(server);
+		properties.setShowEntriesAsList(isShowEntriesAsList());
+		properties.setHideMenu(isHideMenu());
+		properties.setHidePreviousAndNext(isHidePreviousAndNext());
+		properties.setShowTime(isShowTime());
+		properties.setEvents(getEvents());
+		properties.setLedgers(ledgers);
 		
 		Object[] parameters = new Object[2];
 		parameters[0] = instanceId;
-		parameters[1] = groupsAndCalendarPropertiesBean;
+		parameters[1] = properties;
 		
-		Class[] classes = new Class[2];
+		Class<?>[] classes = new Class[2];
 		classes[0] = String.class;
-		classes[1] = GroupsAndCalendarPropertiesBean.class;
-//		
-//		//	Setting parameters to bean, these parameters will be taken by DWR and sent to selected server to get required info
+		classes[1] = CalendarPropertiesBean.class;
+
+		//	Setting parameters to bean, these parameters will be taken by DWR and sent to selected server to get required info
 		WFUtil.invoke(CalendarConstants.CALENDAR_MANAGER_BEAN_ID, "addCalendarProperties", parameters, classes);
 		
 	}
-	protected Web2Business getWeb2Service(IWApplicationContext iwc) {
-		return (Web2Business) SpringBeanLookup.getInstance().getSpringBean(iwc, Web2Business.class);
-	}
 	
-	private void addJavaScript(IWContext iwc) {
+	private void addCssFiles(IWContext iwc) {
 		IWBundle iwb = getBundle(iwc);
-		Web2Business web2_business = getWeb2Service(iwc.getApplicationContext());
-//		BuilderService bService = null;
-//		try {
-//			bService = BuilderServiceFactory.getBuilderService(iwc.getApplicationContext());
-//		} catch (RemoteException e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		}
-		AddResource resourceAdder = AddResourceFactory.getInstance(iwc);
 		
-//		//	"Helpers"
-
-		if(web2_business != null){
-			try {
-//				resourceAdder.addJavaScriptAtPosition(iwc, AddResource.HEADER_BEGIN,web2_business.getBundleURIToBehaviourLib());
-				resourceAdder.addJavaScriptAtPosition(iwc, AddResource.HEADER_BEGIN,web2_business.getBundleURIToMootoolsLib());
-//				resourceAdder.addJavaScriptAtPosition(iwc, AddResource.HEADER_BEGIN,web2_business.getMoodalboxScriptFilePath(true));
-				resourceAdder.addJavaScriptAtPosition(iwc, AddResource.HEADER_BEGIN,web2_business.getMoodalboxScriptFilePath(false));
-				
-				resourceAdder.addStyleSheet(iwc, AddResource.HEADER_BEGIN, web2_business.getMoodalboxStyleFilePath());
-			} catch (RemoteException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+		StringBuffer cssFiles = new StringBuffer("<link rel=\"stylesheet\" href=\"");
+		cssFiles.append(iwb.getVirtualPathWithFileNameString("style/cal.css")).append("\" type=\"text/css\" />\n");
+		
+		cssFiles.append("<link rel=\"stylesheet\" href=\"");
+		cssFiles.append(iwb.getVirtualPathWithFileNameString("style/schedule.css")).append("\" type=\"text/css\" />\n");
+		
+		try {
+			Web2Business web2 = (Web2Business) SpringBeanLookup.getInstance().getSpringBean(iwc, Web2Business.class);
+			cssFiles.append("<link rel=\"stylesheet\" href=\"");
+			cssFiles.append(web2.getMoodalboxStyleFilePath()).append("\" type=\"text/css\" />\n");
+		} catch (Exception e) {
+			e.printStackTrace();
 		}
 		
-		resourceAdder.addJavaScriptAtPosition(iwc, AddResource.HEADER_BEGIN,iwb.getVirtualPathWithFileNameString("javascript/CalendarList.js"));
-		resourceAdder.addJavaScriptAtPosition(iwc, AddResource.HEADER_BEGIN,iwb.getVirtualPathWithFileNameString("javascript/cal.js"));
-		resourceAdder.addJavaScriptAtPosition(iwc, AddResource.HEADER_BEGIN,iwb.getVirtualPathWithFileNameString("javascript/alphaAPI.js"));
-		resourceAdder.addJavaScriptAtPosition(iwc, AddResource.HEADER_BEGIN,iwb.getVirtualPathWithFileNameString("javascript/domLib.js"));
-		resourceAdder.addJavaScriptAtPosition(iwc, AddResource.HEADER_BEGIN,iwb.getVirtualPathWithFileNameString("javascript/domTT_drag.js"));
-		resourceAdder.addJavaScriptAtPosition(iwc, AddResource.HEADER_BEGIN,iwb.getVirtualPathWithFileNameString("javascript/domTT.js"));
-		resourceAdder.addJavaScriptAtPosition(iwc, AddResource.HEADER_BEGIN,iwb.getVirtualPathWithFileNameString("javascript/fadomatic.js"));
-		resourceAdder.addJavaScriptAtPosition(iwc, AddResource.HEADER_BEGIN,iwb.getVirtualPathWithFileNameString("javascript/schedule.js"));
+		add(cssFiles.toString());
+	}
+	
+	private void addJavaScript(IWContext iwc, String id, String instanceId) {
+		IWBundle iwb = getBundle(iwc);
+		List<String> files = new ArrayList<String>();
+		
+		//	Web 2.0 stuff
+		Web2Business web2 = (Web2Business) SpringBeanLookup.getInstance().getSpringBean(iwc, Web2Business.class);
+		try {
+			files.add(web2.getBundleURIToMootoolsLib());
+			files.add(web2.getMoodalboxScriptFilePath(false));
+		} catch (RemoteException e) {
+			e.printStackTrace();
+		}
+		
+		//	Calendar stuff
+		files.add(iwb.getVirtualPathWithFileNameString("javascript/CalendarViewerHelper.js"));
+		files.add(iwb.getVirtualPathWithFileNameString("javascript/CalendarList.js"));
+		files.add(iwb.getVirtualPathWithFileNameString("javascript/alphaAPI.js"));
+		files.add(iwb.getVirtualPathWithFileNameString("javascript/domLib.js"));
+		files.add(iwb.getVirtualPathWithFileNameString("javascript/domTT_drag.js"));
+		files.add(iwb.getVirtualPathWithFileNameString("javascript/domTT.js"));
+		files.add(iwb.getVirtualPathWithFileNameString("javascript/fadomatic.js"));
+		files.add(iwb.getVirtualPathWithFileNameString("javascript/schedule.js"));
 		
 		//	DWR
-		resourceAdder.addJavaScriptAtPosition(iwc, AddResource.HEADER_BEGIN, CalendarConstants.CALENDAR_SERVICE_DWR_INTERFACE_SCRIPT);
-		resourceAdder.addJavaScriptAtPosition(iwc, AddResource.HEADER_BEGIN, "/dwr/engine.js");
-		resourceAdder.addJavaScriptAtPosition(iwc, AddResource.HEADER_BEGIN, "/dwr/interface/ScheduleSession.js");
-		resourceAdder.addStyleSheet(iwc, AddResource.HEADER_BEGIN, iwb.getVirtualPathWithFileNameString("style/cal.css"));
-		resourceAdder.addStyleSheet(iwc, AddResource.HEADER_BEGIN, iwb.getVirtualPathWithFileNameString("style/schedule.css"));
+		files.add(CalendarConstants.CALENDAR_SERVICE_DWR_INTERFACE_SCRIPT);
+		files.add("/dwr/engine.js");
+		files.add("/dwr/interface/ScheduleSession.js");
 
+		addScriptFiles(iwc, files, false);
 		
-//		//	Actions to be performed on page loaded event
-		IWResourceBundle iwrb = getResourceBundle(iwc);
-		StringBuffer action = new StringBuffer("registerEvent(window, 'load', function() {"+
-				"");
-			action.append("scheduleId = '"+this.getId()+"';");
-			action.append("entryIdPrefix = '"+CalendarConstants.ENTRY_ID_PREFIX+"';");
-			action.append("showEntriesAsList = "+showEntriesAsList+";");
-			action.append("hideMenu = "+hideMenu+";");
-			action.append("hidePreviousAndNext = "+hidePreviousAndNext+";");
-			action.append("showTime = "+showTime+";");
-			action.append("entryInScheduleStyleClass = '"+CalendarConstants.SCHEDULE_ENTRY_STYLE_CLASS+"'; ");			
-//			action.append("entryName = 'Name'; ");			
-//			action.append("entryEndDate = 'End date'; ");
-//			action.append("entryType = 'Type'; ");			
-//			action.append("entryTime = 'Time'; ");			
-//			action.append("entryDate = 'Date'; ");
-//			action.append("noEntries = 'There are no entries to display'; ");			
-//			action.append("serverErrorMessage = 'can\\'t connect to:'; ");	
-//			action.append("loadingMsg = 'Loading...';");
+		StringBuffer action = new StringBuffer("window.addEvent('load', function() { loadCalendarViewer('").append(id).append("', '").append(instanceId);
+		action.append("', '").append(iwb.getResourceBundle(iwc).getLocalizedString("loading", "Loading..."));
+		action.append("'); });");
 			
-			//passing captions to JS
-			
-			action.append("entryName = '"+iwrb.getLocalizedString("name", "Name")+"'; ");			
-			action.append("entryEndDate = '"+iwrb.getLocalizedString("endDate", "End date")+"'; ");
-			action.append("entryType = '"+iwrb.getLocalizedString("type", "Type")+"'; ");			
-			action.append("entryTime = '"+iwrb.getLocalizedString("time", "Time")+"'; ");			
-			action.append("entryDate = '"+iwrb.getLocalizedString("date", "Date")+"'; ");
-			action.append("noEntries = '"+iwrb.getLocalizedString("noEntriesToDisplay", "There are no entries to display")+"'; ");			
-			action.append("serverErrorMessage = '"+iwrb.getLocalizedString("cantConnectTo", "can\\'t connect to:")+"'; ");	
-			action.append("loadingMsg = '"+iwrb.getLocalizedString("loadingMsg", "Loading...")+"';");			
-
-			action.append("previousLabel = '"+iwrb.getLocalizedString("previousLabel", "Previous")+"';");
-			action.append("nextLabel = '"+iwrb.getLocalizedString("nextLabel", "Next")+"';");
-			action.append("dayLabel = '"+iwrb.getLocalizedString("dayLabel", "Day")+"';");
-			action.append("weekLabel = '"+iwrb.getLocalizedString("weekLabel", "Week")+"';");
-			action.append("workweekLabel = '"+iwrb.getLocalizedString("workweekLabel", "Workweek")+"';");
-			action.append("monthLabel = '"+iwrb.getLocalizedString("monthLabel", "Month")+"';");
-			action.append("getCalendarProperties();");
-			action.append("});");
-			
-		StringBuffer scriptString = new StringBuffer();
-		scriptString.append("<script type=\"text/javascript\" > \n")
-		.append("\t").append(action).append(" \n")
-		.append("</script> \n");
-		 
+		StringBuffer scriptString = new StringBuffer("<script type=\"text/javascript\" > \n\t").append(action).append(" \n</script> \n");
 		add(scriptString.toString());
-	}	
+	}
+	
+	public void setCalendarProperties(CalendarPropertiesBean properties) {
+		super.setGroups(properties);
+		
+		if (properties == null) {
+			events = null;
+			ledgers = null;
+		}
+		
+		setEvents(properties.getEvents());
+		setLedgers(properties.getLedgers());
+	}
+	
 	public String getBundleIdentifier()	{
 		return CalendarConstants.IW_BUNDLE_IDENTIFIER;
 	}
-	
-//	PropertiesBean bean
-	
-	public void setShowTime(boolean showTime){
-		this.showTime = showTime;
-	}
-	
-	public void setShowEntriesAsList(boolean showEntriesAsList){
+
+	public void setShowEntriesAsList(boolean showEntriesAsList) {
 		this.showEntriesAsList = showEntriesAsList;
 	}
 
-	public void setHideMenu(boolean hideMenu){
+	public void setHideMenu(boolean hideMenu) {
 		this.hideMenu = hideMenu;
 	}
-	
-	public void setHidePreviousAndNext(boolean hidePreviousAndNext){
+
+	public void setHidePreviousAndNext(boolean hidePreviousAndNext) {
 		this.hidePreviousAndNext = hidePreviousAndNext;
 	}
-	
-	
-	public void setCalendarEntries(List list) {
 
-		if (list == null) {
-			server = null;
-			user = null;
-			password = null;
-			isRemoteMode = false;
-			calendarAttributes = null;
+	public void setShowTime(boolean showTime) {
+		this.showTime = showTime;
+	}
 
-			return;
-		}
-		if (((String)list.get(3)).equals("true")){
-			isRemoteMode = true;
-			server = (String)list.get(0);
-			user = (String)list.get(1);
-			password = (String)list.get(2);
-		}
-		else{
-			isRemoteMode = false;
-			server = null;
-			user = null;
-			password = null;			
-		}
-		calendarAttributes = new ArrayList<String>();
-		for (int i = 4; i < list.size(); i++) {
-			calendarAttributes.add((String)list.get(i));
-			
-		}
-	}	
-	
-	public boolean isRemoteMode() {
-		return isRemoteMode;
+	public void setEvents(List<String> events) {
+		this.events = events;
+	}
+
+	public boolean isShowEntriesAsList() {
+		return showEntriesAsList;
+	}
+
+	public boolean isHideMenu() {
+		return hideMenu;
+	}
+
+	public boolean isHidePreviousAndNext() {
+		return hidePreviousAndNext;
+	}
+
+	public boolean isShowTime() {
+		return showTime;
+	}
+
+	public List<String> getEvents() {
+		return events;
+	}
+
+	public List<String> getLedgers() {
+		return ledgers;
+	}
+
+	public void setLedgers(List<String> ledgers) {
+		this.ledgers = ledgers;
 	}
 	
-	public void setRemoteMode(boolean remoteMode) {
-		this.isRemoteMode = remoteMode;
-	}
-
-	public String getPassword() {
-		return password;
-	}
-
-	public void setPassword(String password) {
-		this.password = password;
-	}
-
-	public String getServer() {
-		return server;
-	}
-
-	public void setServer(String server) {
-		this.server = server;
-	}
-
-	public List<String> getUniqueIds() {
-		return uniqueIds;
-	}
-
-	public void setUniqueIds(List<String> uniqueIds) {
-		this.uniqueIds = uniqueIds;
-	}
-
-	public String getUser() {
-		return user;
-	}
-
-	public void setUser(String user) {
-		this.user = user;
-	}	
-	}
+}

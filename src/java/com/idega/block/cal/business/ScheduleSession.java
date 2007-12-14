@@ -1,12 +1,15 @@
 package com.idega.block.cal.business;
 
 
-import java.util.List;
-import org.jdom.Document;
-import com.idega.business.IBOSession;
 import java.rmi.RemoteException;
+import java.util.List;
 
-public interface ScheduleSession extends IBOSession {
+import org.jdom.Document;
+
+import com.idega.business.SpringBeanName;
+
+@SpringBeanName("calendarSchedule")
+public interface ScheduleSession {
 
 	/**
 	 * @see com.idega.block.cal.business.ScheduleSessionBean#changeModeToDayAndGetScheduleDOM
@@ -41,8 +44,8 @@ public interface ScheduleSession extends IBOSession {
 	/**
 	 * @see com.idega.block.cal.business.ScheduleSessionBean#getScheduleDOM
 	 */
-//	public Document getScheduleDOM(List<CalScheduleEntry> entries, String id) throws RemoteException;
 	public Document getScheduleDOM(String id) throws RemoteException;
+	
 	/**
 	 * @see com.idega.block.cal.business.ScheduleSessionBean#changeModeToDayAndGetListOfEntries
 	 */
@@ -76,11 +79,15 @@ public interface ScheduleSession extends IBOSession {
 	/**
 	 * @see com.idega.block.cal.business.ScheduleSessionBean#addEntries
 	 */
-	public int addEntries(List<CalScheduleEntry> entries, String id, boolean clearPreviousEntries);
+	public boolean addEntries(List<CalScheduleEntry> entries, String id, boolean clearPreviousEntries);
 	
 	/**
 	 * @see com.idega.block.cal.business.ScheduleSessionBean#getListOfEntries
 	 */
 	public List<CalScheduleEntry> getListOfEntries(String id);
+	
+	public boolean addCalendarEntryForInfoWindow(CalScheduleEntry entry);
+	
+	public CalScheduleEntry getCalendarEntryForInfoWindow(String id);
 }
 

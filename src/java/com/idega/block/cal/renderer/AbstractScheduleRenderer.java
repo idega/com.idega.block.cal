@@ -19,22 +19,6 @@
 
 package com.idega.block.cal.renderer;
 
-import com.idega.block.cal.business.HtmlSchedule;
-
-import com.idega.block.cal.business.ScheduleMouseEvent;
-import org.apache.myfaces.custom.schedule.model.ScheduleEntry;
-import org.apache.myfaces.custom.schedule.util.ScheduleEntryComparator;
-import org.apache.myfaces.custom.schedule.util.ScheduleUtil;
-import org.apache.myfaces.renderkit.html.util.AddResource;
-import org.apache.myfaces.renderkit.html.util.AddResourceFactory;
-import org.apache.myfaces.shared_tomahawk.renderkit.html.HTML;
-
-import javax.faces.component.UIComponent;
-import javax.faces.context.FacesContext;
-import javax.faces.context.ResponseWriter;
-import javax.faces.el.ValueBinding;
-import javax.faces.event.ActionEvent;
-import javax.faces.render.Renderer;
 import java.io.IOException;
 import java.io.Serializable;
 import java.text.DateFormat;
@@ -42,14 +26,29 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Map;
 
+import javax.faces.component.UIComponent;
+import javax.faces.context.FacesContext;
+import javax.faces.context.ResponseWriter;
+import javax.faces.el.ValueBinding;
+import javax.faces.event.ActionEvent;
+import javax.faces.render.Renderer;
+
+import org.apache.myfaces.custom.schedule.model.ScheduleEntry;
+import org.apache.myfaces.custom.schedule.util.ScheduleEntryComparator;
+import org.apache.myfaces.custom.schedule.util.ScheduleUtil;
+import org.apache.myfaces.shared_tomahawk.renderkit.html.HTML;
+
+import com.idega.block.cal.business.HtmlSchedule;
+import com.idega.block.cal.business.ScheduleMouseEvent;
+
 /**
  * <p>
  * Abstract superclass for all renderer of the UISchedule component
  * </p>
  *
- * @author Jurgen Lust (latest modification by $Author: justinas $)
+ * @author Jurgen Lust (latest modification by $Author: valdas $)
  * @author Bruno Aranda (adaptation of Jurgen's code to myfaces)
- * @version $Revision: 1.2 $
+ * @version $Revision: 1.3 $
  */
 public abstract class AbstractScheduleRenderer extends Renderer implements
         Serializable
@@ -58,7 +57,6 @@ public abstract class AbstractScheduleRenderer extends Renderer implements
     protected static final ScheduleEntryComparator comparator = new ScheduleEntryComparator();
     protected static final String LAST_CLICKED_DATE = "_last_clicked_date";
     protected static final String LAST_CLICKED_Y = "_last_clicked_y";
-    private static final String CSS_RESOURCE = "css/schedule.css";
     public static final String DEFAULT_THEME = "default";
     public static final String OUTLOOK_THEME = "outlookxp";
     public static final String EVOLUTION_THEME = "evolution";
@@ -152,30 +150,6 @@ public abstract class AbstractScheduleRenderer extends Renderer implements
 
         HtmlSchedule schedule = (HtmlSchedule) component;
         ResponseWriter writer = context.getResponseWriter();
-
-        //add needed CSS and Javascript files to the header 
-
-//        AddResource addResource = AddResourceFactory.getInstance(context);
-//        String theme = getTheme(schedule);
-        //The default css file is only loaded if the theme is one of the provided
-        //themes.
-        
-//        if (DEFAULT_THEME.equals(theme) || OUTLOOK_THEME.equals(theme)
-//                || EVOLUTION_THEME.equals(theme))
-//        {
-//            addResource.addStyleSheet(context, AddResource.HEADER_BEGIN,
-//                    HtmlSchedule.class, CSS_RESOURCE);
-//        }
-//        addResource.addJavaScriptAtPosition(context, AddResource.HEADER_BEGIN,
-//                HtmlSchedule.class, "javascript/schedule.js");
-//        addResource.addJavaScriptAtPosition(context, AddResource.HEADER_BEGIN,
-//                HtmlSchedule.class, "javascript/alphaAPI.js");
-//        addResource.addJavaScriptAtPosition(context, AddResource.HEADER_BEGIN,
-//                HtmlSchedule.class, "javascript/domLib.js");
-//        addResource.addJavaScriptAtPosition(context, AddResource.HEADER_BEGIN,
-//                HtmlSchedule.class, "javascript/domTT.js");
-//        addResource.addJavaScriptAtPosition(context, AddResource.HEADER_BEGIN,
-//                HtmlSchedule.class, "javascript/fadomatic.js");
 
         //hidden input field containing the id of the selected entry
         writer.startElement(HTML.INPUT_ELEM, schedule);

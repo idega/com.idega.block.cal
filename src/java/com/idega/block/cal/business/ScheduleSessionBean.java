@@ -1,114 +1,133 @@
 package com.idega.block.cal.business;
 
-import java.rmi.RemoteException;
-import java.text.DateFormat;
-import java.text.ParseException;
-import java.text.ParsePosition;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
 import org.apache.myfaces.custom.schedule.model.DefaultScheduleEntry;
+import org.apache.myfaces.custom.schedule.model.ScheduleDay;
+import org.apache.myfaces.custom.schedule.model.ScheduleEntry;
 import org.apache.myfaces.custom.schedule.model.ScheduleModel;
 import org.apache.myfaces.custom.schedule.model.SimpleScheduleModel;
 import org.jdom.Document;
 
-import com.idega.business.IBOSessionBean;
-import com.idega.core.builder.business.BuilderService;
-import com.idega.core.builder.business.BuilderServiceFactory;
+import com.idega.builder.business.BuilderLogic;
+import com.idega.core.cache.IWCacheManager2;
+import com.idega.idegaweb.IWMainApplication;
 import com.idega.presentation.IWContext;
 import com.idega.presentation.Layer;
 import com.idega.util.CoreUtil;
 
-public class ScheduleSessionBean extends IBOSessionBean implements ScheduleSession{
-	private Map<String, HtmlSchedule> htmlSchedules = new HashMap<String, HtmlSchedule>();
-	HtmlSchedule htmlSchedule = null;
-	private SimpleDateFormat simpleDate = null;	
-	private List<CalScheduleEntry> entriesInSchedule = null;
-	private SimpleDateFormat localizedDate = null;
+public class ScheduleSessionBean implements ScheduleSession {
+
+	private static final long serialVersionUID = -8327086094911532115L;
+	
+	private SimpleDateFormat simpleDate = new SimpleDateFormat(CalendarConstants.DATE_PATTERN);	
+	
 	private static final long DAY_IN_MILLISECONDS = 1000 * 60 * 60 * 24;
 	private static final long WEEK_IN_MILLISECONDS = DAY_IN_MILLISECONDS * 7;
-	private static final long MONTH_IN_MILLISECONDS = DAY_IN_MILLISECONDS * 31;	
+	private static final long MONTH_IN_MILLISECONDS = DAY_IN_MILLISECONDS * 31;
+	
+	//	Cache time - 24 hours
+	private static final long TIME_TO_LIVE_FOR_CACHE = 24 * 60 * 60;
 
 	private static final int DEFAULT_MODE = ScheduleModel.MONTH;
 	
-	private void changeMode(String id, int mode){
-		htmlSchedules.get(id).getModel().setMode(mode);
-		htmlSchedules.get(id).getModel().refresh();		
-//		htmlSchedule.getModel().setMode(mode);
-//		htmlSchedule.getModel().refresh();		
-
+	private CalScheduleEntry entry = null;
+	
+	public ScheduleSessionBean() {
+		getHtmlScheduleCache();
+		getScheduleEntriesCache();
+	}
+	
+	private void changeScheduleMode(String id, int mode) {
+		HtmlSchedule schedule = getHtmlSchedule(id);
+		schedule.getModel().setMode(mode);
+		schedule.getModel().refresh();
+		setHtmlSchedule(id, schedule);
 	}
 
-	public Document changeModeToDayAndGetScheduleDOM(String id){
-		changeMode(id, ScheduleModel.DAY);
+	public Document changeModeToDayAndGetScheduleDOM(String id) {
+		changeScheduleMode(id, ScheduleModel.DAY);
 		return getScheduleDOM(id);
 	}
 	
-	public List<CalScheduleEntry> changeModeToDayAndGetListOfEntries(String id){
-		changeMode(id, ScheduleModel.DAY);
+	public List<CalScheduleEntry> changeModeToDayAndGetListOfEntries(String id) {
+		HtmlSchedule schedule = getHtmlScheduleFromCache(id);
+		if (schedule == null) {
+			return null;
+		}
+		
+		changeScheduleMode(id, ScheduleModel.DAY);
 		Calendar calendar = Calendar.getInstance();
 		Calendar currentDate = Calendar.getInstance();
-		currentDate.setTime(htmlSchedules.get(id).getModel().getSelectedDate());
-//		currentDate.setTime(htmlSchedule.getModel().getSelectedDate());
+		currentDate.setTime(schedule.getModel().getSelectedDate());
 		
 		List<CalScheduleEntry> entriesOfSelectedDay = new ArrayList<CalScheduleEntry>();
 		
-		if (simpleDate == null){
-			simpleDate = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.S"); 
+		List<CalScheduleEntry> entries = getScheduleEntries(id);
+		if (entries == null) {
+			return null;
 		}
-		for (int i = 0; i < entriesInSchedule.size(); i++) {
-			String entryDateString = entriesInSchedule.get(i).getEntryDate();
+		CalScheduleEntry entry = null;
+		for (int i = 0; i < entries.size(); i++) {
+			entry = entries.get(i);
+			
+			String entryDateString = entry.getEntryDate();
 			Date entryDate = null;                
 			try {
 				entryDate = simpleDate.parse(entryDateString);
 				calendar.setTime(entryDate);
-				if((calendar.get(Calendar.YEAR) == currentDate.get(Calendar.YEAR)) && 
-					(calendar.get(Calendar.MONTH) == currentDate.get(Calendar.MONTH)) && 
-					(calendar.get(Calendar.DAY_OF_MONTH) == currentDate.get(Calendar.DAY_OF_MONTH))){
-						entriesOfSelectedDay.add(entriesInSchedule.get(i));
+				if ((calendar.get(Calendar.YEAR) == currentDate.get(Calendar.YEAR)) && (calendar.get(Calendar.MONTH) == currentDate.get(Calendar.MONTH)) && 
+					(calendar.get(Calendar.DAY_OF_MONTH) == currentDate.get(Calendar.DAY_OF_MONTH))) {
+						entriesOfSelectedDay.add(entry);
 				}
-			} catch (ParseException e) {
-				// TODO Auto-generated catch block
+			} catch (Exception e) {
 				e.printStackTrace();
 			}
 		}
+		
 		return entriesOfSelectedDay;
 	}
 	
-	public Document changeModeToMonthAndGetScheduleDOM(String id){
-		changeMode(id, ScheduleModel.MONTH);
+	public Document changeModeToMonthAndGetScheduleDOM(String id) {
+		changeScheduleMode(id, ScheduleModel.MONTH);
 		return getScheduleDOM(id);
 	}
 	
-	public List<CalScheduleEntry> changeModeToMonthAndGetListOfEntries(String id){
-		changeMode(id, ScheduleModel.MONTH);
+	public List<CalScheduleEntry> changeModeToMonthAndGetListOfEntries(String id) {
+		HtmlSchedule schedule = getHtmlScheduleFromCache(id);
+		if (schedule == null) {
+			return null;
+		}
+		
+		changeScheduleMode(id, ScheduleModel.MONTH);
 		Calendar calendar = Calendar.getInstance();
 		Calendar currentDate = Calendar.getInstance();
-		currentDate.setTime(htmlSchedules.get(id).getModel().getSelectedDate());
-//		currentDate.setTime(htmlSchedule.getModel().getSelectedDate());
+		currentDate.setTime(schedule.getModel().getSelectedDate());
 		
 		List<CalScheduleEntry> entriesOfSelectedMonth = new ArrayList<CalScheduleEntry>();
 		
-		if (simpleDate == null){
-			simpleDate = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.S"); 
+		List<CalScheduleEntry> entries = getScheduleEntries(id);
+		if (entries == null) {
+			return null;
 		}
-		for (int i = 0; i < entriesInSchedule.size(); i++) {
-			String entryDateString = entriesInSchedule.get(i).getEntryDate();
+		CalScheduleEntry entry = null;
+		for (int i = 0; i < entries.size(); i++) {
+			entry = entries.get(i);
+			String entryDateString = entry.getEntryDate();
 			Date entryDate = null;
 			try {
 				entryDate = simpleDate.parse(entryDateString);
 				calendar.setTime(entryDate);
-				if((calendar.get(Calendar.YEAR) == currentDate.get(Calendar.YEAR)) && 
-					(calendar.get(Calendar.MONTH) == currentDate.get(Calendar.MONTH))){
-					entriesOfSelectedMonth.add(entriesInSchedule.get(i));
+				if ((calendar.get(Calendar.YEAR) == currentDate.get(Calendar.YEAR)) && (calendar.get(Calendar.MONTH) == currentDate.get(Calendar.MONTH))) {
+					entriesOfSelectedMonth.add(entry);
 				}
-			} catch (ParseException e) {
-				// TODO Auto-generated catch block
+			} catch (Exception e) {
 				e.printStackTrace();
 			}
 		}
@@ -116,7 +135,7 @@ public class ScheduleSessionBean extends IBOSessionBean implements ScheduleSessi
 	}	
 
 	public Document changeModeToWorkweekAndGetScheduleDOM(String id){
-		changeMode(id, ScheduleModel.WORKWEEK);
+		changeScheduleMode(id, ScheduleModel.WORKWEEK);
 		return getScheduleDOM(id);
 	}
 	
@@ -125,7 +144,7 @@ public class ScheduleSessionBean extends IBOSessionBean implements ScheduleSessi
 	}		
 
 	public Document changeModeToWeekAndGetScheduleDOM(String id){
-		changeMode(id, ScheduleModel.WEEK);
+		changeScheduleMode(id, ScheduleModel.WEEK);
 		return getScheduleDOM(id);
 	}
 	
@@ -133,12 +152,16 @@ public class ScheduleSessionBean extends IBOSessionBean implements ScheduleSessi
 		return getEntriesForCurrentWeek(id, false);
 	}	
 	
-	private List<CalScheduleEntry> getEntriesForCurrentWeek(String id, boolean workdaysOnly){
+	private List<CalScheduleEntry> getEntriesForCurrentWeek(String id, boolean workdaysOnly) {
+		HtmlSchedule schedule = getHtmlScheduleFromCache(id);
+		if (schedule == null) {
+			return null;
+		}
+		
 		Calendar calendar = Calendar.getInstance();
 		
 		Calendar beginingOfTheWeek = Calendar.getInstance();
-		beginingOfTheWeek.setTime(htmlSchedules.get(id).getModel().getSelectedDate());
-//		beginingOfTheWeek.setTime(htmlSchedule.getModel().getSelectedDate());
+		beginingOfTheWeek.setTime(schedule.getModel().getSelectedDate());
 		beginingOfTheWeek.set(Calendar.DAY_OF_WEEK, Calendar.MONDAY);
 		beginingOfTheWeek.set(Calendar.HOUR_OF_DAY, 0);
 		beginingOfTheWeek.set(Calendar.MINUTE, 0);
@@ -146,20 +169,13 @@ public class ScheduleSessionBean extends IBOSessionBean implements ScheduleSessi
 		beginingOfTheWeek.set(Calendar.MILLISECOND, 0);
 		
 		Calendar endOfTheWeek = Calendar.getInstance();
-		endOfTheWeek.setTime(htmlSchedules.get(id).getModel().getSelectedDate());
-//		endOfTheWeek.setTime(htmlSchedule.getModel().getSelectedDate());
-		if (workdaysOnly){
-			htmlSchedules.get(id).getModel().setMode(ScheduleModel.WORKWEEK);
-			htmlSchedules.get(id).getModel().refresh();
-//			htmlSchedule.getModel().setMode(ScheduleModel.WORKWEEK);
-//			htmlSchedule.getModel().refresh();
+		endOfTheWeek.setTime(schedule.getModel().getSelectedDate());
+		if (workdaysOnly) {
+			changeScheduleMode(id, ScheduleModel.WORKWEEK);
 			endOfTheWeek.set(Calendar.DAY_OF_WEEK, Calendar.SATURDAY);
 		}
-		else{
-			htmlSchedules.get(id).getModel().setMode(ScheduleModel.WEEK);
-			htmlSchedules.get(id).getModel().refresh();
-//			htmlSchedule.getModel().setMode(ScheduleModel.WEEK);
-//			htmlSchedule.getModel().refresh();
+		else {
+			changeScheduleMode(id, ScheduleModel.WEEK);
 			endOfTheWeek.setTimeInMillis(endOfTheWeek.getTimeInMillis()+WEEK_IN_MILLISECONDS);
 			endOfTheWeek.set(Calendar.DAY_OF_WEEK, Calendar.MONDAY);
 		}
@@ -169,46 +185,62 @@ public class ScheduleSessionBean extends IBOSessionBean implements ScheduleSessi
 		endOfTheWeek.set(Calendar.MILLISECOND, 0);			
 		
 		List<CalScheduleEntry> entriesOfSelectedWorkweek = new ArrayList<CalScheduleEntry>();
-				
-		if (simpleDate == null){
-			simpleDate = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.S"); 
+		
+		List<CalScheduleEntry> entries = getScheduleEntries(id);
+		if (entries == null) {
+			return null;
 		}
-		if(entriesInSchedule == null){
-			entriesInSchedule = new ArrayList<CalScheduleEntry>();
-		} 
-		for (int i = 0; i < entriesInSchedule.size(); i++) {
-			String entryDateString = entriesInSchedule.get(i).getEntryDate();
+		CalScheduleEntry entry = null;
+		for (int i = 0; i < entries.size(); i++) {
+			entry = entries.get(i);
+			String entryDateString = entry.getEntryDate();
 			Date entryDate = null;
 			try {
 				entryDate = simpleDate.parse(entryDateString);
 				calendar.setTime(entryDate);
-				if(beginingOfTheWeek.before(calendar) && calendar.before(endOfTheWeek)){
-					entriesOfSelectedWorkweek.add(entriesInSchedule.get(i));
+				if (beginingOfTheWeek.before(calendar) && calendar.before(endOfTheWeek)) {
+					entriesOfSelectedWorkweek.add(entry);
 				}
-			} catch (ParseException e) {
-				// TODO Auto-generated catch block
+			} catch (Exception e) {
 				e.printStackTrace();
 			}
 		}
 		return entriesOfSelectedWorkweek;		
 	}
 	
-	public Document switchToNextAndGetScheduleDOM(String id){
-		ScheduleModel model = htmlSchedules.get(id).getModel();		
-//		ScheduleModel model = htmlSchedule.getModel();		
-		switch (model.getMode()){
-			case ScheduleModel.DAY: setSelectedDateToNextDay(id); break;
-			case ScheduleModel.WORKWEEK: setSelectedDateToNextWeek(id); break;
-			case ScheduleModel.WEEK: setSelectedDateToNextWeek(id); break;
-			case ScheduleModel.MONTH: setSelectedDateToNextMonth(id); break;
+	public Document switchToNextAndGetScheduleDOM(String id) {
+		HtmlSchedule schedule = getHtmlScheduleFromCache(id);
+		if (schedule == null) {
+			return null;
 		}
+		
+		ScheduleModel model = schedule.getModel();
+		switch (model.getMode()) {
+			case ScheduleModel.DAY:
+				setSelectedDateToNextDay(id);
+				break;
+			case ScheduleModel.WORKWEEK:
+				setSelectedDateToNextWeek(id);
+				break;
+			case ScheduleModel.WEEK:
+				setSelectedDateToNextWeek(id);
+				break;
+			case ScheduleModel.MONTH:
+				setSelectedDateToNextMonth(id);
+				break;
+		}
+		
 		return getScheduleDOM(id);
 	}	
 
-	public List<CalScheduleEntry> switchToNextAndGetListOfEntries(String id){
-		ScheduleModel model = htmlSchedules.get(id).getModel();
-//		ScheduleModel model = htmlSchedule.getModel();
-		switch (model.getMode()){
+	public List<CalScheduleEntry> switchToNextAndGetListOfEntries(String id) {
+		HtmlSchedule schedule = getHtmlScheduleFromCache(id);
+		if (schedule == null) {
+			return null;
+		}
+		
+		ScheduleModel model = schedule.getModel();
+		switch (model.getMode()) {
 			case ScheduleModel.DAY: 
 				setSelectedDateToNextDay(id);
 				return changeModeToDayAndGetListOfEntries(id);
@@ -222,25 +254,42 @@ public class ScheduleSessionBean extends IBOSessionBean implements ScheduleSessi
 				setSelectedDateToNextMonth(id); 
 				return changeModeToMonthAndGetListOfEntries(id);
 		}
+		
 		return null;
 	}	
 	
-	public Document switchToPreviousAndGetScheduleDOM(String id){		
-		ScheduleModel model = htmlSchedules.get(id).getModel();
-//		ScheduleModel model = htmlSchedule.getModel();
-		switch (model.getMode()){
-			case ScheduleModel.DAY: setSelectedDateToPreviousDay(id); break;
-			case ScheduleModel.WORKWEEK: setSelectedDateToPreviousWeek(id); break;
-			case ScheduleModel.WEEK: setSelectedDateToPreviousWeek(id); break;
-			case ScheduleModel.MONTH: setSelectedDateToPreviousMonth(id); break;
+	public Document switchToPreviousAndGetScheduleDOM(String id) {
+		HtmlSchedule schedule = getHtmlScheduleFromCache(id);
+		if (schedule == null) {
+			return null;
+		}
+		
+		ScheduleModel model = schedule.getModel();
+		switch (model.getMode()) {
+			case ScheduleModel.DAY:
+				setSelectedDateToPreviousDay(id);
+				break;
+			case ScheduleModel.WORKWEEK:
+				setSelectedDateToPreviousWeek(id);
+				break;
+			case ScheduleModel.WEEK:
+				setSelectedDateToPreviousWeek(id);
+				break;
+			case ScheduleModel.MONTH:
+				setSelectedDateToPreviousMonth(id);
+				break;
 		}
 		return getScheduleDOM(id);
 	}
 
-	public List<CalScheduleEntry> switchToPreviousAndGetListOfEntries(String id){
-		ScheduleModel model = htmlSchedules.get(id).getModel();
-//		ScheduleModel model = htmlSchedule.getModel();
-		switch (model.getMode()){
+	public List<CalScheduleEntry> switchToPreviousAndGetListOfEntries(String id) {
+		HtmlSchedule schedule = getHtmlScheduleFromCache(id);
+		if (schedule == null) {
+			return null;
+		}
+		
+		ScheduleModel model = schedule.getModel();
+		switch (model.getMode()) {
 			case ScheduleModel.DAY: 
 				setSelectedDateToPreviousDay(id);
 				return changeModeToDayAndGetListOfEntries(id);
@@ -250,253 +299,461 @@ public class ScheduleSessionBean extends IBOSessionBean implements ScheduleSessi
 			case ScheduleModel.WEEK: 
 				setSelectedDateToPreviousWeek(id);
 				return changeModeToWeekAndGetListOfEntries(id);
-			case ScheduleModel.MONTH: 
+			case ScheduleModel.MONTH:
 				setSelectedDateToPreviousMonth(id); 
 				return changeModeToMonthAndGetListOfEntries(id);
 		}
 		return null;
 	}		
 	
-	private void setSelectedDateToNextDay(String id){
-		ScheduleModel model = htmlSchedules.get(id).getModel();
-//		ScheduleModel model = htmlSchedule.getModel();
+	private void setSelectedDateToNextDay(String id) {
+		HtmlSchedule schedule = getHtmlScheduleFromCache(id);
+		if (schedule == null) {
+			return;
+		}
+		
+		ScheduleModel model = schedule.getModel();
 		Date date = model.getSelectedDate();
 		date.setTime(date.getTime()+DAY_IN_MILLISECONDS);
 		model.setSelectedDate(date);
-		htmlSchedules.get(id).setModel(model);
-//		htmlSchedule.setModel(model);
+		
+		schedule.setModel(model);
+		setHtmlSchedule(id, schedule);
 	}
 	
-	private void setSelectedDateToNextWeek(String id){
-		ScheduleModel model = htmlSchedules.get(id).getModel();
-//		ScheduleModel model = htmlSchedule.getModel();
+	private void setSelectedDateToNextWeek(String id) {
+		HtmlSchedule schedule = getHtmlScheduleFromCache(id);
+		if (schedule == null) {
+			return;
+		}
+		
+		ScheduleModel model = schedule.getModel();
 		Date date = model.getSelectedDate();
 		date.setTime(date.getTime()+WEEK_IN_MILLISECONDS);
 		model.setSelectedDate(date);
-		htmlSchedules.get(id).setModel(model);
-//		htmlSchedule.setModel(model);
+		
+		schedule.setModel(model);
+		setHtmlSchedule(id, schedule);
 	}
 	
-	private void setSelectedDateToNextMonth(String id){
-		ScheduleModel model = htmlSchedules.get(id).getModel();
-//		ScheduleModel model = htmlSchedule.getModel();
+	private void setSelectedDateToNextMonth(String id) {
+		HtmlSchedule schedule = getHtmlScheduleFromCache(id);
+		if (schedule == null) {
+			return;
+		}
+		
+		ScheduleModel model = schedule.getModel();
 		Date date = model.getSelectedDate();
 		date.setTime(date.getTime()+MONTH_IN_MILLISECONDS);
 		model.setSelectedDate(date);
-		htmlSchedules.get(id).setModel(model);
-//		htmlSchedule.setModel(model);
+		
+		schedule.setModel(model);
+		setHtmlSchedule(id, schedule);
 	}
 
-	private void setSelectedDateToPreviousDay(String id){
-		ScheduleModel model = htmlSchedules.get(id).getModel();
-//		ScheduleModel model = htmlSchedule.getModel();		
+	private void setSelectedDateToPreviousDay(String id) {
+		HtmlSchedule schedule = getHtmlScheduleFromCache(id);
+		if (schedule == null) {
+			return;
+		}
+		
+		ScheduleModel model = schedule.getModel();
 		Date date = model.getSelectedDate();
 		date.setTime(date.getTime()-DAY_IN_MILLISECONDS);
 		model.setSelectedDate(date);
-		htmlSchedules.get(id).setModel(model);
-//		htmlSchedule.setModel(model);
+		
+		schedule.setModel(model);
+		setHtmlSchedule(id, schedule);
 	}
 	
-	private void setSelectedDateToPreviousWeek(String id){
-		ScheduleModel model = htmlSchedules.get(id).getModel();
-//		ScheduleModel model = htmlSchedule.getModel();
+	private void setSelectedDateToPreviousWeek(String id) {
+		HtmlSchedule schedule = getHtmlScheduleFromCache(id);
+		if (schedule == null) {
+			return;
+		}
+		
+		ScheduleModel model = schedule.getModel();
 		Date date = model.getSelectedDate();
 		date.setTime(date.getTime()-WEEK_IN_MILLISECONDS);
 		model.setSelectedDate(date);
-		htmlSchedules.get(id).setModel(model);
-//		htmlSchedule.setModel(model);
+		
+		schedule.setModel(model);
+		setHtmlSchedule(id, schedule);
 	}
 	
-	private void setSelectedDateToPreviousMonth(String id){
-		ScheduleModel model = htmlSchedules.get(id).getModel();
-//		ScheduleModel model = htmlSchedule.getModel();
+	private void setSelectedDateToPreviousMonth(String id) {
+		HtmlSchedule schedule = getHtmlScheduleFromCache(id);
+		if (schedule == null) {
+			return;
+		}
+		
+		ScheduleModel model = schedule.getModel();
 		Date date = model.getSelectedDate();
 		date.setTime(date.getTime()-MONTH_IN_MILLISECONDS);
 		model.setSelectedDate(date);
-		htmlSchedules.get(id).setModel(model);	
-//		htmlSchedule.setModel(model);	
+		
+		schedule.setModel(model);
+		setHtmlSchedule(id, schedule);
 	}
-	public Document getScheduleDOM(String id){
-		
-		
+	
+	public Document getScheduleDOM(String id) {
 		IWContext iwc = CoreUtil.getIWContext();
-		BuilderService service = null;
-		try { 
-			service = BuilderServiceFactory.getBuilderService(iwc);
-		} catch (RemoteException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+		if (iwc == null) {
 			return null;
 		}
 
+		HtmlSchedule schedule = getHtmlScheduleFromCache(id);
 		ScheduleModel scheduleModel = null;
-
-		if (htmlSchedules.get(id) == null){
-			htmlSchedules.put(id, new HtmlSchedule());
+		if (schedule == null) {
+			schedule = getHtmlSchedule(id);
 		}
-		else{
-			scheduleModel = htmlSchedules.get(id).getModel();
-		}
+		scheduleModel = schedule.getModel();
 
-//		if(htmlSchedule == null){
-//			htmlSchedule = new HtmlSchedule();
-//		}
-//		else{
-//			scheduleModel = htmlSchedule.getModel();
-//		}
-		
-		
-//		if(entriesInSchedule == null){
-//			scheduleModel = htmlSchedules.get(id).getModel();
-//		}
-//		else{ 
-		if(scheduleModel == null){
+
+		if (scheduleModel == null) {
 			scheduleModel = new SimpleScheduleModel();
 			scheduleModel.setMode(DEFAULT_MODE);
-			if(entriesInSchedule != null){
-				for (int i = 0; i < entriesInSchedule.size(); i++) {
-					CalScheduleEntry entry = entriesInSchedule.get(i);
-					DefaultScheduleEntry defaultScheduleEntry = new DefaultScheduleEntry();
-					if (simpleDate == null){
-						simpleDate = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.S");
-					}
-					if (entry.getId() != null){
-						defaultScheduleEntry.setId(entry.getId());
-					}				
-					if (entry.getEntryDate() != null){
-						defaultScheduleEntry.setStartTime(simpleDate.parse(entry.getEntryDate(), new ParsePosition(0)));
-					}
-					if (entry.getEntryEndDate() != null){
-						defaultScheduleEntry.setEndTime(simpleDate.parse(entry.getEntryEndDate(), new ParsePosition(0)));
-					}
-					if (entry.getEntryName() != null){
-						defaultScheduleEntry.setTitle(entry.getEntryName());
-					}
-					if (entry.getEntryDescription() != null){
-						defaultScheduleEntry.setDescription(entry.getEntryDescription());
-					}
-					try {
-						scheduleModel.addEntry(defaultScheduleEntry);
-					} catch (RuntimeException e) {
-						// TODO Auto-generated catch block
-	//					e.printStackTrace();
-					}
-				}			
+			
+			List<CalScheduleEntry> entries = getScheduleEntries(id);
+			if (entries == null) {
+				return null;
 			}
+			
+			CalScheduleEntry entry = null;
+			for (int i = 0; i < entries.size(); i++) {
+				entry = entries.get(i);
+				DefaultScheduleEntry defaultScheduleEntry = new DefaultScheduleEntry();
+				if (entry.getId() != null) {
+					defaultScheduleEntry.setId(entry.getId());
+				}				
+				if (entry.getEntryDate() != null) {
+					try {
+						defaultScheduleEntry.setStartTime(simpleDate.parse(entry.getEntryDate()));
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
+				}
+				if (entry.getEntryEndDate() != null) {
+					try {
+						defaultScheduleEntry.setEndTime(simpleDate.parse(entry.getEntryEndDate()));
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
+				}
+				if (entry.getEntryName() != null) {
+					defaultScheduleEntry.setTitle(entry.getEntryName());
+				}
+				if (entry.getEntryDescription() != null) {
+					defaultScheduleEntry.setDescription(entry.getEntryDescription());
+				}
+				try {
+					scheduleModel.addEntry(defaultScheduleEntry);
+				} catch (RuntimeException e) {
+					e.printStackTrace();
+					return null;
+				}
+			}
+			
 			scheduleModel.refresh();
-			htmlSchedules.get(id).setModel(scheduleModel);			
-//			htmlSchedule.setModel(scheduleModel);
+			schedule.setModel(scheduleModel);
+			setHtmlSchedule(id, schedule);
 		}
-//		htmlSchedules.get(id).setReadonly(true);
-		htmlSchedules.get(id).setReadonly(false);
-//		htmlSchedule.setReadonly(false);
+		
+		schedule.setReadonly(false);
 		Layer scheduleLayer = new Layer();
-		scheduleLayer.add(htmlSchedules.get(id));
-//		scheduleLayer.add(htmlSchedule);
-		return service.getRenderedComponent(iwc, scheduleLayer, false);
+		scheduleLayer.add(schedule);
+		return BuilderLogic.getInstance().getRenderedComponent(iwc, scheduleLayer, false);
 	}
 
-/*	
-	private List setTestEntries(){
-		List<CalScheduleEntry> entries = new ArrayList<CalScheduleEntry>();
-		for(int i = 1; i <= 3; i++){
-			CalScheduleEntry entry = new CalScheduleEntry();
-			
-			entry.setEntryDate("2007-09-08 "+(i*2+12)+":00:00.0");
-			entry.setEntryEndDate("2007-09-08 "+(i*2+13)+":00:00.0");
-			entry.setEntryName(i+"st entry name");
-			entry.setEntryDescription(i+"st entry description");
-			entry.setId(i+"st_entry_id");
-			entries.add(entry);
-		}
-		return entries;
-	}
-*/	
-	public int addEntries(List<CalScheduleEntry> entries, String id, boolean clearPreviousEntries){
-/*		
-		if(entries == null || entries.isEmpty()){
-			entries = setTestEntries();
+	public boolean addEntries(List<CalScheduleEntry> entries, String id, boolean clearPreviousEntries) {
+		if (entries == null || id == null) {
+			return false;
 		}
 		
+		HtmlSchedule schedule = getHtmlSchedule(id);
+		ScheduleModel scheduleModel = schedule.getModel();
 		
-		
-*/		
-		ScheduleModel scheduleModel = null;
-		
-		if (htmlSchedules.get(id) == null){
-//		if (htmlSchedule == null){			
-			htmlSchedules.put(id, new HtmlSchedule());
-//			htmlSchedule = new HtmlSchedule();
-		}
-		
-		scheduleModel = htmlSchedules.get(id).getModel();
-//		scheduleModel = htmlSchedule.getModel();		
-		
-		if (entriesInSchedule == null){
-			entriesInSchedule = new ArrayList<CalScheduleEntry>();
+		if (schedule == null || scheduleModel == null) {
+			return false;
 		}
 		
 		if (clearPreviousEntries) {
-			entriesInSchedule.clear();
-			scheduleModel.setMode(DEFAULT_MODE);
+			removeEntriesFromSchedule(id, scheduleModel);
 		}
 		
-		entriesInSchedule.addAll(entries);
+		List<CalScheduleEntry> parsedEntries = new ArrayList<CalScheduleEntry>();
 		
+		String startDate = null;
+		String endDate = null;
 		for (int i = 0; i < entries.size(); i++) {
 			CalScheduleEntry entry = entries.get(i);
-			entry = setLocalizedDate(entry);
-			DefaultScheduleEntry defaultScheduleEntry = new DefaultScheduleEntry();
-			if (simpleDate == null){
-				simpleDate = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.S");
+			
+			if (entry != null) {
+				startDate = entry.getEntryDate();
+				endDate = entry.getEntryEndDate();
+				
+				DefaultScheduleEntry defaultScheduleEntry = new DefaultScheduleEntry();
+				
+				//	Id
+				if (entry.getId() != null){
+					defaultScheduleEntry.setId(entry.getId());
+				}
+				
+				//	Start date
+				if (startDate != null) {
+					try {
+						defaultScheduleEntry.setStartTime(simpleDate.parse(startDate));
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
+				}
+				
+				//	End date
+				if (endDate != null) {
+					try {
+						defaultScheduleEntry.setEndTime(simpleDate.parse(endDate));
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
+				}
+				
+				//	Name
+				if (entry.getEntryName() != null) {
+					defaultScheduleEntry.setTitle(entry.getEntryName());
+				}
+				
+				//	Description
+				if (entry.getEntryDescription() != null) {
+					defaultScheduleEntry.setDescription(entry.getEntryDescription());
+				}		
+				
+				scheduleModel.addEntry(defaultScheduleEntry);
+				parsedEntries.add(entry);
 			}
-			if (entry.getId() != null){
-				defaultScheduleEntry.setId(entry.getId());
-			}
-			if (entry.getEntryDate() != null){
-				defaultScheduleEntry.setStartTime(simpleDate.parse(entry.getEntryDate(), new ParsePosition(0)));
-			}
-			if (entry.getEntryEndDate() != null){
-				defaultScheduleEntry.setEndTime(simpleDate.parse(entry.getEntryEndDate(), new ParsePosition(0)));
-			}
-			if (entry.getEntryName() != null){
-				defaultScheduleEntry.setTitle(entry.getEntryName());
-			}
-			if (entry.getEntryDescription() != null){
-				defaultScheduleEntry.setDescription(entry.getEntryDescription());
-			}			
-			scheduleModel.addEntry(defaultScheduleEntry);
-		}			
+		}
 	
+		//	Storing schedule entries
+		setEntriesForSchedule(id, parsedEntries);
+		
+		//	Refreshing schedule
 		scheduleModel.refresh();
-		if (htmlSchedules.get(id) == null){
-//		if (htmlSchedule == null){		
-			htmlSchedules.put(id, new HtmlSchedule());			
-//			htmlSchedule = new HtmlSchedule();
-		}
-		htmlSchedules.get(id).setModel(scheduleModel);		
-//		htmlSchedule.setModel(scheduleModel);		
-		return 0;
-	}	
-	
-	private CalScheduleEntry setLocalizedDate(CalScheduleEntry entry){
-		IWContext iwc = IWContext.getInstance();
-		if (localizedDate == null)
-			localizedDate = (SimpleDateFormat)DateFormat.getDateInstance(DateFormat.DEFAULT, iwc.getLocale());
-		if (simpleDate == null){
-			simpleDate = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.S");
-		}
+		schedule.setModel(scheduleModel);
+		setHtmlSchedule(id, schedule);
 		
-		Date date = simpleDate.parse(entry.getEntryDate(), new ParsePosition(0));
-		entry.setLocalizedEntryDate(localizedDate.format(date));
-		date = simpleDate.parse(entry.getEntryEndDate(), new ParsePosition(0));
-		entry.setLocalizedEntryEndDate(localizedDate.format(date));
-		
-		return entry;
+		return true;
 	}
 	
 	public List<CalScheduleEntry> getListOfEntries(String id){
 		return changeModeToMonthAndGetListOfEntries(id);
+	}
+	
+	@SuppressWarnings("unchecked")
+	private Map<String, List<CalScheduleEntry>> getScheduleEntriesCache() {
+		IWCacheManager2 cacheManager = IWCacheManager2.getInstance(IWMainApplication.getDefaultIWMainApplication());
+		if (cacheManager == null) {
+			return null;
+		}
+		
+		
+		Object o = null;
+		try {
+			o = cacheManager.getCache("entriesOfCalScheduleForCalendarViewerCache", 10000, true, false, TIME_TO_LIVE_FOR_CACHE, TIME_TO_LIVE_FOR_CACHE);
+		} catch(Exception e) {
+			e.printStackTrace();
+			return null;
+		}
+		
+		if (o instanceof Map) {
+			return (Map) o;
+		}
+		
+		return null;
+	}
+	
+	private boolean setEntriesForSchedule(String id, List<CalScheduleEntry> entries) {
+		return setEntriesForSchedule(id, entries, true);
+	}
+	
+	private boolean setEntriesForSchedule(String id, List<CalScheduleEntry> entries, boolean append) {
+		Map<String, List<CalScheduleEntry>> cache = getScheduleEntriesCache();
+		if (cache == null) {
+			return false;
+		}
+		
+		if (append && entries != null) {
+			try {
+				List<CalScheduleEntry> currentEntries = cache.get(id);
+				if (currentEntries == null) {
+					currentEntries = new ArrayList<CalScheduleEntry>(entries);
+				}
+				else {
+					currentEntries.addAll(entries);
+				}
+				return setEntriesForSchedule(id, currentEntries, false);
+			} catch(Exception e) {
+				e.printStackTrace();
+				return false;
+			}
+		}
+		
+		try {
+			cache.put(id, entries);
+		} catch(Exception e) {
+			e.printStackTrace();
+			return false;
+		}
+	
+		return true;
+	}
+	
+	private List<CalScheduleEntry> getScheduleEntries(String id) {
+		if (id == null) {
+			return null;
+		}
+		
+		Map<String, List<CalScheduleEntry>> cache = getScheduleEntriesCache();
+		if (cache == null) {
+			return null;
+		}
+		
+		try {
+			return cache.get(id);
+		} catch(Exception e) {
+			e.printStackTrace();
+			return null;
+		}
+	}
+	
+	@SuppressWarnings("unchecked")
+	private boolean removeEntriesFromSchedule(String id, ScheduleModel scheduleModel) {
+		if (scheduleModel != null) {
+			ScheduleDay day = null;
+			Object o = null;
+			List<ScheduleEntry> oldEntries = new ArrayList<ScheduleEntry>();
+			for (int i = 0; i < scheduleModel.size(); i++) {
+				o = scheduleModel.get(i);
+				if (o instanceof ScheduleDay) {
+					day = (ScheduleDay) o;
+					Iterator dayEntries = day.iterator();
+					if (dayEntries != null) {
+						Object oo = null;
+						for (Iterator it = dayEntries; it.hasNext();) {
+							oo = it.next();
+							if (oo instanceof ScheduleEntry) {
+								oldEntries.add((ScheduleEntry) oo);
+							}
+						}
+					}
+				}
+			}
+			for (int i = 0; i < oldEntries.size(); i++) {
+				scheduleModel.removeEntry(oldEntries.get(i));
+			}
+			
+			scheduleModel.setMode(DEFAULT_MODE);
+			setHtmlSchedule(id, getHtmlSchedule(id));
+		}
+		
+		return setEntriesForSchedule(id, new ArrayList<CalScheduleEntry>(), false);
+	}
+	
+	@SuppressWarnings("unchecked")
+	private Map<String, HtmlSchedule> getHtmlScheduleCache() {
+		IWCacheManager2 cacheManager = IWCacheManager2.getInstance(IWMainApplication.getDefaultIWMainApplication());
+		if (cacheManager == null) {
+			return null;
+		}
+		
+		
+		Object o = null;
+		try {
+			o = cacheManager.getCache("entriesOfHtmlScheduleForCalendarViewerCache", 10000, true, false, TIME_TO_LIVE_FOR_CACHE, TIME_TO_LIVE_FOR_CACHE);
+		} catch(Exception e) {
+			e.printStackTrace();
+			return null;
+		}
+		
+		if (o instanceof Map) {
+			return (Map) o;
+		}
+		
+		return null;
+	}
+	
+	private HtmlSchedule getHtmlScheduleFromCache(String id) {
+		if (id == null) {
+			return null;
+		}
+		
+		Map<String, HtmlSchedule> cache = getHtmlScheduleCache();
+		if (cache == null) {
+			return null;
+		}
+		
+		try {
+			return cache.get(id);
+		} catch(Exception e) {
+			e.printStackTrace();
+			return null;
+		}
+	}
+	
+	private boolean setHtmlSchedule(String id, HtmlSchedule schedule) {
+		if (id == null) {
+			return false;
+		}
+		
+		Map<String, HtmlSchedule> cache = getHtmlScheduleCache();
+		if (cache == null) {
+			return false;
+		}
+		
+		try {
+			cache.put(id, schedule);
+		} catch(Exception e) {
+			e.printStackTrace();
+			return false;
+		}
+		
+		return true;
+	}
+	
+	private HtmlSchedule getHtmlSchedule(String id) {
+		HtmlSchedule schedule = getHtmlScheduleFromCache(id);
+		if (schedule == null) {
+			schedule = new HtmlSchedule();
+			
+			ScheduleModel model = new SimpleScheduleModel();
+			model.setSelectedDate(new Date(System.currentTimeMillis()));
+			model.setMode(DEFAULT_MODE);
+			model.refresh();
+			schedule.setModel(model);
+			
+			setHtmlSchedule(id, schedule);
+		}
+		return schedule;
+	}
+	
+	public boolean addCalendarEntryForInfoWindow(CalScheduleEntry entry) {
+		if (entry == null) {
+			return false;
+		}
+		
+		this.entry = entry;
+		
+		return true;
+	}
+	
+	public CalScheduleEntry getCalendarEntryForInfoWindow(String id) {
+		if (id == null) {
+			return null;
+		}
+		
+		if (id.equals(entry.getId())) {
+			return entry;
+		}
+		
+		return null;
 	}
 	
 }

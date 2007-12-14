@@ -440,13 +440,13 @@ public class CalServiceBean implements CalService {
 			return null;
 		}
 		
-		boolean useCache = cacheTime == null ? false : true;
+		/*boolean useCache = cacheTime == null ? false : true;
 		if (useCache) {
 			List<CalScheduleEntry> entriesFromCache = getCalendarEntriesFromCache(iwc, instanceId);
 			if (entriesFromCache != null) {
 				return entriesFromCache;
 			}
-		}
+		}*/
 		
 		CalBusiness calBusiness = getCalBusiness(iwc);
 		if (calBusiness == null) {
@@ -511,9 +511,9 @@ public class CalServiceBean implements CalService {
 		allEntries = getFilteredEntries(entriesByLedgers, allEntries);
 		
 		List<CalScheduleEntry> entries = getConvertedEntries(allEntries, iwc.getCurrentLocale());
-		if (useCache) {
+		/*if (useCache) {
 			addCalendarEntriesToCache(iwc, instanceId, entries);
-		}
+		}*/
 		
 		return entries;
 	}

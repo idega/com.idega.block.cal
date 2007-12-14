@@ -4,6 +4,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -16,8 +17,6 @@ import org.apache.myfaces.custom.schedule.model.SimpleScheduleModel;
 import org.jdom.Document;
 
 import com.idega.builder.business.BuilderLogic;
-import com.idega.core.cache.IWCacheManager2;
-import com.idega.idegaweb.IWMainApplication;
 import com.idega.presentation.IWContext;
 import com.idega.presentation.Layer;
 import com.idega.util.CoreUtil;
@@ -31,13 +30,13 @@ public class ScheduleSessionBean implements ScheduleSession {
 	private static final long DAY_IN_MILLISECONDS = 1000 * 60 * 60 * 24;
 	private static final long WEEK_IN_MILLISECONDS = DAY_IN_MILLISECONDS * 7;
 	private static final long MONTH_IN_MILLISECONDS = DAY_IN_MILLISECONDS * 31;
-	
-	//	Cache time - 24 hours
-	private static final long TIME_TO_LIVE_FOR_CACHE = 24 * 60 * 60;
 
 	private static final int DEFAULT_MODE = ScheduleModel.MONTH;
 	
 	private CalScheduleEntry entry = null;
+	
+	private Map<String, List<CalScheduleEntry>> scheduleEntries = null;
+	private Map<String, HtmlSchedule> schedules = null;
 	
 	public ScheduleSessionBean() {
 		getHtmlScheduleCache();
@@ -548,26 +547,12 @@ public class ScheduleSessionBean implements ScheduleSession {
 	}
 	
 	@SuppressWarnings("unchecked")
-	private Map<String, List<CalScheduleEntry>> getScheduleEntriesCache() {
-		IWCacheManager2 cacheManager = IWCacheManager2.getInstance(IWMainApplication.getDefaultIWMainApplication());
-		if (cacheManager == null) {
-			return null;
+	private Map<String, List<CalScheduleEntry>> getScheduleEntriesCache() {		
+		if (scheduleEntries == null) {
+			scheduleEntries = new HashMap<String, List<CalScheduleEntry>>();
 		}
 		
-		
-		Object o = null;
-		try {
-			o = cacheManager.getCache("entriesOfCalScheduleForCalendarViewerCache", 10000, true, false, TIME_TO_LIVE_FOR_CACHE, TIME_TO_LIVE_FOR_CACHE);
-		} catch(Exception e) {
-			e.printStackTrace();
-			return null;
-		}
-		
-		if (o instanceof Map) {
-			return (Map) o;
-		}
-		
-		return null;
+		return scheduleEntries;
 	}
 	
 	private boolean setEntriesForSchedule(String id, List<CalScheduleEntry> entries) {
@@ -659,25 +644,11 @@ public class ScheduleSessionBean implements ScheduleSession {
 	
 	@SuppressWarnings("unchecked")
 	private Map<String, HtmlSchedule> getHtmlScheduleCache() {
-		IWCacheManager2 cacheManager = IWCacheManager2.getInstance(IWMainApplication.getDefaultIWMainApplication());
-		if (cacheManager == null) {
-			return null;
+		if (schedules == null) {
+			schedules = new HashMap<String, HtmlSchedule>();
 		}
 		
-		
-		Object o = null;
-		try {
-			o = cacheManager.getCache("entriesOfHtmlScheduleForCalendarViewerCache", 10000, true, false, TIME_TO_LIVE_FOR_CACHE, TIME_TO_LIVE_FOR_CACHE);
-		} catch(Exception e) {
-			e.printStackTrace();
-			return null;
-		}
-		
-		if (o instanceof Map) {
-			return (Map) o;
-		}
-		
-		return null;
+		return schedules;
 	}
 	
 	private HtmlSchedule getHtmlScheduleFromCache(String id) {

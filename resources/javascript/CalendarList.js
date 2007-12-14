@@ -503,6 +503,7 @@ var ENTRY_IN_SCHEDULE_STYLE_CLASS = 'scheduleEntry';
 					pack.push(entries[i]);
 				}
 			}
+			//lala
 			else {
 				for (var i = 0; i < entries.length; i++) {
 					pack.push(entries[i]);

@@ -174,7 +174,6 @@ function reloadPropertiesForCalendarViewer(instanceId, containerId, message) {
 	CalService.reloadProperties(instanceId, {
 		callback: function(properties) {
 			if (properties == null) {
-				alert('no prop!');
 				closeAllLoadingMessages();
 				return false;
 			}

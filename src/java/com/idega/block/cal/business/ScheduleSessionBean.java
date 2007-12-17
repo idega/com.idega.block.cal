@@ -7,6 +7,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import org.apache.myfaces.custom.schedule.model.DefaultScheduleEntry;
@@ -20,6 +21,7 @@ import com.idega.builder.business.BuilderLogic;
 import com.idega.presentation.IWContext;
 import com.idega.presentation.Layer;
 import com.idega.util.CoreUtil;
+import com.idega.util.IWTimestamp;
 
 public class ScheduleSessionBean implements ScheduleSession {
 
@@ -715,8 +717,77 @@ public class ScheduleSessionBean implements ScheduleSession {
 		return true;
 	}
 	
+	@SuppressWarnings("unchecked")
+	public CalScheduleEntry getCalendarEntry(String entryId, String scheduleId, Locale locale) {
+		if (entryId == null || scheduleId == null) {
+			return null;
+		}
+		
+		HtmlSchedule schedule = getHtmlSchedule(scheduleId);
+		if (schedule == null) {
+			return null;
+		}
+		ScheduleModel model = schedule.getModel();
+		if (model == null) {
+			return null;
+		}
+		
+		Iterator days = model.iterator();
+		if (days == null) {
+			return null;
+		}
+		
+		Object o = null;
+		Object oo = null;
+		DefaultScheduleEntry entry = null;
+		ScheduleDay day = null;
+		for (Iterator it = days; (it.hasNext() && entry == null);) {
+			o = it.next();
+			if (o instanceof ScheduleDay) {
+				day = (ScheduleDay) o;
+				
+				Iterator entries = day.iterator();
+				if (entries != null) {
+					for (Iterator itt = entries; (itt.hasNext() && entry == null);) {
+						oo = itt.next();
+						if (oo instanceof DefaultScheduleEntry) {
+							entry = (DefaultScheduleEntry) oo;
+							if (!(entryId.equals(entry.getId()))) {
+								entry = null;
+							}
+						}
+					}
+				}
+			}
+		}
+		
+		if (entry == null) {
+			return null;
+		}
+		
+		if (locale == null) {
+			locale = Locale.ENGLISH;
+		}
+		CalScheduleEntry info = new CalScheduleEntry();
+		IWTimestamp date = new IWTimestamp(entry.getStartTime());
+		IWTimestamp endDate = new IWTimestamp(entry.getEndTime());
+		
+		info.setId(String.valueOf(entry.getId()));
+		info.setEntryName(entry.getTitle());
+		
+		info.setEntryDate(date.getDateString(CalendarConstants.DATE_PATTERN));
+		info.setEntryEndDate(endDate.getDateString(CalendarConstants.DATE_PATTERN));
+		
+		info.setEntryTime(date.getLocaleTime(locale));
+		info.setEntryEndTime(endDate.getLocaleTime(locale));
+		
+		info.setEntryDescription(entry.getDescription());
+		
+		return info;
+	}
+	
 	public CalScheduleEntry getCalendarEntryForInfoWindow(String id) {
-		if (id == null) {
+		if (id == null || entry == null) {
 			return null;
 		}
 		

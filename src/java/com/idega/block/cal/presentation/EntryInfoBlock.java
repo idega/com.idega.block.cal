@@ -30,8 +30,12 @@ public class EntryInfoBlock extends Block {
 		
 		CalScheduleEntry entry = schedule.getCalendarEntryForInfoWindow(entryId);
 		if (entry == null) {
-			addNoEntryLabelToContainer(iwc, main);
-			return;
+			entry = schedule.getCalendarEntry(entryId, iwc.getParameter("schedule"), iwc.getCurrentLocale());
+			
+			if (entry == null) {
+				addNoEntryLabelToContainer(iwc, main);
+				return;
+			}
 		}
 		
 		main.add(new Heading1(entry.getEntryName()));

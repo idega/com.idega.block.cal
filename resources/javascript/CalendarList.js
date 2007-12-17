@@ -433,18 +433,33 @@ var ENTRY_IN_SCHEDULE_STYLE_CLASS = 'scheduleEntry';
 				}
 			}
 			
-			ScheduleSession.addCalendarEntryForInfoWindow(clickedEntryObject, {
-				callback: function(result) {
-					if (!result) {
-						return false;
+			if (clickedEntryObject == null) {
+				viewCalendarEntryInfoInMoodalbox(clickedEntryId, scheduleId);
+			}
+			else {
+				ScheduleSession.addCalendarEntryForInfoWindow(clickedEntryObject, {
+					callback: function(result) {
+						if (!result) {
+							return false;
+						}
+						
+						viewCalendarEntryInfoInMoodalbox(clickedEntryId, null);
 					}
-					
-					var link = CALENDAR_ENTRY_INFO_WINDOW_LINK + '&'+entryIdText+'=' + clickedEntryId;
-					MOOdalBox.init({resizeDuration: 50, evalScripts: true, animateCaption: false});
-					var result = MOOdalBox.open(link, CALENDAR_ENTRY_INFO_WINDOW_TITLE, '700 300');
-				}
-			});
+				});
+			}
 		});
+	}
+	
+	function viewCalendarEntryInfoInMoodalbox(clickedEntryId, scheduleId) {
+		var entryIdText = 'entryid';
+		
+		var link = CALENDAR_ENTRY_INFO_WINDOW_LINK + '&'+entryIdText+'=' + clickedEntryId;
+		if (scheduleId != null) {
+			link += '&schedule=' + scheduleId;
+		}
+		
+		MOOdalBox.init({resizeDuration: 50, evalScripts: true, animateCaption: false});
+		var result = MOOdalBox.open(link, CALENDAR_ENTRY_INFO_WINDOW_TITLE, '700 300');
 	}
 	
 	//	Setting behaviour on entries in schedule

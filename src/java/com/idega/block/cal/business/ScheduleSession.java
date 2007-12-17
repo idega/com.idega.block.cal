@@ -3,6 +3,7 @@ package com.idega.block.cal.business;
 
 import java.rmi.RemoteException;
 import java.util.List;
+import java.util.Locale;
 
 import org.jdom.Document;
 
@@ -89,5 +90,7 @@ public interface ScheduleSession {
 	public boolean addCalendarEntryForInfoWindow(CalScheduleEntry entry);
 	
 	public CalScheduleEntry getCalendarEntryForInfoWindow(String id);
+	
+	public CalScheduleEntry getCalendarEntry(String entryId, String scheduleId, Locale locale);
 }
 

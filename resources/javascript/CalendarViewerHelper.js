@@ -12,7 +12,7 @@ var CALENDAR_NO_EVENTS_TEXT = 'Sorry, there are no events created.';
 var CALENDAR_NO_LEDGERS_TEXT = 'Sorry, there are no ledgers created.';
 var CALENDAR_ENTRY_INFO_WINDOW_TITLE = 'Calendar entry information';
 
-var CALENDAR_ENTRY_INFO_WINDOW_LINK = '/servlet/ObjectInstanciator?idegaweb_instance_class=com.idega.block.cal.presentation.EntryInfoBlock';
+var CALENDAR_ENTRY_INFO_WINDOW_LINK = '/servlet/ObjectInstanciator?idegaweb_instance_class=com.idega.block.cal.presentation.CalendarEntryInfoBlock';
 
 function getSimpleCalendarTypes(server, login, password, remoteMode, containerId, selectedEventTypes) {
 	if (containerId == null) {
@@ -144,7 +144,18 @@ function addAdvancedPropertiesForCalendar(properties, containerId, selectedPrope
 		});
 		
 		var isSelected = existsElementInArray(selectedProperties, properties[i].id);
+		if (events) {
+			isSelected = true;
+		}
+		
 		if (isSelected) {
+			var key = CALENDAR_LEDGER_ADVANCED_PROPERTY_NAME;
+			if (events) {
+				key = CALENDAR_EVENT_ADVANCED_PROPERTY_NAME;
+			}
+			var ids = groups_chooser_helper.getAdvancedProperty(key);
+			addElementValueForAdvancedProperty(ids, key, properties[i].id);
+			
 			checkBox.checked = true;
 		}
 		checkBox.injectInside(propertyContainer);

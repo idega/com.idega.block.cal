@@ -132,6 +132,7 @@ public class ScheduleSessionBean implements ScheduleSession {
 				e.printStackTrace();
 			}
 		}
+		
 		return entriesOfSelectedMonth;
 	}	
 
@@ -484,6 +485,15 @@ public class ScheduleSessionBean implements ScheduleSession {
 		
 		List<CalScheduleEntry> parsedEntries = new ArrayList<CalScheduleEntry>();
 		
+		Locale locale = null;
+		IWContext iwc = CoreUtil.getIWContext();
+		if (iwc != null) {
+			locale = iwc.getCurrentLocale();
+		}
+		if (locale == null) {
+			locale = Locale.ENGLISH;
+		}
+		
 		String startDate = null;
 		String endDate = null;
 		for (int i = 0; i < entries.size(); i++) {
@@ -492,6 +502,9 @@ public class ScheduleSessionBean implements ScheduleSession {
 			if (entry != null) {
 				startDate = entry.getEntryDate();
 				endDate = entry.getEntryEndDate();
+				
+				setLocalizedDate(entry, startDate, locale, true);
+				setLocalizedDate(entry, endDate, locale, false);
 				
 				DefaultScheduleEntry defaultScheduleEntry = new DefaultScheduleEntry();
 				
@@ -796,6 +809,36 @@ public class ScheduleSessionBean implements ScheduleSession {
 		}
 		
 		return null;
+	}
+	
+	public String[] getLocalizedDateAndTime(String date, Locale locale) {
+		if (date == null || locale == null) {
+			return null;
+		}
+		
+		IWTimestamp timestamp = new IWTimestamp(date);
+		
+		String[] localizations = new String[2];
+		localizations[0] = timestamp.getLocaleDate(locale);
+		localizations[1] = timestamp.getLocaleTime(locale, 3);
+	
+		return localizations;
+	}
+	
+	private void setLocalizedDate(CalScheduleEntry entry, String date, Locale locale, boolean startTime) {
+		String[] localizedTime = getLocalizedDateAndTime(date, locale);
+		if (localizedTime == null) {
+			return;
+		}
+		
+		if (startTime) {
+			entry.setLocalizedDate(localizedTime[0]);
+			entry.setLocalizedTime(localizedTime[1]);
+		}
+		else {
+			entry.setLocalizedEndDate(localizedTime[0]);
+			entry.setLocalizedEndTime(localizedTime[1]);
+		}
 	}
 	
 }

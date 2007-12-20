@@ -12,9 +12,8 @@ import com.idega.presentation.Layer;
 import com.idega.presentation.text.Heading1;
 import com.idega.presentation.text.Heading2;
 import com.idega.util.CoreConstants;
-import com.idega.util.IWTimestamp;
 
-public class EntryInfoBlock extends Block {
+public class CalendarEntryInfoBlock extends Block {
 	
 	public void main(IWContext iwc) throws Exception {
 		Layer main = new Layer();
@@ -47,15 +46,14 @@ public class EntryInfoBlock extends Block {
 		
 		String startDate = entry.getEntryDate();
 		String startTime = null;
-		IWTimestamp date = null;
 		if (startDate == null) {
 			startDate = CoreConstants.SPACE;
 			startTime = CoreConstants.EMPTY;
 		}
 		else {
-			date = new IWTimestamp(startDate);
-			startDate = date.getLocaleDate(locale);
-			startTime = date.getLocaleTime(locale);
+			String[] start = schedule.getLocalizedDateAndTime(startDate, locale);
+			startDate = start[0];
+			startTime = start[1];
 		}
 		
 		String endDate = entry.getEntryEndDate();
@@ -65,13 +63,20 @@ public class EntryInfoBlock extends Block {
 			endTime = CoreConstants.EMPTY;
 		}
 		else {
-			date = new IWTimestamp(endDate);
-			endDate = date.getLocaleDate(locale);
-			endTime = date.getLocaleTime(locale);
+			String[] end = schedule.getLocalizedDateAndTime(endDate, locale);
+			endDate = end[0];
+			endTime = end[1];
 		}
 		
-		StringBuffer datesText = new StringBuffer(startDate).append(CoreConstants.SPACE).append(startTime).append(CoreConstants.SPACE).append(CoreConstants.MINUS);
-		datesText.append(CoreConstants.SPACE).append(endDate).append(CoreConstants.SPACE).append(endTime);
+		StringBuffer datesText = new StringBuffer(startDate);
+		if (startDate.equals(endDate)) {
+			datesText.append(CoreConstants.COLON).append(CoreConstants.SPACE).append(startTime).append(CoreConstants.SPACE).append(CoreConstants.MINUS);
+			datesText.append(CoreConstants.SPACE).append(endTime);
+		}
+		else {
+			datesText.append(CoreConstants.SPACE).append(startTime).append(CoreConstants.SPACE).append(CoreConstants.MINUS);
+			datesText.append(CoreConstants.SPACE).append(endDate).append(CoreConstants.SPACE).append(endTime);
+		}
 		dates.add(new Heading2(datesText.toString()));
 		
 		Layer description = new Layer();

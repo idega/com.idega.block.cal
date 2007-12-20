@@ -15,7 +15,7 @@ import com.idega.block.cal.bean.CalendarManagerBean;
 import com.idega.block.cal.data.CalendarEntry;
 import com.idega.block.cal.data.CalendarEntryType;
 import com.idega.block.cal.data.CalendarLedger;
-import com.idega.block.cal.presentation.EntryInfoBlock;
+import com.idega.block.cal.presentation.CalendarEntryInfoBlock;
 import com.idega.builder.bean.AdvancedProperty;
 import com.idega.builder.business.BuilderLogic;
 import com.idega.business.IBOLookup;
@@ -305,7 +305,7 @@ public class CalServiceBean implements CalService {
 		info.add(CalendarConstants.SCHEDULE_ENTRY_STYLE_CLASS);											//	25
 		
 		BuilderLogic builder = BuilderLogic.getInstance();
-		info.add(builder.getUriToObject(EntryInfoBlock.class));											//	26
+		info.add(builder.getUriToObject(CalendarEntryInfoBlock.class));									//	26
 		
 		info.add(iwrb.getLocalizedString("calendar_entry_info", "Calendar entry information"));			//	27
 		

@@ -356,31 +356,43 @@ var ENTRY_IN_SCHEDULE_STYLE_CLASS = 'scheduleEntry';
 			entryLink.injectInside(entryContainer);
 			var entryText = entry.entryName;
 			if (extendedProperties.properties.showTime) {
-				var startDate = entry.localizedEntryDate;
+				var startDate = entry.localizedDate;
 				if (startDate == null) {
 					startDate = entry.entryDate;
 					if (startDate == null) {
 						startDate = '';
 					}
 				}
-				var startTime = entry.entryTime;
+				var startTime = entry.localizedTime;
 				if (startTime == null) {
-					startTime = '';
+					startTime = entry.entryTime;
+					if (startTime == null) {
+						startTime = '';
+					}
 				}
 				
-				var endDate = entry.localizedEntryEndDate;
+				var endDate = entry.localizedEndDate;
 				if (endDate == null) {
 					endDate = entry.entryEndDate;
 					if (endDate == null) {
 						endDate = '';
 					}
 				}
-				var endTime = entry.entryEndTime;
+				var endTime = entry.localizedEndTime;
 				if (endTime == null) {
-					endTime = '';
+					endTime = entry.entryEndTime;
+					if (endTime == null) {
+						endTime = '';
+					}
 				}
 				
-				entryText += ' ' + startDate + ' ' + startTime + ' - ' + endDate + ' ' + endTime;
+				entryText += ' ';
+				if (startDate == endDate) {
+					entryText += startDate + ': ' + startTime + ' - ' + endTime;
+				}
+				else {
+				  entryText += startDate + ' ' + startTime + ' - ' + endDate + ' ' + endTime;
+				}
 			}
 			entryLink.setText(entryText);
 			entryLink.setProperty('href', 'javascript:void(0)');

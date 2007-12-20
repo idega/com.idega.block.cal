@@ -92,5 +92,7 @@ public interface ScheduleSession {
 	public CalScheduleEntry getCalendarEntryForInfoWindow(String id);
 	
 	public CalScheduleEntry getCalendarEntry(String entryId, String scheduleId, Locale locale);
+	
+	public String[] getLocalizedDateAndTime(String date, Locale locale);
 }
 

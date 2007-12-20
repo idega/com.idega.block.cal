@@ -4,12 +4,19 @@ public class CalScheduleEntry {
 	
 	private String id = null;
 	private String entryName = null;
+	
 	private String entryDate = null;
-	private String localizedEntryDate = null;
+	private String localizedDate = null;
+	
 	private String entryEndDate = null;	
-	private String localizedEntryEndDate = null;	
+	private String localizedEndDate = null;	
+	
 	private String entryTime = null;
+	private String localizedTime = null;
+	
 	private String entryEndTime = null;
+	private String localizedEndTime = null;
+	
 	private String repeat = null;
 	private String entryTypeName = null;
 	private String entryDescription = null;
@@ -68,16 +75,29 @@ public class CalScheduleEntry {
 	public void setId(String id) {
 		this.id = id;
 	}
-	public String getLocalizedEntryDate() {
-		return localizedEntryDate;
+	public String getLocalizedDate() {
+		return localizedDate;
 	}
-	public void setLocalizedEntryDate(String localizedEntryDate) {
-		this.localizedEntryDate = localizedEntryDate;
+	public void setLocalizedDate(String localizedDate) {
+		this.localizedDate = localizedDate;
 	}
-	public String getLocalizedEntryEndDate() {
-		return localizedEntryEndDate;
+	public String getLocalizedEndDate() {
+		return localizedEndDate;
 	}
-	public void setLocalizedEntryEndDate(String localizedEntryEndDate) {
-		this.localizedEntryEndDate = localizedEntryEndDate;
+	public void setLocalizedEndDate(String localizedEndDate) {
+		this.localizedEndDate = localizedEndDate;
 	}
+	public String getLocalizedTime() {
+		return localizedTime;
+	}
+	public void setLocalizedTime(String localizedTime) {
+		this.localizedTime = localizedTime;
+	}
+	public String getLocalizedEndTime() {
+		return localizedEndTime;
+	}
+	public void setLocalizedEndTime(String localizedEndTime) {
+		this.localizedEndTime = localizedEndTime;
+	}
+	
 }

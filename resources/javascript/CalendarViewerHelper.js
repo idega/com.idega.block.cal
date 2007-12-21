@@ -19,6 +19,8 @@ function getSimpleCalendarTypes(server, login, password, remoteMode, containerId
 		return false;
 	}
 	
+	checkOtherProperties(null);
+	
 	CALENDAR_EVENTS_CONTAINER_ID = containerId;
 	
 	if (remoteMode) {
@@ -55,6 +57,8 @@ function getSimpleCalendarLedgers(server, login, password, remoteMode, container
 	if (containerId == null) {
 		return false;
 	}
+	
+	checkOtherProperties(null);
 	
 	CALENDAR_LEDGERS_CONTAINER_ID = containerId;
 	
@@ -141,10 +145,12 @@ function addAdvancedPropertiesForCalendar(properties, containerId, selectedPrope
 			
 			var spanElement = $(this).getNext();
 			spanElement.setStyle('font-weight', fontWeightValue);
+			
+			checkOtherProperties(null);
 		});
 		
 		var isSelected = existsElementInArray(selectedProperties, properties[i].id);
-		if (events) {
+		if (events && (selectedProperties == null || selectedProperties.length == 0)) {
 			isSelected = true;
 		}
 		
@@ -181,28 +187,38 @@ function reloadPropertiesForCalendarViewer(instanceId, containerId, message) {
 	closeAllLoadingMessages();
 	showLoadingMessage(message);
 	
-	prepareDwr(CalService, getDefaultDwrPath());
-	CalService.reloadProperties(instanceId, {
-		callback: function(properties) {
-			if (properties == null) {
-				closeAllLoadingMessages();
-				return false;
-			}
-			
-			var dwrCallPath = getDefaultDwrPath();
-			var dwrCallType = dwr.engine.XMLHttpRequest;
-			if (properties.remoteMode) {
-				dwrCallPath = properties.server + dwrCallPath;
-				dwrCallType = dwr.engine.ScriptTag;
-			}
-			prepareDwr(CalService, dwrCallPath);
-			CalService.removeCelandarEntriesFromCache(instanceId, {
-				callback: function(result) {
-					closeAllLoadingMessages();
+	prepareDwr(ScheduleSession, getDefaultDwrPath());
+	ScheduleSession.removeCalendar(instanceId, {
+		callback: function(result) {
+			prepareDwr(CalService, getDefaultDwrPath());
+			CalService.reloadProperties(instanceId, {
+				callback: function(properties) {
+					if (properties == null) {
+						closeAllLoadingMessages();
+						var reloadPageCustomEvent = function() {
+							reloadPage();
+						}
+						MOOdalBox.addEventToCloseAction(reloadPageCustomEvent);
+						return false;
+					}
 					
-					loadCalendarViewer(containerId, instanceId, message);
+					var dwrCallPath = getDefaultDwrPath();
+					var dwrCallType = dwr.engine.XMLHttpRequest;
+					if (properties.remoteMode) {
+						dwrCallPath = properties.server + dwrCallPath;
+						dwrCallType = dwr.engine.ScriptTag;
+					}
+					prepareDwr(CalService, dwrCallPath);
+					CalService.removeCelandarEntriesFromCache(instanceId, {
+						callback: function(result) {
+							closeAllLoadingMessages();
+							
+							loadCalendarViewer(containerId, instanceId, message);
+						},
+						rpcType: dwrCallType
+					});
 				},
-				rpcType: dwrCallType
+				rpcType: dwr.engine.XMLHttpRequest
 			});
 		},
 		rpcType: dwr.engine.XMLHttpRequest

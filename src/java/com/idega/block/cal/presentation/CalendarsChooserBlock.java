@@ -23,6 +23,7 @@ public class CalendarsChooserBlock extends Block {
 		Layer main = new Layer();
 		
 		GroupsChooserBlock groupsChooser = new GroupsChooserBlock();
+		groupsChooser.setExecuteScriptOnLoad(false);
 		groupsChooser.setSpecialMarkForRadioButton("calendar");
 		groupsChooser.setStyleClass("groupsLayerStyleClass");
 		groupsChooser.setPropertiesBean(properties);

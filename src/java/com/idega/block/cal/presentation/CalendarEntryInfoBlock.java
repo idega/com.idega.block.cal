@@ -10,7 +10,8 @@ import com.idega.presentation.Block;
 import com.idega.presentation.IWContext;
 import com.idega.presentation.Layer;
 import com.idega.presentation.text.Heading1;
-import com.idega.presentation.text.Heading2;
+import com.idega.presentation.text.Heading4;
+import com.idega.presentation.text.Paragraph;
 import com.idega.util.CoreConstants;
 
 public class CalendarEntryInfoBlock extends Block {
@@ -77,11 +78,13 @@ public class CalendarEntryInfoBlock extends Block {
 			datesText.append(CoreConstants.SPACE).append(startTime).append(CoreConstants.SPACE).append(CoreConstants.MINUS);
 			datesText.append(CoreConstants.SPACE).append(endDate).append(CoreConstants.SPACE).append(endTime);
 		}
-		dates.add(new Heading2(datesText.toString()));
+		dates.add(new Heading4(datesText.toString()));
 		
 		Layer description = new Layer();
+		Paragraph p = new Paragraph();
+		description.add(p);
+		p.addText(entry.getEntryDescription());
 		main.add(description);
-		description.add(entry.getEntryDescription());
 	}
 	
 	private void addNoEntryLabelToContainer(IWContext iwc, Layer container) {

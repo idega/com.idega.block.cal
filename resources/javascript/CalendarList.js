@@ -586,7 +586,11 @@ var ENTRY_IN_SCHEDULE_STYLE_CLASS = 'scheduleEntry';
 	function displayAllEntriesInMonthMode(extendedProperties) {
 		closeAllLoadingMessages();
 		if (extendedProperties.properties.showEntriesAsList) {
-			displayEntriesAsList(extendedProperties.properties.instanceId);
+			ScheduleSession.changeModeToMonthAndGetListOfEntries(extendedProperties.properties.instanceId, {
+				callback: function(entries) {
+					calendarChangeModeCallback(entries, extendedProperties);
+				}
+			});
 		}
 		else {
 			ScheduleSession.getScheduleDOM(extendedProperties.properties.instanceId, {

@@ -32,7 +32,7 @@ function getSimpleCalendarTypes(server, login, password, remoteMode, containerId
 				}
 				
 				prepareDwr(CalService, server + getDefaultDwrPath());
-				CalService.getAvailableCalendarEventTypesWithLogin(login, decode64(password), {
+				CalService.getAvailableCalendarEventTypesWithLogin(login, password, {
 					callback: function(events) {
 						addAdvancedPropertiesForCalendar(events, containerId, selectedEventTypes, true);
 					},
@@ -68,7 +68,7 @@ function getSimpleCalendarLedgers(server, login, password, remoteMode, container
 			callback: function(result) {
 				if (result) {
 					prepareDwr(CalService, server + getDefaultDwrPath());
-					CalService.getAvailableLedgersWithLogin(login, decode64(password), {
+					CalService.getAvailableLedgersWithLogin(login, password, {
 						callback: function(ledgers) {
 							addAdvancedPropertiesForCalendar(ledgers, containerId, selectedLedgers, false);
 						},
@@ -101,7 +101,7 @@ function addAdvancedPropertiesForCalendar(properties, containerId, selectedPrope
 	}
 	
 	container.empty();
-	
+
 	if (properties == null || properties.length == 0) {
 		if (events) {
 			container.setText(CALENDAR_NO_EVENTS_TEXT);
@@ -163,6 +163,10 @@ function addAdvancedPropertiesForCalendar(properties, containerId, selectedPrope
 			addElementValueForAdvancedProperty(ids, key, properties[i].id);
 			
 			checkBox.checked = true;
+			if (IE) {
+				checkBox.setProperty('checked', 'true');
+				checkBox.setProperty('defaultChecked', 'true');
+			}
 		}
 		checkBox.injectInside(propertyContainer);
 		
@@ -286,7 +290,18 @@ function getCalendarViewerProperties(instanceId, containerId, message) {
 				return false;
 			}
 			
-			getCalendarItemsByViewerProperties(properties, containerId);
+			if (properties.uniqueIds == null || properties.uniqueIds.length == 0) {
+				prepareDwr(ScheduleSession, getDefaultDwrPath());
+				ScheduleSession.removeCalendar(instanceId, {
+					callback: function(result) {
+						getCalendarItemsByViewerProperties(properties, containerId);
+					},
+					rpcType: dwr.engine.XMLHttpRequest
+				});
+			}
+			else {
+				getCalendarItemsByViewerProperties(properties, containerId);
+			}
 		},
 		rpcType: dwr.engine.XMLHttpRequest
 	});

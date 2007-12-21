@@ -94,5 +94,7 @@ public interface ScheduleSession {
 	public CalScheduleEntry getCalendarEntry(String entryId, String scheduleId, Locale locale);
 	
 	public String[] getLocalizedDateAndTime(String date, Locale locale);
+	
+	public boolean removeCalendar(String instanceId);
 }
 

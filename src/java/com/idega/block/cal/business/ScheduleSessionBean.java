@@ -841,4 +841,24 @@ public class ScheduleSessionBean implements ScheduleSession {
 		}
 	}
 	
+	public boolean removeCalendar(String instanceId) {
+		if (instanceId == null) {
+			return false;
+		}
+		
+		Map<String, HtmlSchedule> cache = getHtmlScheduleCache();
+		if (cache == null) {
+			return false;
+		}
+		
+		try {
+			cache.remove(instanceId);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return false;
+		}
+		
+		return true;
+	}
+	
 }

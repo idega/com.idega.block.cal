@@ -1,5 +1,6 @@
 package com.idega.block.cal.business;
 
+import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -820,7 +821,7 @@ public class ScheduleSessionBean implements ScheduleSession {
 		
 		String[] localizations = new String[2];
 		localizations[0] = timestamp.getLocaleDate(locale);
-		localizations[1] = timestamp.getLocaleTime(locale, 3);
+		localizations[1] = timestamp.getLocaleTime(locale, DateFormat.SHORT);
 	
 		return localizations;
 	}

@@ -24,6 +24,7 @@ import java.io.Serializable;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Locale;
 import java.util.Map;
 
 import javax.faces.component.UIComponent;
@@ -40,6 +41,8 @@ import org.apache.myfaces.shared_tomahawk.renderkit.html.HTML;
 
 import com.idega.block.cal.business.HtmlSchedule;
 import com.idega.block.cal.business.ScheduleMouseEvent;
+import com.idega.presentation.IWContext;
+import com.idega.util.IWTimestamp;
 
 /**
  * <p>
@@ -48,7 +51,7 @@ import com.idega.block.cal.business.ScheduleMouseEvent;
  *
  * @author Jurgen Lust (latest modification by $Author: valdas $)
  * @author Bruno Aranda (adaptation of Jurgen's code to myfaces)
- * @version $Revision: 1.3 $
+ * @version $Revision: 1.4 $
  */
 public abstract class AbstractScheduleRenderer extends Renderer implements
         Serializable
@@ -185,30 +188,44 @@ public abstract class AbstractScheduleRenderer extends Renderer implements
      *
      * @return the date string
      */
-    protected String getDateString(FacesContext context, UIComponent component,
-            Date date)
-    {
-        DateFormat format;
-        String pattern = getHeaderDateFormat(component);
+    protected String getDateString(FacesContext context, UIComponent component, Date date) {
+    	IWContext iwc = null;
+    	try {
+    		iwc = IWContext.getIWContext(context);
+    	} catch(Exception e) {
+    		e.printStackTrace();
+    	}
+    	if (iwc == null) {
+    		DateFormat format;
+            String pattern = getHeaderDateFormat(component);
 
-        if ((pattern != null) && (pattern.length() > 0))
-        {
-            format = new SimpleDateFormat(pattern);
-        }
-        else
-        {
-            if (context.getApplication().getDefaultLocale() != null)
+            if ((pattern != null) && (pattern.length() > 0))
             {
-                format = DateFormat.getDateInstance(DateFormat.MEDIUM, context
-                        .getApplication().getDefaultLocale());
+                format = new SimpleDateFormat(pattern);
             }
             else
             {
-                format = DateFormat.getDateInstance(DateFormat.MEDIUM);
+                if (context.getApplication().getDefaultLocale() != null)
+                {
+                    format = DateFormat.getDateInstance(DateFormat.MEDIUM, context
+                            .getApplication().getDefaultLocale());
+                }
+                else
+                {
+                    format = DateFormat.getDateInstance(DateFormat.MEDIUM);
+                }
             }
-        }
 
-        return format.format(date);
+            return format.format(date);
+    	}
+    	
+    	IWTimestamp time = new IWTimestamp(date);
+    	Locale locale = iwc.getCurrentLocale();
+    	if (locale == null) {
+    		locale = Locale.ENGLISH;
+    	}
+    	
+    	return time.getLocaleDate(locale, DateFormat.MEDIUM);
     }
 
     /**

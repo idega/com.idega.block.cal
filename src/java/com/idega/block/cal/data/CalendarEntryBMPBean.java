@@ -18,6 +18,8 @@ import com.idega.user.data.User;
 
 public class CalendarEntryBMPBean extends GenericEntity implements com.idega.block.cal.data.CalendarEntry {
 
+	private static final long serialVersionUID = -8599794910985677586L;
+
 	public CalendarEntryBMPBean(){
 		super();
 	}
@@ -277,4 +279,83 @@ public class CalendarEntryBMPBean extends GenericEntity implements com.idega.blo
 		return new ArrayList();
 	}
   }
+  
+  public Collection getEntriesByEventsIdsAndGroupsIds(List eventsIds, List groupsIds) {
+	  try {
+		  return ejbFindEntriesByEventsIdsAndGroupsIds(eventsIds, groupsIds);
+	  } catch (Exception e) {
+		  e.printStackTrace();
+	  }
+
+	  return null;
+  }
+
+  public Collection getEntriesByLedgersIdsAndGroupsIds(List ledgersIds, List groupsIds) {
+	try {
+		  return ejbFindEntriesByLedgerIdsAndGroupsIds(ledgersIds, groupsIds);
+	  } catch (Exception e) {
+		  e.printStackTrace();
+	  }
+
+	  return null;
+  }
+  
+  private Collection ejbFindEntriesByEventsIdsAndGroupsIds(List eventsIds, List groupsIds) throws Exception {
+	  IDOQuery query = idoQueryGetSelect();	
+	  
+	  query.appendWhere();
+	  query.appendLeftParenthesis();
+	  for (int i = 0; i < groupsIds.size(); i++) {
+		  query.appendEquals(getColumnNameGroupID(), groupsIds.get(i).toString());
+		  
+		  if ((i + 1) < groupsIds.size()) {
+			  query.appendOr();
+		  }
+	  }
+	  
+	  query.appendRightParenthesis();
+	  query.appendAnd();
+	  query.appendLeftParenthesis();
+	  
+	  for (int i = 0; i < eventsIds.size(); i++) {
+		  query.appendEquals(getColumnNameEntryTypeID(), eventsIds.get(i).toString());
+		  
+		  if ((i + 1) < eventsIds.size()) {
+			  query.appendOr();
+		  }
+	  }
+	  query.appendRightParenthesis();
+	  
+	  return super.idoFindPKsByQuery(query);
+  }
+  
+  private Collection ejbFindEntriesByLedgerIdsAndGroupsIds(List ledgersIds, List groupsIds) throws Exception {
+	  IDOQuery query = idoQueryGetSelect();	
+	  
+	  query.appendWhere();
+	  query.appendLeftParenthesis();
+	  for (int i = 0; i < groupsIds.size(); i++) {
+		  query.appendEquals(getColumnNameGroupID(), groupsIds.get(i).toString());
+		  
+		  if ((i + 1) < groupsIds.size()) {
+			  query.appendOr();
+		  }
+	  }
+
+	  query.appendRightParenthesis();
+	  query.appendAnd();
+	  query.appendLeftParenthesis();
+	  
+	  for (int i = 0; i < ledgersIds.size(); i++) {
+		  query.appendEquals(getColumnNameLedgerID(), ledgersIds.get(i).toString());
+		  
+		  if ((i + 1) < ledgersIds.size()) {
+			  query.appendOr();
+		  }
+	  }
+	  query.appendRightParenthesis();
+	  
+	  return super.idoFindPKsByQuery(query);
+  }
+  
 }

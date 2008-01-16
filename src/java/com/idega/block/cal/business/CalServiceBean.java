@@ -1,244 +1,448 @@
 package com.idega.block.cal.business;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
+import java.util.Locale;
+import java.util.Map;
 
-import javax.ejb.FinderException;
-
-import com.idega.block.cal.data.CalendarEntryBMPBean;
-import com.idega.block.cal.data.CalendarEntryTypeBMPBean;
-import com.idega.block.cal.data.CalendarLedgerBMPBean;
-import com.idega.business.IBOServiceBean;
-import com.idega.core.accesscontrol.business.LoginBusinessBean;
-import com.idega.core.accesscontrol.data.LoginTable;
-import com.idega.core.accesscontrol.data.LoginTableHome;
-import com.idega.data.IDOLookup;
-import com.idega.data.IDOLookupException;
+import com.idega.block.cal.data.CalendarEntry;
+import com.idega.block.cal.data.CalendarEntryType;
+import com.idega.block.cal.data.CalendarLedger;
+import com.idega.builder.bean.AdvancedProperty;
+import com.idega.business.IBOLookup;
+import com.idega.business.IBOSessionBean;
+import com.idega.core.cache.IWCacheManager2;
+import com.idega.idegaweb.IWApplicationContext;
 import com.idega.presentation.IWContext;
-import com.idega.user.data.User;
+import com.idega.user.business.GroupBusiness;
+import com.idega.user.business.GroupService;
+import com.idega.user.data.Group;
 import com.idega.util.CoreUtil;
+import com.idega.util.IWTimestamp;
 
-public class CalServiceBean extends IBOServiceBean implements CalService {
+public class CalServiceBean extends IBOSessionBean implements CalService {
 
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = -7981985773110524965L;
-	private LoginTableHome loginHome = null;
-	private LoginBusinessBean loginBean = null;
+	private static final long serialVersionUID = 4793559510518957459L;
 	
-	public void setConnectionData(String serverName, String login,
-			String password) {
-		// TODO Auto-generated method stub
-	}
+	private CalBusiness calBusiness = null;
+	private GroupService groupService = null;
+	private GroupBusiness groupBusiness = null;
 	
-	public List getCalendarParameters(String id){
-
-		List calendarParameters = new ArrayList();
-		
-		IWContext iwc = IWContext.getInstance();
-		LedgerVariationsHandler ledgerVariationsHandler = new DefaultLedgerVariationsHandler();
-		
-		CalBusiness calBusiness = ((DefaultLedgerVariationsHandler)ledgerVariationsHandler).getCalBusiness(iwc);
-		
-		List ledgersByGroupId = calBusiness.getLedgersByGroupId(id);
-		
-		List allEntryTypes = calBusiness.getAllEntryTypes();
-		
-		for (int i = 0; i < ledgersByGroupId.size(); i++) {
-			CalendarLedgerBMPBean ledger = (CalendarLedgerBMPBean)ledgersByGroupId.get(i);
-			calendarParameters.add(new CalendarLedgersAndTypes(""+ledger.getID(), ledger.getName(), "L"));
-		}
-		
-		for (int i = 0; i < allEntryTypes.size(); i++) {
-			CalendarEntryTypeBMPBean entryType = (CalendarEntryTypeBMPBean)allEntryTypes.get(i);
-			calendarParameters.add(new CalendarLedgersAndTypes(""+entryType.getID(), entryType.getName(), "T"));
-		}
-				
-		return calendarParameters;
-	}
-	public List getRemoteCalendarParameters(String id, String login, String password){
-		if (login == null || password == null) {
-			return null;
-		}
-
+	private String calendarCacheName = "calendarViewersUniqueIdsCache";
+	private String eventsCacheName = "eventsForCalendarViewersUniqueIdsCache";
+	private String ledgersCacheName = "ledgersForCalendarViewersUniqueIdsCache";
+	
+	private List getAvailableCalendarEventTypes() {
 		IWContext iwc = CoreUtil.getIWContext();
 		if (iwc == null) {
 			return null;
 		}
 		
-		if (isLoggedUser(iwc, login)) {
-			return getCalendarParameters(id);
+		CalBusiness calBusiness = getCalBusiness(iwc);
+		if (calBusiness == null) {
+			return null;
 		}
 		
-		if (logInUser(iwc, login, password)) {
-			return getCalendarParameters(id);
-		}
-		
-		return null;
-	}
-	
-	private boolean isLoggedUser(IWContext iwc, String userName) {
-		if (iwc == null || userName == null) {
-			return false;
-		}
-		
-		//	Geting current user
-		User current = null;
+		List eventsTypes = null;
 		try {
-			current = iwc.getCurrentUser();
+			eventsTypes = calBusiness.getAllEntryTypes();
 		} catch (Exception e) {
 			e.printStackTrace();
-			return false;
-		}
-		if (current == null) {	//	Not logged
-			return false;
+			return null;
 		}
 		
-		LoginTableHome loginHome = getLoginHome();
-		if (loginHome == null) {
-			return false;
+		if (eventsTypes == null) {
+			return null;
 		}
 		
-		int userId = 0;
-		try {
-			userId = Integer.parseInt(current.getId());
-		} catch (NumberFormatException e) {
-			e.printStackTrace();
-			return false;
+		List types = new ArrayList();
+		Object o = null;
+		CalendarEntryType calendarEntryType = null;
+		for (int i = 0; i < eventsTypes.size(); i++) {
+			o = eventsTypes.get(i);
+			if (o instanceof CalendarEntryType) {
+				calendarEntryType = (CalendarEntryType) o;
+				types.add(new AdvancedProperty(calendarEntryType.getId(), calendarEntryType.getName()));
+			}
 		}
 		
-		//	Checking if current user is making request
-		LoginTable login = null;
-		try {
-			login = loginHome.findLoginForUser(userId);
-		} catch (FinderException e) {
-			e.printStackTrace();
-			return false;
-		}
-		if (userName.equals(login.getUserLogin())) {
-			return true;
-		}
-		
-		return false;
-	}		
+		return types;
+	}
 	
-	private boolean logInUser(IWContext iwc, String login, String password) {
-		if (iwc == null || login == null || password == null) {
-			return false;
+	public List getAvailableCalendarEventTypesWithLogin(String login, String password) {
+		if (login == null || password == null) {
+			return null;
 		}
+		
+		IWContext iwc = CoreUtil.getIWContext();
+		if (iwc == null) {
+			return null;
+		}
+		
+		GroupService groupService = getGroupService(iwc);
+		if (groupService == null) {
+			return null;
+		}
+		if (!groupService.isLoggedUser(iwc, login)) {
+			if (!groupService.logInUser(iwc, login, password)) {
+				return null;
+			}
+		}
+		
+		return getAvailableCalendarEventTypes();
+	}
 
-		return getLoginBean(iwc).logInUser(iwc.getRequest(), login, password);
-	}	
+	private List getAvailableLedgers() {
+		IWContext iwc = CoreUtil.getIWContext();
+		if (iwc == null) {
+			return null;
+		}
+		
+		CalBusiness calBusiness = getCalBusiness(iwc);
+		if (calBusiness == null) {
+			return null;
+		}
+		
+		List allLedgers = null;
+		try {
+			allLedgers = calBusiness.getAllLedgers();
+		} catch (Exception e) {
+			e.printStackTrace();
+			return null;
+		}
+		if (allLedgers == null) {
+			return null;
+		}
+		
+		List ledgers = new ArrayList();
+		
+		Object o = null;
+		CalendarLedger ledger = null;
+		for (int i = 0; i < allLedgers.size(); i++) {
+			o = allLedgers.get(i);
+			if (o instanceof CalendarLedger) {
+				ledger = (CalendarLedger) o;
+				ledgers.add(new AdvancedProperty(String.valueOf(ledger.getLedgerID()), ledger.getName()));
+			}
+		}
+		
+		return ledgers;
+	}
 	
-	private synchronized LoginBusinessBean getLoginBean(IWContext iwc) {
-		if (loginBean == null) {
+	public List getAvailableLedgersWithLogin(String login, String password) {
+		if (login == null || password == null) {
+			return null;
+		}
+		
+		IWContext iwc = CoreUtil.getIWContext();
+		if (iwc == null) {
+			return null;
+		}
+		
+		GroupService groupService = getGroupService(iwc);
+		if (groupService == null) {
+			return null;
+		}
+		if (!groupService.isLoggedUser(iwc, login)) {
+			if (!groupService.logInUser(iwc, login, password)) {
+				return null;
+			}
+		}
+		
+		return getAvailableLedgers();
+	}
+	
+	private CalBusiness getCalBusiness(IWApplicationContext iwac) {
+		if (calBusiness == null) {
 			try {
-				loginBean = LoginBusinessBean.getLoginBusinessBean(iwc.getApplicationContext());
+				calBusiness = (CalBusiness) IBOLookup.getServiceInstance(iwac, CalBusiness.class);
+			} catch (Exception e) {
+				e.printStackTrace();
+				return null;
+			}
+		}
+		return calBusiness;
+	}
+	
+	private GroupBusiness getGroupBusiness(IWApplicationContext iwac) {
+		if (groupBusiness == null) {
+			try {
+				groupBusiness = (GroupBusiness) IBOLookup.getServiceInstance(iwac, GroupBusiness.class);
+			} catch (Exception e) {
+				e.printStackTrace();
+				return null;
+			}
+		}
+		return groupBusiness;
+	}
+	
+	private GroupService getGroupService(IWApplicationContext iwac) {
+		if (groupService == null) {
+			try {
+				groupService = (GroupService) IBOLookup.getServiceInstance(iwac, GroupService.class);
+			} catch (Exception e) {
+				e.printStackTrace();
+				return null;
+			}
+		}
+		return groupService;
+	}
+	
+	private GroupService getGroupService() {
+		if (groupService == null) {
+			return getGroupService(CoreUtil.getIWContext());
+		}
+		return groupService;
+	}
+	
+	public Boolean addUniqueIdsForCalendarGroups(String instanceId, List ids) {
+		GroupService groupService = getGroupService();
+		if (groupService == null) {
+			return Boolean.FALSE;
+		}
+		
+		return new Boolean(groupService.addUniqueIds(calendarCacheName, instanceId, ids));
+	}
+	
+	public Boolean addUniqueIdsForCalendarLedgers(String instanceId, List ids) {
+		if (ids == null || ids.size() == 0) {
+			return Boolean.TRUE;
+		}
+		
+		GroupService groupService = getGroupService();
+		if (groupService == null) {
+			return Boolean.FALSE;
+		}
+		
+		return new Boolean(groupService.addUniqueIds(ledgersCacheName, instanceId, ids));
+	}
+	
+	public Boolean addUniqueIdsForCalendarEvents(String instanceId, List ids) {
+		if (ids == null || ids.size() == 0) {
+			return Boolean.TRUE;
+		}
+		
+		GroupService groupService = getGroupService();
+		if (groupService == null) {
+			return Boolean.FALSE;
+		}
+		
+		return new Boolean(groupService.addUniqueIds(eventsCacheName, instanceId, ids));
+	}
+	
+	
+	public List getCalendarEntries(String login, String password, String instanceId, Integer cacheTime, Boolean remoteMode) {
+		if (instanceId == null) {
+			return null;
+		}
+		
+		if (remoteMode == null && (login == null || password == null)) {
+			return null;
+		}
+		
+		IWContext iwc = CoreUtil.getIWContext();
+		if (iwc == null) {
+			return null;
+		}
+		
+		GroupService groupService = getGroupService(iwc);
+		if (groupService == null) {
+			return null;
+		}
+		
+		if (remoteMode.booleanValue() && !groupService.isUserLoggedOn(iwc, login, password)) {
+			return null;
+		}
+		
+		List groupsUniqueIds = null;
+		try {
+			groupsUniqueIds = (List) groupService.getUniqueIds(calendarCacheName).get(instanceId);
+		} catch(Exception e) {
+			e.printStackTrace();
+			return null;
+		}
+		
+		List ledgersIds = null;
+		try {
+			ledgersIds = (List) groupService.getUniqueIds(ledgersCacheName).get(instanceId);
+		} catch(Exception e) {
+			e.printStackTrace();
+			return null;
+		}
+		
+		List eventsIds = null;
+		try {
+			eventsIds = (List) groupService.getUniqueIds(eventsCacheName).get(instanceId);
+		} catch(Exception e) {
+			e.printStackTrace();
+			return null;
+		}
+		
+		if (groupsUniqueIds == null) {
+			return null;
+		}
+		
+		CalBusiness calBusiness = getCalBusiness(iwc);
+		if (calBusiness == null) {
+			return null;
+		}
+		GroupBusiness groupBusiness = getGroupBusiness(iwc);
+		if (groupBusiness == null) {
+			return null;
+		}
+		
+		//	Getting ids for groups from unique ids
+		List groupsIds = new ArrayList();
+		Group group = null;
+		for (int i = 0; i < groupsUniqueIds.size(); i++) {
+			group = null;
+			
+			try {
+				group = groupBusiness.getGroupByUniqueId(groupsUniqueIds.get(i).toString());
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
-		}
-		return loginBean;
-	}
-	
-	private synchronized LoginTableHome getLoginHome() {
-		if (loginHome == null) {
-			try {
-				loginHome = (LoginTableHome) IDOLookup.getHome(LoginTable.class);
-			} catch (IDOLookupException e) {
-				e.printStackTrace();
+			
+			if (group != null) {
+				groupsIds.add(group.getId());
 			}
 		}
-		return loginHome;
+		
+		//	Events by type(s)
+		List entriesByEvents = new ArrayList();
+		if (eventsIds != null && eventsIds.size() > 0) {
+			Collection entries = null;
+			try {
+				entries = calBusiness.getEntriesByEventsIdsAndGroupsIds(eventsIds, groupsIds);
+			} catch(Exception e) {
+				e.printStackTrace();
+			}
+			if (entries != null) {
+				entriesByEvents.addAll(entries);
+			}
+		}
+		
+		//	Events by ledger(s)
+		List entriesByLedgers = new ArrayList();
+		if (ledgersIds != null && ledgersIds.size() > 0) {
+			Collection entries = null;
+			try {
+				entries = calBusiness.getEntriesByLedgersIdsAndGroupsIds(ledgersIds, groupsIds);
+			} catch(Exception e) {
+				e.printStackTrace();
+			}
+			
+			if (entries != null) {
+				entriesByLedgers.addAll(entries);
+			}
+		}
+		
+		List allEntries = new ArrayList();
+		allEntries.addAll(entriesByEvents);
+		
+		allEntries = getFilteredEntries(entriesByLedgers, allEntries);
+		
+		return getConvertedEntries(allEntries, iwc.getCurrentLocale());
 	}
 	
-	public List getRemoteEntries(List attributes, String login, String password){
-		if (login == null || password == null) {
-			return null;
-		}
-
-		IWContext iwc = CoreUtil.getIWContext();
+	private Map getCalendarCache(IWContext iwc) {
 		if (iwc == null) {
 			return null;
 		}
 		
-		if (isLoggedUser(iwc, login)) {
-			return getEntries(attributes);
+		IWCacheManager2 cacheManager = IWCacheManager2.getInstance(iwc.getIWMainApplication());
+		if (cacheManager == null) {
+			return null;
 		}
 		
-		if (logInUser(iwc, login, password)) {
-			return getEntries(attributes);
+		Object o = null;
+		
+		try {
+			o = cacheManager.getCache("cacheForCalendarViewerCalScheduleEntries");
+		} catch(Exception e) {
+			e.printStackTrace();
+			return null;
+		}
+		
+		if (o instanceof Map) {
+			return (Map) o;
 		}
 		
 		return null;
 	}
 	
-	public List getEntries(List attributes){
-		IWContext iwc = IWContext.getInstance();
-		String parameter = null;
-		LedgerVariationsHandler ledgerVariationsHandler = new DefaultLedgerVariationsHandler();
-		List result = new ArrayList();
-		
-		List listOfLedgerIds = new ArrayList(); 
-		List listOfEntryTypesIds = new ArrayList();
-		
-		if (attributes == null)
-			return result;
-		
-		for (int i = 0; i < attributes.size(); i++) {
-			parameter = (String)(attributes.get(i));
-			if(parameter.substring(0, 1).equals("L")){
-				listOfLedgerIds.add(parameter.substring(1));
-			}
-			if(parameter.substring(0, 1).equals("T")){
-				listOfEntryTypesIds.add(parameter.substring(1));
-			}			
+	public boolean removeCelandarEntriesFromCache(String instanceId) {
+		if (instanceId == null) {
+			return false;
 		}
 		
-		CalBusiness calBusiness = ((DefaultLedgerVariationsHandler)ledgerVariationsHandler).getCalBusiness(iwc);
-		
-		List entriesToDisplay = calBusiness.getEntriesByLedgersAndEntryTypes(listOfEntryTypesIds, listOfLedgerIds);
-
-		for (int i = 0; i < entriesToDisplay.size(); i++) {
-//		for (int i = 0; i < 15; i++) {
-			CalendarEntryBMPBean entry = (CalendarEntryBMPBean)entriesToDisplay.get(i);
-			if(checkIfTypeIsCorrect(entry, listOfEntryTypesIds)){
-//				result.add(new ScheduleEntry(entry.getStringColumnValue("CAL_ENTRY_NAME"), getDate(entry.getStringColumnValue("CAL_ENTRY_DATE")), getDate(entry.getStringColumnValue("CAL_ENTRY_END_DATE")),getTime(entry.getStringColumnValue("CAL_ENTRY_DATE")), getTime(entry.getStringColumnValue("CAL_ENTRY_END_DATE")), entry.getStringColumnValue("CAL_ENTRY_REPEAT"), entry.getStringColumnValue("CAL_TYPE_NAME")));
-				CalScheduleEntry calEntry = new CalScheduleEntry();
-				calEntry.setId(entry.getStringColumnValue("CAL_ENTRY_ID"));
-				calEntry.setEntryName(entry.getStringColumnValue("CAL_ENTRY_NAME"));
-				
-//				calEntry.setEntryDate(getDate(entry.getStringColumnValue("CAL_ENTRY_DATE")));
-//				calEntry.setEntryEndDate(getDate(entry.getStringColumnValue("CAL_ENTRY_END_DATE")));
-				calEntry.setEntryDate(entry.getStringColumnValue("CAL_ENTRY_DATE"));
-				calEntry.setEntryEndDate(entry.getStringColumnValue("CAL_ENTRY_END_DATE"));
-				
-				calEntry.setEntryTime(getTime(entry.getStringColumnValue("CAL_ENTRY_DATE")));
-				calEntry.setEntryTime(getTime(entry.getStringColumnValue("CAL_ENTRY_END_DATE")));
-				calEntry.setEntryTypeName(entry.getStringColumnValue("CAL_TYPE_NAME"));
-				calEntry.setRepeat(entry.getStringColumnValue("CAL_ENTRY_REPEAT"));
-				calEntry.setEntryDescription(entry.getStringColumnValue("CAL_ENTRY_DESCRIPTION"));
-				result.add(calEntry);
-//				result.add(new ScheduleEntry(entry.getStringColumnValue("CAL_ENTRY_NAME"), entry.getStringColumnValue("CAL_ENTRY_DATE"), entry.getStringColumnValue("CAL_ENTRY_END_DATE"), entry.getStringColumnValue("CAL_ENTRY_REPEAT"), entry.getStringColumnValue("CAL_TYPE_NAME")));
-			}
-		}
-//		dateMode.put(id, ScheduleModel.MONTH);
-		return result;
-	}
-	private boolean checkIfTypeIsCorrect(CalendarEntryBMPBean entry, List entryTypesIds){
-		String typeId = entry.getStringColumnValue("CAL_TYPE_ID");
-		for (int i = 0; i < entryTypesIds.size(); i++) {
-			if(entryTypesIds.get(i).equals(typeId))
+		try {
+			Map cache = getCalendarCache(CoreUtil.getIWContext());
+			if (cache == null) {
 				return true;
+			}
+			cache.remove(instanceId);
+		} catch(Exception e) {
+			e.printStackTrace();
+			return false;
 		}
-		return false;
-	}	
-
-	private String getTime(String entryDate){
-		return entryDate.substring(11,16);
+		
+		return true;
 	}
 	
-
-
+	private List getFilteredEntries(List source, List destination) {
+		if (source != null) {
+			for (int i = 0; i < source.size(); i++) {
+				if (!(destination.contains(source.get(i)))) {
+					destination.add(source.get(i));
+				}
+			}
+		}
+		
+		return destination;
+	}
+	
+	private List getConvertedEntries(List entries, Locale locale) {
+		if (entries == null) {
+			return null;
+		}
+		
+		if (locale == null) {
+			IWContext iwc = CoreUtil.getIWContext();
+			if (iwc == null) {
+				locale = Locale.ENGLISH;
+			}
+			else {
+				locale = iwc.getCurrentLocale();
+			}
+		}
+		
+		List convertedEntries = new ArrayList();
+		CalendarEntry entry = null;
+		for (int i = 0; i < entries.size(); i++) {
+			entry = (CalendarEntry) entries.get(i);
+			CalScheduleEntry calEntry = new CalScheduleEntry();
+			
+			IWTimestamp date = new IWTimestamp(entry.getDate());
+			IWTimestamp endDate = new IWTimestamp(entry.getEndDate());
+			
+			calEntry.setId(String.valueOf(entry.getEntryID()));
+			calEntry.setEntryName(entry.getName());
+			
+			calEntry.setEntryDate(date.getDateString(CalendarConstants.DATE_PATTERN));
+			calEntry.setEntryEndDate(endDate.getDateString(CalendarConstants.DATE_PATTERN));
+			
+			calEntry.setEntryTime(date.getLocaleTime(locale));
+			calEntry.setEntryEndTime(endDate.getLocaleTime(locale));
+			
+			calEntry.setEntryTypeName(entry.getEntryTypeName());
+			calEntry.setRepeat(entry.getRepeat());
+			calEntry.setEntryDescription(entry.getDescription());
+			
+			convertedEntries.add(calEntry);
+		}
+		
+		return convertedEntries;
+	}
 }

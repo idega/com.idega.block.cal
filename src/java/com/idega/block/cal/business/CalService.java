@@ -1,34 +1,51 @@
 package com.idega.block.cal.business;
 
 
-import java.rmi.RemoteException;
 import java.util.List;
+import com.idega.business.IBOSession;
+import java.rmi.RemoteException;
 
-import com.idega.business.IBOService;
-
-public interface CalService extends IBOService {
+public interface CalService extends IBOSession {
 	/**
-	 * @see com.idega.block.cal.business.CalServiceBean#setConnectionData
+	 * @see com.idega.block.cal.business.CalServiceBean#getAvailableCalendarEventTypesWithLogin
 	 */
-	public void setConnectionData(String serverName, String login, String password) throws RemoteException;
-
-	/**
-	 * @see com.idega.block.cal.business.CalServiceBean#getCalendarParameters
-	 */
-	public List getCalendarParameters(String id) throws RemoteException;
+	public List getAvailableCalendarEventTypesWithLogin(String login,
+			String password) throws RemoteException;
 
 	/**
-	 * @see com.idega.block.cal.business.CalServiceBean#getRemoteCalendarParameters
+	 * @see com.idega.block.cal.business.CalServiceBean#getAvailableLedgersWithLogin
 	 */
-	public List getRemoteCalendarParameters(String id, String login, String password) throws RemoteException;
+	public List getAvailableLedgersWithLogin(String login, String password)
+			throws RemoteException;
 
 	/**
-	 * @see com.idega.block.cal.business.CalServiceBean#getRemoteEntries
+	 * @see com.idega.block.cal.business.CalServiceBean#addUniqueIdsForCalendarGroups
 	 */
-	public List getRemoteEntries(List attributes, String login, String password) throws RemoteException;
+	public Boolean addUniqueIdsForCalendarGroups(String instanceId, List ids)
+			throws RemoteException;
 
 	/**
-	 * @see com.idega.block.cal.business.CalServiceBean#getEntries
+	 * @see com.idega.block.cal.business.CalServiceBean#addUniqueIdsForCalendarLedgers
 	 */
-	public List getEntries(List attributes) throws RemoteException;
+	public Boolean addUniqueIdsForCalendarLedgers(String instanceId, List ids)
+			throws RemoteException;
+
+	/**
+	 * @see com.idega.block.cal.business.CalServiceBean#addUniqueIdsForCalendarEvents
+	 */
+	public Boolean addUniqueIdsForCalendarEvents(String instanceId, List ids)
+			throws RemoteException;
+
+	/**
+	 * @see com.idega.block.cal.business.CalServiceBean#getCalendarEntries
+	 */
+	public List getCalendarEntries(String login, String password,
+			String instanceId, Integer cacheTime, Boolean remoteMode)
+			throws RemoteException;
+
+	/**
+	 * @see com.idega.block.cal.business.CalServiceBean#removeCelandarEntriesFromCache
+	 */
+	public boolean removeCelandarEntriesFromCache(String instanceId)
+			throws RemoteException;
 }

@@ -1,12 +1,17 @@
 package com.idega.block.cal.data;
 
+import java.util.Collection;
 import java.util.List;
 
 
 
 public class CalendarEntryHomeImpl extends com.idega.data.IDOFactory implements CalendarEntryHome
 {
- protected Class getEntityInterfaceClass(){
+
+	private static final long serialVersionUID = -8824967195073998599L;
+
+
+protected Class getEntityInterfaceClass(){
   return CalendarEntry.class;
  }
 
@@ -67,6 +72,31 @@ public java.util.Collection findEntriesByEvents(List eventsList) throws javax.ej
 	this.idoCheckInPooledEntity(entity);
 	return this.getEntityCollectionForPrimaryKeys(ids);	
 
+ }
+ 
+ public Collection getEntriesByEventsIdsAndGroupsIds(List eventsIds, List groupsIds) {
+	 com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
+	 Collection ids = ((CalendarEntryBMPBean)entity).getEntriesByEventsIdsAndGroupsIds(eventsIds, groupsIds);
+	 this.idoCheckInPooledEntity(entity);
+	 try {
+		return this.getEntityCollectionForPrimaryKeys(ids);
+	 } catch (Exception e) {
+		e.printStackTrace();
+		return null;
+	 }	
+ }
+
+
+ public Collection getEntriesByLedgersIdsAndGroupsIds(List ledgersIds, List groupsIds) {
+	 com.idega.data. IDOEntity entity = this.idoCheckOutPooledEntity();
+	 Collection ids = ((CalendarEntryBMPBean)entity).getEntriesByLedgersIdsAndGroupsIds(ledgersIds, groupsIds);
+	 this.idoCheckInPooledEntity(entity);
+	 try {
+		return this.getEntityCollectionForPrimaryKeys(ids);
+	 } catch (Exception e) {
+		e.printStackTrace();
+		return null;
+	 }
  }
 
 

@@ -52,6 +52,8 @@ import com.idega.util.IWTimestamp;
  */
 public class CalBusinessBean extends IBOServiceBean implements CalBusiness,UserGroupPlugInBusiness{
 
+	private static final long serialVersionUID = -7406233446712560215L;
+
 	//GET methods for Entries
 	/**
 	 * @return a calendar entry with the specific entryID
@@ -1200,6 +1202,30 @@ public List getLedgersByGroupId(String groupId){
 			e.printStackTrace();
 		}
 		return list;		
+	}
+	
+	public List getEntriesByEventsIdsAndGroupsIds(List eventsIds, List groupsIds) {
+		List list = null; 
+		try {
+			CalendarEntryHome entryHome = (CalendarEntryHome) getIDOHome(CalendarEntry.class);
+			list = new ArrayList(entryHome.getEntriesByEventsIdsAndGroupsIds(eventsIds, groupsIds));
+		} catch(Exception e) {
+			e.printStackTrace();
+		}
+		
+		return list;
+	}
+	
+	public List getEntriesByLedgersIdsAndGroupsIds(List ledgersIds, List groupsIds) {
+		List list = null; 
+		try {
+			CalendarEntryHome entryHome = (CalendarEntryHome) getIDOHome(CalendarEntry.class);
+			list = new ArrayList(entryHome.getEntriesByLedgersIdsAndGroupsIds(ledgersIds, groupsIds));
+		} catch(Exception e) {
+			e.printStackTrace();
+		}
+		
+		return list;
 	}
 	
 }

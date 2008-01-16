@@ -21,6 +21,8 @@ import com.idega.data.IDOQuery;
 
 public class CalendarEntryTypeBMPBean extends com.idega.data.GenericEntity implements com.idega.block.cal.data.CalendarEntryType {
 
+	private static final long serialVersionUID = 3898454177923507314L;
+
 	public CalendarEntryTypeBMPBean(){
 		super();
 	}
@@ -107,6 +109,10 @@ public class CalendarEntryTypeBMPBean extends com.idega.data.GenericEntity imple
 	public void delete() throws SQLException{
     removeFrom(GenericEntity.getStaticInstance(LocalizedText.class));
 		super.delete();
+	}
+	
+	public String getId() {
+		return getStringColumnValue(getColumnNameCalendarTypeID());
 	}
 
 }

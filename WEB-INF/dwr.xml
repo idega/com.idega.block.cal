@@ -7,7 +7,7 @@
 		<convert converter="bean" match="com.idega.block.cal.business.CalendarLedgersAndTypes" />
 		<convert converter="bean" match="com.idega.block.cal.business.CalScheduleEntry" />
 		
-		<create creator="ibo" javascript="CalService" scope="application">
+		<create creator="ibo" javascript="CalService" scope="session">
 	    	<param name="class" value="com.idega.block.cal.business.CalService" />
     	</create>
     	
@@ -15,13 +15,19 @@
 	<signatures>
 		<![CDATA[
   			import java.util.List;
-  			import org.jdom.Document;
-	  		import com.idega.block.cal.business.CalendarLedgersAndTypes;
-	  
-			CalService.getEntries(List<String>);
-			CalService.getRemoteEntries(List<String>, String, String);
-			CalService.getRemoteCalendarParameters(String, String, String);
-			CalService.getCalendarProperties(String);
+  			
+  			import com.idega.builder.bean.AdvancedProperty;
+  			import com.idega.block.cal.business.CalScheduleEntry;
+  			
+  			List<AdvancedProperty> CalService.getAvailableCalendarEventTypesWithLogin(String, String);
+  			
+  			List<CalScheduleEntry> CalService.getCalendarEntries(String, String, String, Integer, Boolean);
+  			
+			List<AdvancedProperty> CalService.getAvailableLedgersWithLogin(String, String);
+			
+			Boolean CalService.addUniqueIdsForCalendarGroups(String, List<String>);
+			Boolean CalService.addUniqueIdsForCalendarLedgers(String, List<String>);
+			Boolean CalService.addUniqueIdsForCalendarEvents(String, List<String>);
   		]]>
 	</signatures>	
 </dwr>

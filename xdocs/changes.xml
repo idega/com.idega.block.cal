@@ -4,6 +4,11 @@
 		<author email="tryggvi@idega.com">Tryggvi Larusson</author>
 	</properties>
 	<body>
+		<release version="3.1.9" date="2008-01-16">
+      		<action dev="valdas" type="update">
+      			Merged latest stuff from HEAD
+      		</action>       
+    	</release>
 	
 		<release version="3.1.8" date="2007-09-19">
       		<action dev="eiki" type="update">

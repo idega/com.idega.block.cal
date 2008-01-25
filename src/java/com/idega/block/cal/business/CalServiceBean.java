@@ -158,27 +158,17 @@ public class CalServiceBean implements CalService {
 			return null;
 		}
 		
-		List allLedgers = null;
-		try {
-			allLedgers = calBusiness.getAllLedgers();
-		} catch (Exception e) {
-			e.printStackTrace();
-			return null;
-		}
-		if (allLedgers == null) {
+		List<CalendarLedger> userLedgers = calBusiness.getUserLedgers(iwc.getCurrentUser());
+		if (userLedgers == null) {
 			return null;
 		}
 		
 		List<AdvancedProperty> ledgers = new ArrayList<AdvancedProperty>();
-		
-		Object o = null;
+
 		CalendarLedger ledger = null;
-		for (int i = 0; i < allLedgers.size(); i++) {
-			o = allLedgers.get(i);
-			if (o instanceof CalendarLedger) {
-				ledger = (CalendarLedger) o;
-				ledgers.add(new AdvancedProperty(String.valueOf(ledger.getLedgerID()), ledger.getName()));
-			}
+		for (int i = 0; i < userLedgers.size(); i++) {
+			ledger = userLedgers.get(i);
+			ledgers.add(new AdvancedProperty(String.valueOf(ledger.getLedgerID()), ledger.getName()));
 		}
 		
 		return ledgers;

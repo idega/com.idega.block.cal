@@ -14,6 +14,7 @@ import java.util.GregorianCalendar;
 import java.util.Iterator;
 import java.util.List;
 import javax.ejb.CreateException;
+import javax.ejb.EJBException;
 import javax.ejb.FinderException;
 import javax.ejb.RemoveException;
 import com.idega.block.cal.data.AttendanceEntity;
@@ -31,8 +32,13 @@ import com.idega.block.cal.data.CalendarLedgerHome;
 import com.idega.block.cal.presentation.CalendarEntryCreator;
 import com.idega.block.cal.presentation.CalendarWindowPlugin;
 import com.idega.block.category.business.CategoryBusiness;
+import com.idega.business.IBOLookup;
+import com.idega.business.IBOLookupException;
 import com.idega.business.IBOServiceBean;
+import com.idega.core.accesscontrol.business.AccessControl;
 import com.idega.idegaweb.IWApplicationContext;
+import com.idega.idegaweb.IWMainApplication;
+import com.idega.idegaweb.IWMainApplicationContext;
 import com.idega.presentation.IWContext;
 import com.idega.presentation.PresentationObject;
 import com.idega.user.business.GroupBusiness;
@@ -1225,6 +1231,52 @@ public class CalBusinessBean extends IBOServiceBean implements CalBusiness,UserG
 		}
 		
 		return list;
+	}
+	
+	public List<CalendarLedger> getUserLedgers(User user) {
+		if (user == null) {
+			return null;
+		}
+		
+		Collection groups = null;
+		try {
+			groups = getUserBusiness(IWMainApplication.getDefaultIWApplicationContext()).getUserGroups(user);
+		} catch (EJBException e) {
+			e.printStackTrace();
+		} catch (RemoteException e) {
+			e.printStackTrace();
+		}
+		if (groups == null) {
+			return null;
+		}
+		
+		List<String> groupsIds = new ArrayList<String>();
+		Object o = null;
+		for (Iterator it = groups.iterator(); it.hasNext();) {
+			o = it.next();
+			if (o instanceof Group) {
+				groupsIds.add(((Group) o).getId());
+			}
+		}
+		
+		return null;	//	TODO
+		
+//		AccessControl.getAllGroupPermitPermissionsByGroup(group)
+//		AccessControl.getAllGroupOwnerPermissionsByGroup(group)
+	}
+	
+	public List<CalendarLedger> getUserLedgers(String userId) {
+		if (userId == null) {
+			return null;
+		}
+		
+		try {
+			return getUserLedgers(getUserBusiness(IWMainApplication.getDefaultIWApplicationContext()).getUser(Integer.valueOf(userId)));
+		} catch(Exception e) {
+			e.printStackTrace();
+		}
+		
+		return null;
 	}
 	
 }

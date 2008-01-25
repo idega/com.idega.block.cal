@@ -158,7 +158,7 @@ public class CalServiceBean implements CalService {
 			return null;
 		}
 		
-		List<CalendarLedger> userLedgers = calBusiness.getUserLedgers(iwc.getCurrentUser());
+		List<CalendarLedger> userLedgers = calBusiness.getUserLedgers(iwc.getCurrentUser(), iwc);
 		if (userLedgers == null) {
 			return null;
 		}

@@ -1235,7 +1235,12 @@ public class CalBusinessBean extends IBOServiceBean implements CalBusiness,UserG
 			return null;
 		}
 		
-		List<Group> allGroups = getUserBusiness(iwc).getAllUserGroups(user, iwc);
+		List<Group> allGroups = null;
+		try {
+			allGroups = getUserBusiness(iwc).getAllUserGroups(user, iwc);
+		} catch (RemoteException e) {
+			e.printStackTrace();
+		}
 		if (allGroups == null) {
 			return null; 	//	TODO return: where coachid=userid
 		}

@@ -1,5 +1,11 @@
 package com.idega.block.cal.data;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.List;
+
+import javax.ejb.FinderException;
 
 public class CalendarLedgerHomeImpl extends com.idega.data.IDOFactory implements CalendarLedgerHome
 {
@@ -38,5 +44,38 @@ public class CalendarLedgerHomeImpl extends com.idega.data.IDOFactory implements
 	 	this.idoCheckInPooledEntity(entity);
 	 	return this.getEntityCollectionForPrimaryKeys(ids);
 	 }
+
+
+public List<CalendarLedger> findLedgersByCoachId(String coachId) throws FinderException {
+	if (coachId == null) {
+		return null;
+	}
+	
+	com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
+ 	java.util.Collection ids = ((CalendarLedgerBMPBean)entity).ejbFindLedgersByCoachId(coachId);
+ 	this.idoCheckInPooledEntity(entity);
+ 	Collection ledgers = this.getEntityCollectionForPrimaryKeys(ids);
+ 	
+ 	if (ids == null) {
+ 		return null;
+ 	}
+ 	List<CalendarLedger> ledgersInList = new ArrayList<CalendarLedger>();
+ 	Object o = null;
+ 	for (Iterator it = ledgers.iterator(); it.hasNext();) {
+ 		o = it.next();
+ 		
+ 		if (o instanceof CalendarLedger) {
+ 			ledgersInList.add((CalendarLedger) o);
+ 		}
+ 	}
+ 	return ledgersInList;
+}
+
+
+public List<CalendarLedger> findLedgersByCoachIdAndGroupsIds(String coachId,
+		List<String> groupsIds) throws FinderException {
+	// TODO Auto-generated method stub
+	return null;
+}
 
 }

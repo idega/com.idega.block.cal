@@ -25,6 +25,8 @@ import com.idega.user.data.User;
  */
 public class CalendarLedgerBMPBean extends GenericEntity implements com.idega.block.cal.data.CalendarLedger{
 	
+	private static final long serialVersionUID = 6143691864461026083L;
+	
 	public void initializeAttributes(){
 		addAttribute(getColumnNameLedgerID());
 		addAttribute(getColumnNameLedgerName(),"Ledger name",true,true,String.class);
@@ -139,5 +141,12 @@ public class CalendarLedgerBMPBean extends GenericEntity implements com.idega.bl
 		List result = new ArrayList(super.idoFindPKsByQuery(query));
 		return result;
 		
+	}
+	
+	public Collection ejbFindLedgersByCoachId(String coachId) throws FinderException {
+		IDOQuery query = idoQueryGetSelect();
+		query.appendWhereEquals(getColumnNameUserID(), coachId);
+		List result = new ArrayList(super.idoFindPKsByQuery(query));
+		return result;
 	}
 }

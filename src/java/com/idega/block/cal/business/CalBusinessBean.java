@@ -1235,25 +1235,30 @@ public class CalBusinessBean extends IBOServiceBean implements CalBusiness,UserG
 			return null;
 		}
 		
-		List<Group> allGroups = null;
+		List<String> groupsIds = null;
 		try {
-			allGroups = getUserBusiness(iwc).getAllUserGroups(user, iwc);
+			groupsIds = getUserBusiness(iwc).getAllUserGroupsIds(user, iwc);
 		} catch (RemoteException e) {
 			e.printStackTrace();
 		}
-		if (allGroups == null) {
-			return null; 	//	TODO return: where coachid=userid
+		
+		groupsIds = null;	//	TODO: remove
+		CalendarLedgerHome ledgerHome = null;
+		try {
+			ledgerHome = (CalendarLedgerHome) getIDOHome(CalendarLedger.class);
+		} catch (RemoteException e) {
+			e.printStackTrace();
+			return null;
+		}
+		if (groupsIds == null || groupsIds.size() == 0) {
+			try {
+				return ledgerHome.findLedgersByCoachId(user.getId());
+			} catch (FinderException e) {
+				e.printStackTrace();
+			}
 		}
 		
-		List<String> groupsIds = new ArrayList<String>();
-		for (int i = 0; i < allGroups.size(); i++) {
-			groupsIds.add(allGroups.get(i).getId());
-		}
-		
-		return null;	//	TODO
-		
-//		AccessControl.getAllGroupPermitPermissionsByGroup(group)
-//		AccessControl.getAllGroupOwnerPermissionsByGroup(group)
+		return null;
 	}
 	
 	public List<CalendarLedger> getUserLedgers(String userId, IWContext iwc) {

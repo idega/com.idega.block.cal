@@ -149,4 +149,14 @@ public class CalendarLedgerBMPBean extends GenericEntity implements com.idega.bl
 		List result = new ArrayList(super.idoFindPKsByQuery(query));
 		return result;
 	}
+	
+	public Collection ejbFindLedgersByCoachIdAndGroupsIds(String coachId, List<String> groupsIds) throws FinderException {
+		IDOQuery query = idoQueryGetSelect();
+		query.appendWhereEquals(getColumnNameUserID(), coachId);
+		query.appendOr();
+		query.append(getColumnNameGroupID());
+		query.appendInCollection(groupsIds);
+		List result = new ArrayList(super.idoFindPKsByQuery(query));
+		return result;
+	}
 }

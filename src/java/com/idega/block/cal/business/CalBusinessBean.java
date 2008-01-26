@@ -1242,7 +1242,6 @@ public class CalBusinessBean extends IBOServiceBean implements CalBusiness,UserG
 			e.printStackTrace();
 		}
 		
-		groupsIds = null;	//	TODO: remove
 		CalendarLedgerHome ledgerHome = null;
 		try {
 			ledgerHome = (CalendarLedgerHome) getIDOHome(CalendarLedger.class);
@@ -1256,6 +1255,12 @@ public class CalBusinessBean extends IBOServiceBean implements CalBusiness,UserG
 			} catch (FinderException e) {
 				e.printStackTrace();
 			}
+		}
+		
+		try {
+			return ledgerHome.findLedgersByCoachIdAndGroupsIds(user.getId(), groupsIds);
+		} catch (FinderException e) {
+			e.printStackTrace();
 		}
 		
 		return null;

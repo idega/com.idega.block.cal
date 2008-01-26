@@ -56,7 +56,29 @@ public List<CalendarLedger> findLedgersByCoachId(String coachId) throws FinderEx
  	this.idoCheckInPooledEntity(entity);
  	Collection ledgers = this.getEntityCollectionForPrimaryKeys(ids);
  	
- 	if (ids == null) {
+ 	return getConvertedLedgers(ledgers);
+}
+
+
+public List<CalendarLedger> findLedgersByCoachIdAndGroupsIds(String coachId, List<String> groupsIds) throws FinderException {
+	if (coachId == null) {
+		return null;
+	}
+	
+	if (groupsIds == null || groupsIds.size() == 0){
+		return findLedgersByCoachId(coachId);
+	}
+	
+	com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
+ 	java.util.Collection ids = ((CalendarLedgerBMPBean)entity).ejbFindLedgersByCoachIdAndGroupsIds(coachId, groupsIds);
+ 	this.idoCheckInPooledEntity(entity);
+ 	Collection ledgers = this.getEntityCollectionForPrimaryKeys(ids);
+ 	
+ 	return getConvertedLedgers(ledgers);
+}
+
+private List<CalendarLedger> getConvertedLedgers(Collection ledgers) {
+	if (ledgers == null) {
  		return null;
  	}
  	List<CalendarLedger> ledgersInList = new ArrayList<CalendarLedger>();
@@ -69,13 +91,6 @@ public List<CalendarLedger> findLedgersByCoachId(String coachId) throws FinderEx
  		}
  	}
  	return ledgersInList;
-}
-
-
-public List<CalendarLedger> findLedgersByCoachIdAndGroupsIds(String coachId,
-		List<String> groupsIds) throws FinderException {
-	// TODO Auto-generated method stub
-	return null;
 }
 
 }

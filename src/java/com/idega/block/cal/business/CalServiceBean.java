@@ -104,27 +104,17 @@ public class CalServiceBean extends IBOSessionBean implements CalService {
 			return null;
 		}
 		
-		List allLedgers = null;
-		try {
-			allLedgers = calBusiness.getAllLedgers();
-		} catch (Exception e) {
-			e.printStackTrace();
-			return null;
-		}
-		if (allLedgers == null) {
+		List userLedgers = calBusiness.getUserLedgers(iwc.getCurrentUser(), iwc);
+		if (userLedgers == null) {
 			return null;
 		}
 		
 		List ledgers = new ArrayList();
-		
-		Object o = null;
+
 		CalendarLedger ledger = null;
-		for (int i = 0; i < allLedgers.size(); i++) {
-			o = allLedgers.get(i);
-			if (o instanceof CalendarLedger) {
-				ledger = (CalendarLedger) o;
-				ledgers.add(new AdvancedProperty(String.valueOf(ledger.getLedgerID()), ledger.getName()));
-			}
+		for (int i = 0; i < userLedgers.size(); i++) {
+			ledger = (CalendarLedger) userLedgers.get(i);
+			ledgers.add(new AdvancedProperty(String.valueOf(ledger.getLedgerID()), ledger.getName()));
 		}
 		
 		return ledgers;

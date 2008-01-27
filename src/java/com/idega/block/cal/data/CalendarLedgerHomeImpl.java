@@ -1,5 +1,12 @@
 package com.idega.block.cal.data;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.List;
+
+import javax.ejb.FinderException;
+
 
 public class CalendarLedgerHomeImpl extends com.idega.data.IDOFactory implements CalendarLedgerHome
 {
@@ -38,6 +45,53 @@ public class CalendarLedgerHomeImpl extends com.idega.data.IDOFactory implements
 	 	this.idoCheckInPooledEntity(entity);
 	 	return this.getEntityCollectionForPrimaryKeys(ids);
 	 }
+ 
+ 	public List findLedgersByCoachId(String coachId) throws FinderException {
+		if (coachId == null) {
+			return null;
+		}
+		
+		com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
+	 	java.util.Collection ids = ((CalendarLedgerBMPBean)entity).ejbFindLedgersByCoachId(coachId);
+	 	this.idoCheckInPooledEntity(entity);
+	 	Collection ledgers = this.getEntityCollectionForPrimaryKeys(ids);
+	 	
+	 	return getConvertedLedgers(ledgers);
+	}
+
+
+	public List findLedgersByCoachIdAndGroupsIds(String coachId, List groupsIds) throws FinderException {
+		if (coachId == null) {
+			return null;
+		}
+		
+		if (groupsIds == null || groupsIds.size() == 0){
+			return findLedgersByCoachId(coachId);
+		}
+		
+		com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
+	 	java.util.Collection ids = ((CalendarLedgerBMPBean)entity).ejbFindLedgersByCoachIdAndGroupsIds(coachId, groupsIds);
+	 	this.idoCheckInPooledEntity(entity);
+	 	Collection ledgers = this.getEntityCollectionForPrimaryKeys(ids);
+	 	
+	 	return getConvertedLedgers(ledgers);
+	}
+
+	private List getConvertedLedgers(Collection ledgers) {
+		if (ledgers == null) {
+	 		return null;
+	 	}
+	 	List ledgersInList = new ArrayList();
+	 	Object o = null;
+	 	for (Iterator it = ledgers.iterator(); it.hasNext();) {
+	 		o = it.next();
+	 		
+	 		if (o instanceof CalendarLedger) {
+	 			ledgersInList.add((CalendarLedger) o);
+	 		}
+	 	}
+	 	return ledgersInList;
+	}
 
 
 }

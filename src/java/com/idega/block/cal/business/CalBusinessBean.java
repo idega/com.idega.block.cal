@@ -35,6 +35,7 @@ import com.idega.block.cal.presentation.CalendarWindowPlugin;
 import com.idega.block.category.business.CategoryBusiness;
 import com.idega.business.IBOServiceBean;
 import com.idega.idegaweb.IWApplicationContext;
+import com.idega.idegaweb.IWMainApplication;
 import com.idega.presentation.IWContext;
 import com.idega.presentation.PresentationObject;
 import com.idega.user.business.GroupBusiness;
@@ -1226,6 +1227,56 @@ public List getLedgersByGroupId(String groupId){
 		}
 		
 		return list;
+	}
+	
+	public List getUserLedgers(User user, IWContext iwc) {
+		if (user == null) {
+			return null;
+		}
+		
+		List groupsIds = null;
+		try {
+			groupsIds = getUserBusiness(iwc).getAllUserGroupsIds(user, iwc);
+		} catch (RemoteException e) {
+			e.printStackTrace();
+		}
+		
+		CalendarLedgerHome ledgerHome = null;
+		try {
+			ledgerHome = (CalendarLedgerHome) getIDOHome(CalendarLedger.class);
+		} catch (RemoteException e) {
+			e.printStackTrace();
+			return null;
+		}
+		if (groupsIds == null || groupsIds.size() == 0) {
+			try {
+				return ledgerHome.findLedgersByCoachId(user.getId());
+			} catch (FinderException e) {
+				e.printStackTrace();
+			}
+		}
+		
+		try {
+			return ledgerHome.findLedgersByCoachIdAndGroupsIds(user.getId(), groupsIds);
+		} catch (FinderException e) {
+			e.printStackTrace();
+		}
+		
+		return null;
+	}
+	
+	public List getUserLedgers(String userId, IWContext iwc) {
+		if (userId == null) {
+			return null;
+		}
+		
+		try {
+			return getUserLedgers(getUserBusiness(IWMainApplication.getDefaultIWApplicationContext()).getUser(Integer.valueOf(userId)), iwc);
+		} catch(Exception e) {
+			e.printStackTrace();
+		}
+		
+		return null;
 	}
 	
 }

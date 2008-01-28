@@ -455,8 +455,8 @@ public class CalServiceBean implements CalService {
 		List<CalendarEntry> entriesByEvents = new ArrayList<CalendarEntry>();
 		List<CalendarEntry> entriesByLedgers = new ArrayList<CalendarEntry>();
 		List<CalendarEntry> entries = null;
-		if (groupsIds == null) {
-			if (ledgersIds == null) {
+		if (groupsIds == null || groupsIds.size() == 0) {
+			if (ledgersIds == null || ledgersIds.size() == 0) {
 				//	We don't want to get calendar entries only by events
 				return null;
 			}

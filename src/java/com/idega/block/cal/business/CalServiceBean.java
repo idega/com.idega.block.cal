@@ -1,10 +1,12 @@
 package com.idega.block.cal.business;
 
+import java.rmi.RemoteException;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+
+import javax.ejb.FinderException;
 
 import com.idega.block.cal.data.CalendarEntry;
 import com.idega.block.cal.data.CalendarEntryType;
@@ -250,7 +252,6 @@ public class CalServiceBean extends IBOSessionBean implements CalService {
 			groupsUniqueIds = (List) groupService.getUniqueIds(calendarCacheName).get(instanceId);
 		} catch(Exception e) {
 			e.printStackTrace();
-			return null;
 		}
 		
 		List ledgersIds = null;
@@ -258,7 +259,6 @@ public class CalServiceBean extends IBOSessionBean implements CalService {
 			ledgersIds = (List) groupService.getUniqueIds(ledgersCacheName).get(instanceId);
 		} catch(Exception e) {
 			e.printStackTrace();
-			return null;
 		}
 		
 		List eventsIds = null;
@@ -266,11 +266,6 @@ public class CalServiceBean extends IBOSessionBean implements CalService {
 			eventsIds = (List) groupService.getUniqueIds(eventsCacheName).get(instanceId);
 		} catch(Exception e) {
 			e.printStackTrace();
-			return null;
-		}
-		
-		if (groupsUniqueIds == null) {
-			return null;
 		}
 		
 		CalBusiness calBusiness = getCalBusiness(iwc);
@@ -282,55 +277,74 @@ public class CalServiceBean extends IBOSessionBean implements CalService {
 			return null;
 		}
 		
-		//	Getting ids for groups from unique ids
-		List groupsIds = new ArrayList();
-		Group group = null;
-		for (int i = 0; i < groupsUniqueIds.size(); i++) {
-			group = null;
-			
-			try {
-				group = groupBusiness.getGroupByUniqueId(groupsUniqueIds.get(i).toString());
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-			
-			if (group != null) {
-				groupsIds.add(group.getId());
+		List groupsIds = null;
+		if (groupsUniqueIds != null) {
+			//	Getting ids for groups from unique ids
+			groupsIds = new ArrayList();
+			Group group = null;
+			for (int i = 0; i < groupsUniqueIds.size(); i++) {
+				group = null;
+				
+				try {
+					group = groupBusiness.getGroupByUniqueId(groupsUniqueIds.get(i).toString());
+				} catch (RemoteException e) {
+					e.printStackTrace();
+				} catch (FinderException e) {
+					e.printStackTrace();
+				}
+				
+				if (group != null) {
+					groupsIds.add(group.getId());
+				}
 			}
 		}
 		
-		//	Events by type(s)
 		List entriesByEvents = new ArrayList();
-		if (eventsIds != null && eventsIds.size() > 0) {
-			Collection entries = null;
-			try {
-				entries = calBusiness.getEntriesByEventsIdsAndGroupsIds(eventsIds, groupsIds);
-			} catch(Exception e) {
-				e.printStackTrace();
-			}
-			if (entries != null) {
-				entriesByEvents.addAll(entries);
-			}
-		}
-		
-		//	Events by ledger(s)
 		List entriesByLedgers = new ArrayList();
-		if (ledgersIds != null && ledgersIds.size() > 0) {
-			Collection entries = null;
-			try {
-				entries = calBusiness.getEntriesByLedgersIdsAndGroupsIds(ledgersIds, groupsIds);
-			} catch(Exception e) {
-				e.printStackTrace();
+		List entries = null;
+		if (groupsIds == null || groupsIds.size() == 0) {
+			if (ledgersIds == null || ledgersIds.size() == 0) {
+				//	We don't want to get calendar entries only by events
+				return null;
 			}
 			
-			if (entries != null) {
-				entriesByLedgers.addAll(entries);
+			entries = calBusiness.getEntriesByLedgers(ledgersIds);
+			if (entries == null) {
+				return null;
+			}
+			entriesByLedgers.addAll(entries);
+		}
+		else {
+			//	Events by type(s) and group(s)
+			if (eventsIds != null && eventsIds.size() > 0) {
+				entries = null;
+				try {
+					entries = calBusiness.getEntriesByEventsIdsAndGroupsIds(eventsIds, groupsIds);
+				} catch(Exception e) {
+					e.printStackTrace();
+				}
+				if (entries != null) {
+					entriesByEvents.addAll(entries);
+				}
+			}
+			
+			//	Events by ledger(s) and group(s)
+			if (ledgersIds != null && ledgersIds.size() > 0) {
+				entries = null;
+				try {
+					entries = calBusiness.getEntriesByLedgersIdsAndGroupsIds(ledgersIds, groupsIds);
+				} catch(Exception e) {
+					e.printStackTrace();
+				}
+				
+				if (entries != null) {
+					entriesByLedgers.addAll(entries);
+				}
 			}
 		}
 		
 		List allEntries = new ArrayList();
 		allEntries.addAll(entriesByEvents);
-		
 		allEntries = getFilteredEntries(entriesByLedgers, allEntries);
 		
 		return getConvertedEntries(allEntries, iwc.getCurrentLocale());

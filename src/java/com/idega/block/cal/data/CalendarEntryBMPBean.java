@@ -322,6 +322,7 @@ public class CalendarEntryBMPBean extends GenericEntity implements com.idega.blo
 	  return super.idoFindPKsByQuery(query);
   }
   
+  @SuppressWarnings("unchecked")
   public Collection<CalendarEntry> ejbFindEntriesByLedgersIds(List<String> ledgersIds) throws Exception {
 	  IDOQuery query = idoQueryGetSelect();	
 	  

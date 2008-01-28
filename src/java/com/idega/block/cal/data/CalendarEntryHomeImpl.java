@@ -3,6 +3,8 @@ package com.idega.block.cal.data;
 import java.util.Collection;
 import java.util.List;
 
+import com.idega.data.IDOEntity;
+
 
 
 public class CalendarEntryHomeImpl extends com.idega.data.IDOFactory implements CalendarEntryHome
@@ -88,7 +90,7 @@ public java.util.Collection findEntriesByEvents(List eventsList) throws javax.ej
 
 
  public Collection getEntriesByLedgersIdsAndGroupsIds(List ledgersIds, List groupsIds) {
-	 com.idega.data. IDOEntity entity = this.idoCheckOutPooledEntity();
+	 IDOEntity entity = this.idoCheckOutPooledEntity();
 	 Collection ids = ((CalendarEntryBMPBean)entity).getEntriesByLedgersIdsAndGroupsIds(ledgersIds, groupsIds);
 	 this.idoCheckInPooledEntity(entity);
 	 try {
@@ -99,5 +101,21 @@ public java.util.Collection findEntriesByEvents(List eventsList) throws javax.ej
 	 }
  }
 
-
+ public Collection getEntriesByLedgersIds(List ledgersIds) {
+	 IDOEntity entity = this.idoCheckOutPooledEntity();
+	 Collection ids = null;
+	 try {
+		 ids = ((CalendarEntryBMPBean)entity).ejbFindEntriesByLedgersIds(ledgersIds);
+	 } catch (Exception e) {
+		 e.printStackTrace();
+	 }
+	 this.idoCheckInPooledEntity(entity);
+	 try {
+		return this.getEntityCollectionForPrimaryKeys(ids);
+	 } catch (Exception e) {
+		e.printStackTrace();
+		return null;
+	 }
+ }
+ 
 }

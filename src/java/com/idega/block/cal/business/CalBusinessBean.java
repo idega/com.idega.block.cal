@@ -1279,4 +1279,16 @@ public List getLedgersByGroupId(String groupId){
 		return null;
 	}
 	
+	public List getEntriesByLedgers(List ledgersIds) {
+		List list = null; 
+		try {
+			CalendarEntryHome entryHome = (CalendarEntryHome) getIDOHome(CalendarEntry.class);
+			list = new ArrayList(entryHome.getEntriesByLedgersIds(ledgersIds));
+		} catch(Exception e) {
+			e.printStackTrace();
+		}
+		
+		return list;
+	}
+	
 }

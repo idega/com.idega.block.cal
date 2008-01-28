@@ -19,4 +19,6 @@ public interface CalendarEntryHome extends com.idega.data.IDOHome
  public Collection getEntriesByEventsIdsAndGroupsIds(List eventsIds, List groupsIds);
  
  public Collection getEntriesByLedgersIdsAndGroupsIds(List ledgersIds, List groupsIds);
+ 
+ public Collection getEntriesByLedgersIds(List ledgersIds);
 }

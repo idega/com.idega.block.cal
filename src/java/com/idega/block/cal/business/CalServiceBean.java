@@ -2,7 +2,6 @@ package com.idega.block.cal.business;
 
 import java.rmi.RemoteException;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -378,7 +377,6 @@ public class CalServiceBean implements CalService {
 		return bean;
 	}
 	
-	@SuppressWarnings("unchecked")
 	public List<CalScheduleEntry> getCalendarEntries(String login, String password, String instanceId, Integer cacheTime, boolean remoteMode) {
 		if (instanceId == null) {
 			return null;
@@ -407,7 +405,6 @@ public class CalServiceBean implements CalService {
 			groupsUniqueIds = groupService.getUniqueIds(calendarCacheName).get(instanceId);
 		} catch(Exception e) {
 			e.printStackTrace();
-			return null;
 		}
 		
 		List<String> ledgersIds = null;
@@ -415,7 +412,6 @@ public class CalServiceBean implements CalService {
 			ledgersIds = groupService.getUniqueIds(ledgersCacheName).get(instanceId);
 		} catch(Exception e) {
 			e.printStackTrace();
-			return null;
 		}
 		
 		List<String> eventsIds = null;
@@ -423,11 +419,6 @@ public class CalServiceBean implements CalService {
 			eventsIds = groupService.getUniqueIds(eventsCacheName).get(instanceId);
 		} catch(Exception e) {
 			e.printStackTrace();
-			return null;
-		}
-		
-		if (groupsUniqueIds == null) {
-			return null;
 		}
 		
 		CalBusiness calBusiness = getCalBusiness(iwc);
@@ -439,57 +430,74 @@ public class CalServiceBean implements CalService {
 			return null;
 		}
 		
-		//	Getting ids for groups from unique ids
-		List<String> groupsIds = new ArrayList<String>();
-		Group group = null;
-		for (int i = 0; i < groupsUniqueIds.size(); i++) {
-			group = null;
-			
-			try {
-				group = groupBusiness.getGroupByUniqueId(groupsUniqueIds.get(i));
-			} catch (RemoteException e) {
-				e.printStackTrace();
-			} catch (FinderException e) {
-				e.printStackTrace();
-			}
-			
-			if (group != null) {
-				groupsIds.add(group.getId());
+		List<String> groupsIds = null;
+		if (groupsUniqueIds != null) {
+			//	Getting ids for groups from unique ids
+			groupsIds = new ArrayList<String>();
+			Group group = null;
+			for (int i = 0; i < groupsUniqueIds.size(); i++) {
+				group = null;
+				
+				try {
+					group = groupBusiness.getGroupByUniqueId(groupsUniqueIds.get(i));
+				} catch (RemoteException e) {
+					e.printStackTrace();
+				} catch (FinderException e) {
+					e.printStackTrace();
+				}
+				
+				if (group != null) {
+					groupsIds.add(group.getId());
+				}
 			}
 		}
 		
-		//	Events by type(s)
 		List<CalendarEntry> entriesByEvents = new ArrayList<CalendarEntry>();
-		if (eventsIds != null && eventsIds.size() > 0) {
-			Collection entries = null;
-			try {
-				entries = calBusiness.getEntriesByEventsIdsAndGroupsIds(eventsIds, groupsIds);
-			} catch(Exception e) {
-				e.printStackTrace();
-			}
-			if (entries != null) {
-				entriesByEvents.addAll(entries);
-			}
-		}
-		
-		//	Events by ledger(s)
 		List<CalendarEntry> entriesByLedgers = new ArrayList<CalendarEntry>();
-		if (ledgersIds != null && ledgersIds.size() > 0) {
-			Collection entries = null;
-			try {
-				entries = calBusiness.getEntriesByLedgersIdsAndGroupsIds(ledgersIds, groupsIds);
-			} catch(Exception e) {
-				e.printStackTrace();
+		List<CalendarEntry> entries = null;
+		if (groupsIds == null) {
+			if (ledgersIds == null) {
+				//	We don't want to get calendar entries only by events
+				return null;
 			}
 			
-			if (entries != null) {
-				entriesByLedgers.addAll(entries);
+			entries = calBusiness.getEntriesByLedgers(ledgersIds);
+			if (entries == null) {
+				return null;
+			}
+			entriesByLedgers.addAll(entries);
+		}
+		else {
+			//	Events by type(s) and group(s)
+			if (eventsIds != null && eventsIds.size() > 0) {
+				entries = null;
+				try {
+					entries = calBusiness.getEntriesByEventsIdsAndGroupsIds(eventsIds, groupsIds);
+				} catch(Exception e) {
+					e.printStackTrace();
+				}
+				if (entries != null) {
+					entriesByEvents.addAll(entries);
+				}
+			}
+			
+			//	Events by ledger(s) and group(s)
+			if (ledgersIds != null && ledgersIds.size() > 0) {
+				entries = null;
+				try {
+					entries = calBusiness.getEntriesByLedgersIdsAndGroupsIds(ledgersIds, groupsIds);
+				} catch(Exception e) {
+					e.printStackTrace();
+				}
+				
+				if (entries != null) {
+					entriesByLedgers.addAll(entries);
+				}
 			}
 		}
 		
 		List<CalendarEntry> allEntries = new ArrayList<CalendarEntry>();
 		allEntries.addAll(entriesByEvents);
-		
 		allEntries = getFilteredEntries(entriesByLedgers, allEntries);
 		
 		return getConvertedEntries(allEntries, iwc.getCurrentLocale());

@@ -117,4 +117,23 @@ public java.util.Collection findEntriesByEvents(List eventsList) throws javax.ej
  }
 
 
+ @SuppressWarnings("unchecked")
+ public Collection<CalendarEntry> getEntriesByLedgersIds(List<String> ledgersIds) {
+	 IDOEntity entity = this.idoCheckOutPooledEntity();
+	 Collection<CalendarEntry> ids = null;
+	 try {
+		 ids = ((CalendarEntryBMPBean)entity).ejbFindEntriesByLedgersIds(ledgersIds);
+	 } catch (Exception e) {
+		 e.printStackTrace();
+	 }
+	 this.idoCheckInPooledEntity(entity);
+	 try {
+		return this.getEntityCollectionForPrimaryKeys(ids);
+	 } catch (Exception e) {
+		e.printStackTrace();
+		return null;
+	 }
+ }
+
+
 }

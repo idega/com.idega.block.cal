@@ -322,6 +322,16 @@ public class CalendarEntryBMPBean extends GenericEntity implements com.idega.blo
 	  return super.idoFindPKsByQuery(query);
   }
   
+  public Collection<CalendarEntry> ejbFindEntriesByLedgersIds(List<String> ledgersIds) throws Exception {
+	  IDOQuery query = idoQueryGetSelect();	
+	  
+	  query.appendWhere();
+	  query.append(getColumnNameLedgerID());
+	  query.appendInCollection(ledgersIds);
+	  
+	  return super.idoFindPKsByQuery(query);
+  }
+  
   //DELETE
 	public void delete() throws SQLException{
     removeFrom(GenericEntity.getStaticInstance(LocalizedText.class));

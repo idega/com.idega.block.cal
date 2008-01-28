@@ -1279,5 +1279,16 @@ public class CalBusinessBean extends IBOServiceBean implements CalBusiness,UserG
 		
 		return null;
 	}
+	public List<CalendarEntry> getEntriesByLedgers(List<String> ledgersIds) {
+		List list = null; 
+		try {
+			CalendarEntryHome entryHome = (CalendarEntryHome) getIDOHome(CalendarEntry.class);
+			list = new ArrayList(entryHome.getEntriesByLedgersIds(ledgersIds));
+		} catch(Exception e) {
+			e.printStackTrace();
+		}
+		
+		return list;
+	}
 	
 }

@@ -172,13 +172,10 @@ var ENTRY_IN_SCHEDULE_STYLE_CLASS = 'scheduleEntry';
 		}
 		
 		var viewer = $(extendedProperties.containerId);
-		var loadingLayer = $(setLoadingLayerForElement(viewer.id, false, viewer.getSize(), viewer.getPosition()));
 		
 		ScheduleSession.switchToNextAndGetListOfEntries(extendedProperties.properties.instanceId, {
 			callback: function(entries) {
 				calendarChangeModeCallback(entries, extendedProperties);
-				
-				loadingLayer.remove();
 			}
 		});
 
@@ -192,13 +189,10 @@ var ENTRY_IN_SCHEDULE_STYLE_CLASS = 'scheduleEntry';
 		}
 		
 		var viewer = $(extendedProperties.containerId);
-		var loadingLayer = $(setLoadingLayerForElement(viewer.id, false, viewer.getSize(), viewer.getPosition()));
 		
 		ScheduleSession.switchToPreviousAndGetListOfEntries(extendedProperties.properties.instanceId, {
 			callback: function(entries) {
 				calendarChangeModeCallback(entries, extendedProperties);
-				
-				loadingLayer.remove();
 			}
 		});
 	}
@@ -214,13 +208,10 @@ var ENTRY_IN_SCHEDULE_STYLE_CLASS = 'scheduleEntry';
 		addExtendedCalendarViewerPropertiesBean(extendedProperties);
 		
 		var viewer = $(extendedProperties.containerId);
-		var loadingLayer = $(setLoadingLayerForElement(viewer.id, false, viewer.getSize(), viewer.getPosition()));
 		
 		ScheduleSession.changeModeToDayAndGetListOfEntries(extendedProperties.properties.instanceId, {
 			callback: function(entries) {
 				calendarChangeModeCallback(entries, extendedProperties);
-				
-				loadingLayer.remove();
 			}
 		});
 	}
@@ -236,13 +227,10 @@ var ENTRY_IN_SCHEDULE_STYLE_CLASS = 'scheduleEntry';
 		addExtendedCalendarViewerPropertiesBean(extendedProperties);
 		
 		var viewer = $(extendedProperties.containerId);
-		var loadingLayer = $(setLoadingLayerForElement(viewer.id, false, viewer.getSize(), viewer.getPosition()));
 		
 		ScheduleSession.changeModeToWorkweekAndGetListOfEntries(extendedProperties.properties.instanceId, {
 			callback: function(entries) {
 				calendarChangeModeCallback(entries, extendedProperties);
-				
-				loadingLayer.remove();
 			}
 		});
 	}	
@@ -258,13 +246,10 @@ var ENTRY_IN_SCHEDULE_STYLE_CLASS = 'scheduleEntry';
 		addExtendedCalendarViewerPropertiesBean(extendedProperties);
 		
 		var viewer = $(extendedProperties.containerId);
-		var loadingLayer = $(setLoadingLayerForElement(viewer.id, false, viewer.getSize(), viewer.getPosition()));
 		
 		ScheduleSession.changeModeToWeekAndGetListOfEntries(extendedProperties.properties.instanceId, {
 			callback: function(entries) {
 				calendarChangeModeCallback(entries, extendedProperties);
-				
-				loadingLayer.remove();
 			}
 		});
 	}		
@@ -280,13 +265,10 @@ var ENTRY_IN_SCHEDULE_STYLE_CLASS = 'scheduleEntry';
 		addExtendedCalendarViewerPropertiesBean(extendedProperties);
 		
 		var viewer = $(extendedProperties.containerId);
-		var loadingLayer = $(setLoadingLayerForElement(viewer.id, false, viewer.getSize(), viewer.getPosition()));
 		
 		ScheduleSession.changeModeToMonthAndGetListOfEntries(extendedProperties.properties.instanceId, {
 			callback: function(entries) {
 				calendarChangeModeCallback(entries, extendedProperties);
-				
-				loadingLayer.remove();
 			}
 		});
 	}
@@ -355,12 +337,19 @@ var ENTRY_IN_SCHEDULE_STYLE_CLASS = 'scheduleEntry';
 			entryLink.setProperty(entryIdText, entry.id);
 			entryLink.injectInside(entryContainer);
 			var entryText = entry.entryName;
+			if (entryText == null) {
+				entryText = '';
+			}
+			var dateText = '';
 			if (extendedProperties.properties.showTime) {
-				var startDate = entry.localizedDate;
+				var startDate = entry.localizedShortStartDate;
 				if (startDate == null) {
-					startDate = entry.entryDate;
+					startDate = entry.localizedDate;
 					if (startDate == null) {
-						startDate = '';
+						startDate = entry.entryDate;
+						if (startDate == null) {
+							startDate = '';
+						}
 					}
 				}
 				var startTime = entry.localizedTime;
@@ -371,30 +360,12 @@ var ENTRY_IN_SCHEDULE_STYLE_CLASS = 'scheduleEntry';
 					}
 				}
 				
-				var endDate = entry.localizedEndDate;
-				if (endDate == null) {
-					endDate = entry.entryEndDate;
-					if (endDate == null) {
-						endDate = '';
-					}
-				}
-				var endTime = entry.localizedEndTime;
-				if (endTime == null) {
-					endTime = entry.entryEndTime;
-					if (endTime == null) {
-						endTime = '';
-					}
-				}
-				
-				entryText += ' ';
-				if (startDate == endDate) {
-					entryText += startDate + ': ' + startTime + ' - ' + endTime;
-				}
-				else {
-				  entryText += startDate + ' ' + startTime + ' - ' + endDate + ' ' + endTime;
+				dateText += startDate + ' ' + startTime;
+				if (entryText != '') {
+					dateText += ': ';
 				}
 			}
-			entryLink.setText(entryText);
+			entryLink.setText(dateText + entryText);
 			entryLink.setProperty('href', 'javascript:void(0)');
 			addEventToCalendarEntryToShowInfoWindow(entryLink, null);
 			

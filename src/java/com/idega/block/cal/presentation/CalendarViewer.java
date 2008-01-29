@@ -13,6 +13,7 @@ import com.idega.idegaweb.IWBundle;
 import com.idega.presentation.IWContext;
 import com.idega.presentation.Layer;
 import com.idega.user.presentation.group.GroupViewer;
+import com.idega.util.CoreUtil;
 import com.idega.webface.WFUtil;
 
 public class CalendarViewer extends GroupViewer {
@@ -31,10 +32,12 @@ public class CalendarViewer extends GroupViewer {
 		String instanceId = BuilderLogic.getInstance().getInstanceId(this);
 		
 		Layer container = new Layer();
-		String containerId = new StringBuffer(instanceId).append(CalendarConstants.CALENDAR_VIEWER_MAIN_CONTAINER_ID_ENDING).toString();
-		container.setId(containerId);
+		if (instanceId != null) {
+			String containerId = new StringBuffer(instanceId).append(CalendarConstants.CALENDAR_VIEWER_MAIN_CONTAINER_ID_ENDING).toString();
+			container.setId(containerId);
+		}
 		
-		addJavaScript(iwc, containerId, instanceId);
+		addJavaScript(iwc, container.getId(), instanceId);
 		addCssFiles(iwc);
 		
 		setCalendarPropertiesBean(instanceId);
@@ -75,12 +78,14 @@ public class CalendarViewer extends GroupViewer {
 		cssFiles.append("<link rel=\"stylesheet\" href=\"");
 		cssFiles.append(iwb.getVirtualPathWithFileNameString("style/schedule.css")).append("\" type=\"text/css\" />\n");
 		
-		try {
-			Web2Business web2 = (Web2Business) SpringBeanLookup.getInstance().getSpringBean(iwc, Web2Business.class);
-			cssFiles.append("<link rel=\"stylesheet\" href=\"");
-			cssFiles.append(web2.getMoodalboxStyleFilePath()).append("\" type=\"text/css\" />\n");
-		} catch (Exception e) {
-			e.printStackTrace();
+		if (!CoreUtil.isSingleComponentRenderingProcess(iwc)) {
+			try {
+				Web2Business web2 = (Web2Business) SpringBeanLookup.getInstance().getSpringBean(iwc, Web2Business.class);
+				cssFiles.append("<link rel=\"stylesheet\" href=\"");
+				cssFiles.append(web2.getMoodalboxStyleFilePath()).append("\" type=\"text/css\" />\n");
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
 		}
 		
 		add(cssFiles.toString());
@@ -90,13 +95,16 @@ public class CalendarViewer extends GroupViewer {
 		IWBundle iwb = getBundle(iwc);
 		List<String> files = new ArrayList<String>();
 		
-		//	Web 2.0 stuff
-		Web2Business web2 = (Web2Business) SpringBeanLookup.getInstance().getSpringBean(iwc, Web2Business.class);
-		try {
-			files.add(web2.getBundleURIToMootoolsLib());
-			files.add(web2.getMoodalboxScriptFilePath(false));
-		} catch (RemoteException e) {
-			e.printStackTrace();
+		boolean singleProcess = CoreUtil.isSingleComponentRenderingProcess(iwc);
+		if (!singleProcess) {
+			//	Web 2.0 stuff
+			Web2Business web2 = (Web2Business) SpringBeanLookup.getInstance().getSpringBean(iwc, Web2Business.class);
+			try {
+				files.add(web2.getBundleURIToMootoolsLib());
+				files.add(web2.getMoodalboxScriptFilePath(false));
+			} catch (RemoteException e) {
+				e.printStackTrace();
+			}
 		}
 		
 		//	Calendar stuff
@@ -114,13 +122,19 @@ public class CalendarViewer extends GroupViewer {
 		files.add("/dwr/engine.js");
 		files.add("/dwr/interface/ScheduleSession.js");
 
-		addScriptFiles(iwc, files, false);
+		addScriptFiles(iwc, files, singleProcess);
 		
-		StringBuffer action = new StringBuffer("window.addEvent('load', function() { loadCalendarViewer('").append(id).append("', '").append(instanceId);
-		action.append("', '").append(iwb.getResourceBundle(iwc).getLocalizedString("loading", "Loading..."));
-		action.append("'); });");
+		StringBuffer singleAction = new StringBuffer("loadCalendarViewer('").append(id).append("', '").append(instanceId).append("', '");
+		singleAction.append(iwb.getResourceBundle(iwc).getLocalizedString("loading", "Loading...")).append("');");
+		StringBuffer action = null;
+		if (singleProcess) {
+			action = singleAction;
+		}
+		else {
+			action = new StringBuffer("window.addEvent('load', function() {").append(singleAction.toString()).append("});");
+		}
 			
-		StringBuffer scriptString = new StringBuffer("<script type=\"text/javascript\" > \n\t").append(action).append(" \n</script> \n");
+		StringBuffer scriptString = new StringBuffer("<script type=\"text/javascript\" > \n\t").append(action.toString()).append(" \n</script> \n");
 		add(scriptString.toString());
 	}
 	

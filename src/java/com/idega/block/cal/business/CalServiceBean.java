@@ -7,6 +7,7 @@ import java.util.Locale;
 import java.util.Map;
 
 import javax.ejb.FinderException;
+import javax.faces.component.UIComponent;
 
 import org.apache.myfaces.custom.schedule.model.ScheduleModel;
 
@@ -24,6 +25,7 @@ import com.idega.core.builder.business.ICBuilderConstants;
 import com.idega.core.cache.IWCacheManager2;
 import com.idega.idegaweb.IWApplicationContext;
 import com.idega.idegaweb.IWBundle;
+import com.idega.idegaweb.IWMainApplication;
 import com.idega.idegaweb.IWResourceBundle;
 import com.idega.presentation.IWContext;
 import com.idega.user.business.GroupBusiness;
@@ -346,35 +348,44 @@ public class CalServiceBean implements CalService {
 			return null;
 		}
 		
+		IWMainApplication iwma = iwc.getIWMainApplication();
 		BuilderLogic builder = BuilderLogic.getInstance();
 		String pageKey = builder.getCurrentIBPage(iwc);
 		
-		String propertyName = new StringBuffer(":method:1:implied:void:setCalendarProperties:").append(CalendarPropertiesBean.class.getName()).append(":").toString();
-		String values[] = builder.getPropertyValues(iwc.getIWMainApplication(), pageKey, instanceId, propertyName, null, true);
-		if (values == null) {
-			return null;
+		CalendarPropertiesBean properties = null;
+		UIComponent calendar = builder.findComponentInPage(iwc, pageKey, instanceId);
+		if (calendar == null) {
+			String propertyName = new StringBuffer(":method:1:implied:void:setCalendarProperties:").append(CalendarPropertiesBean.class.getName()).append(":").toString();
+			String values[] = builder.getPropertyValues(iwma, pageKey, instanceId, propertyName, null, true);
+			if (values == null) {
+				return null;
+			}
+			if (values.length == 0) {
+				return null;
+			}
+					
+			CalendarsChooserHelper helper = new CalendarsChooserHelper();
+			properties = helper.getExtractedPropertiesFromString(values[0]);
+			properties.setInstanceId(instanceId);
 		}
-		if (values.length == 0) {
-			return null;
+		else {
+			builder.getRenderedComponent(iwc, calendar, false);
+			properties = getCalendarProperties(instanceId);
 		}
-		
-		CalendarsChooserHelper helper = new CalendarsChooserHelper();
-		CalendarPropertiesBean bean = helper.getExtractedPropertiesFromString(values[0]);
-		bean.setInstanceId(instanceId);
-		
-		if (bean == null) {
+			
+		if (properties == null) {
 			return null;
 		}
 		Object[] parameters = new Object[2];
 		parameters[0] = instanceId;
-		parameters[1] = bean;
+		parameters[1] = properties;
 		
 		Class<?>[] classes = new Class[2];
 		classes[0] = String.class;
 		classes[1] = CalendarPropertiesBean.class;
 		
 		WFUtil.invoke(CalendarConstants.CALENDAR_MANAGER_BEAN_ID, "addCalendarProperties", parameters, classes);
-		return bean;
+		return properties;
 	}
 	
 	public List<CalScheduleEntry> getCalendarEntries(String login, String password, String instanceId, Integer cacheTime, boolean remoteMode) {

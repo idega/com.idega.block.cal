@@ -17,6 +17,9 @@ public class CalScheduleEntry {
 	private String entryEndTime = null;
 	private String localizedEndTime = null;
 	
+	private String localizedShortStartDate = null;
+	private String localizedShortEndDate = null;
+	
 	private String repeat = null;
 	private String entryTypeName = null;
 	private String entryDescription = null;
@@ -98,6 +101,18 @@ public class CalScheduleEntry {
 	}
 	public void setLocalizedEndTime(String localizedEndTime) {
 		this.localizedEndTime = localizedEndTime;
+	}
+	public String getLocalizedShortStartDate() {
+		return localizedShortStartDate;
+	}
+	public void setLocalizedShortStartDate(String localizedShortStartDate) {
+		this.localizedShortStartDate = localizedShortStartDate;
+	}
+	public String getLocalizedShortEndDate() {
+		return localizedShortEndDate;
+	}
+	public void setLocalizedShortEndDate(String localizedShortEndDate) {
+		this.localizedShortEndDate = localizedShortEndDate;
 	}
 	
 }

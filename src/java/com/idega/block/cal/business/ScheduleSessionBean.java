@@ -819,9 +819,10 @@ public class ScheduleSessionBean implements ScheduleSession {
 		
 		IWTimestamp timestamp = new IWTimestamp(date);
 		
-		String[] localizations = new String[2];
+		String[] localizations = new String[3];
 		localizations[0] = timestamp.getLocaleDate(locale);
 		localizations[1] = timestamp.getLocaleTime(locale, DateFormat.SHORT);
+		localizations[2] = timestamp.getLocaleDate(locale, DateFormat.SHORT);
 	
 		return localizations;
 	}
@@ -835,10 +836,12 @@ public class ScheduleSessionBean implements ScheduleSession {
 		if (startTime) {
 			entry.setLocalizedDate(localizedTime[0]);
 			entry.setLocalizedTime(localizedTime[1]);
+			entry.setLocalizedShortStartDate(localizedTime[2]);
 		}
 		else {
 			entry.setLocalizedEndDate(localizedTime[0]);
 			entry.setLocalizedEndTime(localizedTime[1]);
+			entry.setLocalizedShortEndDate(localizedTime[2]);
 		}
 	}
 	

@@ -1236,12 +1236,11 @@ public class CalBusinessBean extends IBOServiceBean implements CalBusiness,UserG
 		}
 		
 		List<String> groupsIds = null;
-//		FIXME: commented out due to  cannot find symbol when compiling
-//		try {
-//			groupsIds = getUserBusiness(iwc).getAllUserGroupsIds(user, iwc);
-//		} catch (RemoteException e) {
-//			e.printStackTrace();
-//		}
+		try {
+			groupsIds = getUserBusiness(iwc).getAllUserGroupsIds(user, iwc);
+		} catch (RemoteException e) {
+			e.printStackTrace();
+		}
 		
 		CalendarLedgerHome ledgerHome = null;
 		try {

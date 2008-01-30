@@ -441,7 +441,7 @@ var ENTRY_IN_SCHEDULE_STYLE_CLASS = 'scheduleEntry';
 			link += '&schedule=' + scheduleId;
 		}
 		
-		MOOdalBox.init({resizeDuration: 50, evalScripts: true, animateCaption: false});
+		MOOdalBox.init({resizeDuration: 0, evalScripts: true, animateCaption: false});
 		var result = MOOdalBox.open(link, CALENDAR_ENTRY_INFO_WINDOW_TITLE, '700 300');
 	}
 	

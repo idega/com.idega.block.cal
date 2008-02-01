@@ -368,7 +368,6 @@ public class CalendarEntryBMPBean extends GenericEntity implements com.idega.blo
 	  query.addCriteria(new MatchCriteria(dateCol, MatchCriteria.GREATEREQUAL, from));
 	  query.addCriteria(new MatchCriteria(dateCol, MatchCriteria.LESSEQUAL, to));
 	  
-	  System.out.println("[CalendarEntryBMPBean] SQL : "+query.toString());
 	  return this.idoFindPKsByQuery(query);
   }
   

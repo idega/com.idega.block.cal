@@ -55,7 +55,7 @@ import com.idega.util.IWTimestamp;
 public class CalBusinessBean extends IBOServiceBean implements CalBusiness,UserGroupPlugInBusiness{
 
 	private static final long serialVersionUID = 3817371057903141346L;
-	
+	public static final String ROLE_LEDGER_ADMIN = "ledger_admin";
 	//GET methods for Entries
 	/**
 	 * @return a calendar entry with the specific entryID
@@ -85,6 +85,25 @@ public class CalBusinessBean extends IBOServiceBean implements CalBusiness,UserG
 			e.printStackTrace();
 		}
 		return list;		
+	}
+	public Collection<CalendarEntry> getUserEntriesBetweenTimestamps(User user, Timestamp fromStamp, Timestamp toStamp, IWContext iwc) {
+		List<CalendarEntry> list = null; 
+		try {
+			CalendarEntryHome entryHome = (CalendarEntryHome) getIDOHome(CalendarEntry.class);
+			List<CalendarLedger> ledgers = getUserLedgers(user, iwc);
+			List<String> ledgersIds = new ArrayList<String>();
+			if (ledgers != null) {
+				Iterator<CalendarLedger> ledgerIter = ledgers.iterator();
+				while (ledgerIter.hasNext()) {
+					ledgersIds.add(((CalendarLedger) ledgerIter.next()).getPrimaryKey().toString());
+				}
+			}
+			List groupsIds = getUserBusiness(iwc).getAllUserGroupsIds(user, iwc);
+			list = new ArrayList<CalendarEntry>(entryHome.findEntriesByLedgerIdsOrGroupsIds(ledgersIds, groupsIds, fromStamp,toStamp));
+		} catch(Exception e) {
+			e.printStackTrace();
+		}
+		return list;
 	}
 	public Collection getEntriesBetweenTimestamps(Timestamp fromStamp, Timestamp toStamp) {
 		List list = null; 

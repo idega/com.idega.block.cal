@@ -14,6 +14,12 @@ import com.idega.data.GenericEntity;
 import com.idega.data.IDOAddRelationshipException;
 import com.idega.data.IDOQuery;
 import com.idega.data.IDORelationshipException;
+import com.idega.data.query.Column;
+import com.idega.data.query.InCriteria;
+import com.idega.data.query.MatchCriteria;
+import com.idega.data.query.OR;
+import com.idega.data.query.SelectQuery;
+import com.idega.data.query.Table;
 import com.idega.user.data.User;
 
 public class CalendarEntryBMPBean extends GenericEntity implements com.idega.block.cal.data.CalendarEntry {
@@ -372,6 +378,32 @@ public class CalendarEntryBMPBean extends GenericEntity implements com.idega.blo
 	  }
 
 	  return null;
+  }
+
+ public Collection<CalendarEntry> ejbFindEntriesByLedgerIdsOrGroupsIds(List<String> ledgersIds, List groupsIds, Timestamp from, Timestamp to) throws FinderException {
+	  Table table = new Table(this);
+	  SelectQuery query = new SelectQuery(table);
+	  query.addColumn(new Column(table, getIDColumnName()));
+	  
+	  InCriteria ledIn = new InCriteria(new Column(table, getColumnNameLedgerID()), ledgersIds);
+	  InCriteria grpIn = new InCriteria(new Column(table, getColumnNameGroupID()), groupsIds);
+
+	  boolean useLedgers = ledgersIds != null && !ledgersIds.isEmpty();
+	  boolean useGroups = ledgersIds != null && !ledgersIds.isEmpty();
+	  
+	  if (useLedgers && useGroups) {
+		  OR or = new OR(ledIn, grpIn);
+		  query.addCriteria(or);
+	  } else if (useLedgers) {
+		  query.addCriteria(ledIn);
+	  } else if (useGroups) {
+		  query.addCriteria(grpIn);
+	  }
+	  Column dateCol = new Column(table, "CAL_ENTRY_DATE");
+	  query.addCriteria(new MatchCriteria(dateCol, MatchCriteria.GREATEREQUAL, from));
+	  query.addCriteria(new MatchCriteria(dateCol, MatchCriteria.LESSEQUAL, to));
+	  
+	  return this.idoFindPKsByQuery(query);
   }
 
   public Collection<CalendarEntry> getEntriesByLedgersIdsAndGroupsIds(List<String> ledgersIds, List<String> groupsIds) {

@@ -15,6 +15,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import com.idega.block.cal.business.CalBusiness;
+import com.idega.block.cal.business.CalBusinessBean;
 import com.idega.block.cal.data.CalendarEntry;
 import com.idega.block.cal.data.CalendarLedger;
 import com.idega.idegaweb.IWApplicationContext;
@@ -145,13 +146,14 @@ public class CalendarView extends Block{
 			toStamp.setHours(this.endHour);
 			toStamp.setMinutes(0);
 			toStamp.setNanos(0);			
-			List listOfEntries = (List) getCalBusiness(iwc).getEntriesBetweenTimestamps(fromStamp,toStamp);
+//			List listOfEntries = (List) getCalBusiness(iwc).getEntriesBetweenTimestamps(fromStamp,toStamp);
 			User user = null;
 			Integer userID = null;
 			if(iwc.isLoggedOn()) {
 				user = iwc.getCurrentUser();
 				userID = (Integer) user.getPrimaryKey();
 			}
+			List listOfEntries = (List) getCalBusiness(iwc).getUserEntriesBetweenTimestamps(user, fromStamp, toStamp, iwc);
 			//the inner for-loop goes through the list of entries and prints them out as a link
 			//the link opens the view for the entry
 			int numberOfEntries = listOfEntries.size();
@@ -360,13 +362,14 @@ public class CalendarView extends Block{
 					 toStamp.setHours(this.endHour);
 					 toStamp.setMinutes(0);
 					 toStamp.setNanos(0);			
-					 List listOfEntries = (List) getCalBusiness(iwc).getEntriesBetweenTimestamps(fromStamp,toStamp);	
+					 //List listOfEntries = (List) getCalBusiness(iwc).getEntriesBetweenTimestamps(fromStamp,toStamp);	
 					 User user = null;
 					 Integer userID = null;
 					 if(iwc.isLoggedOn()) {
 						 user = iwc.getCurrentUser();
 						 userID = (Integer) user.getPrimaryKey();
 					 }
+					 List listOfEntries = (List) getCalBusiness(iwc).getUserEntriesBetweenTimestamps(user, fromStamp, toStamp, iwc);
 					 for(int h=0; h<listOfEntries.size(); h++) {
 
 						 CalendarEntry entry = (CalendarEntry) listOfEntries.get(h);
@@ -566,12 +569,14 @@ public class CalendarView extends Block{
 			toStamp.setHours(23);
 			toStamp.setMinutes(59);
 			toStamp.setNanos(0);
-			List listOfEntries = (List) getCalBusiness(iwc).getEntriesBetweenTimestamps(fromStamp,toStamp);
+//			List listOfEntries = (List) getCalBusiness(iwc).getEntriesBetweenTimestamps(fromStamp,toStamp);
+			List listOfEntries = (List) getCalBusiness(iwc).getUserEntriesBetweenTimestamps(user, fromStamp, toStamp, iwc);
 			Collections.sort(listOfEntries,new Comparator() {
 				public int compare(Object arg0, Object arg1) {
 					return ((CalendarEntry) arg0).getDate().compareTo(((CalendarEntry) arg1).getDate());
 				}				
 			});
+			boolean ledgerAdmin = iwc.getAccessController().hasRole(CalBusinessBean.ROLE_LEDGER_ADMIN, iwc);
 
 			for(int h=0; h<listOfEntries.size(); h++) {
 				CalendarEntry entry = (CalendarEntry) listOfEntries.get(h);
@@ -613,7 +618,8 @@ public class CalendarView extends Block{
 				}
 				if(isInGroup || iwc.isSuperAdmin() || 
 						getViewGroupID() == entry.getGroupID() ||
-						(userID!=null && userID.intValue() == entry.getUserID())) {
+						(userID!=null && userID.intValue() == entry.getUserID()) ||
+						ledgerAdmin) {
 					String headline = getEntryHeadline(entry);
 					Link headlineLink = new Link(headline);
 					headlineLink.addParameter(ACTION,OPEN);
@@ -1053,7 +1059,7 @@ public class CalendarView extends Block{
 		}
 
 
-		if(iwc.getAccessController().hasRole("cal_view_entry_creator",iwc) && !this.isPrintable) { 
+		if((iwc.getAccessController().hasRole("cal_view_entry_creator",iwc) || iwc.getAccessController().hasRole(CalBusinessBean.ROLE_LEDGER_ADMIN,iwc))&& !this.isPrintable) { 
 			if(this.adminOnTop) {
 				table.add(getAdminTable(iwc,creator),1,2);
 			}

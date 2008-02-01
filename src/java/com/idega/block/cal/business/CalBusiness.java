@@ -1,5 +1,5 @@
 /*
- * $Id: CalBusiness.java,v 1.22 2008/01/28 11:32:39 valdas Exp $ Created on Dec 7, 2004
+ * $Id: CalBusiness.java,v 1.23 2008/02/01 15:51:42 gimmi Exp $ Created on Dec 7, 2004
  * 
  * Copyright (C) 2004 Idega Software hf. All Rights Reserved.
  * 
@@ -31,10 +31,10 @@ import com.idega.user.data.User;
 
 /**
  * 
- * Last modified: $Date: 2008/01/28 11:32:39 $ by $Author: valdas $
+ * Last modified: $Date: 2008/02/01 15:51:42 $ by $Author: gimmi $
  * 
  * @author <a href="mailto:eiki@idega.com">eiki </a>
- * @version $Revision: 1.22 $
+ * @version $Revision: 1.23 $
  */
 public interface CalBusiness extends IBOService, UserGroupPlugInBusiness {
 
@@ -321,4 +321,6 @@ public interface CalBusiness extends IBOService, UserGroupPlugInBusiness {
 	public List<CalendarLedger> getUserLedgers(User user, IWContext iwc);
 	
 	public List<CalendarLedger> getUserLedgers(String userId, IWContext iwc);
+	
+	public Collection<CalendarEntry> getUserEntriesBetweenTimestamps(User user, Timestamp fromStamp, Timestamp toStamp, IWContext iwc);
 }

@@ -1,7 +1,10 @@
 package com.idega.block.cal.data;
 
+import java.sql.Timestamp;
 import java.util.Collection;
 import java.util.List;
+
+import javax.ejb.FinderException;
 
 import com.idega.data.IDOEntity;
 
@@ -99,6 +102,13 @@ public java.util.Collection findEntriesByEvents(List eventsList) throws javax.ej
 		e.printStackTrace();
 		return null;
 	 }
+ }
+ 
+ public Collection findEntriesByLedgerIdsOrGroupsIds(List ledgersIds, List groupsIds, Timestamp from, Timestamp to) throws FinderException {
+	com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
+	java.util.Collection ids = ((CalendarEntryBMPBean)entity).ejbFindEntriesByLedgerIdsOrGroupsIds(ledgersIds, groupsIds, from, to);
+	this.idoCheckInPooledEntity(entity);
+	return this.getEntityCollectionForPrimaryKeys(ids);
  }
 
  public Collection getEntriesByLedgersIds(List ledgersIds) {

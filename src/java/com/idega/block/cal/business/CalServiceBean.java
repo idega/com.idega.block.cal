@@ -369,7 +369,7 @@ public class CalServiceBean implements CalService {
 			properties.setInstanceId(instanceId);
 		}
 		else {
-			builder.getRenderedComponent(iwc, calendar, false);
+			builder.getRenderedComponent(calendar, iwc, false);
 			properties = getCalendarProperties(instanceId);
 		}
 			

@@ -4,6 +4,11 @@
 		<author email="tryggvi@idega.com">Tryggvi Larusson</author>
 	</properties>
 	<body>
+		<release version="3.1.13" date="2008-02-05">
+      		<action dev="valdas" type="update">
+      			Using com.idega.user 3.1.21 version
+      		</action>       
+    	</release>
 		<release version="3.1.12" date="2008-02-01">
       		<action dev="gimmi" type="update">
       			new method for getting calendar entries

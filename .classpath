@@ -9,7 +9,7 @@
   </classpathentry>
   <classpathentry kind="var" path="MAVEN_REPO/slide/jars/slide-kernel-2.2pre1.iwbuild5.jar">
   </classpathentry>
-  <classpathentry kind="var" path="MAVEN_REPO/bundles/jars/com.idega.user-3.1.20.jar">
+  <classpathentry kind="var" path="MAVEN_REPO/bundles/jars/com.idega.user-3.1.21.jar">
   </classpathentry>
   <classpathentry kind="src" path="/com.idega.block.category">
   </classpathentry>

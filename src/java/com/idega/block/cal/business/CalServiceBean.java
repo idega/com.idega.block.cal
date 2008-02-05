@@ -194,7 +194,7 @@ public class CalServiceBean extends IBOSessionBean implements CalService {
 			return Boolean.FALSE;
 		}
 		
-		return new Boolean(groupService.addUniqueIds(calendarCacheName, instanceId, ids));
+		return groupService.addUniqueIds(calendarCacheName, instanceId, ids);
 	}
 	
 	public Boolean addUniqueIdsForCalendarLedgers(String instanceId, List ids) {
@@ -207,7 +207,7 @@ public class CalServiceBean extends IBOSessionBean implements CalService {
 			return Boolean.FALSE;
 		}
 		
-		return new Boolean(groupService.addUniqueIds(ledgersCacheName, instanceId, ids));
+		return groupService.addUniqueIds(ledgersCacheName, instanceId, ids);
 	}
 	
 	public Boolean addUniqueIdsForCalendarEvents(String instanceId, List ids) {
@@ -220,7 +220,7 @@ public class CalServiceBean extends IBOSessionBean implements CalService {
 			return Boolean.FALSE;
 		}
 		
-		return new Boolean(groupService.addUniqueIds(eventsCacheName, instanceId, ids));
+		return groupService.addUniqueIds(eventsCacheName, instanceId, ids);
 	}
 	
 	

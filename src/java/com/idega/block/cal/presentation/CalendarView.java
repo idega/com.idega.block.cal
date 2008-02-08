@@ -103,6 +103,22 @@ public class CalendarView extends Block{
 		backTable.setWidth(Table.HUNDRED_PERCENT);//500
 		backTable.setHeight(400);
 
+		User user = null;
+		Integer userID = null;
+		if(iwc.isLoggedOn()) {
+			user = iwc.getCurrentUser();
+		}
+
+		Timestamp fromStamp = Timestamp.valueOf(stamp.getDateString("yyyy-MM-dd hh:mm:ss.S")); 
+		fromStamp.setHours(this.beginHour);
+		fromStamp.setMinutes(0);
+		fromStamp.setNanos(0);
+		Timestamp toStamp =Timestamp.valueOf(stamp.getDateString("yyyy-MM-dd hh:mm:ss.S"));
+		toStamp.setHours(this.endHour);
+		toStamp.setMinutes(0);
+		toStamp.setNanos(0);			
+
+		List listOfEntries = (List) getCalBusiness(iwc).getUserEntriesBetweenTimestamps(user, fromStamp, toStamp, iwc);
 
 		/*		backTable.mergeCells(1,1,2,1);
 		backTable.add(headTable,1,1);
@@ -110,6 +126,11 @@ public class CalendarView extends Block{
 		//the outer for-loop goes through the hours and prints out
 		//the style for each cell,
 		//the entrylist for each hour
+		
+		Iterator calIter = listOfEntries.iterator();
+		CalendarEntry entry = null;
+
+		
 		for(int i=this.beginHour;i<=this.endHour;i++) {
 			backTable.setHeight(1,row,40);
 			backTable.setHeight(2,row,40);
@@ -138,28 +159,45 @@ public class CalendarView extends Block{
 			dayTable.setColor(1,1,"#ffffff");
 			backTable.add(dayTable,1,row);
 
-			Timestamp fromStamp = Timestamp.valueOf(stamp.getDateString("yyyy-MM-dd hh:mm:ss.S")); 
-			fromStamp.setHours(this.beginHour);
-			fromStamp.setMinutes(0);
-			fromStamp.setNanos(0);
-			Timestamp toStamp =Timestamp.valueOf(stamp.getDateString("yyyy-MM-dd hh:mm:ss.S"));
-			toStamp.setHours(this.endHour);
-			toStamp.setMinutes(0);
-			toStamp.setNanos(0);			
+			
+//			Timestamp fromStamp = Timestamp.valueOf(stamp.getDateString("yyyy-MM-dd hh:mm:ss.S")); 
+//			fromStamp.setHours(this.beginHour);
+//			fromStamp.setMinutes(0);
+//			fromStamp.setNanos(0);
+//			Timestamp toStamp =Timestamp.valueOf(stamp.getDateString("yyyy-MM-dd hh:mm:ss.S"));
+//			toStamp.setHours(this.endHour);
+//			toStamp.setMinutes(0);
+//			toStamp.setNanos(0);			
 //			List listOfEntries = (List) getCalBusiness(iwc).getEntriesBetweenTimestamps(fromStamp,toStamp);
-			User user = null;
-			Integer userID = null;
-			if(iwc.isLoggedOn()) {
-				user = iwc.getCurrentUser();
-				userID = (Integer) user.getPrimaryKey();
-			}
-			List listOfEntries = (List) getCalBusiness(iwc).getUserEntriesBetweenTimestamps(user, fromStamp, toStamp, iwc);
+//			User user = null;
+//			Integer userID = null;
+//			if(iwc.isLoggedOn()) {
+//				user = iwc.getCurrentUser();
+//				userID = (Integer) user.getPrimaryKey();
+//			}
+			
 			//the inner for-loop goes through the list of entries and prints them out as a link
 			//the link opens the view for the entry
-			int numberOfEntries = listOfEntries.size();
+//			int numberOfEntries = listOfEntries.size();
 
-			for(int j=0; j<numberOfEntries; j++) {
-				CalendarEntry entry = (CalendarEntry) listOfEntries.get(j);
+			
+			if (entry == null && calIter.hasNext()) {
+				entry = (CalendarEntry) calIter.next();
+			}
+			
+			boolean timeFits =  false;
+			if (entry != null) {
+				Timestamp eStamp = entry.getDate();
+				if (eStamp.getHours() == i) {
+					timeFits = true;
+				} else {
+					timeFits = false;
+				}
+			}
+			
+			while (timeFits) {
+//			for(int j=0; j<numberOfEntries; j++) {
+//				CalendarEntry entry = (CalendarEntry) listOfEntries.get(j);
 				if(entry==null) {
 					//fucked up check
 					continue;
@@ -251,7 +289,20 @@ public class CalendarView extends Block{
 						entryTable.add(Text.BREAK,1,2);
 					}						
 				}
-
+				// NEXT ENTRY
+				if (calIter.hasNext()) {
+					entry = (CalendarEntry) calIter.next();
+					Timestamp eStamp = entry.getDate();
+					if (eStamp.getHours() == i) {
+						timeFits = true;
+					} else {
+						timeFits = false;
+					}
+				} else {
+					entry = null;
+					timeFits = false;
+				}
+				
 			}	
 			backTable.add(entryTable,2,row);
 			row++;
@@ -484,6 +535,7 @@ public class CalendarView extends Block{
 		/*		backTable.mergeCells(1,1,7,1);
 		backTable.add(headTable,1,1);
 		 */		
+		
 
 		int weekday = 1;
 		for(int i=1; i<weekdays; i++) {
@@ -517,6 +569,23 @@ public class CalendarView extends Block{
 		else {
 			userID = new Integer(-2);
 		}
+		Timestamp fromStamp = Timestamp.valueOf(stamp.getDateString("yyyy-MM-dd hh:mm:ss.S"));
+		fromStamp.setDate(1);
+		fromStamp.setHours(0);
+		fromStamp.setMinutes(0);
+		fromStamp.setNanos(0);	
+		Timestamp toStamp = Timestamp.valueOf(stamp.getDateString("yyyy-MM-dd hh:mm:ss.S"));
+		toStamp.setDate(daycount);
+		toStamp.setHours(23);
+		toStamp.setMinutes(59);
+		toStamp.setNanos(0);
+		List listOfEntries = (List) getCalBusiness(iwc).getUserEntriesBetweenTimestamps(user, fromStamp, toStamp, iwc);
+		Collections.sort(listOfEntries,new Comparator() {
+			public int compare(Object arg0, Object arg1) {
+				return ((CalendarEntry) arg0).getDate().compareTo(((CalendarEntry) arg1).getDate());
+			}				
+		});
+
 		Collection viewGroups = null;		
 		if(user != null) {
 			try {
@@ -526,6 +595,11 @@ public class CalendarView extends Block{
 				e.printStackTrace();
 			}
 		}
+		
+		Iterator calIter = listOfEntries.iterator();
+		CalendarEntry entry = null;
+		
+//		while (entry != null && calIter.hasNext()) {
 
 		while (n <= daycount) {
 			Table dayCell = new Table();
@@ -559,27 +633,36 @@ public class CalendarView extends Block{
 			dayCell.setHeight(1,1,12);
 			dayCell.add(Text.BREAK,1,1);
 			dayCell.setAlignment(1,1,Table.HORIZONTAL_ALIGN_RIGHT);
-			Timestamp fromStamp = Timestamp.valueOf(stamp.getDateString("yyyy-MM-dd hh:mm:ss.S"));
-			fromStamp.setDate(n);
-			fromStamp.setHours(0);
-			fromStamp.setMinutes(0);
-			fromStamp.setNanos(0);	
-			Timestamp toStamp = Timestamp.valueOf(stamp.getDateString("yyyy-MM-dd hh:mm:ss.S"));
-			toStamp.setDate(n);
-			toStamp.setHours(23);
-			toStamp.setMinutes(59);
-			toStamp.setNanos(0);
+			Timestamp tmpStamp = Timestamp.valueOf(stamp.getDateString("yyyy-MM-dd hh:mm:ss.S"));
+			tmpStamp.setDate(n);
+			tmpStamp.setHours(0);
+			tmpStamp.setMinutes(0);
+			tmpStamp.setNanos(0);	
+//			Timestamp toStamp = Timestamp.valueOf(stamp.getDateString("yyyy-MM-dd hh:mm:ss.S"));
+//			toStamp.setDate(n);
+//			toStamp.setHours(23);
+//			toStamp.setMinutes(59);
+//			toStamp.setNanos(0);
 //			List listOfEntries = (List) getCalBusiness(iwc).getEntriesBetweenTimestamps(fromStamp,toStamp);
-			List listOfEntries = (List) getCalBusiness(iwc).getUserEntriesBetweenTimestamps(user, fromStamp, toStamp, iwc);
-			Collections.sort(listOfEntries,new Comparator() {
-				public int compare(Object arg0, Object arg1) {
-					return ((CalendarEntry) arg0).getDate().compareTo(((CalendarEntry) arg1).getDate());
-				}				
-			});
+//			List listOfEntries = (List) getCalBusiness(iwc).getUserEntriesBetweenTimestamps(user, fromStamp, toStamp, iwc);
 			boolean ledgerAdmin = iwc.getAccessController().hasRole(CalBusinessBean.ROLE_LEDGER_ADMIN, iwc);
+			boolean dateFits = false;
+			if (entry == null && calIter.hasNext()) {
+				entry = (CalendarEntry) calIter.next();
+			}
 
-			for(int h=0; h<listOfEntries.size(); h++) {
-				CalendarEntry entry = (CalendarEntry) listOfEntries.get(h);
+			if (entry != null) {
+				Timestamp eStamp = entry.getDate();
+				if (eStamp.getYear() == tmpStamp.getYear() && eStamp.getMonth() == tmpStamp.getMonth() && eStamp.getDate() == tmpStamp.getDate()) {
+					dateFits = true;
+				} else {
+					dateFits = false;
+				}
+			}
+			
+			while (dateFits) {
+//			for(int h=0; h<listOfEntries.size(); h++) {
+//				CalendarEntry entry = (CalendarEntry) listOfEntries.get(h);
 				CalendarLedger ledger = null;
 				int groupIDInLedger = 0;
 				int coachGroupIDInLedger = 0;
@@ -656,6 +739,20 @@ public class CalendarView extends Block{
 					dayCell.add("<br>",1,cellRow++);						
 				}
 
+				// NEXT ENTRY
+				if (calIter.hasNext()) {
+					entry = (CalendarEntry) calIter.next();
+					Timestamp eStamp = entry.getDate();
+					if (eStamp.getYear() == tmpStamp.getYear() && eStamp.getMonth() == tmpStamp.getMonth() && eStamp.getDate() == tmpStamp.getDate()) {
+						dateFits = true;
+					} else {
+						dateFits = false;
+					}
+				} else {
+					entry = null;
+					dateFits = false;
+				}
+				
 			}
 			backTable.add(dayCell,column,row);
 			backTable.setColor(column,row,"#ffffff");

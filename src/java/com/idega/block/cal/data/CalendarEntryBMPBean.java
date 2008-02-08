@@ -18,6 +18,7 @@ import com.idega.data.query.Column;
 import com.idega.data.query.InCriteria;
 import com.idega.data.query.MatchCriteria;
 import com.idega.data.query.OR;
+import com.idega.data.query.Order;
 import com.idega.data.query.SelectQuery;
 import com.idega.data.query.Table;
 import com.idega.user.data.User;
@@ -367,7 +368,8 @@ public class CalendarEntryBMPBean extends GenericEntity implements com.idega.blo
 	  Column dateCol = new Column(table, "CAL_ENTRY_DATE");
 	  query.addCriteria(new MatchCriteria(dateCol, MatchCriteria.GREATEREQUAL, from));
 	  query.addCriteria(new MatchCriteria(dateCol, MatchCriteria.LESSEQUAL, to));
-	  
+	  Order order = new Order(dateCol, true);
+	  query.addOrder(order);
 	  return this.idoFindPKsByQuery(query);
   }
   

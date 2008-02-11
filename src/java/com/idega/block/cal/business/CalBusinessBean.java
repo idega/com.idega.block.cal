@@ -89,7 +89,9 @@ public class CalBusinessBean extends IBOServiceBean implements CalBusiness,UserG
 		List list = null; 
 		try {
 			CalendarEntryHome entryHome = (CalendarEntryHome) getIDOHome(CalendarEntry.class);
+			System.out.print("[CalBusinessBean : getUserEntries] : ");
 			List ledgers = getUserLedgers(user, iwc);
+			System.out.print("ldeger");
 			List ledgersIds = new ArrayList();
 			if (ledgers != null) {
 				Iterator ledgerIter = ledgers.iterator();
@@ -97,8 +99,11 @@ public class CalBusinessBean extends IBOServiceBean implements CalBusiness,UserG
 					ledgersIds.add(((CalendarLedger) ledgerIter.next()).getPrimaryKey());
 				}
 			}
+			System.out.print("Ids ");
 			List groupsIds = getUserBusiness(iwc).getAllUserGroupsIds(user, iwc);
+			System.out.print("groupdIds ");
 			list = new ArrayList(entryHome.findEntriesByLedgerIdsOrGroupsIds(ledgersIds, groupsIds, fromStamp,toStamp));
+			System.out.print("entries.");
 		} catch(Exception e) {
 			e.printStackTrace();
 		}

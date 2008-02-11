@@ -6,6 +6,7 @@ package com.idega.block.cal.presentation;
 import java.sql.Date;
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 
@@ -305,7 +306,11 @@ public class CalendarEntryCreator extends Form{
 		if(day != null && month != null && year != null && 
 				v == CalendarParameters.DAY) {
 			//month is month - 1 -> January == 0!!
-			Date date = new Date(Integer.parseInt(year),Integer.parseInt(month)-1,Integer.parseInt(day));
+			int y = Integer.parseInt(year);
+			int m = Integer.parseInt(month);
+			int d = Integer.parseInt(day);
+			Date date = (new IWTimestamp(d, m, y)).getDate();
+//			Date date = new Date(y, m, d);
 			this.dayFromField.setDate(date);
 			this.dayToField.setDate(date);
 		}
@@ -348,11 +353,33 @@ public class CalendarEntryCreator extends Form{
 //		if(entryIDString != null && !entryIDString.equals("")) {
 			
 		if(entry != null) {
-			
-//			isEntrySet = true;
+			IWTimestamp iwFrom = new IWTimestamp(entry.getDate());
+			IWTimestamp iwTo = new IWTimestamp(entry.getEndDate());
+
 			this.modifyOneRadioButton = new RadioButton(modifyOneOrManyRadioButtonParameterName,oneValue);
-			this.modifyOneRadioButton.setSelected();
 			this.modifyManyRadioButton = new RadioButton(modifyOneOrManyRadioButtonParameterName,manyValue);
+			
+			String rep = entry.getRepeat();
+			if (!rep.equals(this.noRepeatText.toString())) {
+				int groupID = entry.getEntryGroupID();
+				Collection coll = calBiz.getEntriesByEntryGroupID(groupID);
+				if (coll!= null && !coll.isEmpty()) {
+					Iterator its = coll.iterator();
+					iwFrom = new IWTimestamp(((CalendarEntry) its.next()).getDate());
+					if (its.hasNext()) {
+						this.modifyManyRadioButton.setSelected();
+						while (its.hasNext()) {
+							iwTo = new IWTimestamp(((CalendarEntry) its.next()).getEndDate());
+						}
+					}
+				} else {
+					this.modifyOneRadioButton.setSelected();
+				}
+			} else {
+				this.modifyOneRadioButton.setSelected();
+			}
+			this.modifyOneRadioButton.setSelected();
+//			isEntrySet = true;
 			
 			this.newEntryLink = new Link(iwrb.getLocalizedString("new_entry","New Entry"));
 			this.newEntryLink.addParameter(entryIDParameterName,"");
@@ -384,11 +411,9 @@ public class CalendarEntryCreator extends Form{
 			}
 			
 			
-			IWTimestamp iwFrom = new IWTimestamp(entry.getDate());
 			Date dateF = iwFrom.getDate();
 			this.dayFromField.setDate(dateF);
 			
-			IWTimestamp iwTo = new IWTimestamp(entry.getEndDate());
 			Date dateT = iwTo.getDate();
 			this.dayToField.setDate(dateT);
 			

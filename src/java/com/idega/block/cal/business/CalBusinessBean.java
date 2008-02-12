@@ -44,6 +44,7 @@ import com.idega.user.business.UserGroupPlugInBusiness;
 import com.idega.user.data.Group;
 import com.idega.user.data.User;
 import com.idega.util.IWTimestamp;
+import com.idega.util.Timer;
 
 /**
  * Description: <br>
@@ -89,9 +90,19 @@ public class CalBusinessBean extends IBOServiceBean implements CalBusiness,UserG
 		List list = null; 
 		try {
 			CalendarEntryHome entryHome = (CalendarEntryHome) getIDOHome(CalendarEntry.class);
+			Timer t2 = new Timer();
+			t2.start();
+			Timer t = new Timer();
+			t.start();
 			System.out.print("[CalBusinessBean : getUserEntries] : ");
-			List ledgers = getUserLedgers(user, iwc);
-			System.out.print("ldeger");
+			List groupsIds = getUserBusiness(iwc).getAllUserGroupsIds(user, iwc);
+			t.stop();
+			System.out.print("groupdIds ("+t.getTimeString()+") : ");
+			t.start();
+			List ledgers = getUserLedgers(user, iwc, groupsIds);
+			t.stop();
+			System.out.print("ldeger ("+t.getTimeString()+") ");
+			t.start();
 			List ledgersIds = new ArrayList();
 			if (ledgers != null) {
 				Iterator ledgerIter = ledgers.iterator();
@@ -99,11 +110,31 @@ public class CalBusinessBean extends IBOServiceBean implements CalBusiness,UserG
 					ledgersIds.add(((CalendarLedger) ledgerIter.next()).getPrimaryKey());
 				}
 			}
-			System.out.print("Ids ");
-			List groupsIds = getUserBusiness(iwc).getAllUserGroupsIds(user, iwc);
-			System.out.print("groupdIds ");
-			list = new ArrayList(entryHome.findEntriesByLedgerIdsOrGroupsIds(ledgersIds, groupsIds, fromStamp,toStamp));
-			System.out.print("entries.");
+			t.stop();
+			System.out.print("Ids ("+t.getTimeString()+") : ");
+			t.start();
+			list = new ArrayList(entryHome.findEntriesBetweenTimestamps(fromStamp,toStamp));
+			List returner = new ArrayList();
+			Iterator its = list.iterator();
+			CalendarEntry e = null;
+			while (its.hasNext()) {
+				e = (CalendarEntry) its.next();
+				Integer iGID = new Integer(e.getGroupID());
+				if (groupsIds.contains(iGID)) {
+					returner.add(e);
+				} else {
+					Integer iLID = new Integer(e.getLedgerID());
+					if (ledgersIds.contains(iLID)) {
+						returner.add(e);
+					}
+				}
+			}
+//			list = new ArrayList(entryHome.findEntriesByLedgerIdsOrGroupsIds(ledgersIds, groupsIds, fromStamp,toStamp));
+			t.stop();
+			t2.stop();
+			System.out.print("entries ("+t.getTimeString()+").");
+			System.out.println(" total time : "+t2.getTimeString());
+
 		} catch(Exception e) {
 			e.printStackTrace();
 		}
@@ -1256,18 +1287,23 @@ public List getLedgersByGroupId(String groupId){
 		
 		return list;
 	}
-	
+
 	public List getUserLedgers(User user, IWContext iwc) {
-		if (user == null) {
-			return null;
-		}
-		
 		List groupsIds = null;
 		try {
 			groupsIds = getUserBusiness(iwc).getAllUserGroupsIds(user, iwc);
 		} catch (RemoteException e) {
 			e.printStackTrace();
 		}
+		return getUserLedgers(user, iwc, groupsIds);
+	}
+	
+	public List getUserLedgers(User user, IWContext iwc, List groupsIds) {
+		if (user == null) {
+			return null;
+		}
+		
+
 		
 		CalendarLedgerHome ledgerHome = null;
 		try {

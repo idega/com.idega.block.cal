@@ -116,11 +116,14 @@ public class CalBusinessBean extends IBOServiceBean implements CalBusiness,UserG
 			list = new ArrayList(entryHome.findEntriesBetweenTimestamps(fromStamp,toStamp));
 			List returner = new ArrayList();
 			Iterator its = list.iterator();
+			int userID = ((Integer) user.getPrimaryKey()).intValue();
 			CalendarEntry e = null;
 			while (its.hasNext()) {
 				e = (CalendarEntry) its.next();
-				Integer iGID = new Integer(e.getGroupID());
-				if (groupsIds.contains(iGID)) {
+				String iGID = Integer.toString(e.getGroupID());
+				if (e.getUserID() == userID) {
+					returner.add(e);
+				} else if (groupsIds.contains(iGID)) {
 					returner.add(e);
 				} else {
 					Integer iLID = new Integer(e.getLedgerID());

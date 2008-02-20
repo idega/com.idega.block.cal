@@ -134,6 +134,8 @@ public class CalBusinessBean extends IBOServiceBean implements CalBusiness,UserG
 			t2.stop();
 			System.out.print("entries ("+t.getTimeString()+").");
 			System.out.println(" total time : "+t2.getTimeString());
+			System.out.println("GroupIDs used = "+groupsIds);
+			System.out.println("Ledgers used  = "+ledgersIds);
 			return returner;
 
 		} catch(Exception e) {

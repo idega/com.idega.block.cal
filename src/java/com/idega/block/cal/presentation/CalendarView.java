@@ -662,6 +662,7 @@ public class CalendarView extends Block{
 			
 			while (dateFits) {
 				System.out.println("[CalendarView] Checking entry ("+entry.getPrimaryKey()+") for date "+tmpStamp);
+				System.out.println("[CalendarView] palli fnebneb");
 //			for(int h=0; h<listOfEntries.size(); h++) {
 //				CalendarEntry entry = (CalendarEntry) listOfEntries.get(h);
 				CalendarLedger ledger = null;
@@ -680,6 +681,7 @@ public class CalendarView extends Block{
 					groupIDInLedger = -1;
 					coachGroupIDInLedger = -1;
 				}
+				System.out.println("[CalendarView] palli fnebneb 1");
 				if(viewGroups != null) {
 					Iterator viewGroupsIter = viewGroups.iterator();
 					//goes through the groups the user may view and prints out the entry if 
@@ -694,13 +696,17 @@ public class CalendarView extends Block{
 						}
 					}
 				}
+				System.out.println("[CalendarView] palli fnebneb 2");
 				if(groupIDInLedger == getViewGroupID()) {
 					isInGroup = true;
 				}
+				System.out.println("[CalendarView] palli fnebneb 3");
 				if(coachGroupIDInLedger == getViewGroupID()) {
 					isInGroup = true;
 				}
+				System.out.println("[CalendarView] palli fnebneb 4");
 				System.out.println("[CalViewer] "+isInGroup+", "+iwc.isSuperAdmin()+", "+getViewGroupID() == entry.getGroupID()+", "+(userID!=null && userID.intValue() == entry.getUserID())+", "+ledgerAdmin);
+				System.out.println("[CalendarView] palli fnebneb 5");
 				if(isInGroup || iwc.isSuperAdmin() || 
 						getViewGroupID() == entry.getGroupID() ||
 						(userID!=null && userID.intValue() == entry.getUserID()) ||

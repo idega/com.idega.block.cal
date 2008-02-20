@@ -706,10 +706,11 @@ public class CalendarView extends Block{
 				System.out.println("[CalViewer] "+(userID!=null && userID.intValue() == entry.getUserID()));
 				System.out.println("[CalViewer] "+ledgerAdmin);
 				System.out.println("[CalendarView] palli fnebneb 5");
-				if(isInGroup || iwc.isSuperAdmin() || 
-						getViewGroupID() == entry.getGroupID() ||
-						(userID!=null && userID.intValue() == entry.getUserID()) ||
-						ledgerAdmin) {
+//				if(isInGroup || iwc.isSuperAdmin() || 
+//						getViewGroupID() == entry.getGroupID() ||
+//						(userID!=null && userID.intValue() == entry.getUserID()) ||
+//						ledgerAdmin) {
+//				if (true ) {
 					String headline = getEntryHeadline(entry);
 					Link headlineLink = new Link(headline);
 					headlineLink.addParameter(ACTION,OPEN);
@@ -744,7 +745,7 @@ public class CalendarView extends Block{
 					dayCell.add(headlineLink,1,cellRow);
 					dayCell.setVerticalAlignment(1,cellRow,"top");
 					dayCell.add("<br>",1,cellRow++);						
-				}
+//				}
 
 				// NEXT ENTRY
 				if (calIter.hasNext()) {

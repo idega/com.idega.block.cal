@@ -561,13 +561,13 @@ public class CalendarView extends Block{
 //			backTable.setWidth(i,2,"200");
 		}
 		User user = null;
-		Integer userID = null;
+//		Integer userID = null;
 		if(iwc.isLoggedOn()) {
 			user = iwc.getCurrentUser();
-			userID = (Integer) user.getPrimaryKey();
+//			userID = (Integer) user.getPrimaryKey();
 		}
 		else {
-			userID = new Integer(-2);
+//			userID = new Integer(-2);
 		}
 		Timestamp fromStamp = Timestamp.valueOf(stamp.getDateString("yyyy-MM-dd hh:mm:ss.S"));
 		fromStamp.setDate(1);
@@ -586,16 +586,16 @@ public class CalendarView extends Block{
 			}				
 		});
 
-		Collection viewGroups = null;		
-		if(user != null) {
-			try {
-				viewGroups = getUserBusiness(iwc).getUserGroups(user);
-
-			}catch(Exception e) {
-				e.printStackTrace();
-			}
-		}
-		
+//		Collection viewGroups = null;		
+//		if(user != null) {
+//			try {
+//				viewGroups = getUserBusiness(iwc).getUserGroups(user);
+//
+//			}catch(Exception e) {
+//				e.printStackTrace();
+//			}
+//		}
+//		
 		Iterator calIter = listOfEntries.iterator();
 		CalendarEntry entry = null;
 		
@@ -645,7 +645,7 @@ public class CalendarView extends Block{
 //			toStamp.setNanos(0);
 //			List listOfEntries = (List) getCalBusiness(iwc).getEntriesBetweenTimestamps(fromStamp,toStamp);
 //			List listOfEntries = (List) getCalBusiness(iwc).getUserEntriesBetweenTimestamps(user, fromStamp, toStamp, iwc);
-			boolean ledgerAdmin = iwc.getAccessController().hasRole(CalBusinessBean.ROLE_LEDGER_ADMIN, iwc);
+//			boolean ledgerAdmin = iwc.getAccessController().hasRole(CalBusinessBean.ROLE_LEDGER_ADMIN, iwc);
 			boolean dateFits = false;
 			if (entry == null && calIter.hasNext()) {
 				entry = (CalendarEntry) calIter.next();
@@ -664,47 +664,48 @@ public class CalendarView extends Block{
 				System.out.println("[CalendarView] Checking entry ("+entry.getPrimaryKey()+") for date "+tmpStamp);
 //			for(int h=0; h<listOfEntries.size(); h++) {
 //				CalendarEntry entry = (CalendarEntry) listOfEntries.get(h);
-				CalendarLedger ledger = null;
-				int groupIDInLedger = 0;
-				int coachGroupIDInLedger = 0;
-				boolean isInGroup = false;
+//				CalendarLedger ledger = null;
+//				int groupIDInLedger = 0;
+//				int coachGroupIDInLedger = 0;
+//				boolean isInGroup = false;
+//
+//				if(entry.getLedgerID() != -1) {
+//					ledger = getCalBusiness(iwc).getLedger(entry.getLedgerID());
+//					if(ledger != null) {
+//						groupIDInLedger = ledger.getGroupID();
+//						coachGroupIDInLedger = ledger.getCoachGroupID();
+//					}
+//				}
+//				else {
+//					groupIDInLedger = -1;
+//					coachGroupIDInLedger = -1;
+//				}
+//				if(viewGroups != null) {
+//					Iterator viewGroupsIter = viewGroups.iterator();
+//					//goes through the groups the user may view and prints out the entry if 
+//					//the group connected to the entry is the same as the group the user may view
+//					while(viewGroupsIter.hasNext()) {
+//						Group group =(Group) viewGroupsIter.next();
+//						Integer groupID = (Integer) group.getPrimaryKey();
+//
+//						if(entry.getGroupID() == groupID.intValue() 
+//								|| groupIDInLedger == groupID.intValue()){
+//							isInGroup = true;
+//						}
+//					}
+//				}
+//				if(groupIDInLedger == getViewGroupID()) {
+//					isInGroup = true;
+//				}
+//				if(coachGroupIDInLedger == getViewGroupID()) {
+//					isInGroup = true;
+//				}
+//				System.out.println("[CalViewer] "+isInGroup+", "+iwc.isSuperAdmin()+", "+(getViewGroupID() == entry.getGroupID())+", "+(userID!=null && userID.intValue() == entry.getUserID())+", "+ledgerAdmin);
+//				if(isInGroup || iwc.isSuperAdmin() || 
+//						getViewGroupID() == entry.getGroupID() ||
+//						(userID!=null && userID.intValue() == entry.getUserID()) ||
+//						ledgerAdmin) {
 
-				if(entry.getLedgerID() != -1) {
-					ledger = getCalBusiness(iwc).getLedger(entry.getLedgerID());
-					if(ledger != null) {
-						groupIDInLedger = ledger.getGroupID();
-						coachGroupIDInLedger = ledger.getCoachGroupID();
-					}
-				}
-				else {
-					groupIDInLedger = -1;
-					coachGroupIDInLedger = -1;
-				}
-				if(viewGroups != null) {
-					Iterator viewGroupsIter = viewGroups.iterator();
-					//goes through the groups the user may view and prints out the entry if 
-					//the group connected to the entry is the same as the group the user may view
-					while(viewGroupsIter.hasNext()) {
-						Group group =(Group) viewGroupsIter.next();
-						Integer groupID = (Integer) group.getPrimaryKey();
-
-						if(entry.getGroupID() == groupID.intValue() 
-								|| groupIDInLedger == groupID.intValue()){
-							isInGroup = true;
-						}
-					}
-				}
-				if(groupIDInLedger == getViewGroupID()) {
-					isInGroup = true;
-				}
-				if(coachGroupIDInLedger == getViewGroupID()) {
-					isInGroup = true;
-				}
-				System.out.println("[CalViewer] "+isInGroup+", "+iwc.isSuperAdmin()+", "+(getViewGroupID() == entry.getGroupID())+", "+(userID!=null && userID.intValue() == entry.getUserID())+", "+ledgerAdmin);
-				if(isInGroup || iwc.isSuperAdmin() || 
-						getViewGroupID() == entry.getGroupID() ||
-						(userID!=null && userID.intValue() == entry.getUserID()) ||
-						ledgerAdmin) {
 					String headline = getEntryHeadline(entry);
 					Link headlineLink = new Link(headline);
 					headlineLink.addParameter(ACTION,OPEN);
@@ -739,7 +740,7 @@ public class CalendarView extends Block{
 					dayCell.add(headlineLink,1,cellRow);
 					dayCell.setVerticalAlignment(1,cellRow,"top");
 					dayCell.add("<br>",1,cellRow++);						
-				}
+//				}
 
 				// NEXT ENTRY
 				if (calIter.hasNext()) {

@@ -4,7 +4,13 @@
 		<author email="tryggvi@idega.com">Tryggvi Larusson</author>
 	</properties>
 	<body>
-	
+		
+		<release version="3.1.5" date="2008-02-22">
+      		<action dev="alexis" type="update">
+      			Updated core version to 3.1.82
+      		</action>       
+    	</release>
+    	
 		<release version="3.1.4" date="2007-04-23">
       		<action dev="eiki" type="update">
       			Merged changes made in v.2.0 to v3.1

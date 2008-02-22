@@ -31,6 +31,7 @@ import com.idega.presentation.IWContext;
 import com.idega.user.business.GroupBusiness;
 import com.idega.user.business.GroupService;
 import com.idega.user.data.Group;
+import com.idega.util.CoreConstants;
 import com.idega.util.CoreUtil;
 import com.idega.util.IWTimestamp;
 import com.idega.webface.WFUtil;
@@ -60,7 +61,7 @@ public class CalServiceBean implements CalService {
 		}
 	
 		List<String> scripts = new ArrayList<String>();
-		scripts.add("/dwr/engine.js");
+		scripts.add(CoreConstants.DWR_ENGINE_SCRIPT);
 		scripts.add(CalendarConstants.CALENDAR_SERVICE_DWR_INTERFACE_SCRIPT);
 		
 		return groupService.canMakeCallToServerAndScript(server, scripts);

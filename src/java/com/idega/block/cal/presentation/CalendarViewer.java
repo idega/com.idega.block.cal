@@ -13,6 +13,7 @@ import com.idega.idegaweb.IWBundle;
 import com.idega.presentation.IWContext;
 import com.idega.presentation.Layer;
 import com.idega.user.presentation.group.GroupViewer;
+import com.idega.util.CoreConstants;
 import com.idega.util.CoreUtil;
 import com.idega.webface.WFUtil;
 
@@ -119,7 +120,7 @@ public class CalendarViewer extends GroupViewer {
 		
 		//	DWR
 		files.add(CalendarConstants.CALENDAR_SERVICE_DWR_INTERFACE_SCRIPT);
-		files.add("/dwr/engine.js");
+		files.add(CoreConstants.DWR_ENGINE_SCRIPT);
 		files.add("/dwr/interface/ScheduleSession.js");
 
 		addScriptFiles(iwc, files, singleProcess);

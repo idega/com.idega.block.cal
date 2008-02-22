@@ -8,6 +8,7 @@ import com.idega.idegaweb.IWBundle;
 import com.idega.presentation.Block;
 import com.idega.presentation.IWContext;
 import com.idega.presentation.Layer;
+import com.idega.util.CoreConstants;
 
 public class CalendarListViewer extends Block {
 	
@@ -35,7 +36,7 @@ public class CalendarListViewer extends Block {
 		
 		//	DWR
 		resourceAdder.addJavaScriptAtPosition(iwc, AddResource.HEADER_BEGIN, CalendarConstants.CALENDAR_SERVICE_DWR_INTERFACE_SCRIPT);
-		resourceAdder.addJavaScriptAtPosition(iwc, AddResource.HEADER_BEGIN, "/dwr/engine.js");
+		resourceAdder.addJavaScriptAtPosition(iwc, AddResource.HEADER_BEGIN, CoreConstants.DWR_ENGINE_SCRIPT);
 		
 		resourceAdder.addStyleSheet(iwc, AddResource.HEADER_BEGIN, iwb.getVirtualPathWithFileNameString("style/cal.css"));
 

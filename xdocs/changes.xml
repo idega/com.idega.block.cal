@@ -4,7 +4,11 @@
 		<author email="tryggvi@idega.com">Tryggvi Larusson</author>
 	</properties>
 	<body>
-	
+		<release version="3.1.15" date="2008-02-22">
+      		<action dev="alexis" type="update">
+      			new core version 3.1.82
+      		</action>       
+    	</release>
 		<release version="3.1.14" date="2008-02-11">
       		<action dev="gimmi" type="update">
       			speed boost to getting calendar entries

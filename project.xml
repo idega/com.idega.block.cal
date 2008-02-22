@@ -137,7 +137,7 @@
     <dependency>
       <groupId>bundles</groupId>
       <artifactId>com.idega.core</artifactId>
-      <version>3.1.78</version>
+      <version>3.1.82</version>
       <type>jar</type>
       <url>http://www.idega.com/</url>
     </dependency>

@@ -265,15 +265,16 @@ public class CalendarEntryCreator extends Form{
 		this.ledgerField.addMenuElement(-1,iwrb.getLocalizedString(noLedgerFieldParameterName,"No ledger"));
 		
 		User user = iwc.getCurrentUser();
-		Integer userID = (Integer) user.getPrimaryKey();
-		int userGroupID = user.getPrimaryGroupID();
+//		Integer userID = (Integer) user.getPrimaryKey();
+//		int userGroupID = user.getPrimaryGroupID();
 
-		Iterator ledgerIter = calBiz.getAllLedgers().iterator();
+//		Iterator ledgerIter = calBiz.getAllLedgers().iterator();
+		Iterator ledgerIter = getCalBusiness(iwc).getUserLedgers(user, iwc).iterator();
 		while(ledgerIter.hasNext()) {
 			CalendarLedger ledger = (CalendarLedger) ledgerIter.next();
-			if(userID.intValue() == ledger.getCoachID() || userGroupID == ledger.getCoachGroupID()) {
+//			if(userID.intValue() == ledger.getCoachID() || userGroupID == ledger.getCoachGroupID()) {
 				this.ledgerField.addMenuElement(ledger.getLedgerID(),ledger.getName());
-			}
+//			}
 			
 		}
 		this.locationField = new TextInput(locationFieldParameterName);

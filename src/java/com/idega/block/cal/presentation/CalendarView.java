@@ -7,8 +7,6 @@ import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Collection;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.Iterator;
@@ -30,6 +28,7 @@ import com.idega.presentation.Layer;
 import com.idega.presentation.Page;
 import com.idega.presentation.Table;
 import com.idega.presentation.text.Link;
+import com.idega.presentation.text.Lists;
 import com.idega.presentation.text.Text;
 import com.idega.presentation.ui.GenericButton;
 import com.idega.presentation.ui.StyledButton;
@@ -580,11 +579,12 @@ public class CalendarView extends Block{
 		toStamp.setMinutes(59);
 		toStamp.setNanos(0);
 		List listOfEntries = (List) getCalBusiness(iwc).getUserEntriesBetweenTimestamps(user, fromStamp, toStamp, iwc);
-		Collections.sort(listOfEntries,new Comparator() {
-			public int compare(Object arg0, Object arg1) {
-				return ((CalendarEntry) arg0).getDate().compareTo(((CalendarEntry) arg1).getDate());
-			}				
-		});
+		
+//		Collections.sort(listOfEntries,new Comparator() {
+//			public int compare(Object arg0, Object arg1) {
+//				return ((CalendarEntry) arg0).getDate().compareTo(((CalendarEntry) arg1).getDate());
+//			}				
+//		});
 
 //		Collection viewGroups = null;		
 //		if(user != null) {
@@ -600,6 +600,7 @@ public class CalendarView extends Block{
 		CalendarEntry entry = null;
 		
 //		while (entry != null && calIter.hasNext()) {
+		String e = iwc.getParameter(CalendarEntryCreator.entryIDParameterName);
 
 		while (n <= daycount) {
 			Table dayCell = new Table();
@@ -661,7 +662,7 @@ public class CalendarView extends Block{
 			}
 			
 			while (dateFits) {
-				System.out.println("[CalendarView] Checking entry ("+entry.getPrimaryKey()+") for date "+tmpStamp);
+//				System.out.println("[CalendarView] Checking entry ("+entry.getPrimaryKey()+") for date "+tmpStamp);
 //			for(int h=0; h<listOfEntries.size(); h++) {
 //				CalendarEntry entry = (CalendarEntry) listOfEntries.get(h);
 //				CalendarLedger ledger = null;
@@ -719,21 +720,20 @@ public class CalendarView extends Block{
 					}
 					headlineLink.setStyleClass(this.entryLink);
 
-					String e = iwc.getParameter(CalendarEntryCreator.entryIDParameterName);
-					CalendarEntry ent = null;
-					if(e == null || e.equals("")) {
-						e = "";
-					}
-					else {
-						try {
-							ent = getCalBusiness(iwc).getEntry(Integer.parseInt(e));
-						}catch(Exception ex) {
-							ent = null;
-						}
-
-					}
-					if(ent != null) {
-						if(ent.getPrimaryKey().equals(entry.getPrimaryKey())) {
+//					CalendarEntry ent = null;
+//					if(e == null || e.equals("")) {
+//						e = "";
+//					}
+//					else {
+//						try {
+//							ent = getCalBusiness(iwc).getEntry(Integer.parseInt(e));
+//						}catch(Exception ex) {
+//							ent = null;
+//						}
+//
+//					}
+					if(e != null && !e.equals("")) {
+						if((new Integer(e)).equals(entry.getPrimaryKey())) {
 							headlineLink.setStyleClass(this.entryLinkActive);
 						}
 					}
@@ -1004,17 +1004,20 @@ public class CalendarView extends Block{
 
 		//only get the correct ledger right away!
 
-		boolean isRoot = iwc.isSuperAdmin();
+//		boolean isRoot = iwc.isSuperAdmin();
 
-		Iterator ledgerIter = getCalBusiness(iwc).getAllLedgers().iterator();
+		Iterator ledgerIter = getCalBusiness(iwc).getUserLedgers(user, iwc).iterator();
+//		Iterator ledgerIter = getCalBusiness(iwc).getAllLedgers().iterator();
+		Lists list = new Lists();
+		list.setStyleClass("ledger_list");
 		while(ledgerIter.hasNext()) {
 			CalendarLedger ledger = (CalendarLedger) ledgerIter.next();
 
 			if(user != null) {
 
-				if( isRoot || ((Integer) user.getPrimaryKey()).intValue() == ledger.getCoachID() || user.hasRelationTo(ledger.getCoachGroupID())) {						
+//				if( isRoot || ((Integer) user.getPrimaryKey()).intValue() == ledger.getCoachID() || user.hasRelationTo(ledger.getCoachGroupID())) {						
 					//dont know why the hell this is here after Birna...
-					ledgerTable.add(" &bull; ",1,row);
+//					ledgerTable.add(" &bull; ",1,row);
 
 					Link ledgerLink =new Link(ledger.getName());
 					ledgerLink.setStyleClass(this.styledLink);
@@ -1023,12 +1026,15 @@ public class CalendarView extends Block{
 					ledgerLink.addParameter(CalendarParameters.PARAMETER_MONTH,this.timeStamp.getMonth());
 					ledgerLink.addParameter(CalendarParameters.PARAMETER_YEAR,this.timeStamp.getYear());
 					ledgerLink.setWindowToOpen(LedgerWindow.class);
-					ledgerTable.add(ledgerLink,1,row++);
-				}			
+//					ledgerTable.add(ledgerLink,1,row++);
+					list.add(ledgerLink);
+//				}			
 			}
 
 		}
 
+		ledgerTable.add(list, 1, row++);
+		
 		Layer layer = new Layer(Layer.DIV);
 		layer.setOverflow("auto");
 

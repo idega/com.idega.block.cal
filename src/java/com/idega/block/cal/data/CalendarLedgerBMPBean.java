@@ -138,6 +138,7 @@ public class CalendarLedgerBMPBean extends GenericEntity implements com.idega.bl
 		query.appendCommaDelimited(groups);
 		query.appendWhereEquals("CAL_LEDGER.IC_GROUP_ID", "IC_GROUP.IC_GROUP_ID");
 		query.appendAndEquals("IC_GROUP.UNIQUE_ID", "'"+id+"'");
+		query.appendOrderBy(getColumnNameLedgerName());
 		List result = new ArrayList(super.idoFindPKsByQuery(query));
 		return result;
 		
@@ -146,6 +147,7 @@ public class CalendarLedgerBMPBean extends GenericEntity implements com.idega.bl
 	public Collection ejbFindLedgersByCoachId(String coachId) throws FinderException {
 		IDOQuery query = idoQueryGetSelect();
 		query.appendWhereEquals(getColumnNameUserID(), coachId);
+		query.appendOrderBy(getColumnNameLedgerName());
 		List result = new ArrayList(super.idoFindPKsByQuery(query));
 		return result;
 	}
@@ -156,6 +158,7 @@ public class CalendarLedgerBMPBean extends GenericEntity implements com.idega.bl
 		query.appendOr();
 		query.append(getColumnNameGroupID());
 		query.appendInCollection(groupsIds);
+		query.appendOrderBy(getColumnNameLedgerName());
 		List result = new ArrayList(super.idoFindPKsByQuery(query));
 		return result;
 	}

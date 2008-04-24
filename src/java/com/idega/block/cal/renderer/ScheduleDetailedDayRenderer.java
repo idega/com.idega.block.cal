@@ -19,11 +19,23 @@
 
 package com.idega.block.cal.renderer;
 
+import java.io.IOException;
+import java.io.Serializable;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.TreeSet;
+
+import javax.faces.component.UIComponent;
+import javax.faces.context.FacesContext;
+import javax.faces.context.ResponseWriter;
+import javax.faces.el.ValueBinding;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
-import com.idega.block.cal.business.CalendarConstants;
-import com.idega.block.cal.business.HtmlSchedule;
 import org.apache.myfaces.custom.schedule.model.ScheduleDay;
 import org.apache.myfaces.custom.schedule.model.ScheduleEntry;
 import org.apache.myfaces.custom.schedule.util.ScheduleUtil;
@@ -31,24 +43,16 @@ import org.apache.myfaces.shared_tomahawk.renderkit.RendererUtils;
 import org.apache.myfaces.shared_tomahawk.renderkit.html.HTML;
 import org.apache.myfaces.shared_tomahawk.renderkit.html.util.FormInfo;
 
-import javax.faces.component.UIComponent;
-import javax.faces.context.FacesContext;
-import javax.faces.context.ResponseWriter;
-import javax.faces.el.ValueBinding;
-import java.io.IOException;
-import java.io.Serializable;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.*;
+import com.idega.block.cal.business.HtmlSchedule;
 
 /**
  * <p>
  * Renderer for the day and workweek views of the Schedule component
  * </p>
  *
- * @author Jurgen Lust (latest modification by $Author: valdas $)
+ * @author Jurgen Lust (latest modification by $Author: laddi $)
  * @author Bruno Aranda (adaptation of Jurgen's code to myfaces)
- * @version $Revision: 1.5 $
+ * @version $Revision: 1.6 $
  */
 public class ScheduleDetailedDayRenderer extends AbstractScheduleRenderer
         implements Serializable
@@ -67,7 +71,8 @@ public class ScheduleDetailedDayRenderer extends AbstractScheduleRenderer
      * @see javax.faces.render.Renderer#encodeBegin(javax.faces.context.FacesContext,
      *      javax.faces.component.UIComponent)
      */
-    public void encodeBegin(FacesContext context, UIComponent component)
+    @Override
+		public void encodeBegin(FacesContext context, UIComponent component)
             throws IOException
     {
         if (!component.isRendered())
@@ -103,7 +108,8 @@ public class ScheduleDetailedDayRenderer extends AbstractScheduleRenderer
      * @see javax.faces.render.Renderer#encodeChildren(javax.faces.context.FacesContext,
      *      javax.faces.component.UIComponent)
      */
-    public void encodeChildren(FacesContext context, UIComponent component)
+    @Override
+		public void encodeChildren(FacesContext context, UIComponent component)
             throws IOException
     {
         if (!component.isRendered())
@@ -154,7 +160,8 @@ public class ScheduleDetailedDayRenderer extends AbstractScheduleRenderer
      * @see javax.faces.render.Renderer#encodeEnd(javax.faces.context.FacesContext,
      *      javax.faces.component.UIComponent)
      */
-    public void encodeEnd(FacesContext context, UIComponent component)
+    @Override
+		public void encodeEnd(FacesContext context, UIComponent component)
             throws IOException
     {
         if (!component.isRendered())
@@ -254,7 +261,7 @@ public class ScheduleDetailedDayRenderer extends AbstractScheduleRenderer
                                  ResponseWriter writer) throws IOException
     {
         final int rowHeight = getRowHeight(schedule.getAttributes()) - 1;
-        final int headerHeight = rowHeight + 10;
+        //final int headerHeight = rowHeight + 10;
         writer.startElement(HTML.DIV_ELEM, schedule);
         writer.writeAttribute(HTML.CLASS_ATTR, getStyleClass(schedule,
                 "background"), null);
@@ -490,9 +497,9 @@ public class ScheduleDetailedDayRenderer extends AbstractScheduleRenderer
     protected void writeEntries(FacesContext context, HtmlSchedule schedule,
                               ScheduleDay day, ResponseWriter writer, int index) throws IOException
     {
-        final String clientId = schedule.getClientId(context);
-        FormInfo parentFormInfo = RendererUtils.findNestingForm(schedule, context);
-        String formId = parentFormInfo == null ? null : parentFormInfo.getFormName();
+        //final String clientId = schedule.getClientId(context);
+        //FormInfo parentFormInfo = RendererUtils.findNestingForm(schedule, context);
+        //String formId = parentFormInfo == null ? null : parentFormInfo.getFormName();
 
         TreeSet entrySet = new TreeSet();
 
@@ -645,7 +652,7 @@ public class ScheduleDetailedDayRenderer extends AbstractScheduleRenderer
                                       HtmlSchedule schedule, ResponseWriter writer) throws IOException
     {
         final int rowHeight = getRowHeight(schedule.getAttributes()) - 1;
-        final int headerHeight = rowHeight + 10;
+        //final int headerHeight = rowHeight + 10;
         final String clientId = schedule.getClientId(context);
         FormInfo parentFormInfo = RendererUtils.findNestingForm(schedule, context);
         String formId = parentFormInfo == null ? null : parentFormInfo.getFormName();
@@ -660,8 +667,8 @@ public class ScheduleDetailedDayRenderer extends AbstractScheduleRenderer
         writer.writeAttribute(HTML.CELLPADDING_ATTR, "0", null);
         writer.startElement(HTML.DIV_ELEM, schedule);
 
-        float columnWidth = (schedule.getModel().size() == 0) ? 100
-                : (100 / schedule.getModel().size());
+        /*float columnWidth = (schedule.getModel().size() == 0) ? 100
+                : (100 / schedule.getModel().size());*/
 
         for (Iterator dayIterator = schedule.getModel().iterator(); dayIterator
                 .hasNext();)
@@ -711,12 +718,14 @@ public class ScheduleDetailedDayRenderer extends AbstractScheduleRenderer
 
     //~ Inner Classes ----------------------------------------------------------
 
-    protected String getRowHeightProperty()
+    @Override
+		protected String getRowHeightProperty()
     {
         return "detailedRowHeight";
     }
 
-    protected int getDefaultRowHeight()
+    @Override
+		protected int getDefaultRowHeight()
     {
         return defaultRowHeightInPixels;
     }
@@ -725,8 +734,9 @@ public class ScheduleDetailedDayRenderer extends AbstractScheduleRenderer
      * In the detailed day renderer, we take the y coordinate of the mouse
      * into account when determining the last clicked date.
      */
-    protected Date determineLastClickedDate(HtmlSchedule schedule, String dateId, String yPos) {
-        Calendar cal = GregorianCalendar.getInstance();
+    @Override
+		protected Date determineLastClickedDate(HtmlSchedule schedule, String dateId, String yPos) {
+        Calendar cal = Calendar.getInstance();
         //the dateId is the schedule client id + "_" + yyyyMMdd 
         String day = dateId.substring(dateId.lastIndexOf("_") + 1);
         Date date = ScheduleUtil.getDateFromId(day);
@@ -814,10 +824,10 @@ public class ScheduleDetailedDayRenderer extends AbstractScheduleRenderer
         //~ Instance fields ----------------------------------------------------
 
         private final ScheduleDay day;
-        private final ScheduleEntry entry;
-        private final TreeSet overlappingEntries;
-        private int colspan;
-        private int column;
+        final ScheduleEntry entry;
+        final TreeSet overlappingEntries;
+        int colspan;
+        int column;
 
         //~ Constructors -------------------------------------------------------
 
@@ -843,7 +853,8 @@ public class ScheduleDetailedDayRenderer extends AbstractScheduleRenderer
         /**
          * @see java.lang.Object#equals(java.lang.Object)
          */
-        public boolean equals(Object o)
+        @Override
+				public boolean equals(Object o)
         {
             if (o instanceof EntryWrapper)
             {
@@ -863,7 +874,8 @@ public class ScheduleDetailedDayRenderer extends AbstractScheduleRenderer
         /**
          * @see java.lang.Object#hashCode()
          */
-        public int hashCode()
+        @Override
+				public int hashCode()
         {
             int returnint = entry.getStartTime().hashCode()
                     ^ entry.getEndTime().hashCode() ^ entry.getId().hashCode();
@@ -885,7 +897,7 @@ public class ScheduleDetailedDayRenderer extends AbstractScheduleRenderer
         {
             int rowHeight = getRowHeight(schedule.getAttributes());
             float width = (columnWidth * colspan) - 0.5f;
-            Calendar cal = GregorianCalendar.getInstance();
+            Calendar cal = Calendar.getInstance();
             cal.setTime(day.getDate());
 
             int curyear = cal.get(Calendar.YEAR);

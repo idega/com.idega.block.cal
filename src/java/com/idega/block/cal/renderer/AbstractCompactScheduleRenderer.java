@@ -19,11 +19,22 @@
 
 package com.idega.block.cal.renderer;
 
+import java.io.IOException;
+import java.io.Serializable;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.TreeSet;
+
+import javax.faces.component.UIComponent;
+import javax.faces.context.FacesContext;
+import javax.faces.context.ResponseWriter;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
-import com.idega.block.cal.business.CalendarConstants;
-import com.idega.block.cal.business.HtmlSchedule;
 import org.apache.myfaces.custom.schedule.model.ScheduleDay;
 import org.apache.myfaces.custom.schedule.model.ScheduleEntry;
 import org.apache.myfaces.custom.schedule.util.ScheduleUtil;
@@ -31,23 +42,17 @@ import org.apache.myfaces.shared_tomahawk.renderkit.RendererUtils;
 import org.apache.myfaces.shared_tomahawk.renderkit.html.HTML;
 import org.apache.myfaces.shared_tomahawk.renderkit.html.util.FormInfo;
 
-import javax.faces.component.UIComponent;
-import javax.faces.context.FacesContext;
-import javax.faces.context.ResponseWriter;
-import java.io.IOException;
-import java.io.Serializable;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.*;
+import com.idega.block.cal.business.CalendarConstants;
+import com.idega.block.cal.business.HtmlSchedule;
 
 /**
  * <p>
  * Abstract superclass for the week and month view renderers.
  * </p>
  * 
- * @author Jurgen Lust (latest modification by $Author: valdas $)
+ * @author Jurgen Lust (latest modification by $Author: laddi $)
  * @author Bruno Aranda (adaptation of Jurgen's code to myfaces)
- * @version $Revision: 1.9 $
+ * @version $Revision: 1.10 $
  */
 public abstract class AbstractCompactScheduleRenderer extends
         AbstractScheduleRenderer implements Serializable
@@ -61,7 +66,8 @@ public abstract class AbstractCompactScheduleRenderer extends
      * @see javax.faces.render.Renderer#encodeChildren(javax.faces.context.FacesContext,
      *      javax.faces.component.UIComponent)
      */
-    public void encodeChildren(FacesContext context, UIComponent component)
+    @Override
+		public void encodeChildren(FacesContext context, UIComponent component)
             throws IOException
     {
         // the children are rendered in the encodeBegin phase
@@ -71,7 +77,8 @@ public abstract class AbstractCompactScheduleRenderer extends
      * @see javax.faces.render.Renderer#encodeEnd(javax.faces.context.FacesContext,
      *      javax.faces.component.UIComponent)
      */
-    public void encodeEnd(FacesContext context, UIComponent component)
+    @Override
+		public void encodeEnd(FacesContext context, UIComponent component)
             throws IOException
     {
         // all rendering is done in the begin phase
@@ -80,12 +87,14 @@ public abstract class AbstractCompactScheduleRenderer extends
     /**
      * @return The default height, in pixels, of one row in the schedule grid
      */
-    protected abstract int getDefaultRowHeight();
+    @Override
+		protected abstract int getDefaultRowHeight();
 
     /**
      * @return The name of the property that determines the row height
      */
-    protected abstract String getRowHeightProperty();
+    @Override
+		protected abstract String getRowHeightProperty();
 
     /**
      * @param attributes
@@ -93,7 +102,8 @@ public abstract class AbstractCompactScheduleRenderer extends
      * 
      * @return The row height, in pixels
      */
-    protected int getRowHeight(Map attributes)
+    @Override
+		protected int getRowHeight(Map attributes)
     {
         int rowHeight = 0;
 
@@ -386,9 +396,9 @@ public abstract class AbstractCompactScheduleRenderer extends
     protected void writeEntries(FacesContext context, HtmlSchedule schedule,
                                 ScheduleDay day, ResponseWriter writer) throws IOException
     {
-        final String clientId = schedule.getClientId(context);
-        final FormInfo parentFormInfo = RendererUtils.findNestingForm(schedule, context);
-        final String formId = parentFormInfo == null ? null : parentFormInfo.getFormName();
+        //final String clientId = schedule.getClientId(context);
+        //final FormInfo parentFormInfo = RendererUtils.findNestingForm(schedule, context);
+        //final String formId = parentFormInfo == null ? null : parentFormInfo.getFormName();
         final TreeSet entrySet = new TreeSet(comparator);
 
         for (Iterator entryIterator = day.iterator(); entryIterator.hasNext();)
@@ -513,8 +523,9 @@ public abstract class AbstractCompactScheduleRenderer extends
      * In the compact renderer, we don't take the y coordinate of the mouse
      * into account when determining the last clicked date.
      */
-    protected Date determineLastClickedDate(HtmlSchedule schedule, String dateId, String yPos) {
-        Calendar cal = GregorianCalendar.getInstance();
+    @Override
+		protected Date determineLastClickedDate(HtmlSchedule schedule, String dateId, String yPos) {
+        Calendar cal = Calendar.getInstance();
         //the dateId is the schedule client id + "_" + yyyyMMdd 
         String day = dateId.substring(dateId.lastIndexOf("_") + 1);
         Date date = ScheduleUtil.getDateFromId(day);

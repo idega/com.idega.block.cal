@@ -20,18 +20,19 @@
 package com.idega.block.cal.renderer;
 
 
-import com.idega.block.cal.business.HtmlSchedule;
-import org.apache.myfaces.custom.schedule.model.ScheduleDay;
-import org.apache.myfaces.shared_tomahawk.renderkit.html.HTML;
+import java.io.IOException;
+import java.io.Serializable;
+import java.util.Calendar;
+import java.util.Iterator;
 
 import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
 import javax.faces.context.ResponseWriter;
-import java.io.IOException;
-import java.io.Serializable;
-import java.util.Calendar;
-import java.util.GregorianCalendar;
-import java.util.Iterator;
+
+import org.apache.myfaces.custom.schedule.model.ScheduleDay;
+import org.apache.myfaces.shared_tomahawk.renderkit.html.HTML;
+
+import com.idega.block.cal.business.HtmlSchedule;
 
 
 /**
@@ -39,9 +40,9 @@ import java.util.Iterator;
  * Renderer for the week view of the UISchedule component
  * </p>
  *
- * @author Jurgen Lust (latest modification by $Author: valdas $)
+ * @author Jurgen Lust (latest modification by $Author: laddi $)
  * @author Bruno Aranda (adaptation of Jurgen's code to myfaces)
- * @version $Revision: 1.5 $
+ * @version $Revision: 1.6 $
  */
 public class ScheduleCompactWeekRenderer
     extends AbstractCompactScheduleRenderer
@@ -55,7 +56,8 @@ public class ScheduleCompactWeekRenderer
      * @see javax.faces.render.Renderer#encodeBegin(javax.faces.context.FacesContext,
      *      javax.faces.component.UIComponent)
      */
-    public void encodeBegin(
+    @Override
+		public void encodeBegin(
         FacesContext context,
         UIComponent component
     )
@@ -87,7 +89,7 @@ public class ScheduleCompactWeekRenderer
         writer.writeAttribute(HTML.CELLSPACING_ATTR, "0", null);
         writer.writeAttribute("border", "0", null);
         writer.writeAttribute(HTML.WIDTH_ATTR, "100%", null);
-        Calendar cal = GregorianCalendar.getInstance();
+        Calendar cal = Calendar.getInstance();
 
         for (
             Iterator dayIterator = schedule.getModel().iterator();
@@ -132,7 +134,8 @@ public class ScheduleCompactWeekRenderer
     /**
      * @see org.apache.myfaces.custom.schedule.renderer.AbstractCompactScheduleRenderer#getDefaultRowHeight()
      */
-    protected int getDefaultRowHeight()
+    @Override
+		protected int getDefaultRowHeight()
     {
         return 200;
     }
@@ -140,7 +143,8 @@ public class ScheduleCompactWeekRenderer
     /**
      * @see org.apache.myfaces.custom.schedule.renderer.AbstractCompactScheduleRenderer#getRowHeightProperty()
      */
-    protected String getRowHeightProperty()
+    @Override
+		protected String getRowHeightProperty()
     {
         return "compactWeekRowHeight";
     }

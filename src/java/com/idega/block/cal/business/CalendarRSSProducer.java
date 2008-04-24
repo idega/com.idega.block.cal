@@ -66,6 +66,7 @@ public class CalendarRSSProducer  extends RSSAbstractProducer implements RSSProd
 	private static final String INCORRECT_URI_TITLE = "Incorrect uri";
 	private static final String INCORRECT_URI_FILE = "incorect_uri.xml";
 		
+	@Override
 	public void handleRSSRequest(RSSRequest rssRequest) throws IOException {
 		String extraURI = rssRequest.getExtraUri();
 		if(extraURI == null)
@@ -360,7 +361,7 @@ public class CalendarRSSProducer  extends RSSAbstractProducer implements RSSProd
 		try {
 			String feedContent = rss.convertFeedToAtomXMLString(feed);
 			IWSlideService service = this.getIWSlideService(rssRequest);
-			service.uploadFileAndCreateFoldersFromStringAsRoot(PATH_TO_FEED_PARENT_FOLDER, feedFileName, feedContent, this.RSS_CONTENT_TYPE, true);
+			service.uploadFileAndCreateFoldersFromStringAsRoot(PATH_TO_FEED_PARENT_FOLDER, feedFileName, feedContent, RSSAbstractProducer.RSS_CONTENT_TYPE, true);
 			rssFileURIsCacheList.add(feedFileName);
 		} catch (RemoteException e) {
 				// TODO Auto-generated catch block

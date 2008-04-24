@@ -21,7 +21,6 @@ package com.idega.block.cal.renderer;
 
 import java.io.IOException;
 import java.io.Serializable;
-import java.text.DateFormat;
 import java.util.Date;
 import java.util.Map;
 
@@ -30,16 +29,17 @@ import javax.faces.context.FacesContext;
 import javax.faces.context.ResponseWriter;
 import javax.faces.el.ValueBinding;
 
-import com.idega.block.cal.business.HtmlSchedule;
 import org.apache.myfaces.custom.schedule.model.ScheduleDay;
 import org.apache.myfaces.custom.schedule.model.ScheduleEntry;
 import org.apache.myfaces.shared_tomahawk.renderkit.html.HTML;
 
+import com.idega.block.cal.business.HtmlSchedule;
+
 /**
  * The default implementation of the ScheduleEntryRenderer
  * 
- * @author Jurgen Lust (latest modification by $Author: justinas $)
- * @version $Revision: 1.2 $
+ * @author Jurgen Lust (latest modification by $Author: laddi $)
+ * @version $Revision: 1.3 $
  */
 public class DefaultScheduleEntryRenderer implements ScheduleEntryRenderer,
         Serializable
@@ -106,7 +106,7 @@ public class DefaultScheduleEntryRenderer implements ScheduleEntryRenderer,
 
         if (!entry.isAllDay())
         {
-        	DateFormat format = DateFormat.getTimeInstance(DateFormat.SHORT);
+        	//DateFormat format = DateFormat.getTimeInstance(DateFormat.SHORT);
         	text.append(startTime.getHours()+":");
         	if(startTime.getMinutes() < 10){
         		text.append("0"+startTime.getMinutes());

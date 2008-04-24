@@ -35,9 +35,9 @@ import org.apache.myfaces.shared_tomahawk.util._ComponentUtils;
 
 /**
  *
- * @author Bruno Aranda (latest modification by $Author: justinas $)
+ * @author Bruno Aranda (latest modification by $Author: laddi $)
  * @author Jurgen Lust
- * @version $Revision: 1.1 $
+ * @version $Revision: 1.2 $
  */
 public class HtmlSchedule extends UISchedule implements UserRoleAware,
         Serializable
@@ -64,7 +64,8 @@ public class HtmlSchedule extends UISchedule implements UserRoleAware,
     /**
      * @see javax.faces.component.UIComponent#broadcast(javax.faces.event.FacesEvent)
      */
-    public void broadcast(FacesEvent event) throws AbortProcessingException
+    @Override
+		public void broadcast(FacesEvent event) throws AbortProcessingException
     {
         // First invoke the mouse listener, before any other listener
         if (event instanceof ScheduleMouseEvent)
@@ -98,7 +99,8 @@ public class HtmlSchedule extends UISchedule implements UserRoleAware,
     /**
      * @see javax.faces.component.UIComponent#getFamily()
      */
-    public String getFamily()
+    @Override
+		public String getFamily()
     {
         return COMPONENT_FAMILY;
     }
@@ -154,7 +156,8 @@ public class HtmlSchedule extends UISchedule implements UserRoleAware,
     /**
      * @see javax.faces.component.UIComponent#queueEvent(javax.faces.event.FacesEvent)
      */
-    public void queueEvent(FacesEvent event)
+    @Override
+		public void queueEvent(FacesEvent event)
     {
         if (event instanceof ScheduleMouseEvent)
         {
@@ -183,7 +186,8 @@ public class HtmlSchedule extends UISchedule implements UserRoleAware,
     /**
      * @see javax.faces.component.StateHolder#restoreState(javax.faces.context.FacesContext, java.lang.Object)
      */
-    public void restoreState(FacesContext context, Object state)
+    @Override
+		public void restoreState(FacesContext context, Object state)
     {
         Object values[] = (Object[]) state;
         super.restoreState(context, values[0]);
@@ -200,7 +204,8 @@ public class HtmlSchedule extends UISchedule implements UserRoleAware,
     /**
      * @see javax.faces.component.StateHolder#saveState(javax.faces.context.FacesContext)
      */
-    public Object saveState(FacesContext context)
+    @Override
+		public Object saveState(FacesContext context)
     {
         Object values[] = new Object[6];
         values[0] = super.saveState(context);
@@ -209,7 +214,7 @@ public class HtmlSchedule extends UISchedule implements UserRoleAware,
         values[3] = _submitOnClick;
         values[4] = _lastClickedDateAndTime;
         values[5] = saveAttachedState(context, _mouseListener);
-        return ((Object) (values));
+        return values;
     }
 
     /**

@@ -562,7 +562,6 @@ public class ScheduleSessionBean implements ScheduleSession {
 		return changeModeToMonthAndGetListOfEntries(id);
 	}
 	
-	@SuppressWarnings("unchecked")
 	private Map<String, List<CalScheduleEntry>> getScheduleEntriesCache() {		
 		if (scheduleEntries == null) {
 			scheduleEntries = new HashMap<String, List<CalScheduleEntry>>();
@@ -625,7 +624,6 @@ public class ScheduleSessionBean implements ScheduleSession {
 		}
 	}
 	
-	@SuppressWarnings("unchecked")
 	private boolean removeEntriesFromSchedule(String id, ScheduleModel scheduleModel) {
 		if (scheduleModel != null) {
 			ScheduleDay day = null;
@@ -658,7 +656,6 @@ public class ScheduleSessionBean implements ScheduleSession {
 		return setEntriesForSchedule(id, new ArrayList<CalScheduleEntry>(), false);
 	}
 	
-	@SuppressWarnings("unchecked")
 	private Map<String, HtmlSchedule> getHtmlScheduleCache() {
 		if (schedules == null) {
 			schedules = new HashMap<String, HtmlSchedule>();
@@ -731,7 +728,6 @@ public class ScheduleSessionBean implements ScheduleSession {
 		return true;
 	}
 	
-	@SuppressWarnings("unchecked")
 	public CalScheduleEntry getCalendarEntry(String entryId, String scheduleId, Locale locale) {
 		if (entryId == null || scheduleId == null) {
 			return null;

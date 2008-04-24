@@ -23,16 +23,16 @@ package com.idega.block.cal.renderer;
 import java.io.IOException;
 import java.io.Serializable;
 import java.util.Calendar;
-import java.util.GregorianCalendar;
 import java.util.Iterator;
 
 import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
 import javax.faces.context.ResponseWriter;
 
-import com.idega.block.cal.business.HtmlSchedule;
 import org.apache.myfaces.custom.schedule.model.ScheduleDay;
 import org.apache.myfaces.shared_tomahawk.renderkit.html.HTML;
+
+import com.idega.block.cal.business.HtmlSchedule;
 
 
 /**
@@ -40,9 +40,9 @@ import org.apache.myfaces.shared_tomahawk.renderkit.html.HTML;
  * Renderer for the month view of the Schedule component
  * </p>
  *
- * @author Jurgen Lust (latest modification by $Author: valdas $)
+ * @author Jurgen Lust (latest modification by $Author: laddi $)
  * @author Bruno Aranda (adaptation of Jurgen's code to myfaces)
- * @version $Revision: 1.6 $
+ * @version $Revision: 1.7 $
  */
 public class ScheduleCompactMonthRenderer
     extends AbstractCompactScheduleRenderer
@@ -57,7 +57,8 @@ public class ScheduleCompactMonthRenderer
      * @see javax.faces.render.Renderer#encodeBegin(javax.faces.context.FacesContext,
      *      javax.faces.component.UIComponent)
      */
-    public void encodeBegin(
+    @Override
+		public void encodeBegin(
         FacesContext context,
         UIComponent component
     )
@@ -79,7 +80,7 @@ public class ScheduleCompactMonthRenderer
         writer.startElement(HTML.DIV_ELEM, schedule);
         writer.writeAttribute(HTML.CLASS_ATTR, getStyleClass(schedule, "month"), null);
 
-        Calendar cal = GregorianCalendar.getInstance();
+        Calendar cal = Calendar.getInstance();
         cal.setTime(schedule.getModel().getSelectedDate());
         int selectedMonth = cal.get(Calendar.MONTH);
 
@@ -114,7 +115,8 @@ public class ScheduleCompactMonthRenderer
     /**
      * @see AbstractCompactScheduleRenderer#getDefaultRowHeight()
      */
-    protected int getDefaultRowHeight()
+    @Override
+		protected int getDefaultRowHeight()
     {
         return 120;
     }
@@ -122,7 +124,8 @@ public class ScheduleCompactMonthRenderer
     /**
      * @see AbstractCompactScheduleRenderer#getRowHeightProperty()
      */
-    protected String getRowHeightProperty()
+    @Override
+		protected String getRowHeightProperty()
     {
         return "compactMonthRowHeight";
     }

@@ -87,7 +87,6 @@ public class CalServiceBean implements CalService {
 		return bean.getCalendarProperties(instanceId);
 	}
 	
-	@SuppressWarnings("unchecked")
 	public List<AdvancedProperty> getAvailableCalendarEventTypes() {
 		IWContext iwc = CoreUtil.getIWContext();
 		if (iwc == null) {
@@ -148,7 +147,6 @@ public class CalServiceBean implements CalService {
 		return getAvailableCalendarEventTypes();
 	}
 	
-	@SuppressWarnings("unchecked")
 	public List<AdvancedProperty> getAvailableLedgers() {
 		IWContext iwc = CoreUtil.getIWContext();
 		if (iwc == null) {
@@ -515,7 +513,6 @@ public class CalServiceBean implements CalService {
 		return getConvertedEntries(allEntries, iwc.getCurrentLocale());
 	}
 	
-	@SuppressWarnings("unchecked")
 	private Map<String, List<CalScheduleEntry>> getCalendarCache(IWContext iwc) {
 		if (iwc == null) {
 			return null;

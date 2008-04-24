@@ -16,6 +16,7 @@ public class CalendarEntryHomeImpl extends com.idega.data.IDOFactory implements 
 	private static final long serialVersionUID = 6804879831234569243L;
 
 
+@Override
 protected Class<CalendarEntry> getEntityInterfaceClass(){
   return CalendarEntry.class;
  }
@@ -79,7 +80,6 @@ public java.util.Collection findEntriesByEvents(List eventsList) throws javax.ej
 	 
  }
  
- @SuppressWarnings("unchecked")
  public Collection<CalendarEntry> getEntriesByEventsIds(List<String> eventsIds) {
 	 IDOEntity entity = this.idoCheckOutPooledEntity();
 	 Collection<CalendarEntry> ids = ((CalendarEntryBMPBean)entity).getEntriesByEventsIds(eventsIds);
@@ -92,7 +92,6 @@ public java.util.Collection findEntriesByEvents(List eventsList) throws javax.ej
 	 }	
  }
  
- @SuppressWarnings("unchecked")
  public Collection<CalendarEntry> getEntriesByEventsIdsAndGroupsIds(List<String> eventsIds, List<String> groupsIds) {
 	 IDOEntity entity = this.idoCheckOutPooledEntity();
 	 Collection<CalendarEntry> ids = ((CalendarEntryBMPBean)entity).getEntriesByEventsIdsAndGroupsIds(eventsIds, groupsIds);
@@ -105,8 +104,6 @@ public java.util.Collection findEntriesByEvents(List eventsList) throws javax.ej
 	 }	
  }
 
-
- @SuppressWarnings("unchecked")
  public Collection<CalendarEntry> getEntriesByLedgersIdsAndGroupsIds(List<String> ledgersIds, List<String> groupsIds) {
 	 IDOEntity entity = this.idoCheckOutPooledEntity();
 	 Collection<CalendarEntry> ids = ((CalendarEntryBMPBean)entity).getEntriesByLedgersIdsAndGroupsIds(ledgersIds, groupsIds);
@@ -119,8 +116,6 @@ public java.util.Collection findEntriesByEvents(List eventsList) throws javax.ej
 	 }
  }
 
-
- @SuppressWarnings("unchecked")
  public Collection<CalendarEntry> getEntriesByLedgersIds(List<String> ledgersIds) {
 	 IDOEntity entity = this.idoCheckOutPooledEntity();
 	 Collection<CalendarEntry> ids = null;

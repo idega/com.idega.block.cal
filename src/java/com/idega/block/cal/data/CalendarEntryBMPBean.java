@@ -39,6 +39,7 @@ public class CalendarEntryBMPBean extends GenericEntity implements com.idega.blo
 //    CalendarBusiness.initializeCalendarEntry();
 //  }
 
+	@Override
 	public void initializeAttributes(){
 		addAttribute(getIDColumnName());
 		addAttribute(getColumnNameName(),"CalEntryName",true,true,String.class);
@@ -74,10 +75,12 @@ public class CalendarEntryBMPBean extends GenericEntity implements com.idega.blo
 	public static String getColumnNameRepeat() { return "CAL_ENTRY_REPEAT"; }
 	public static String getColumnNameEntryGroupID() { return com.idega.block.cal.data.CalendarEntryGroupBMPBean.getColumnNameEntryGroupID(); }
 	
-  public String getIDColumnName(){
+  @Override
+	public String getIDColumnName(){
 		return getColumnNameEntryID();
 	}
   
+	@Override
 	public String getEntityName(){
 		return getEntityTableName();
 	}
@@ -119,7 +122,8 @@ public class CalendarEntryBMPBean extends GenericEntity implements com.idega.blo
   public int getLedgerID() {
   	return getIntColumnValue(getColumnNameLedgerID());
   }
-  public String getName() {
+  @Override
+	public String getName() {
   	return getStringColumnValue(getColumnNameName());
   }
   
@@ -174,7 +178,8 @@ public class CalendarEntryBMPBean extends GenericEntity implements com.idega.blo
   public void setLedgerID(int ledgerID) {
   	setColumn(getColumnNameLedgerID(),ledgerID);
   }
-  public void setName(String name) {
+  @Override
+	public void setName(String name) {
   		setColumn(getColumnNameName(), name);
   }
   
@@ -262,7 +267,6 @@ public class CalendarEntryBMPBean extends GenericEntity implements com.idega.blo
 	  	return super.idoFindPKsByQuery(query);
   }
 
-  @SuppressWarnings("unchecked")
   private Collection<CalendarEntry> ejbFindEntriesByEventsIds(List<String> eventsIds) throws Exception {
 	  	IDOQuery query = idoQueryGetSelect();	  	
 	  	query.appendWhereEquals(getColumnNameEntryTypeID(), eventsIds.get(0));
@@ -330,7 +334,6 @@ public class CalendarEntryBMPBean extends GenericEntity implements com.idega.blo
 	  return super.idoFindPKsByQuery(query);
   }
   
-  @SuppressWarnings("unchecked")
   public Collection<CalendarEntry> ejbFindEntriesByLedgersIds(List<String> ledgersIds) throws Exception {
 	  IDOQuery query = idoQueryGetSelect();	
 	  
@@ -342,6 +345,7 @@ public class CalendarEntryBMPBean extends GenericEntity implements com.idega.blo
   }
   
   //DELETE
+	@Override
 	public void delete() throws SQLException{
     removeFrom(GenericEntity.getStaticInstance(LocalizedText.class));
 		super.delete();

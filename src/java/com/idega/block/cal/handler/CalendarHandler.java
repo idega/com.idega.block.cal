@@ -14,7 +14,6 @@ import com.idega.util.CoreConstants;
 
 public class CalendarHandler implements ICPropertyHandler {
 
-	@SuppressWarnings("unchecked")
 	public List getDefaultHandlerTypes() {
 		return null;
 	}

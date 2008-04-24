@@ -31,7 +31,6 @@ public class CalendarManagerBean implements Serializable {
 		return calendarProperties.get(instanceId);
 	}	
 	
-	@SuppressWarnings("unchecked")
 	public boolean removeProperties(String key, Map calendarProperties) {
 		if (key == null) {
 			return false;

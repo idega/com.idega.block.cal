@@ -19,11 +19,12 @@ public class CalendarsChooser extends GroupsChooser {
 		super(instanceId, method, actionAfterPropertySaved);
 	}
 	
-	@SuppressWarnings("unchecked")
+	@Override
 	public Class getChooserWindowClass() {
 		return CalendarsChooserBlock.class;
 	}
 	
+	@Override
 	public PresentationObject getChooser(IWContext iwc, IWBundle bundle) {
 		CalendarsChooserBlock chooserBlock = new CalendarsChooserBlock();
 		chooserBlock.setProperties(properties);

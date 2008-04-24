@@ -16,6 +16,8 @@ import com.idega.util.CoreConstants;
 
 public class CalendarEntryInfoBlock extends Block {
 	
+	@Override
+	@SuppressWarnings("cast")
 	public void main(IWContext iwc) throws Exception {
 		Layer main = new Layer();
 		add(main);
@@ -91,6 +93,7 @@ public class CalendarEntryInfoBlock extends Block {
 		container.add(new Heading1(getResourceBundle(iwc).getLocalizedString("noEntriesToDisplay", "There are no entries to display")));
 	}
 	
+	@Override
 	public String getBundleIdentifier() {
 		return CalendarConstants.IW_BUNDLE_IDENTIFIER;
 	}

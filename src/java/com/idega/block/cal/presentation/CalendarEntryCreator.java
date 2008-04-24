@@ -127,8 +127,8 @@ public class CalendarEntryCreator extends Form{
 	//fields
 	private TextInput headlineField;
 	private DropdownMenu typeField;
-	private SelectOption generalField;
-	private SelectOption practiceField;
+	//private SelectOption generalField;
+	//private SelectOption practiceField;
 	private DropdownMenu repeatField;
 	private SelectOption noRepeatField;
 	private SelectOption dailyField;
@@ -229,12 +229,10 @@ public class CalendarEntryCreator extends Form{
 				
 		this.headlineField = new TextInput(headlineFieldParameterName);
 		
-		this.practiceField =new SelectOption(this.practiceText.toString(),generalFieldParameterName);
-		this.generalField =new SelectOption(this.generalText.toString(),practiceFieldParameterName);
-		
+		//this.practiceField =new SelectOption(this.practiceText.toString(),generalFieldParameterName);
+		//this.generalField =new SelectOption(this.generalText.toString(),practiceFieldParameterName);
 		
 		this.typeField = new DropdownMenu(typeFieldParameterName);
-		
 		
 		//if the general and practice types have not been added -> they are added!
 		if(calBusiness.getEntryTypeByName(practiceFieldParameterName) == null) {
@@ -243,7 +241,6 @@ public class CalendarEntryCreator extends Form{
 		if(calBusiness.getEntryTypeByName(generalFieldParameterName) == null) {
 			calBusiness.createNewEntryType(generalFieldParameterName);			
 		}
-			
 
 		CalBusiness calBiz = getCalBusiness(iwc);
 		Iterator typeIter = calBiz.getAllEntryTypes().iterator();
@@ -714,6 +711,7 @@ public class CalendarEntryCreator extends Form{
 		((CalendarRSSProducer)producer).clearRssCacheList(parameters);
 	}
 	
+	@Override
 	public void main(IWContext iwc) {
 		setName("form");
 		CalendarEntry entry = null;
@@ -747,6 +745,7 @@ public class CalendarEntryCreator extends Form{
 		add(lineUpEdit(iwc,entry));
 	}
 	
+	@Override
 	public String getBundleIdentifier() {
 		return IW_BUNDLE_IDENTIFIER;
 	}

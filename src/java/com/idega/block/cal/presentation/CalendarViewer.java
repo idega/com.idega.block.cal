@@ -70,6 +70,7 @@ public class CalendarViewer extends GroupViewer {
 		
 	}
 	
+	@SuppressWarnings("cast")
 	private void addCssFiles(IWContext iwc) {
 		IWBundle iwb = getBundle(iwc);
 		
@@ -92,6 +93,7 @@ public class CalendarViewer extends GroupViewer {
 		add(cssFiles.toString());
 	}
 	
+	@SuppressWarnings("cast")
 	private void addJavaScript(IWContext iwc, String id, String instanceId) {
 		IWBundle iwb = getBundle(iwc);
 		List<String> files = new ArrayList<String>();

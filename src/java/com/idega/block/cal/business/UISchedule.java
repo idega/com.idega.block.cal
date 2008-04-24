@@ -45,16 +45,16 @@ import org.apache.myfaces.custom.schedule.util.ScheduleUtil;
  * A schedule component similar to the ones found in Outlook or Evolution
  * </p>
  *
- * @author Jurgen Lust (latest modification by $Author: justinas $)
+ * @author Jurgen Lust (latest modification by $Author: laddi $)
  * @author Bruno Aranda (adaptation of Jurgen code to myfaces)
- * @version $Revision: 1.1 $
+ * @version $Revision: 1.2 $
  */
 public class UISchedule extends UIComponentBase implements ValueHolder,
         Serializable, ActionSource
 {
     private static final long serialVersionUID = 3440822180568539483L;
 
-    private class ScheduleActionListener implements ActionListener
+    protected class ScheduleActionListener implements ActionListener
     {
         //~ Methods ------------------------------------------------------------
 
@@ -123,7 +123,8 @@ public class UISchedule extends UIComponentBase implements ValueHolder,
     /**
      * @see javax.faces.component.UIComponent#broadcast(javax.faces.event.FacesEvent)
      */
-    public void broadcast(FacesEvent event) throws AbortProcessingException
+    @Override
+		public void broadcast(FacesEvent event) throws AbortProcessingException
     {
         super.broadcast(event);
 
@@ -206,7 +207,8 @@ public class UISchedule extends UIComponentBase implements ValueHolder,
     /**
      * @see javax.faces.component.UIComponent#getFamily()
      */
-    public String getFamily()
+    @Override
+		public String getFamily()
     {
         return COMPONENT_FAMILY;
     }
@@ -241,7 +243,8 @@ public class UISchedule extends UIComponentBase implements ValueHolder,
     /**
      * @see javax.faces.component.UIComponent#getRendersChildren()
      */
-    public boolean getRendersChildren()
+    @Override
+		public boolean getRendersChildren()
     {
         return true;
     }
@@ -343,7 +346,8 @@ public class UISchedule extends UIComponentBase implements ValueHolder,
     /**
      * @see javax.faces.component.UIComponent#queueEvent(javax.faces.event.FacesEvent)
      */
-    public void queueEvent(FacesEvent event)
+    @Override
+		public void queueEvent(FacesEvent event)
     {
         if (event instanceof ActionEvent)
         {
@@ -372,7 +376,8 @@ public class UISchedule extends UIComponentBase implements ValueHolder,
      * @see javax.faces.component.StateHolder#restoreState(javax.faces.context.FacesContext,
      *      java.lang.Object)
      */
-    public void restoreState(FacesContext context, Object state)
+    @Override
+		public void restoreState(FacesContext context, Object state)
     {
         Object[] values = (Object[]) state;
         super.restoreState(context, values[0]);
@@ -405,7 +410,8 @@ public class UISchedule extends UIComponentBase implements ValueHolder,
     /**
      * @see javax.faces.component.StateHolder#saveState(javax.faces.context.FacesContext)
      */
-    public Object saveState(FacesContext context)
+    @Override
+		public Object saveState(FacesContext context)
     {
         removeActionListener(scheduleListener);
 

@@ -95,7 +95,7 @@ public class CalBusinessBean extends IBOServiceBean implements CalBusiness,UserG
 			if (ledgers != null) {
 				Iterator<CalendarLedger> ledgerIter = ledgers.iterator();
 				while (ledgerIter.hasNext()) {
-					ledgersIds.add(((CalendarLedger) ledgerIter.next()).getPrimaryKey().toString());
+					ledgersIds.add((ledgerIter.next()).getPrimaryKey().toString());
 				}
 			}
 			List groupsIds = getUserBusiness(iwc).getAllUserGroupsIds(user, iwc);
@@ -533,11 +533,11 @@ public class CalBusinessBean extends IBOServiceBean implements CalBusiness,UserG
 			IWTimestamp st = new IWTimestamp(startDate);
 		Timestamp startTime = st.getTimestamp();		
 		//modifications of the time properties of the start timestamp
-		if(startHour != null || !startHour.equals("")) {
+		if(startHour != null && !startHour.equals("")) {
 			Integer sH =new Integer(startHour);		
 			startTime.setHours(sH.intValue());
 		}
-		if(startMinute != null || !startMinute.equals("")) {
+		if(startMinute != null && !startMinute.equals("")) {
 			Integer sM = new Integer(startMinute);
 			startTime.setMinutes(sM.intValue());
 		}
@@ -546,11 +546,11 @@ public class CalBusinessBean extends IBOServiceBean implements CalBusiness,UserG
 		IWTimestamp et = new IWTimestamp(endDate);
 		Timestamp endTime = et.getTimestamp();
 		//modifications of the time properties of the end timestamp
-		if(endHour != null || !endHour.equals("")) {
+		if(endHour != null && !endHour.equals("")) {
 			Integer eH =new Integer(endHour);
 			endTime.setHours(eH.intValue());
 		}
-		if(endMinute != null || !endMinute.equals("")) {
+		if(endMinute != null && !endMinute.equals("")) {
 			Integer eM =new Integer(endMinute);
 			endTime.setMinutes(eM.intValue());
 		}
@@ -588,11 +588,11 @@ public class CalBusinessBean extends IBOServiceBean implements CalBusiness,UserG
 		}
 		while(start < end) {	
 			Timestamp endOfEntryTime = Timestamp.valueOf(startTime.toString());
-			if(endHour != null || !endHour.equals("")) {
+			if(endHour != null && !endHour.equals("")) {
 				Integer eH =new Integer(endHour);
 				endOfEntryTime.setHours(eH.intValue());
 			}
-			if(endMinute != null || !endMinute.equals("")) {
+			if(endMinute != null && !endMinute.equals("")) {
 				Integer eM =new Integer(endMinute);
 				endOfEntryTime.setMinutes(eM.intValue());
 			}
@@ -738,11 +738,11 @@ public class CalBusinessBean extends IBOServiceBean implements CalBusiness,UserG
 		IWTimestamp startD = new IWTimestamp(startDate);
 		Timestamp startTime = startD.getTimestamp();//Timestamp.valueOf(startDate);		
 		//modifications of the time properties of the start timestamp
-		if(startHour != null || !startHour.equals("")) {
+		if(startHour != null && !startHour.equals("")) {
 			Integer sH =new Integer(startHour);		
 			startTime.setHours(sH.intValue());
 		}
-		if(startMinute != null || !startMinute.equals("")) {
+		if(startMinute != null && !startMinute.equals("")) {
 			Integer sM = new Integer(startMinute);
 			startTime.setMinutes(sM.intValue());
 		}
@@ -752,11 +752,11 @@ public class CalBusinessBean extends IBOServiceBean implements CalBusiness,UserG
 		IWTimestamp endD = new IWTimestamp(endDate);
 		Timestamp endTime = endD.getTimestamp();//Timestamp.valueOf(endDate);
 		//modifications of the time properties of the end timestamp
-		if(endHour != null || !endHour.equals("")) {
+		if(endHour != null && !endHour.equals("")) {
 			Integer eH =new Integer(endHour);
 			endTime.setHours(eH.intValue());
 		}
-		if(endMinute != null || !endMinute.equals("")) {
+		if(endMinute != null && !endMinute.equals("")) {
 			Integer eM =new Integer(endMinute);
 			endTime.setMinutes(eM.intValue());
 		}
@@ -793,11 +793,11 @@ public class CalBusinessBean extends IBOServiceBean implements CalBusiness,UserG
 		
 		while(start < end) {
 			Timestamp endOfEntryTime = Timestamp.valueOf(startTime.toString());
-			if(endHour != null || !endHour.equals("")) {
+			if(endHour != null && !endHour.equals("")) {
 				Integer eH =new Integer(endHour);
 				endOfEntryTime.setHours(eH.intValue());
 			}
-			if(endMinute != null || !endMinute.equals("")) {
+			if(endMinute != null && !endMinute.equals("")) {
 				Integer eM =new Integer(endMinute);
 				endOfEntryTime.setMinutes(eM.intValue());
 			}

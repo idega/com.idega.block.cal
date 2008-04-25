@@ -47,7 +47,7 @@ import org.apache.myfaces.custom.schedule.util.ScheduleUtil;
  *
  * @author Jurgen Lust (latest modification by $Author: laddi $)
  * @author Bruno Aranda (adaptation of Jurgen code to myfaces)
- * @version $Revision: 1.2 $
+ * @version $Revision: 1.3 $
  */
 public class UISchedule extends UIComponentBase implements ValueHolder,
         Serializable, ActionSource
@@ -61,7 +61,8 @@ public class UISchedule extends UIComponentBase implements ValueHolder,
         /**
          * @see javax.faces.event.ActionListener#processAction(javax.faces.event.ActionEvent)
          */
-        public void processAction(ActionEvent event)
+        @SuppressWarnings("synthetic-access")
+				public void processAction(ActionEvent event)
                 throws AbortProcessingException
         {
             UISchedule schedule = (UISchedule) event.getComponent();

@@ -334,7 +334,6 @@ function getCalendarItemsByViewerProperties(properties, containerId) {
 				}
 			},
 			errorHandler: function(message) {
-				alert('Unable to contact server!');
 				closeAllLoadingMessages();
 				return false;
 			},

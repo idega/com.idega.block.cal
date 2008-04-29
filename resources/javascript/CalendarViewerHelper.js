@@ -243,8 +243,6 @@ function reloadPropertiesForCalendarViewer(instanceId, containerId, message) {
 
 //	Initial step
 function loadCalendarViewer(id, instanceId, message) {
-	showLoadingMessage(message);
-	
 	prepareDwr(CalService, getDefaultDwrPath());
 	CalService.getCalendarInformation({
 		callback: function(info) {

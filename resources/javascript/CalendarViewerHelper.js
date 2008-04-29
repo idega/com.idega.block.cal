@@ -39,6 +39,12 @@ function getSimpleCalendarTypes(server, login, password, remoteMode, containerId
 					rpcType: dwr.engine.ScriptTag
 				});
 			},
+			errorHandler: function(message) {
+				alert('Unable to contact server!');
+				closeAllLoadingMessages();
+				return false;
+			},
+			timeout: 10000,
 			rpcType: dwr.engine.XMLHttpRequest
 		});
 	}
@@ -80,6 +86,12 @@ function getSimpleCalendarLedgers(server, login, password, remoteMode, container
 					return false;
 				}
 			},
+			errorHandler: function(message) {
+				alert('Unable to contact server!');
+				closeAllLoadingMessages();
+				return false;
+			},
+			timeout: 10000,
 			rpcType: dwr.engine.XMLHttpRequest
 		});
 	}
@@ -321,6 +333,12 @@ function getCalendarItemsByViewerProperties(properties, containerId) {
 					return false;
 				}
 			},
+			errorHandler: function(message) {
+				alert('Unable to contact server!');
+				closeAllLoadingMessages();
+				return false;
+			},
+			timeout: 10000,
 			rpcType: dwr.engine.XMLHttpRequest
 		});
 	}

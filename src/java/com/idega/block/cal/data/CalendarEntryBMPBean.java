@@ -239,6 +239,7 @@ public class CalendarEntryBMPBean extends GenericEntity implements com.idega.blo
   	IDOQuery query = idoQueryGetSelect();
   	query.appendWhere();
   	query.appendWithinStamps("CAL_ENTRY_DATE",fromStamp,toStamp);
+  	query.appendOrderBy("CAL_ENTRY_DATE");
   	return super.idoFindPKsByQuery(query);
   }
   public Collection ejbFindEntryByLedgerID(int ledgerID) throws FinderException {

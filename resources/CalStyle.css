@@ -263,6 +263,11 @@ select {
 	margin-left: 10px;	
 }
 
+.ledger_list{
+	margin : 0;
+	padding-left : 15px;
+}
+
 .connection_table{
 /*	display: none*/
 }

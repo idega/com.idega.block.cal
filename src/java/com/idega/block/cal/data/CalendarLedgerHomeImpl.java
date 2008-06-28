@@ -7,6 +7,7 @@ import java.util.List;
 
 import javax.ejb.FinderException;
 
+
 public class CalendarLedgerHomeImpl extends com.idega.data.IDOFactory implements CalendarLedgerHome
 {
  protected Class getEntityInterfaceClass(){

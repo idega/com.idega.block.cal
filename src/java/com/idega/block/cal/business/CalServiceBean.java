@@ -305,7 +305,7 @@ public class CalServiceBean implements CalService {
 	public boolean addUniqueIdsForCalendarGroups(String instanceId, List<String> ids) {
 		GroupService groupService = getGroupService();
 		if (groupService == null) {
-			return false;
+			return Boolean.FALSE;
 		}
 		
 		return groupService.addUniqueIds(calendarCacheName, instanceId, ids);
@@ -313,12 +313,12 @@ public class CalServiceBean implements CalService {
 	
 	public boolean addUniqueIdsForCalendarLedgers(String instanceId, List<String> ids) {
 		if (ids == null || ids.size() == 0) {
-			return true;
+			return Boolean.TRUE;
 		}
 		
 		GroupService groupService = getGroupService();
 		if (groupService == null) {
-			return false;
+			return Boolean.FALSE;
 		}
 		
 		return groupService.addUniqueIds(ledgersCacheName, instanceId, ids);
@@ -326,12 +326,12 @@ public class CalServiceBean implements CalService {
 	
 	public boolean addUniqueIdsForCalendarEvents(String instanceId, List<String> ids) {
 		if (ids == null || ids.size() == 0) {
-			return true;
+			return Boolean.TRUE;
 		}
 		
 		GroupService groupService = getGroupService();
 		if (groupService == null) {
-			return false;
+			return Boolean.FALSE;
 		}
 		
 		return groupService.addUniqueIds(eventsCacheName, instanceId, ids);

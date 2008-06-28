@@ -216,8 +216,12 @@ public class CalBusinessBean extends IBOServiceBean implements CalBusiness,UserG
 		try {
 			CalendarEntryTypeHome typeHome = (CalendarEntryTypeHome) getIDOHome(CalendarEntryType.class);
 			list = new ArrayList(typeHome.findTypeByName(entryTypeName));
-			entryType = (CalendarEntryType) list.get(0);
-			return entryType;
+			if (!list.isEmpty()) {
+				entryType = (CalendarEntryType) list.get(0);
+				return entryType;
+			} else {
+				return null;
+			}
 			
 		} catch(Exception e) {
 			e.printStackTrace();

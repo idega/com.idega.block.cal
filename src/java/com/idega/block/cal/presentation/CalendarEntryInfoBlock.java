@@ -5,7 +5,6 @@ import java.util.Locale;
 import com.idega.block.cal.business.CalScheduleEntry;
 import com.idega.block.cal.business.CalendarConstants;
 import com.idega.block.cal.business.ScheduleSession;
-import com.idega.business.SpringBeanLookup;
 import com.idega.presentation.Block;
 import com.idega.presentation.IWContext;
 import com.idega.presentation.Layer;
@@ -13,6 +12,7 @@ import com.idega.presentation.text.Heading1;
 import com.idega.presentation.text.Heading4;
 import com.idega.presentation.text.Paragraph;
 import com.idega.util.CoreConstants;
+import com.idega.util.expression.ELUtil;
 
 public class CalendarEntryInfoBlock extends Block {
 	
@@ -28,7 +28,7 @@ public class CalendarEntryInfoBlock extends Block {
 			return;
 		}
 		
-		ScheduleSession schedule = (ScheduleSession) SpringBeanLookup.getInstance().getSpringBean(iwc, ScheduleSession.class);
+		ScheduleSession schedule = ELUtil.getInstance().getBean(ScheduleSession.class);
 		
 		CalScheduleEntry entry = schedule.getCalendarEntryForInfoWindow(entryId);
 		if (entry == null) {

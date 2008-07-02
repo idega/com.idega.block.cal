@@ -7,7 +7,6 @@ import java.util.List;
 import com.idega.block.cal.business.CalendarConstants;
 import com.idega.block.web2.business.Web2Business;
 import com.idega.builder.business.BuilderLogic;
-import com.idega.business.SpringBeanLookup;
 import com.idega.cal.bean.CalendarPropertiesBean;
 import com.idega.idegaweb.IWBundle;
 import com.idega.presentation.IWContext;
@@ -15,6 +14,7 @@ import com.idega.presentation.Layer;
 import com.idega.user.presentation.group.GroupViewer;
 import com.idega.util.CoreConstants;
 import com.idega.util.CoreUtil;
+import com.idega.util.expression.ELUtil;
 import com.idega.webface.WFUtil;
 
 public class CalendarViewer extends GroupViewer {
@@ -82,7 +82,7 @@ public class CalendarViewer extends GroupViewer {
 		
 		if (!CoreUtil.isSingleComponentRenderingProcess(iwc)) {
 			try {
-				Web2Business web2 = (Web2Business) SpringBeanLookup.getInstance().getSpringBean(iwc, Web2Business.class);
+				Web2Business web2 = ELUtil.getInstance().getBean(Web2Business.class);
 				cssFiles.append("<link rel=\"stylesheet\" href=\"");
 				cssFiles.append(web2.getMoodalboxStyleFilePath()).append("\" type=\"text/css\" />\n");
 			} catch (Exception e) {
@@ -101,7 +101,7 @@ public class CalendarViewer extends GroupViewer {
 		boolean singleProcess = CoreUtil.isSingleComponentRenderingProcess(iwc);
 		if (!singleProcess) {
 			//	Web 2.0 stuff
-			Web2Business web2 = (Web2Business) SpringBeanLookup.getInstance().getSpringBean(iwc, Web2Business.class);
+			Web2Business web2 = ELUtil.getInstance().getBean(Web2Business.class);
 			try {
 				files.add(web2.getBundleURIToMootoolsLib());
 				files.add(web2.getMoodalboxScriptFilePath(false));

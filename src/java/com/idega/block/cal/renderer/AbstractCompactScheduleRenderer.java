@@ -50,9 +50,9 @@ import com.idega.block.cal.business.HtmlSchedule;
  * Abstract superclass for the week and month view renderers.
  * </p>
  * 
- * @author Jurgen Lust (latest modification by $Author: laddi $)
+ * @author Jurgen Lust (latest modification by $Author: civilis $)
  * @author Bruno Aranda (adaptation of Jurgen's code to myfaces)
- * @version $Revision: 1.10 $
+ * @version $Revision: 1.11 $
  */
 public abstract class AbstractCompactScheduleRenderer extends
         AbstractScheduleRenderer implements Serializable
@@ -162,8 +162,10 @@ public abstract class AbstractCompactScheduleRenderer extends
         final Map attributes = schedule.getAttributes();
         final FormInfo parentFormInfo = RendererUtils.findNestingForm(schedule, context);
         final String formId = parentFormInfo == null ? null : parentFormInfo.getFormName();
-        final String dayHeaderId = clientId + "_header_" + ScheduleUtil.getDateId(day.getDate());
-        final String dayBodyId = clientId + "_body_" + ScheduleUtil.getDateId(day.getDate());
+        
+//      TODO: the myfaces api changed, check if this works now
+        final String dayHeaderId = clientId + "_header_" + ScheduleUtil.getDateId(day.getDate(), null);
+        final String dayBodyId = clientId + "_body_" + ScheduleUtil.getDateId(day.getDate(), null);
         
         boolean isMonthMode = false;
         boolean isWeekMode = false;
@@ -528,7 +530,9 @@ public abstract class AbstractCompactScheduleRenderer extends
         Calendar cal = Calendar.getInstance();
         //the dateId is the schedule client id + "_" + yyyyMMdd 
         String day = dateId.substring(dateId.lastIndexOf("_") + 1);
-        Date date = ScheduleUtil.getDateFromId(day);
+        
+//      TODO: the myfaces api changed, check if this works now
+        Date date = ScheduleUtil.getDateFromId(day, null);
 
         if (date != null) cal.setTime(date);
         cal.set(Calendar.HOUR_OF_DAY, schedule.getVisibleStartHour());

@@ -50,9 +50,9 @@ import com.idega.block.cal.business.HtmlSchedule;
  * Renderer for the day and workweek views of the Schedule component
  * </p>
  *
- * @author Jurgen Lust (latest modification by $Author: laddi $)
+ * @author Jurgen Lust (latest modification by $Author: civilis $)
  * @author Bruno Aranda (adaptation of Jurgen's code to myfaces)
- * @version $Revision: 1.6 $
+ * @version $Revision: 1.7 $
  */
 public class ScheduleDetailedDayRenderer extends AbstractScheduleRenderer
         implements Serializable
@@ -127,7 +127,10 @@ public class ScheduleDetailedDayRenderer extends AbstractScheduleRenderer
                 .hasNext();)
         {
             ScheduleDay day = (ScheduleDay) dayIterator.next();
-            String dayBodyId = clientId + "_body_" + ScheduleUtil.getDateId(day.getDate());
+            
+//            TODO: the myfaces api changed, check if this works now
+//            String dayBodyId = clientId + "_body_" + ScheduleUtil.getDateId(day.getDate());
+            String dayBodyId = clientId + "_body_" + ScheduleUtil.getDateId(day.getDate(), null);
             writer.startElement(HTML.DIV_ELEM, schedule);
 
             writer.writeAttribute(HTML.CLASS_ATTR, getStyleClass(schedule,
@@ -674,7 +677,10 @@ public class ScheduleDetailedDayRenderer extends AbstractScheduleRenderer
                 .hasNext();)
         {
             ScheduleDay day = (ScheduleDay) dayIterator.next();
-            final String dayHeaderId = clientId + "_header_" + ScheduleUtil.getDateId(day.getDate());
+            
+//          TODO: the myfaces api changed, check if this works now
+//            final String dayHeaderId = clientId + "_header_" + ScheduleUtil.getDateId(day.getDate());
+            final String dayHeaderId = clientId + "_header_" + ScheduleUtil.getDateId(day.getDate(), null);
             writer.startElement(HTML.DIV_ELEM, schedule);
             writer.writeAttribute(HTML.ID_ATTR, dayHeaderId, null);
             writer.writeAttribute(HTML.CLASS_ATTR, getStyleClass(schedule,
@@ -739,7 +745,9 @@ public class ScheduleDetailedDayRenderer extends AbstractScheduleRenderer
         Calendar cal = Calendar.getInstance();
         //the dateId is the schedule client id + "_" + yyyyMMdd 
         String day = dateId.substring(dateId.lastIndexOf("_") + 1);
-        Date date = ScheduleUtil.getDateFromId(day);
+        
+//      TODO: the myfaces api changed, check if this works now
+        Date date = ScheduleUtil.getDateFromId(day, null);
 
         if (date != null) cal.setTime(date);
         cal.set(Calendar.HOUR_OF_DAY, getRenderedStartHour(schedule));

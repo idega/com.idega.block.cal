@@ -1029,6 +1029,7 @@ public class CalendarView extends Block{
 	}
 
 
+	@Override
 	public void main(IWContext iwc) throws Exception{
 		IWResourceBundle iwrb = getResourceBundle(iwc);
 
@@ -1346,6 +1347,7 @@ public class CalendarView extends Block{
 	}
 
 
+	@Override
 	public String getBundleIdentifier() {
 		return IW_BUNDLE_IDENTIFIER;
 	}
@@ -1353,7 +1355,7 @@ public class CalendarView extends Block{
 	public CalBusiness getCalBusiness(IWApplicationContext iwc) {
 		if (this.calBiz == null) {
 			try {
-				this.calBiz = (CalBusiness) com.idega.business.IBOLookup.getServiceInstance(iwc, CalBusiness.class);
+				this.calBiz = com.idega.business.IBOLookup.getServiceInstance(iwc, CalBusiness.class);
 			}
 			catch (java.rmi.RemoteException rme) {
 				throw new RuntimeException(rme.getMessage());
@@ -1365,7 +1367,7 @@ public class CalendarView extends Block{
 		UserBusiness userBusiness = null;
 		if (userBusiness == null) {
 			try {
-				userBusiness = (UserBusiness) com.idega.business.IBOLookup.getServiceInstance(iwc, UserBusiness.class);
+				userBusiness = com.idega.business.IBOLookup.getServiceInstance(iwc, UserBusiness.class);
 			}
 			catch (java.rmi.RemoteException rme) {
 				throw new RuntimeException(rme.getMessage());

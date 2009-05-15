@@ -200,7 +200,7 @@ public class CalServiceBean implements CalService {
 	private CalBusiness getCalBusiness(IWApplicationContext iwac) {
 		if (calBusiness == null) {
 			try {
-				calBusiness = (CalBusiness) IBOLookup.getServiceInstance(iwac, CalBusiness.class);
+				calBusiness = IBOLookup.getServiceInstance(iwac, CalBusiness.class);
 			} catch (Exception e) {
 				e.printStackTrace();
 				return null;
@@ -212,7 +212,7 @@ public class CalServiceBean implements CalService {
 	private GroupBusiness getGroupBusiness(IWApplicationContext iwac) {
 		if (groupBusiness == null) {
 			try {
-				groupBusiness = (GroupBusiness) IBOLookup.getServiceInstance(iwac, GroupBusiness.class);
+				groupBusiness = IBOLookup.getServiceInstance(iwac, GroupBusiness.class);
 			} catch (Exception e) {
 				e.printStackTrace();
 				return null;
@@ -224,7 +224,7 @@ public class CalServiceBean implements CalService {
 	private GroupService getGroupService(IWApplicationContext iwac) {
 		if (groupService == null) {
 			try {
-				groupService = (GroupService) IBOLookup.getServiceInstance(iwac, GroupService.class);
+				groupService = IBOLookup.getServiceInstance(iwac, GroupService.class);
 			} catch (Exception e) {
 				e.printStackTrace();
 				return null;

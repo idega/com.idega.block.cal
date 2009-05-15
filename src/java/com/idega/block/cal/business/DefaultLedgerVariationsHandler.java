@@ -60,7 +60,7 @@ public class DefaultLedgerVariationsHandler implements LedgerVariationsHandler{
 		CalBusiness calBiz = null;
 		if (calBiz == null) {
 			try {
-				calBiz = (CalBusiness) com.idega.business.IBOLookup.getServiceInstance(iwc, CalBusiness.class);
+				calBiz = com.idega.business.IBOLookup.getServiceInstance(iwc, CalBusiness.class);
 			}
 			catch (java.rmi.RemoteException rme) {
 				throw new RuntimeException(rme.getMessage());
@@ -72,7 +72,7 @@ public class DefaultLedgerVariationsHandler implements LedgerVariationsHandler{
 		GroupBusiness groupBiz =null;
 		if (groupBiz == null) {
 			try {
-				groupBiz = (GroupBusiness) com.idega.business.IBOLookup.getServiceInstance(iwc, GroupBusiness.class);
+				groupBiz = com.idega.business.IBOLookup.getServiceInstance(iwc, GroupBusiness.class);
 			}
 			catch (java.rmi.RemoteException rme) {
 				throw new RuntimeException(rme.getMessage());

@@ -1061,7 +1061,7 @@ public class CalBusinessBean extends IBOServiceBean implements CalBusiness,UserG
 		GroupBusiness groupBiz = null;
 		if (groupBiz == null) {
 			try {
-				groupBiz = (GroupBusiness) com.idega.business.IBOLookup.getServiceInstance(iwc, GroupBusiness.class);
+				groupBiz = com.idega.business.IBOLookup.getServiceInstance(iwc, GroupBusiness.class);
 			}
 			catch (java.rmi.RemoteException rme) {
 				throw new RuntimeException(rme.getMessage());
@@ -1073,7 +1073,7 @@ public class CalBusinessBean extends IBOServiceBean implements CalBusiness,UserG
 		UserBusiness userBusiness = null;
 		if (userBusiness == null) {
 			try {
-				userBusiness = (UserBusiness) com.idega.business.IBOLookup.getServiceInstance(iwc, UserBusiness.class);
+				userBusiness = com.idega.business.IBOLookup.getServiceInstance(iwc, UserBusiness.class);
 			}
 			catch (java.rmi.RemoteException rme) {
 				throw new RuntimeException(rme.getMessage());

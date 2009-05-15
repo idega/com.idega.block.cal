@@ -753,7 +753,7 @@ public class CalendarEntryCreator extends Form{
 	public CalBusiness getCalBusiness(IWApplicationContext iwc) {
 		if (this.calBiz == null) {
 			try {
-				this.calBiz = (CalBusiness) com.idega.business.IBOLookup.getServiceInstance(iwc, CalBusiness.class);
+				this.calBiz = com.idega.business.IBOLookup.getServiceInstance(iwc, CalBusiness.class);
 			}
 			catch (java.rmi.RemoteException rme) {
 				throw new RuntimeException(rme.getMessage());
@@ -766,7 +766,7 @@ public class CalendarEntryCreator extends Form{
 		UserBusiness userBusiness = null;
 		if (userBusiness == null) {
 			try {
-				userBusiness = (UserBusiness) com.idega.business.IBOLookup.getServiceInstance(iwc, UserBusiness.class);
+				userBusiness = com.idega.business.IBOLookup.getServiceInstance(iwc, UserBusiness.class);
 			}
 			catch (java.rmi.RemoteException rme) {
 				throw new RuntimeException(rme.getMessage());
@@ -778,7 +778,7 @@ public class CalendarEntryCreator extends Form{
 		GroupBusiness groupBiz = null;
 		if (groupBiz == null) {
 			try {
-				groupBiz = (GroupBusiness) com.idega.business.IBOLookup.getServiceInstance(iwc, GroupBusiness.class);
+				groupBiz = com.idega.business.IBOLookup.getServiceInstance(iwc, GroupBusiness.class);
 			}
 			catch (java.rmi.RemoteException rme) {
 				throw new RuntimeException(rme.getMessage());

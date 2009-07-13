@@ -142,22 +142,24 @@ public class CalendarLedgerBMPBean extends GenericEntity implements com.idega.bl
 		
 	}
 	
-	public Collection ejbFindLedgersByCoachId(String coachId) throws FinderException {
+	public Collection ejbFindLedgersByCoachIdAndGroupsIds(String coachId, Collection groupsIds, Collection coachGroupsIds) throws FinderException {
 		IDOQuery query = idoQueryGetSelect();
 		query.appendWhereEquals(getColumnNameUserID(), coachId);
+		if(groupsIds!=null){
+			query.appendOr();
+			query.append(getColumnNameGroupID());
+			query.appendInCollection(groupsIds);
+		}
+		if(coachGroupsIds!=null){
+			query.appendOr();
+			query.append(getColumnNameCoachGroupID());
+			query.appendInCollection(coachGroupsIds);
+		}
+		
 		query.appendOrderBy(getColumnNameLedgerName());
-		List result = new ArrayList(super.idoFindPKsByQuery(query));
-		return result;
-	}
-	
-	public Collection ejbFindLedgersByCoachIdAndGroupsIds(String coachId, List groupsIds) throws FinderException {
-		IDOQuery query = idoQueryGetSelect();
-		query.appendWhereEquals(getColumnNameUserID(), coachId);
-		query.appendOr();
-		query.append(getColumnNameGroupID());
-		query.appendInCollection(groupsIds);
-		query.appendOrderBy(getColumnNameLedgerName());
-		List result = new ArrayList(super.idoFindPKsByQuery(query));
-		return result;
+		
+		System.out.println("sql = " + query.toString());
+		
+		return super.idoFindPKsByQuery(query);
 	}
 }

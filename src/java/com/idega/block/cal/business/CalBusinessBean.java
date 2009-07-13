@@ -1310,8 +1310,6 @@ public List getLedgersByGroupId(String groupId){
 			return null;
 		}
 		
-
-		
 		CalendarLedgerHome ledgerHome = null;
 		try {
 			ledgerHome = (CalendarLedgerHome) getIDOHome(CalendarLedger.class);
@@ -1321,14 +1319,14 @@ public List getLedgersByGroupId(String groupId){
 		}
 		if (groupsIds == null || groupsIds.size() == 0) {
 			try {
-				return ledgerHome.findLedgersByCoachId(user.getId());
+				return new ArrayList(ledgerHome.findLedgersByCoachIdAndGroupsIds(user.getId().toString(), null, null));
 			} catch (FinderException e) {
 				e.printStackTrace();
 			}
 		}
 		
 		try {
-			return ledgerHome.findLedgersByCoachIdAndGroupsIds(user.getId(), groupsIds);
+			return new ArrayList(ledgerHome.findLedgersByCoachIdAndGroupsIds(user.getId(), groupsIds, null));
 		} catch (FinderException e) {
 			e.printStackTrace();
 		}

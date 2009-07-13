@@ -1,97 +1,56 @@
 package com.idega.block.cal.data;
 
-import java.util.ArrayList;
+
 import java.util.Collection;
-import java.util.Iterator;
-import java.util.List;
-
+import javax.ejb.CreateException;
 import javax.ejb.FinderException;
+import com.idega.data.IDOEntity;
+import com.idega.data.IDOFactory;
 
-
-public class CalendarLedgerHomeImpl extends com.idega.data.IDOFactory implements CalendarLedgerHome
-{
- protected Class getEntityInterfaceClass(){
-  return CalendarLedger.class;
- }
-
-
- public CalendarLedger create() throws javax.ejb.CreateException{
-  return (CalendarLedger) super.createIDO();
- }
-
-
- public CalendarLedger findByPrimaryKey(Object pk) throws javax.ejb.FinderException{
-  return (CalendarLedger) super.findByPrimaryKeyIDO(pk);
- }
- 
- public java.util.Collection findLedgers()throws javax.ejb.FinderException{
- 	com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
- 	java.util.Collection ids = ((CalendarLedgerBMPBean)entity).ejbFindLedgers();
- 	this.idoCheckInPooledEntity(entity);
- 	return this.getEntityCollectionForPrimaryKeys(ids);
- }
- 
- public CalendarLedger findLedgerByName(String name) throws javax.ejb.FinderException{
- 	com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
- 	Object id = ((CalendarLedgerBMPBean)entity).ejbFindLedgerByName(name);
- 	this.idoCheckInPooledEntity(entity);
- 	return (CalendarLedger) super.findByPrimaryKeyIDO(id);//getEntityCollectionForPrimaryKeys(ids);
- 	
- }
- 
- public java.util.Collection findLedgersByGroupId(String id)throws javax.ejb.FinderException{
-	 	com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
-	 	java.util.Collection ids = ((CalendarLedgerBMPBean)entity).ejbFindLedgersByGroupId(id);
-	 	this.idoCheckInPooledEntity(entity);
-	 	return this.getEntityCollectionForPrimaryKeys(ids);
-	 }
- 
- 	public List findLedgersByCoachId(String coachId) throws FinderException {
-		if (coachId == null) {
-			return null;
-		}
-		
-		com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
-	 	java.util.Collection ids = ((CalendarLedgerBMPBean)entity).ejbFindLedgersByCoachId(coachId);
-	 	this.idoCheckInPooledEntity(entity);
-	 	Collection ledgers = this.getEntityCollectionForPrimaryKeys(ids);
-	 	
-	 	return getConvertedLedgers(ledgers);
+public class CalendarLedgerHomeImpl extends IDOFactory implements
+		CalendarLedgerHome {
+	public Class getEntityInterfaceClass() {
+		return CalendarLedger.class;
 	}
 
-
-	public List findLedgersByCoachIdAndGroupsIds(String coachId, List groupsIds) throws FinderException {
-		if (coachId == null) {
-			return null;
-		}
-		
-		if (groupsIds == null || groupsIds.size() == 0){
-			return findLedgersByCoachId(coachId);
-		}
-		
-		com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
-	 	java.util.Collection ids = ((CalendarLedgerBMPBean)entity).ejbFindLedgersByCoachIdAndGroupsIds(coachId, groupsIds);
-	 	this.idoCheckInPooledEntity(entity);
-	 	Collection ledgers = this.getEntityCollectionForPrimaryKeys(ids);
-	 	
-	 	return getConvertedLedgers(ledgers);
+	public CalendarLedger create() throws CreateException {
+		return (CalendarLedger) super.createIDO();
 	}
 
-	private List getConvertedLedgers(Collection ledgers) {
-		if (ledgers == null) {
-	 		return null;
-	 	}
-	 	List ledgersInList = new ArrayList();
-	 	Object o = null;
-	 	for (Iterator it = ledgers.iterator(); it.hasNext();) {
-	 		o = it.next();
-	 		
-	 		if (o instanceof CalendarLedger) {
-	 			ledgersInList.add((CalendarLedger) o);
-	 		}
-	 	}
-	 	return ledgersInList;
+	public CalendarLedger findByPrimaryKey(Object pk) throws FinderException {
+		return (CalendarLedger) super.findByPrimaryKeyIDO(pk);
 	}
 
+	public Collection findLedgers() throws FinderException {
+		IDOEntity entity = this.idoCheckOutPooledEntity();
+		Collection ids = ((CalendarLedgerBMPBean) entity).ejbFindLedgers();
+		this.idoCheckInPooledEntity(entity);
+		return this.getEntityCollectionForPrimaryKeys(ids);
+	}
 
+	public CalendarLedger findLedgerByName(String name) throws FinderException {
+		IDOEntity entity = this.idoCheckOutPooledEntity();
+		Object pk = ((CalendarLedgerBMPBean) entity).ejbFindLedgerByName(name);
+		this.idoCheckInPooledEntity(entity);
+		return this.findByPrimaryKey(pk);
+	}
+
+	public Collection findLedgersByGroupId(String id) throws FinderException {
+		IDOEntity entity = this.idoCheckOutPooledEntity();
+		Collection ids = ((CalendarLedgerBMPBean) entity)
+				.ejbFindLedgersByGroupId(id);
+		this.idoCheckInPooledEntity(entity);
+		return this.getEntityCollectionForPrimaryKeys(ids);
+	}
+
+	public Collection findLedgersByCoachIdAndGroupsIds(String coachId,
+			Collection groupsIds, Collection coachGroupsIds)
+			throws FinderException {
+		IDOEntity entity = this.idoCheckOutPooledEntity();
+		Collection ids = ((CalendarLedgerBMPBean) entity)
+				.ejbFindLedgersByCoachIdAndGroupsIds(coachId, groupsIds,
+						coachGroupsIds);
+		this.idoCheckInPooledEntity(entity);
+		return this.getEntityCollectionForPrimaryKeys(ids);
+	}
 }

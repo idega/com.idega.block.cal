@@ -27,6 +27,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.TimeZone;
 import java.util.TreeSet;
 
 import javax.faces.component.UIComponent;
@@ -156,16 +157,16 @@ public abstract class AbstractCompactScheduleRenderer extends
     protected void writeDayCell(FacesContext context, ResponseWriter writer,
                                 HtmlSchedule schedule, ScheduleDay day, float cellWidth,
                                 int dayOfWeek, int dayOfMonth, boolean isWeekend,
-                                boolean isCurrentMonth, int rowspan) throws IOException
-    {
+                                boolean isCurrentMonth, int rowspan) throws IOException {
+    	
         final String clientId = schedule.getClientId(context);
-        final Map attributes = schedule.getAttributes();
+        final Map<String, Object> attributes = schedule.getAttributes();
         final FormInfo parentFormInfo = RendererUtils.findNestingForm(schedule, context);
         final String formId = parentFormInfo == null ? null : parentFormInfo.getFormName();
-        
-//      TODO: the myfaces api changed, check if this works now
-        final String dayHeaderId = clientId + "_header_" + ScheduleUtil.getDateId(day.getDate(), null);
-        final String dayBodyId = clientId + "_body_" + ScheduleUtil.getDateId(day.getDate(), null);
+
+        TimeZone tz = TimeZone.getDefault();
+        final String dayHeaderId = clientId + "_header_" + ScheduleUtil.getDateId(day.getDate(), tz);
+        final String dayBodyId = clientId + "_body_" + ScheduleUtil.getDateId(day.getDate(), tz);
         
         boolean isMonthMode = false;
         boolean isWeekMode = false;
@@ -531,8 +532,7 @@ public abstract class AbstractCompactScheduleRenderer extends
         //the dateId is the schedule client id + "_" + yyyyMMdd 
         String day = dateId.substring(dateId.lastIndexOf("_") + 1);
         
-//      TODO: the myfaces api changed, check if this works now
-        Date date = ScheduleUtil.getDateFromId(day, null);
+        Date date = ScheduleUtil.getDateFromId(day, TimeZone.getDefault());
 
         if (date != null) cal.setTime(date);
         cal.set(Calendar.HOUR_OF_DAY, schedule.getVisibleStartHour());

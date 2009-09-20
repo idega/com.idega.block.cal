@@ -27,6 +27,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.TimeZone;
 import java.util.TreeSet;
 
 import javax.faces.component.UIComponent;
@@ -128,9 +129,7 @@ public class ScheduleDetailedDayRenderer extends AbstractScheduleRenderer
         {
             ScheduleDay day = (ScheduleDay) dayIterator.next();
             
-//            TODO: the myfaces api changed, check if this works now
-//            String dayBodyId = clientId + "_body_" + ScheduleUtil.getDateId(day.getDate());
-            String dayBodyId = clientId + "_body_" + ScheduleUtil.getDateId(day.getDate(), null);
+            String dayBodyId = clientId + "_body_" + ScheduleUtil.getDateId(day.getDate(), TimeZone.getDefault());
             writer.startElement(HTML.DIV_ELEM, schedule);
 
             writer.writeAttribute(HTML.CLASS_ATTR, getStyleClass(schedule,
@@ -678,9 +677,7 @@ public class ScheduleDetailedDayRenderer extends AbstractScheduleRenderer
         {
             ScheduleDay day = (ScheduleDay) dayIterator.next();
             
-//          TODO: the myfaces api changed, check if this works now
-//            final String dayHeaderId = clientId + "_header_" + ScheduleUtil.getDateId(day.getDate());
-            final String dayHeaderId = clientId + "_header_" + ScheduleUtil.getDateId(day.getDate(), null);
+            final String dayHeaderId = clientId + "_header_" + ScheduleUtil.getDateId(day.getDate(), TimeZone.getDefault());
             writer.startElement(HTML.DIV_ELEM, schedule);
             writer.writeAttribute(HTML.ID_ATTR, dayHeaderId, null);
             writer.writeAttribute(HTML.CLASS_ATTR, getStyleClass(schedule,
@@ -746,8 +743,7 @@ public class ScheduleDetailedDayRenderer extends AbstractScheduleRenderer
         //the dateId is the schedule client id + "_" + yyyyMMdd 
         String day = dateId.substring(dateId.lastIndexOf("_") + 1);
         
-//      TODO: the myfaces api changed, check if this works now
-        Date date = ScheduleUtil.getDateFromId(day, null);
+        Date date = ScheduleUtil.getDateFromId(day, TimeZone.getDefault());
 
         if (date != null) cal.setTime(date);
         cal.set(Calendar.HOUR_OF_DAY, getRenderedStartHour(schedule));

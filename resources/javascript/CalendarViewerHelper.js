@@ -219,10 +219,9 @@ function reloadPropertiesForCalendarViewer(instanceId, containerId, message) {
 					}
 					
 					var dwrCallPath = getDefaultDwrPath();
-					var dwrCallType = dwr.engine.XMLHttpRequest;
+					var dwrCallType = getDwrCallType(properties.remoteMode);
 					if (properties.remoteMode) {
 						dwrCallPath = properties.server + dwrCallPath;
-						dwrCallType = dwr.engine.ScriptTag;
 					}
 					prepareDwr(CalService, dwrCallPath);
 					CalService.removeCelandarEntriesFromCache(instanceId, {
@@ -231,7 +230,8 @@ function reloadPropertiesForCalendarViewer(instanceId, containerId, message) {
 							
 							loadCalendarViewer(containerId, instanceId, message);
 						},
-						rpcType: dwrCallType
+						rpcType: dwrCallType,
+						transport: dwrCallType
 					});
 				},
 				rpcType: dwr.engine.XMLHttpRequest
@@ -355,11 +355,10 @@ function addCalendarViewerAfterServerIsChecked(properties, containerId) {
 		}
 	}
 
-	var dwrCallType = dwr.engine.XMLHttpRequest;
+	var dwrCallType = getDwrCallType(properties.remoteMode);
 	var dwrCallPath = getDefaultDwrPath();
 	if (properties.remoteMode) {
 		dwrCallPath = properties.server + getDefaultDwrPath();
-		dwrCallType = dwr.engine.ScriptTag;
 	}
 	
 	prepareDwr(CalService, dwrCallPath);
@@ -368,7 +367,8 @@ function addCalendarViewerAfterServerIsChecked(properties, containerId) {
 		callback: function(result) {
 			sendIdsOfCalendarLedgers(properties, containerId);
 		},
-		rpcType: dwrCallType
+		rpcType: dwrCallType,
+		transport: dwrCallType
 	});
 }
 
@@ -383,11 +383,10 @@ function sendIdsOfCalendarLedgers(properties, containerId) {
 		}
 	}
 
-	var dwrCallType = dwr.engine.XMLHttpRequest;
+	var dwrCallType = getDwrCallType(properties.remoteMode);
 	var dwrCallPath = getDefaultDwrPath();
 	if (properties.remoteMode) {
 		dwrCallPath = properties.server + getDefaultDwrPath();
-		dwrCallType = dwr.engine.ScriptTag;
 	}
 	
 	prepareDwr(CalService, dwrCallPath);
@@ -396,7 +395,8 @@ function sendIdsOfCalendarLedgers(properties, containerId) {
 		callback: function(result) {			
 			sendIdsOfCalendarEvents(properties, containerId);
 		},
-		rpcType: dwrCallType
+		rpcType: dwrCallType,
+		transport: dwrCallType
 	});
 }
 
@@ -411,11 +411,10 @@ function sendIdsOfCalendarEvents(properties, containerId) {
 		}
 	}
 
-	var dwrCallType = dwr.engine.XMLHttpRequest;
+	var dwrCallType = getDwrCallType(properties.remoteMode);
 	var dwrCallPath = getDefaultDwrPath();
 	if (properties.remoteMode) {
 		dwrCallPath = properties.server + getDefaultDwrPath();
-		dwrCallType = dwr.engine.ScriptTag;
 	}
 	
 	prepareDwr(CalService, dwrCallPath);
@@ -424,16 +423,16 @@ function sendIdsOfCalendarEvents(properties, containerId) {
 		callback: function(result) {			
 			getCalendarEntries(properties, containerId);
 		},
-		rpcType: dwrCallType
+		rpcType: dwrCallType,
+		transport: dwrCallType
 	});
 }
 
 function getCalendarEntries(properties, containerId) {
-	var dwrCallType = dwr.engine.XMLHttpRequest;
+	var dwrCallType = getDwrCallType(properties.remoteMode);
 	var dwrCallPath = getDefaultDwrPath();
 	if (properties.remoteMode) {
 		dwrCallPath = properties.server + getDefaultDwrPath();
-		dwrCallType = dwr.engine.ScriptTag;
 	}
 	
 	prepareDwr(CalService, dwrCallPath);
@@ -442,7 +441,8 @@ function getCalendarEntries(properties, containerId) {
 		callback: function(entries) {
 			addCalendarEntriesIntoContainer(entries, containerId, properties);
 		},
-		rpcType: dwrCallType
+		rpcType: dwrCallType,
+		transport: dwrCallType
 	});
 }
 

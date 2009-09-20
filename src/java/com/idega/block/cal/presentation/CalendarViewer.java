@@ -27,6 +27,7 @@ public class CalendarViewer extends GroupViewer {
 	private List<String> events = null;
 	private List<String> ledgers = null;
 	
+	@Override
 	public void main(IWContext iwc) {
 		super.main(iwc);
 		
@@ -67,7 +68,6 @@ public class CalendarViewer extends GroupViewer {
 
 		//	Setting parameters to bean, these parameters will be taken by DWR and sent to selected server to get required info
 		WFUtil.invoke(CalendarConstants.CALENDAR_MANAGER_BEAN_ID, "addCalendarProperties", parameters, classes);
-		
 	}
 	
 	@SuppressWarnings("cast")
@@ -153,6 +153,7 @@ public class CalendarViewer extends GroupViewer {
 		setLedgers(properties.getLedgers());
 	}
 	
+	@Override
 	public String getBundleIdentifier()	{
 		return CalendarConstants.IW_BUNDLE_IDENTIFIER;
 	}

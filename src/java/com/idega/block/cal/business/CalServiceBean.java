@@ -523,20 +523,15 @@ public class CalServiceBean implements CalService {
 			return null;
 		}
 		
-		Object o = null;
-		
+		Map<String, List<CalScheduleEntry>> cache = null;
 		try {
-			o = cacheManager.getCache("cacheForCalendarViewerCalScheduleEntries");
+			cache = cacheManager.getCache("cacheForCalendarViewerCalScheduleEntries");
 		} catch(Exception e) {
 			e.printStackTrace();
 			return null;
 		}
 		
-		if (o instanceof Map) {
-			return (Map) o;
-		}
-		
-		return null;
+		return cache;
 	}
 	
 	public boolean removeCelandarEntriesFromCache(String instanceId) {

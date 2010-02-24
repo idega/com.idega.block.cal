@@ -1310,6 +1310,16 @@ public List getLedgersByGroupId(String groupId){
 			return null;
 		}
 		
+		System.out.println("user id = " + user.getPrimaryKey().toString());
+		if (groupsIds != null) {
+			Iterator it = groupsIds.iterator();
+			while (it.hasNext()) {
+				
+			}			
+		} else {
+			System.out.println("groupsIds is null");
+		}
+		
 		CalendarLedgerHome ledgerHome = null;
 		try {
 			ledgerHome = (CalendarLedgerHome) getIDOHome(CalendarLedger.class);

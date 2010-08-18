@@ -1312,10 +1312,11 @@ public List getLedgersByGroupId(String groupId){
 		
 		System.out.println("user id = " + user.getPrimaryKey().toString());
 		if (groupsIds != null) {
-			Iterator it = groupsIds.iterator();
+			//What the hell!!!!
+			/*Iterator it = groupsIds.iterator();
 			while (it.hasNext()) {
 				
-			}			
+			}*/			
 		} else {
 			System.out.println("groupsIds is null");
 		}

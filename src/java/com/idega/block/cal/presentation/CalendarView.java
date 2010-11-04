@@ -980,7 +980,7 @@ public class CalendarView extends Block{
 		}
 
 		Layer layer = new Layer(Layer.DIV);
-		layer.setOverflow("auto");
+		layer.setStyleAttribute("overflow", "auto");
 
 		if(this.adminOnTop) {
 			layer.setWidth("220px");

@@ -53,6 +53,7 @@ import com.idega.presentation.ui.SubmitButton;
 import com.idega.presentation.ui.TextInput;
 import com.idega.repository.data.RefactorClassRegistry;
 import com.idega.user.business.GroupBusiness;
+import com.idega.user.business.NoPhoneFoundException;
 import com.idega.user.data.Group;
 import com.idega.user.data.User;
 import com.idega.user.presentation.UserPropertyWindow;

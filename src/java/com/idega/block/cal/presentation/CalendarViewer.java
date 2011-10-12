@@ -125,7 +125,7 @@ public class CalendarViewer extends GroupViewer {
 		files.add(CoreConstants.DWR_ENGINE_SCRIPT);
 		files.add("/dwr/interface/ScheduleSession.js");
 
-		addScriptFiles(iwc, files, singleProcess);
+		addScriptFiles(iwc, files);
 		
 		StringBuffer singleAction = new StringBuffer("loadCalendarViewer('").append(id).append("', '").append(instanceId).append("', '");
 		singleAction.append(iwb.getResourceBundle(iwc).getLocalizedString("loading", "Loading...")).append("');");

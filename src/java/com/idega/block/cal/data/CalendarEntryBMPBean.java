@@ -22,11 +22,12 @@ import com.idega.data.query.Order;
 import com.idega.data.query.SelectQuery;
 import com.idega.data.query.Table;
 import com.idega.user.data.User;
+import com.idega.util.ListUtil;
 
 public class CalendarEntryBMPBean extends GenericEntity implements com.idega.block.cal.data.CalendarEntry {
 
 	private static final long serialVersionUID = 8762106863386057912L;
-	
+
 	public CalendarEntryBMPBean(){
 		super();
 	}
@@ -74,68 +75,82 @@ public class CalendarEntryBMPBean extends GenericEntity implements com.idega.blo
 	public static String getColumnNameLocation() { return "CAL_ENTRY_LOCATION"; }
 	public static String getColumnNameRepeat() { return "CAL_ENTRY_REPEAT"; }
 	public static String getColumnNameEntryGroupID() { return com.idega.block.cal.data.CalendarEntryGroupBMPBean.getColumnNameEntryGroupID(); }
-	
+
   @Override
 	public String getIDColumnName(){
 		return getColumnNameEntryID();
 	}
-  
+
 	@Override
 	public String getEntityName(){
 		return getEntityTableName();
 	}
+	@Override
 	public int getEntryID() {
 		return getIntColumnValue(getColumnNameEntryID());
 	}
 
 	//GET
-  public int getEntryTypeID() {
+  @Override
+public int getEntryTypeID() {
     return getIntColumnValue(getColumnNameEntryTypeID());
   }
-  public String getEntryType() {
+  @Override
+public String getEntryType() {
   	return getStringColumnValue(getColumnNameEntryTypeID());
   }
-  public String getEntryTypeName() {
+  @Override
+public String getEntryTypeName() {
   	return getStringColumnValue(getColumnNameEntryTypeName());
   }
-  public String getRepeat() {
+  @Override
+public String getRepeat() {
   	return getStringColumnValue(getColumnNameRepeat());
   }
 
-  public Timestamp getDate(){
+  @Override
+public Timestamp getDate(){
 		return (Timestamp) getColumnValue(getColumnNameEntryDate());
 	}
-  public int getDay() {
+  @Override
+public int getDay() {
   	return getDate().getDate();
   }
+	@Override
 	public Timestamp getEndDate(){
 		return (Timestamp) getColumnValue(getColumnNameEntryEndDate());
 	}
 
-  public int getUserID() {
+  @Override
+public int getUserID() {
     return getIntColumnValue(getColumnNameUserID());
   }
 
-  public int getGroupID() {
+  @Override
+public int getGroupID() {
     return getIntColumnValue(getColumnNameGroupID());
   }
-  public int getLedgerID() {
+  @Override
+public int getLedgerID() {
   	return getIntColumnValue(getColumnNameLedgerID());
   }
   @Override
 	public String getName() {
   	return getStringColumnValue(getColumnNameName());
   }
-  
-  public String getDescription() {
+
+  @Override
+public String getDescription() {
   	return getStringColumnValue(getColumnNameDescription());
   }
-  
-  public String getLocation() {
+
+  @Override
+public String getLocation() {
   	return getStringColumnValue(getColumnNameLocation());
   }
-    
-  public Collection getUsers() {
+
+  @Override
+public Collection getUsers() {
   	try {
   		return idoGetRelatedEntities(User.class);
   	} catch(IDORelationshipException e) {
@@ -144,57 +159,69 @@ public class CalendarEntryBMPBean extends GenericEntity implements com.idega.blo
   		return Collections.EMPTY_LIST;
   	}
   }
-  
-  public int getEntryGroupID() {
+
+  @Override
+public int getEntryGroupID() {
   	return getIntColumnValue(getColumnNameEntryGroupID());
   }
 
   //SET
-  public void setEntryTypeID(int entryTypeID) {
+  @Override
+public void setEntryTypeID(int entryTypeID) {
       setColumn(getColumnNameEntryTypeID(),entryTypeID);
   }
-  public void setEntryType(String entryType) {
+  @Override
+public void setEntryType(String entryType) {
   	setColumn(getColumnNameEntryTypeName(),entryType);
   }
-  public void setRepeat(String repeat) {
+  @Override
+public void setRepeat(String repeat) {
   	setColumn(getColumnNameRepeat(),repeat);
   }
 
+	@Override
 	public void setDate(Timestamp date){
 			setColumn(getColumnNameEntryDate(), date);
 	}
 
+	@Override
 	public void setEndDate(Timestamp date){
 			setColumn(getColumnNameEntryEndDate(), date);
 	}
 
-  public void setUserID(int userID) {
+  @Override
+public void setUserID(int userID) {
       setColumn(getColumnNameUserID(),userID);
   }
 
-  public void setGroupID(int groupID) {
+  @Override
+public void setGroupID(int groupID) {
       setColumn(getColumnNameGroupID(),groupID);
   }
-  public void setLedgerID(int ledgerID) {
+  @Override
+public void setLedgerID(int ledgerID) {
   	setColumn(getColumnNameLedgerID(),ledgerID);
   }
   @Override
 	public void setName(String name) {
   		setColumn(getColumnNameName(), name);
   }
-  
-  public void setDescription(String description) {
+
+  @Override
+public void setDescription(String description) {
   	setColumn(getColumnNameDescription(), description);
   }
-  
-  public void setLocation(String location) {
+
+  @Override
+public void setLocation(String location) {
   	setColumn(getColumnNameLocation(), location);
   }
-  
-  public void setEntryGroupID(int entryGroupID) {
+
+  @Override
+public void setEntryGroupID(int entryGroupID) {
   	setColumn(getColumnNameEntryGroupID(), entryGroupID);
   }
-  
+
 //add a user to the middle table
   public void addUser(User user) {
   	try {
@@ -202,10 +229,11 @@ public class CalendarEntryBMPBean extends GenericEntity implements com.idega.blo
   	} catch(IDOAddRelationshipException e) {
   		System.out.println("Could not add user to entry");
   		e.printStackTrace();
-  	} 
+  	}
   }
-  
-  public Collection<CalendarEntry> getEntriesByEventsIds(List<String> eventsIds) {
+
+  @Override
+public Collection<CalendarEntry> getEntriesByEventsIds(List<String> eventsIds) {
 	  try {
 		return ejbFindEntriesByEventsIds(eventsIds);
 	  } catch (Exception e) {
@@ -213,7 +241,7 @@ public class CalendarEntryBMPBean extends GenericEntity implements com.idega.blo
 		return null;
 	  }
   }
-  
+
   //ejbFind...
   public Collection ejbFindEntries() throws FinderException{
   	List result = new ArrayList(super.idoFindAllIDsOrderedBySQL("CAL_ENTRY_NAME"));
@@ -258,9 +286,9 @@ public class CalendarEntryBMPBean extends GenericEntity implements com.idega.blo
 	  	query.appendWhereEquals("IC_GROUP_ID",entryGroupID);
 	  	return super.idoFindPKsByQuery(query);
   }
-  
+
   public Collection ejbFindEntriesByEvents(List eventsList) throws FinderException {
-	  	IDOQuery query = idoQueryGetSelect();	  	
+	  	IDOQuery query = idoQueryGetSelect();
 	  	query.appendWhereEquals("CAL_TYPE_NAME","\""+eventsList.get(0)+"\"");
 	  	for (int i = 1; i < eventsList.size(); i++) {
 	  		query.appendOrEquals("CAL_TYPE_NAME", "\""+eventsList.get(i)+"\"");
@@ -269,51 +297,22 @@ public class CalendarEntryBMPBean extends GenericEntity implements com.idega.blo
   }
 
   private Collection<CalendarEntry> ejbFindEntriesByEventsIds(List<String> eventsIds) throws Exception {
-	  	IDOQuery query = idoQueryGetSelect();	  	
+	  	IDOQuery query = idoQueryGetSelect();
 	  	query.appendWhereEquals(getColumnNameEntryTypeID(), eventsIds.get(0));
 	  	for (int i = 1; i < eventsIds.size(); i++) {
 	  		query.appendOrEquals(getColumnNameEntryTypeID(), eventsIds.get(i));
 		}
 	  	return super.idoFindPKsByQuery(query);
   }
-  
+
   private Collection<CalendarEntry> ejbFindEntriesByEventsIdsAndGroupsIds(List<String> eventsIds, List<String> groupsIds) throws Exception {
-	  IDOQuery query = idoQueryGetSelect();	
-	  
+	  IDOQuery query = idoQueryGetSelect();
+
 	  query.appendWhere();
 	  query.appendLeftParenthesis();
 	  for (int i = 0; i < groupsIds.size(); i++) {
 		  query.appendEquals(getColumnNameGroupID(), groupsIds.get(i));
-		  
-		  if ((i + 1) < groupsIds.size()) {
-			  query.appendOr();
-		  }
-	  }
-	  
-	  query.appendRightParenthesis();
-	  query.appendAnd();
-	  query.appendLeftParenthesis();
-	  
-	  for (int i = 0; i < eventsIds.size(); i++) {
-		  query.appendEquals(getColumnNameEntryTypeID(), eventsIds.get(i));
-		  
-		  if ((i + 1) < eventsIds.size()) {
-			  query.appendOr();
-		  }
-	  }
-	  query.appendRightParenthesis();
-	  
-	  return super.idoFindPKsByQuery(query);
-  }
-  
-  private Collection<CalendarEntry> ejbFindEntriesByLedgerIdsAndGroupsIds(List<String> ledgersIds, List<String> groupsIds) throws Exception {
-	  IDOQuery query = idoQueryGetSelect();	
-	  
-	  query.appendWhere();
-	  query.appendLeftParenthesis();
-	  for (int i = 0; i < groupsIds.size(); i++) {
-		  query.appendEquals(getColumnNameGroupID(), groupsIds.get(i));
-		  
+
 		  if ((i + 1) < groupsIds.size()) {
 			  query.appendOr();
 		  }
@@ -322,29 +321,58 @@ public class CalendarEntryBMPBean extends GenericEntity implements com.idega.blo
 	  query.appendRightParenthesis();
 	  query.appendAnd();
 	  query.appendLeftParenthesis();
-	  
+
+	  for (int i = 0; i < eventsIds.size(); i++) {
+		  query.appendEquals(getColumnNameEntryTypeID(), eventsIds.get(i));
+
+		  if ((i + 1) < eventsIds.size()) {
+			  query.appendOr();
+		  }
+	  }
+	  query.appendRightParenthesis();
+
+	  return super.idoFindPKsByQuery(query);
+  }
+
+  private Collection<CalendarEntry> ejbFindEntriesByLedgerIdsAndGroupsIds(List<String> ledgersIds, List<String> groupsIds) throws Exception {
+	  IDOQuery query = idoQueryGetSelect();
+
+	  query.appendWhere();
+	  query.appendLeftParenthesis();
+	  for (int i = 0; i < groupsIds.size(); i++) {
+		  query.appendEquals(getColumnNameGroupID(), groupsIds.get(i));
+
+		  if ((i + 1) < groupsIds.size()) {
+			  query.appendOr();
+		  }
+	  }
+
+	  query.appendRightParenthesis();
+	  query.appendAnd();
+	  query.appendLeftParenthesis();
+
 	  for (int i = 0; i < ledgersIds.size(); i++) {
 		  query.appendEquals(getColumnNameLedgerID(), ledgersIds.get(i));
-		  
+
 		  if ((i + 1) < ledgersIds.size()) {
 			  query.appendOr();
 		  }
 	  }
 	  query.appendRightParenthesis();
-	  
+
 	  return super.idoFindPKsByQuery(query);
   }
-  
+
   public Collection<CalendarEntry> ejbFindEntriesByLedgersIds(List<String> ledgersIds) throws Exception {
-	  IDOQuery query = idoQueryGetSelect();	
-	  
+	  IDOQuery query = idoQueryGetSelect();
+
 	  query.appendWhere();
 	  query.append(getColumnNameLedgerID());
 	  query.appendInCollection(ledgersIds);
-	  
+
 	  return super.idoFindPKsByQuery(query);
   }
-  
+
   //DELETE
 	@Override
 	public void delete() throws SQLException{
@@ -358,16 +386,16 @@ public class CalendarEntryBMPBean extends GenericEntity implements com.idega.blo
   public Collection ejbFindEntriesByICGroup(List listOfLedgerIds){
 	  if(listOfLedgerIds.isEmpty())
 		  return new ArrayList();
-	  
+
 	  IDOQuery query = idoQueryGetSelect();
-	  
+
 	  query.appendWhereEquals("CAL_LEDGER_ID",listOfLedgerIds.get(0));
 	  if(listOfLedgerIds.size() > 1){
 		  for(int i = 1; i < listOfLedgerIds.size(); i++){
 			  query.appendOr().append("CAL_LEDGER_ID").appendEqualSign().append(listOfLedgerIds.get(i));
 		  }
 	  }
-		  
+
 	  try {
 		return super.idoFindPKsByQuery(query);
 	} catch (FinderException e) {
@@ -377,7 +405,8 @@ public class CalendarEntryBMPBean extends GenericEntity implements com.idega.blo
 	}
   }
 
-  public Collection<CalendarEntry> getEntriesByEventsIdsAndGroupsIds(List<String> eventsIds, List<String> groupsIds) {
+  @Override
+public Collection<CalendarEntry> getEntriesByEventsIdsAndGroupsIds(List<String> eventsIds, List<String> groupsIds) {
 	  try {
 		  return ejbFindEntriesByEventsIdsAndGroupsIds(eventsIds, groupsIds);
 	  } catch (Exception e) {
@@ -391,13 +420,13 @@ public class CalendarEntryBMPBean extends GenericEntity implements com.idega.blo
 	  Table table = new Table(this);
 	  SelectQuery query = new SelectQuery(table);
 	  query.addColumn(new Column(table, getIDColumnName()));
-	  
-	  InCriteria ledIn = new InCriteria(new Column(table, getColumnNameLedgerID()), ledgersIds);
-	  InCriteria grpIn = new InCriteria(new Column(table, getColumnNameGroupID()), groupsIds);
 
-	  boolean useLedgers = ledgersIds != null && !ledgersIds.isEmpty();
-	  boolean useGroups = ledgersIds != null && !ledgersIds.isEmpty();
-	  
+	  boolean useLedgers = !ListUtil.isEmpty(ledgersIds);
+	  boolean useGroups = !ListUtil.isEmpty(groupsIds);
+
+	  InCriteria ledIn = useLedgers ? new InCriteria(new Column(table, getColumnNameLedgerID()), ledgersIds) : null;
+	  InCriteria grpIn = useGroups ? new InCriteria(new Column(table, getColumnNameGroupID()), groupsIds) : null;
+
 	  if (useLedgers && useGroups) {
 		  OR or = new OR(ledIn, grpIn);
 		  query.addCriteria(or);
@@ -416,7 +445,8 @@ public class CalendarEntryBMPBean extends GenericEntity implements com.idega.blo
 	  return this.idoFindPKsByQuery(query);
   }
 
-  public Collection<CalendarEntry> getEntriesByLedgersIdsAndGroupsIds(List<String> ledgersIds, List<String> groupsIds) {
+  @Override
+public Collection<CalendarEntry> getEntriesByLedgersIdsAndGroupsIds(List<String> ledgersIds, List<String> groupsIds) {
 	try {
 		  return ejbFindEntriesByLedgerIdsAndGroupsIds(ledgersIds, groupsIds);
 	  } catch (Exception e) {

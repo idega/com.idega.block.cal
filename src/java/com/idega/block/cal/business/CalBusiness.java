@@ -1,8 +1,8 @@
 /*
  * $Id: CalBusiness.java,v 1.23 2008/02/01 15:51:42 gimmi Exp $ Created on Dec 7, 2004
- * 
+ *
  * Copyright (C) 2004 Idega Software hf. All Rights Reserved.
- * 
+ *
  * This software is the proprietary information of Idega hf. Use is subject to
  * license terms.
  */
@@ -12,8 +12,10 @@ import java.rmi.RemoteException;
 import java.sql.Timestamp;
 import java.util.Collection;
 import java.util.List;
+
 import javax.ejb.CreateException;
 import javax.ejb.RemoveException;
+
 import com.idega.block.cal.data.AttendanceEntity;
 import com.idega.block.cal.data.AttendanceMark;
 import com.idega.block.cal.data.CalendarEntry;
@@ -30,9 +32,9 @@ import com.idega.user.data.Group;
 import com.idega.user.data.User;
 
 /**
- * 
+ *
  * Last modified: $Date: 2008/02/01 15:51:42 $ by $Author: gimmi $
- * 
+ *
  * @author <a href="mailto:eiki@idega.com">eiki </a>
  * @version $Revision: 1.23 $
  */
@@ -57,7 +59,7 @@ public interface CalBusiness extends IBOService, UserGroupPlugInBusiness {
 	 * @see com.idega.block.cal.business.CalBusinessBean#getEntriesByLedgerID
 	 */
 	public Collection getEntriesByLedgerID(int ledgerID);
-	
+
 	public List<CalendarEntry> getEntriesByLedgers(List<String> ledgersIds);
 
 	/**
@@ -242,85 +244,98 @@ public interface CalBusiness extends IBOService, UserGroupPlugInBusiness {
 	/**
 	 * @see com.idega.block.cal.business.CalBusinessBean#beforeUserRemove
 	 */
+	@Override
 	public void beforeUserRemove(User user, Group parentGroup) throws RemoveException, RemoteException;
 
 	/**
 	 * @see com.idega.block.cal.business.CalBusinessBean#afterUserCreateOrUpdate
 	 */
+	@Override
 	public void afterUserCreateOrUpdate(User user, Group parentGroup) throws CreateException, RemoteException;
 
 	/**
 	 * @see com.idega.block.cal.business.CalBusinessBean#beforeGroupRemove
 	 */
+	@Override
 	public void beforeGroupRemove(Group group, Group parentGroup) throws RemoveException, RemoteException;
 
 	/**
 	 * @see com.idega.block.cal.business.CalBusinessBean#afterGroupCreateOrUpdate
 	 */
+	@Override
 	public void afterGroupCreateOrUpdate(Group group, Group parentGroup) throws CreateException, RemoteException;
 
 	/**
 	 * @see com.idega.block.cal.business.CalBusinessBean#instanciateEditor
 	 */
+	@Override
 	public PresentationObject instanciateEditor(Group group) throws RemoteException;
 
 	/**
 	 * @see com.idega.block.cal.business.CalBusinessBean#instanciateViewer
 	 */
+	@Override
 	public PresentationObject instanciateViewer(Group group) throws RemoteException;
 
 	/**
 	 * @see com.idega.block.cal.business.CalBusinessBean#getUserPropertiesTabs
 	 */
+	@Override
 	public List getUserPropertiesTabs(User user) throws RemoteException;
 
 	/**
 	 * @see com.idega.block.cal.business.CalBusinessBean#getGroupPropertiesTabs
 	 */
+	@Override
 	public List getGroupPropertiesTabs(Group group) throws RemoteException;
 
 	/**
 	 * @see com.idega.block.cal.business.CalBusinessBean#getMainToolbarElements
 	 */
+	@Override
 	public List getMainToolbarElements() throws RemoteException;
 
 	/**
 	 * @see com.idega.block.cal.business.CalBusinessBean#getGroupToolbarElements
 	 */
+	@Override
 	public List getGroupToolbarElements(Group group) throws RemoteException;
 
 	/**
 	 * @see com.idega.block.cal.business.CalBusinessBean#isUserAssignableFromGroupToGroup
 	 */
+	@Override
 	public String isUserAssignableFromGroupToGroup(User user, Group sourceGroup, Group targetGroup);
 
 	/**
 	 * @see com.idega.block.cal.business.CalBusinessBean#isUserSuitedForGroup
 	 */
+	@Override
 	public String isUserSuitedForGroup(User user, Group targetGroup);
 
 	/**
 	 * @see com.idega.block.cal.business.CalBusinessBean#canCreateSubGroup
 	 */
+	@Override
 	public String canCreateSubGroup(Group group, String groupTypeOfSubGroup) throws RemoteException;
-	
+
 	public Collection getEntriesByICGroup(int groupId);
-	
+
 	public Collection getEntriesByEvents(List eventsList);
-	
+
 	public List getLedgersByGroupId(String groupId);
-	
+
 	public List getEntriesByLedgersAndEntryTypes(List<String> listOfEntryTypesIds, List<String> listOfLedgerIds);
-	
+
 	public List<CalendarEntry> getEntriesByEventsIds(List<String> eventsIds);
-	
+
 	public List<CalendarEntry> getEntriesByEventsIdsAndGroupsIds(List<String> eventsIds, List<String> groupsIds);
-	
+
 	public List<CalendarEntry> getEntriesByLedgersIdsAndGroupsIds(List<String> ledgersIds, List<String> groupsIds);
-	
+
 	public List<CalendarLedger> getUserLedgers(User user, IWContext iwc);
-	
+
 	public List<CalendarLedger> getUserLedgers(String userId, IWContext iwc);
-	
-	public Collection<CalendarEntry> getUserEntriesBetweenTimestamps(User user, Timestamp fromStamp, Timestamp toStamp, IWContext iwc);
+
+	public List<CalendarEntry> getUserEntriesBetweenTimestamps(User user, Timestamp fromStamp, Timestamp toStamp, IWContext iwc);
 }

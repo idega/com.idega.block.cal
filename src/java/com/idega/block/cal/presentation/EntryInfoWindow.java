@@ -3,7 +3,6 @@
  */
 package com.idega.block.cal.presentation;
 
-import java.util.ArrayList;
 import java.util.Collection;
 
 import com.idega.block.cal.business.CalBusiness;
@@ -35,7 +34,7 @@ public class EntryInfoWindow extends StyledIWAdminWindow{
 	public static final String BUNDLE_KEY_LEDGER_VARIATIONS_HANDLER_CLASS = "ledger_variations_class";
 
 	private static final String HELP_TEXT_KEY = "cal_entry_info";
-	
+
 	//parameter names
 	public static String headlineFieldParameterName = "headline";
 	public static String typeFieldParameterName = "type";
@@ -45,7 +44,7 @@ public class EntryInfoWindow extends StyledIWAdminWindow{
 	public static String timeToFieldParameterName = "timeTo";
 	public static String descriptionFieldParameterName = "description";
 	public static String locationFieldParameterName = "location";
-	
+
 	//texts
 	private Text headlineText;
 	private Text typeText;
@@ -55,7 +54,7 @@ public class EntryInfoWindow extends StyledIWAdminWindow{
 	private Text timeToText;
 	private Text locationText;
 	private Text descriptionText;
-	
+
 	//fields
 	private Text groupNameField;
 	private String clubNameField;
@@ -65,12 +64,12 @@ public class EntryInfoWindow extends StyledIWAdminWindow{
 	private String dayToField;
 	private String locationField;
 	private String descriptionField;
-	
+
 	//styles
 	private String boldText ="bold";
 	private String borderAllWhiteStyle ="borderAllWhite";
 	private Table table;
-	
+
 	public EntryInfoWindow() {
 		setHeight(300);
 		setWidth(400);
@@ -95,17 +94,17 @@ public class EntryInfoWindow extends StyledIWAdminWindow{
 		this.descriptionText = new Text(iwrb.getLocalizedString(descriptionFieldParameterName,"Description"));
 		this.descriptionText.setStyleClass(this.boldText);
 		this.locationText = new Text(iwrb.getLocalizedString(locationFieldParameterName, "Location"));
-		this.locationText.setStyleClass(this.boldText);		
+		this.locationText.setStyleClass(this.boldText);
 	}
 	public void initializeFields(IWContext iwc) {
 		IWResourceBundle iwrb = getResourceBundle(iwc);
 		String entryIDString = iwc.getParameter(CalendarEntryCreator.entryIDParameterName);
-		
+
 		LedgerVariationsHandler ledgerVariationsHandler = getLedgerVariationsHandler(iwc);
-		
+
 		Integer entryID = new Integer(entryIDString);
 		CalendarEntry entry = getCalBusiness(iwc).getEntry(entryID.intValue());
-		
+
 		int groupID = entry.getGroupID();
 		int ledgerID = entry.getLedgerID();
 		Collection parentGroups = null;
@@ -115,7 +114,7 @@ public class EntryInfoWindow extends StyledIWAdminWindow{
 			}
 			if(groupID != -1) {
 				this.groupNameField = new Text(getGroupBusiness(iwc).getGroupByGroupID(groupID).getName());
-				parentGroups = new ArrayList(getGroupBusiness(iwc).getParentGroupsRecursive(getGroupBusiness(iwc).getGroupByGroupID(groupID)));				
+				parentGroups = getGroupBusiness(iwc).getParentGroupsRecursive(getGroupBusiness(iwc).getGroupByGroupID(groupID));
 			}
 			else if(ledgerID != -1) {
 				CalendarLedger ledger = getCalBusiness(iwc).getLedger(ledgerID);
@@ -127,7 +126,7 @@ public class EntryInfoWindow extends StyledIWAdminWindow{
 				this.groupNameField = new Text(iwrb.getLocalizedString("entryinfowindow.no_group_text","No group"));
 				this.groupNameField.setStyleClass(this.boldText);
 			}
-			
+
 		}catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -135,16 +134,16 @@ public class EntryInfoWindow extends StyledIWAdminWindow{
 			this.clubNameField = ledgerVariationsHandler.getParentOfParentGroupName(parentGroups);
 
 		}
-		
+
 		this.headlineField = entry.getName();
 		this.typeField = iwrb.getLocalizedString("calendarEntry."+entry.getEntryTypeName(),entry.getEntryTypeName());
 		this.dayFromField = new IWTimestamp(entry.getDate()).getDateString("dd MMM yyyy - HH.mm");
 		this.dayToField = new IWTimestamp(entry.getEndDate()).getDateString("dd MMM yyyy - HH.mm");
-		
+
 		this.locationField = entry.getLocation();
 		this.descriptionField = entry.getDescription();
-		
-		//stamp is needed to get the current day/week/month of the CalendarView 
+
+		//stamp is needed to get the current day/week/month of the CalendarView
 		//the parameters are then set to the change link (see below)
 		IWTimestamp stamp = null;
 		if (stamp == null) {
@@ -155,12 +154,12 @@ public class EntryInfoWindow extends StyledIWAdminWindow{
 			if(month != null && !month.equals("") &&
 					day != null && !day.equals("") &&
 					year != null && !year.equals("")) {
-				stamp = CalendarView.getTimestamp(day,month,year);			
+				stamp = CalendarView.getTimestamp(day,month,year);
 			}
 			else {
 				stamp = IWTimestamp.RightNow();
 			}
-		}		
+		}
 	}
 	public void lineUp() {
 		this.table = new Table();
@@ -182,20 +181,22 @@ public class EntryInfoWindow extends StyledIWAdminWindow{
 		this.table.add(this.locationField,2,6);
 		this.table.add(this.descriptionText,1,7);
 		this.table.add(this.descriptionField,2,7);
-		
+
 		this.table.add(getHelp(HELP_TEXT_KEY), 1, 8);
 	}
+	@Override
 	public void main(IWContext iwc) throws Exception {
 		IWResourceBundle iwrb = getResourceBundle(iwc);
 		setTitle(iwrb.getLocalizedString("entryInfoWindow.entry_info","Entry info"));
 		addTitle(iwrb.getLocalizedString("entryInfoWindow.entry_info","Entry info"),TITLE_STYLECLASS);
-		
+
 		initializeTexts(iwc);
 		initializeFields(iwc);
 		lineUp();
 		add(this.table,iwc);
-		
+
 	}
+	@Override
 	public String getBundleIdentifier() {
 		return IW_BUNDLE_IDENTIFIER;
 	}
@@ -224,7 +225,7 @@ public class EntryInfoWindow extends StyledIWAdminWindow{
 		return groupBiz;
 	}
 	public static LedgerVariationsHandler getLedgerVariationsHandler(IWContext iwc) {
-		// the class used to handle ledgerVariations is an applicationProperty... 
+		// the class used to handle ledgerVariations is an applicationProperty...
 		String bClass = null;
 		try {
 			bClass = iwc.getIWMainApplication().getBundle(IW_BUNDLE_IDENTIFIER).getProperty(BUNDLE_KEY_LEDGER_VARIATIONS_HANDLER_CLASS);
@@ -246,10 +247,10 @@ public class EntryInfoWindow extends StyledIWAdminWindow{
 			ledgerVariationsHandler = new DefaultLedgerVariationsHandler();
 		}
 		return ledgerVariationsHandler;
-		
+
 	}
 
-	
-	
+
+
 
 }

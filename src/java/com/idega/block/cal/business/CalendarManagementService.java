@@ -82,9 +82,12 @@
  */
 package com.idega.block.cal.business;
 
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 import com.idega.block.cal.data.CalDAVCalendar;
+import com.idega.core.user.data.User;
 
 /**
  * Class description goes here.
@@ -107,7 +110,7 @@ public interface CalendarManagementService {
 	 */
 	public String getHomeCalendarPath(com.idega.user.data.User user);
 	
-	public List<CalDAVCalendar> getUnSubscribedCalendars(com.idega.user.data.User user, int maxResults, int firstResult) throws Exception;
+	public List<CalDAVCalendar> getUnSubscribedCalendars(com.idega.user.data.User user, int maxResults, int firstResult);
 
 	/**
 	* Finds calendars that are available for provided user.
@@ -119,19 +122,30 @@ public interface CalendarManagementService {
 	*  from 0 result else starts from firstResult result. Returns empty collection if no calendars
 	*  found.
 	*/
-	public List<CalDAVCalendar> getSubscribedCalendars(com.idega.user.data.User user, int maxResults, int firstResult) throws Exception;
+	public List<CalDAVCalendar> getSubscribedCalendars(com.idega.user.data.User user, int maxResults, int firstResult);
+	
+	public List<CalDAVCalendar> getAllVisibleCalendars(com.idega.user.data.User user, int maxResults, int firstResult);
 	
 	/**
 	* Sets that user will get data from this calendar.
 	* @param user		user that will get data from Calendar
 	* @param calendar	calendar that will send data for user
 	*/
-	public boolean subscribeCalendar(com.idega.user.data.User user, CalDAVCalendar calendar) throws Exception;
+	public boolean subscribeCalendar(com.idega.user.data.User user, String calendarPath);
 
 	/**
 	* Sets that user will not get data from this calendar.
 	* @param user		user that will not get data from Calendar
 	* @param calendar	calendar that will not send data for user
 	*/
-	public boolean unSubscribeCalendar(com.idega.user.data.User user, CalDAVCalendar calendar) throws Exception;
+	public boolean unSubscribeCalendar(com.idega.user.data.User user, String calendarPath);
+	
+	/**
+	 * <p>Searches Bedework system for calendars, where given {@link User} is creator.</p>
+	 * @param userid {@link User#getPrimaryKey()};
+	 * @return {@link Collection} of {@link BwCalendar}s or {@link Collections#EMPTY_SET} 
+	 * on failure.
+	 * @author <a href="mailto:martynas@idega.com">Martynas Stakė</a>
+	 */
+	public Collection<CalDAVCalendar> getAllUserCalendars(com.idega.user.data.User user);
 }

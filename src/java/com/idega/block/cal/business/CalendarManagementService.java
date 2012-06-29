@@ -99,10 +99,9 @@ import com.idega.core.user.data.User;
  * @author martynasstake
  */
 public interface CalendarManagementService {
-	public List<CalDAVCalendar> getAllChildsOfCalendar(CalDAVCalendar calendar);
-
 	/**
-	 * <p>Searches for home directory of user calendars.</p>
+	 * <p>Searches for home directory of user calendars. If fails to find, creates directory: 
+	 *\/user/\{@link com.idega.user.data.User#getPrimaryKey()}.
 	 * @param user
 	 * @return Directory of user calendars root, where are or should calendars to be placed.
 	 * <code>null</code> on failure.
@@ -161,5 +160,5 @@ public interface CalendarManagementService {
 	 * on failure.
 	 * @author <a href="mailto:martynas@idega.com">Martynas Stakė</a>
 	 */
-	public Collection<CalDAVCalendar> getAllUserCalendars(com.idega.user.data.User user);
+	public Collection<CalDAVCalendar> getAllUserCalendars(String userID);
 }

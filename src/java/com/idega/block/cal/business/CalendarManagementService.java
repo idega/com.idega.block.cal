@@ -129,14 +129,28 @@ public interface CalendarManagementService {
 	/**
 	* Sets that user will get data from this calendar.
 	* @param user		user that will get data from Calendar
-	* @param calendar	calendar that will send data for user
+	* @param calendarPath	path to calendar that will send data for user
 	*/
 	public boolean subscribeCalendar(com.idega.user.data.User user, String calendarPath);
+	
+	/**
+	* Sets that user will get data from these calendars.
+	* @param user		user that will get data from Calendars
+	* @param calendarPaths	paths to calendar that will send data for user
+	*/
+	public boolean subscribeCalendars(com.idega.user.data.User user, Collection<String> calendarPaths);
+	
+	/**
+	* Sets that user will not get data from these calendars.
+	* @param user		user that will get data from Calendars
+	* @param calendarPaths	paths to calendar that will not send data for user
+	*/
+	public boolean unsubscribeCalendars(com.idega.user.data.User user, Collection<String> calendarPaths);
 
 	/**
 	* Sets that user will not get data from this calendar.
 	* @param user		user that will not get data from Calendar
-	* @param calendar	calendar that will not send data for user
+	* @param calendarPath	path to calendar that will not send data for user
 	*/
 	public boolean unSubscribeCalendar(com.idega.user.data.User user, String calendarPath);
 	

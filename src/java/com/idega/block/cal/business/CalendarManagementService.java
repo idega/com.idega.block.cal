@@ -85,9 +85,11 @@ package com.idega.block.cal.business;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 
 import com.idega.block.cal.data.CalDAVCalendar;
 import com.idega.core.user.data.User;
+import com.idega.user.data.Group;
 
 /**
  * Class description goes here.
@@ -109,7 +111,8 @@ public interface CalendarManagementService {
 	 */
 	public String getHomeCalendarPath(com.idega.user.data.User user);
 	
-	public List<CalDAVCalendar> getUnSubscribedCalendars(com.idega.user.data.User user, int maxResults, int firstResult);
+	public List<CalDAVCalendar> getUnSubscribedCalendars(com.idega.user.data.User user, 
+			Integer maxResults, Integer firstResult);
 
 	/**
 	* Finds calendars that are available for provided user.
@@ -121,9 +124,35 @@ public interface CalendarManagementService {
 	*  from 0 result else starts from firstResult result. Returns empty collection if no calendars
 	*  found.
 	*/
-	public List<CalDAVCalendar> getSubscribedCalendars(com.idega.user.data.User user, int maxResults, int firstResult);
+	public List<CalDAVCalendar> getSubscribedCalendars(com.idega.user.data.User user, 
+			Integer maxResults, Integer firstResult);
 	
-	public List<CalDAVCalendar> getAllVisibleCalendars(com.idega.user.data.User user, int maxResults, int firstResult);
+	/**
+	 * <p>Fetches all {@link CalDAVCalendar}s, which can be seen or edited by 
+	 * given {@link com.idega.user.data.User}.</p>
+	 * @param user - {@link com.idega.user.data.User}, who's calendars is needed to be 
+	 * fetched.
+	 * @param maxResults - tells how much results should be fetched, 
+	 * in "SQL" query would be: "LIMIT maxResults, firstResult".
+	 * @param firstResult - tells which result in row should be fetched first. 
+	 * In "SQL" query would be: "LIMIT maxResults, firstResult".
+	 * @return {@link List} of fetched {@link CalDAVCalendar}s or <code>null</code>
+	 * on failure.
+	 * @author <a href="mailto:martynas@idega.com">Martynas Stakė</a>
+	 */
+	public List<CalDAVCalendar> getAllVisibleCalendars(
+			com.idega.user.data.User user, Integer maxResults, Integer firstResult);
+	
+	/**
+	 * <p>Fetches all {@link CalDAVCalendar}s, which can be seen or edited by 
+	 * given {@link com.idega.user.data.User}.</p>
+	 * @param user - {@link com.idega.user.data.User}, who's calendars is needed to be 
+	 * fetched.
+	 * @return {@link List} of fetched {@link CalDAVCalendar}s or <code>null</code>
+	 * on failure.
+	 * @author <a href="mailto:martynas@idega.com">Martynas Stakė</a>
+	 */
+	public List<CalDAVCalendar> getAllVisibleCalendars(com.idega.user.data.User user);
 	
 	/**
 	* Sets that user will get data from this calendar.
@@ -161,4 +190,61 @@ public interface CalendarManagementService {
 	 * @author <a href="mailto:martynas@idega.com">Martynas Stakė</a>
 	 */
 	public Collection<CalDAVCalendar> getAllUserCalendars(String userID);
+
+	/**
+	 * <p>Fetches all calendars, which can be seen or subscribed by given 
+	 * {@link Group#getPrimaryKey()}.</p>
+	 * @param groupIDs -  {@link List} of {@link Group#getPrimaryKey()}. Not 
+	 * <code>null</code>.
+	 * @return {@link List} of {@link CalDAVCalendar}s which can be seen or subscribed by 
+	 * given groups.
+	 * @author <a href="mailto:martynas@idega.com">Martynas Stakė</a>
+	 */
+	public List<CalDAVCalendar> getAllPrivateCalendarsByGroupIDs(List<String> groupIDs);
+	
+	/**
+	 * <p>Fetches all calendars, which can be seen or subscribed by given 
+	 * {@link Group#getPrimaryKey()}.</p>
+	 * @param groupIDs -  {@link List} of {@link Group#getPrimaryKey()}. Not 
+	 * <code>null</code>.
+	 * 	@param maxResults - tells how much results should be fetched, 
+	 * in "SQL" query would be: "LIMIT maxResults, firstResult".
+	 * @param firstResult - tells which result in row should be fetched first. 
+	 * In "SQL" query would be: "LIMIT maxResults, firstResult".
+	 * @return {@link List} of {@link CalDAVCalendar}s which can be seen or subscribed by 
+	 * given groups.
+	 * @author <a href="mailto:martynas@idega.com">Martynas Stakė</a>
+	 */
+	public List<CalDAVCalendar> getAllPrivateCalendarsByGroupIDs(
+			List<String> groupIDs, Integer maxResult, Integer firstResult);
+
+	/**
+	 * <p>Fetches all calendars, which can be seen or subscribed by given 
+	 * {@link Group#getPrimaryKey()}.</p>
+	 * @param groupIDs -  {@link List} of {@link Group#getPrimaryKey()}. Not 
+	 * <code>null</code>.
+	 * @param maxResults - tells how much results should be fetched, 
+	 * in "SQL" query would be: "LIMIT maxResults, firstResult".
+	 * @param firstResult - tells which result in row should be fetched first. 
+	 * In "SQL" query would be: "LIMIT maxResults, firstResult".
+	 * @return {@link List} of {@link CalDAVCalendar}s which can be seen or subscribed by 
+	 * given groups.
+	 * @author <a href="mailto:martynas@idega.com">Martynas Stakė</a>
+	 */
+	public List<CalDAVCalendar> getAllPrivateCalendarsByGroupIDs(Set<Long> groupIDs,
+			Integer maxResult, Integer firstResult);
+
+	/**
+	 * <p>Fetches all private {@link CalDAVCalendar}s from database.</p>
+	 * @return {@link CalDAVCalendar}s or <code>null</code> of failure.
+	 * @author <a href="mailto:martynas@idega.com">Martynas Stakė</a>
+	 */
+	public List<CalDAVCalendar> getAllPrivateCalendars();
+
+	/**
+	 * <p>Fetches all public {@link CalDAVCalendar}s from database.</p>
+	 * @return {@link CalDAVCalendar}s or <code>null</code> of failure.
+	 * @author <a href="mailto:martynas@idega.com">Martynas Stakė</a>
+	 */
+	public List<CalDAVCalendar> getAllPublicCalendars();
 }

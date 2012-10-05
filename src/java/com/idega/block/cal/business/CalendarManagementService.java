@@ -140,7 +140,7 @@ public interface CalendarManagementService {
 	 * on failure.
 	 * @author <a href="mailto:martynas@idega.com">Martynas Stakė</a>
 	 */
-	public List<CalDAVCalendar> getAllVisibleCalendars(
+	public List<CalDAVCalendar> getVisibleSubscriptions(
 			com.idega.user.data.User user, Integer maxResults, Integer firstResult);
 	
 	/**
@@ -152,7 +152,7 @@ public interface CalendarManagementService {
 	 * on failure.
 	 * @author <a href="mailto:martynas@idega.com">Martynas Stakė</a>
 	 */
-	public List<CalDAVCalendar> getAllVisibleCalendars(com.idega.user.data.User user);
+	public List<CalDAVCalendar> getVisibleSubscriptions(com.idega.user.data.User user);
 	
 	/**
 	* Sets that user will get data from this calendar.
@@ -189,7 +189,7 @@ public interface CalendarManagementService {
 	 * on failure.
 	 * @author <a href="mailto:martynas@idega.com">Martynas Stakė</a>
 	 */
-	public Collection<CalDAVCalendar> getAllUserCalendars(String userID);
+	public Collection<CalDAVCalendar> getCalendars(String userID);
 
 	/**
 	 * <p>Fetches all calendars, which can be seen or subscribed by given 
@@ -200,7 +200,7 @@ public interface CalendarManagementService {
 	 * given groups.
 	 * @author <a href="mailto:martynas@idega.com">Martynas Stakė</a>
 	 */
-	public List<CalDAVCalendar> getAllPrivateCalendarsByGroupIDs(List<String> groupIDs);
+	public List<CalDAVCalendar> getPrivateCalendars(List<String> groupIDs);
 	
 	/**
 	 * <p>Fetches all calendars, which can be seen or subscribed by given 
@@ -215,7 +215,7 @@ public interface CalendarManagementService {
 	 * given groups.
 	 * @author <a href="mailto:martynas@idega.com">Martynas Stakė</a>
 	 */
-	public List<CalDAVCalendar> getAllPrivateCalendarsByGroupIDs(
+	public List<CalDAVCalendar> getPrivateCalendars(
 			List<String> groupIDs, Integer maxResult, Integer firstResult);
 
 	/**
@@ -231,7 +231,7 @@ public interface CalendarManagementService {
 	 * given groups.
 	 * @author <a href="mailto:martynas@idega.com">Martynas Stakė</a>
 	 */
-	public List<CalDAVCalendar> getAllPrivateCalendarsByGroupIDs(Set<Long> groupIDs,
+	public List<CalDAVCalendar> getPrivateCalendars(Set<Long> groupIDs,
 			Integer maxResult, Integer firstResult);
 
 	/**
@@ -239,12 +239,12 @@ public interface CalendarManagementService {
 	 * @return {@link CalDAVCalendar}s or <code>null</code> of failure.
 	 * @author <a href="mailto:martynas@idega.com">Martynas Stakė</a>
 	 */
-	public List<CalDAVCalendar> getAllPrivateCalendars();
+	public List<CalDAVCalendar> getPrivateCalendars();
 
 	/**
 	 * <p>Fetches all public {@link CalDAVCalendar}s from database.</p>
 	 * @return {@link CalDAVCalendar}s or <code>null</code> of failure.
 	 * @author <a href="mailto:martynas@idega.com">Martynas Stakė</a>
 	 */
-	public List<CalDAVCalendar> getAllPublicCalendars();
+	public List<CalDAVCalendar> getPublicCalendars();
 }

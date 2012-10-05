@@ -14,6 +14,7 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.Iterator;
 import java.util.List;
+import java.util.logging.Level;
 
 import javax.ejb.CreateException;
 import javax.ejb.FinderException;
@@ -46,6 +47,8 @@ import com.idega.user.data.Group;
 import com.idega.user.data.User;
 import com.idega.util.CoreUtil;
 import com.idega.util.IWTimestamp;
+import com.idega.util.ListUtil;
+import com.idega.util.StringUtil;
 
 /**
  * Description: <br>
@@ -218,43 +221,90 @@ public class CalBusinessBean extends IBOServiceBean implements CalBusiness,UserG
 
 
 	}
-	//GET methods for EntryTypes
+	
+	private CalendarEntryTypeHome calendarEntryTypeHome = null;
+	
 	/**
-	 * gets a CalendarEntryType with the name <code>entryTypeName</code>
+	 * FIXME document this
+	 * @return
+	 * @author <a href="mailto:martynas@idega.com">Martynas Stakė</a>
+	 */
+	protected CalendarEntryTypeHome getCalendarEntryTypeHome() {
+		if (this.calendarEntryTypeHome == null) {
+			try {
+				this.calendarEntryTypeHome = (CalendarEntryTypeHome) getIDOHome(
+						CalendarEntryType.class);
+			} catch (RemoteException e) {
+				getLogger().log(Level.WARNING, "Unable to find " 
+						+ CalendarEntryTypeHome.class + ": ", e);
+			}
+		}
+		
+		return this.calendarEntryTypeHome;
+	}
+	
+	/*
+	 * (non-Javadoc)
+	 * @see com.idega.block.cal.business.CalBusiness#getEntryTypeByName(
+	 * 		java.lang.String
+	 * )
 	 */
 	@Override
 	public CalendarEntryType getEntryTypeByName(String entryTypeName) {
-		CalendarEntryType entryType = null;
-//		CalendarEntryType tempEntry = null;
-		List list = null;
-		try {
-			CalendarEntryTypeHome typeHome = (CalendarEntryTypeHome) getIDOHome(CalendarEntryType.class);
-			list = new ArrayList(typeHome.findTypeByName(entryTypeName));
-			if (!list.isEmpty()) {
-				entryType = (CalendarEntryType) list.get(0);
-				return entryType;
-			} else {
-				return null;
-			}
-
-		} catch(Exception e) {
-			e.printStackTrace();
+		if (StringUtil.isEmpty(entryTypeName)) {
 			return null;
 		}
+		
+		Collection<?> typesByName = null;
+		try {
+			typesByName = getCalendarEntryTypeHome()
+					.findTypeByName(entryTypeName);
+		} catch (FinderException e) {
+			getLogger().log(Level.WARNING, 
+					"Unable to find such type '" + 
+					entryTypeName + "' cause of: ", e);
+		}
+		
+		if (ListUtil.isEmpty(typesByName)) {
+			return null;
+		}
+		
+		for (Object o : typesByName) {
+			if (o instanceof CalendarEntryType) {
+				return (CalendarEntryType) o;
+			}
+		}
+		
+		return null;
 	}
-	/**
-	 *
+	
+	/*
+	 * (non-Javadoc)
+	 * @see com.idega.block.cal.business.CalBusiness#getAllEntryTypes()
 	 */
 	@Override
-	public List getAllEntryTypes() {
-		List types = null;
+	public List<CalendarEntryType> getAllEntryTypes() {
+		Collection<?> types = null;
 		try {
-			CalendarEntryTypeHome typeHome = (CalendarEntryTypeHome) getIDOHome(CalendarEntryType.class);
-			types = new ArrayList(typeHome.findTypes());
-		} catch(Exception e) {
-			e.printStackTrace();
+			types = getCalendarEntryTypeHome().findTypes();
+		} catch (FinderException e) {
+			getLogger().log(Level.WARNING, "Unable to find " + 
+					CalendarEntryType.class + "'s, cause of: ", e);
 		}
-		return types;
+		
+		if (ListUtil.isEmpty(types)) {
+			return null;
+		}
+		
+		List<CalendarEntryType> parametrizedTypes = 
+				new ArrayList<CalendarEntryType>(types.size());
+		for (Object type : types) {
+			if (type instanceof CalendarEntryType) {
+				parametrizedTypes.add((CalendarEntryType) type);
+			}
+		}
+		
+		return parametrizedTypes;
 	}
 
 	//GET methods for Ledger
@@ -520,33 +570,38 @@ public class CalBusinessBean extends IBOServiceBean implements CalBusiness,UserG
 		}
 	}
 
-	/**
-	 * creates a new CalendarEntryType
-	 * @param typeName
+	/*
+	 * (non-Javadoc)
+	 * @see com.idega.block.cal.business.CalBusiness#createNewEntryType(
+	 * 		java.lang.String
+	 * )
 	 */
 	@Override
 	public boolean createNewEntryType(String typeName) {
-
-		Iterator typeIter = getAllEntryTypes().iterator();
-		while(typeIter.hasNext()) {
-			CalendarEntryType type = (CalendarEntryType) typeIter.next();
-			if(type.getName().equals(typeName)) {
-				return false;
+		if (StringUtil.isEmpty(typeName)) {
+			return Boolean.FALSE;
+		}
+		
+		List<CalendarEntryType> types = getAllEntryTypes();
+		if (!ListUtil.isEmpty(types)) {
+			for(Iterator<CalendarEntryType> typeIter = types.iterator(); typeIter.hasNext();) {
+				CalendarEntryType type = typeIter.next();
+				if(type.getName().equals(typeName)) {
+					return Boolean.FALSE;
+				}
 			}
 		}
+		
 		CalendarEntryType type = null;
 		try {
-			CalendarEntryTypeHome typeHome = (CalendarEntryTypeHome) getIDOHome(CalendarEntryType.class);
-			type = typeHome.create();
+			type = getCalendarEntryTypeHome().create();
 			type.setName(typeName);
 			type.store();
+		} catch(Exception e) {
+			return Boolean.FALSE;
 		}
-		catch(Exception e) {
-			return false;
-		}
-		return true;
-
-
+		
+		return Boolean.TRUE;
 	}
 	/**
 	 * startDate and endDate have to be of the form  yyyy-MM-dd hh:mm:ss.S
@@ -1082,14 +1137,13 @@ public class CalBusinessBean extends IBOServiceBean implements CalBusiness,UserG
 				CalendarEntry[] entries = (CalendarEntry[]) com.idega.block.calendar.data.CalendarEntryBMPBean.getStaticInstance().findAllByColumn(com.idega.block.calendar.data.CalendarEntryBMPBean.getColumnNameEntryTypeID(), typeID);
 				if (entries != null) {
 					for (int a = 0; a < entries.length; a++) {
-//						entries[a].removeFrom(com.idega.block.text.data.LocalizedTextBMPBean.getStaticInstance(LocalizedText.class));
 						entries[a].remove();
 					}
 				}
-//				type.removeFrom(com.idega.block.text.data.LocalizedTextBMPBean.getStaticInstance(LocalizedText.class));
+				
 				type.remove();
 			} catch (Exception e) {
-				e.printStackTrace(System.err);
+				getLogger().log(Level.WARNING, "Unable to remove type: ", e);
 			}
 		}
 	}

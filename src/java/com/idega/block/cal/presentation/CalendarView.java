@@ -6,14 +6,17 @@ package com.idega.block.cal.presentation;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.GregorianCalendar;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import com.idega.block.cal.business.CalBusiness;
 import com.idega.block.cal.business.CalBusinessBean;
@@ -37,22 +40,25 @@ import com.idega.presentation.ui.StyledButton;
 import com.idega.user.business.UserBusiness;
 import com.idega.user.data.Group;
 import com.idega.user.data.User;
+import com.idega.util.CoreConstants;
 import com.idega.util.IWCalendar;
 import com.idega.util.IWTimestamp;
+import com.idega.util.ListUtil;
+import com.idega.util.datastructures.map.MapUtil;
 
 /**
  * Description: <br>
  * Copyright: Idega Software 2004 <br>
  * Company: Idega Software <br>
+ * 
  * @author <a href="mailto:birna@idega.is">Birna Iris Jonsdottir</a>
  */
-public class CalendarView extends Block{
+public class CalendarView extends Block {
 
 	private final static String IW_BUNDLE_IDENTIFIER = "com.idega.block.cal";
 	private int view = CalendarParameters.MONTH;
 
 	private final static String PARAMETER_ISI_GROUP_ID = "group_id";
-
 
 	private IWTimestamp now = null;
 	private IWTimestamp timeStamp = null;
@@ -63,7 +69,7 @@ public class CalendarView extends Block{
 	private String styledLink = "styledLink";
 	private String entryLink = "entryLink";
 	private String entryLinkActive = "entryLinkActive";
-	private String headline ="headline";
+	private String headline = "headline";
 	public static String ACTION = "action";
 	public static String OPEN = "open";
 	public static String CLOSE = "close";
@@ -77,23 +83,26 @@ public class CalendarView extends Block{
 
 	public boolean adminOnTop = true;
 
-
 	public CalendarView() {
 
 	}
+
 	public String getCategoryType() {
 		return "";
 	}
+
 	public boolean getMultible() {
 		return true;
 	}
+
 	/**
-	 * draws the day view of the CalendarView
-	 * By default the day view varies from 8:00 until 17:00
-	 * but can be changed via setBeginHour(int hour) and setEndHour(int hour)
+	 * draws the day view of the CalendarView By default the day view varies
+	 * from 8:00 until 17:00 but can be changed via setBeginHour(int hour) and
+	 * setEndHour(int hour)
 	 */
 	private Table dayView(IWContext iwc, IWTimestamp stamp) {
-		//row is 2 because in the first row info on the day (name etc. are printed)
+		// row is 2 because in the first row info on the day (name etc. are
+		// printed)
 		int row = 1;
 		this.now = new IWTimestamp();
 
@@ -101,41 +110,43 @@ public class CalendarView extends Block{
 		backTable.setColor("#cccccc");
 		backTable.setCellspacing(1);
 		backTable.setCellpadding(0);
-		backTable.setWidth(Table.HUNDRED_PERCENT);//500
+		backTable.setWidth(Table.HUNDRED_PERCENT);// 500
 		backTable.setHeight(400);
 
 		User user = null;
 		Integer userID = null;
-		if(iwc.isLoggedOn()) {
+		if (iwc.isLoggedOn()) {
 			user = iwc.getCurrentUser();
 		}
 
-		Timestamp fromStamp = Timestamp.valueOf(stamp.getDateString("yyyy-MM-dd hh:mm:ss.S"));
+		Timestamp fromStamp = Timestamp.valueOf(stamp
+				.getDateString("yyyy-MM-dd hh:mm:ss.S"));
 		fromStamp.setHours(this.beginHour);
 		fromStamp.setMinutes(0);
 		fromStamp.setNanos(0);
-		Timestamp toStamp =Timestamp.valueOf(stamp.getDateString("yyyy-MM-dd hh:mm:ss.S"));
+		Timestamp toStamp = Timestamp.valueOf(stamp
+				.getDateString("yyyy-MM-dd hh:mm:ss.S"));
 		toStamp.setHours(this.endHour);
 		toStamp.setMinutes(0);
 		toStamp.setNanos(0);
 
-		List listOfEntries = getCalBusiness(iwc).getUserEntriesBetweenTimestamps(user, fromStamp, toStamp, iwc);
+		List listOfEntries = getCalBusiness(iwc)
+				.getUserEntriesBetweenTimestamps(user, fromStamp, toStamp, iwc);
 
-		/*		backTable.mergeCells(1,1,2,1);
-		backTable.add(headTable,1,1);
+		/*
+		 * backTable.mergeCells(1,1,2,1); backTable.add(headTable,1,1);
 		 */
-		//the outer for-loop goes through the hours and prints out
-		//the style for each cell,
-		//the entrylist for each hour
+		// the outer for-loop goes through the hours and prints out
+		// the style for each cell,
+		// the entrylist for each hour
 
 		Iterator calIter = listOfEntries.iterator();
 		CalendarEntry entry = null;
 
-
-		for(int i=this.beginHour;i<=this.endHour;i++) {
-			backTable.setHeight(1,row,40);
-			backTable.setHeight(2,row,40);
-			backTable.setWidth(1,row,40);
+		for (int i = this.beginHour; i <= this.endHour; i++) {
+			backTable.setHeight(1, row, 40);
+			backTable.setHeight(2, row, 40);
+			backTable.setWidth(1, row, 40);
 
 			Table dayTable = new Table();
 			dayTable.setCellspacing(0);
@@ -147,45 +158,49 @@ public class CalendarView extends Block{
 			entryTable.setCellpadding(0);
 			entryTable.setWidth(Table.HUNDRED_PERCENT);
 			entryTable.setHeight(Table.HUNDRED_PERCENT);
-			entryTable.setColor(1,1,"#ffffff");
-			entryTable.setColor(1,2,"#f9f9f9");
-			entryTable.setStyleClass(1,2,"borderTop");
-			entryTable.setHeight(1,1,18);
-			entryTable.setHeight(1,2,18);
-			this.now.setTime(i,0,0);
-			Text timeText = new Text(this.now.getDateString("HH:mm",iwc.getCurrentLocale()));
+			entryTable.setColor(1, 1, "#ffffff");
+			entryTable.setColor(1, 2, "#f9f9f9");
+			entryTable.setStyleClass(1, 2, "borderTop");
+			entryTable.setHeight(1, 1, 18);
+			entryTable.setHeight(1, 2, 18);
+			this.now.setTime(i, 0, 0);
+			Text timeText = new Text(this.now.getDateString("HH:mm",
+					iwc.getCurrentLocale()));
 			timeText.setBold();
-			dayTable.add(timeText,1,1);
-			dayTable.setAlignment(1,1,Table.HORIZONTAL_ALIGN_CENTER);
-			dayTable.setColor(1,1,"#ffffff");
-			backTable.add(dayTable,1,row);
+			dayTable.add(timeText, 1, 1);
+			dayTable.setAlignment(1, 1, Table.HORIZONTAL_ALIGN_CENTER);
+			dayTable.setColor(1, 1, "#ffffff");
+			backTable.add(dayTable, 1, row);
 
-//			Timestamp fromStamp = Timestamp.valueOf(stamp.getDateString("yyyy-MM-dd hh:mm:ss.S"));
-//			fromStamp.setHours(this.beginHour);
-//			fromStamp.setMinutes(0);
-//			fromStamp.setNanos(0);
-//			Timestamp toStamp =Timestamp.valueOf(stamp.getDateString("yyyy-MM-dd hh:mm:ss.S"));
-//			toStamp.setHours(this.endHour);
-//			toStamp.setMinutes(0);
-//			toStamp.setNanos(0);
-//			List listOfEntries = (List) getCalBusiness(iwc).getEntriesBetweenTimestamps(fromStamp,toStamp);
-//			User user = null;
-//			Integer userID = null;
-//			if(iwc.isLoggedOn()) {
-//				user = iwc.getCurrentUser();
-//				userID = (Integer) user.getPrimaryKey();
-//			}
+			// Timestamp fromStamp =
+			// Timestamp.valueOf(stamp.getDateString("yyyy-MM-dd hh:mm:ss.S"));
+			// fromStamp.setHours(this.beginHour);
+			// fromStamp.setMinutes(0);
+			// fromStamp.setNanos(0);
+			// Timestamp toStamp
+			// =Timestamp.valueOf(stamp.getDateString("yyyy-MM-dd hh:mm:ss.S"));
+			// toStamp.setHours(this.endHour);
+			// toStamp.setMinutes(0);
+			// toStamp.setNanos(0);
+			// List listOfEntries = (List)
+			// getCalBusiness(iwc).getEntriesBetweenTimestamps(fromStamp,toStamp);
+			// User user = null;
+			// Integer userID = null;
+			// if(iwc.isLoggedOn()) {
+			// user = iwc.getCurrentUser();
+			// userID = (Integer) user.getPrimaryKey();
+			// }
 
-			//the inner for-loop goes through the list of entries and prints them out as a link
-			//the link opens the view for the entry
-//			int numberOfEntries = listOfEntries.size();
-
+			// the inner for-loop goes through the list of entries and prints
+			// them out as a link
+			// the link opens the view for the entry
+			// int numberOfEntries = listOfEntries.size();
 
 			if (entry == null && calIter.hasNext()) {
 				entry = (CalendarEntry) calIter.next();
 			}
 
-			boolean timeFits =  false;
+			boolean timeFits = false;
 			if (entry != null) {
 				Timestamp eStamp = entry.getDate();
 				if (eStamp.getHours() == i) {
@@ -196,97 +211,106 @@ public class CalendarView extends Block{
 			}
 
 			while (timeFits) {
-//			for(int j=0; j<numberOfEntries; j++) {
-//				CalendarEntry entry = (CalendarEntry) listOfEntries.get(j);
-				if(entry==null) {
-					//fucked up check
+				// for(int j=0; j<numberOfEntries; j++) {
+				// CalendarEntry entry = (CalendarEntry) listOfEntries.get(j);
+				if (entry == null) {
+					// fucked up check
 					continue;
 				}
 				CalendarLedger ledger = null;
 				int groupIDInLedger = -1;
 				boolean isInGroup = false;
-				//get a collection of groups the current user may view
+				// get a collection of groups the current user may view
 
 				Collection viewGroups = null;
-				if(user != null) {
+				if (user != null) {
 					try {
 						viewGroups = getUserBusiness(iwc).getUserGroups(user);
-					}catch(Exception e) {
+					} catch (Exception e) {
 						e.printStackTrace();
 					}
 				}
 
-				if(entry.getLedgerID() != -1) {
+				if (entry.getLedgerID() != -1) {
 					ledger = getCalBusiness(iwc).getLedger(entry.getLedgerID());
-					if(ledger != null) {
+					if (ledger != null) {
 						groupIDInLedger = ledger.getGroupID();
 					}
 
-				}
-				else {
+				} else {
 					groupIDInLedger = -1;
 				}
-				if(viewGroups != null) {
+				if (viewGroups != null) {
 					Iterator viewGroupsIter = viewGroups.iterator();
-					//goes through the groups the user may view and prints out the entry if
-					//the group connected to the entry is the same as the group the user may view
-					while(viewGroupsIter.hasNext()) {
-						Group group =(Group) viewGroupsIter.next();
+					// goes through the groups the user may view and prints out
+					// the entry if
+					// the group connected to the entry is the same as the group
+					// the user may view
+					while (viewGroupsIter.hasNext()) {
+						Group group = (Group) viewGroupsIter.next();
 						Integer groupID = (Integer) group.getPrimaryKey();
-						if(entry.getGroupID() == groupID.intValue()
+						if (entry.getGroupID() == groupID.intValue()
 								|| groupIDInLedger == groupID.intValue()) {
 							isInGroup = true;
 						}
 					}
 				}
-				if(groupIDInLedger == getViewGroupID()) {
+				if (groupIDInLedger == getViewGroupID()) {
 					isInGroup = true;
 				}
 
-				if(isInGroup || iwc.isSuperAdmin() ||
-						getViewGroupID() == entry.getGroupID() ||
-						(userID!=null && userID.intValue() == entry.getUserID())) {
+				if (isInGroup
+						|| iwc.isSuperAdmin()
+						|| getViewGroupID() == entry.getGroupID()
+						|| (userID != null && userID.intValue() == entry
+								.getUserID())) {
 					Timestamp fStamp = entry.getDate();
 					Timestamp tStamp = entry.getEndDate();
-					//i is the current hour
-					if(i <= tStamp.getHours() && i >= fStamp.getHours()) {
+					// i is the current hour
+					if (i <= tStamp.getHours() && i >= fStamp.getHours()) {
 						entry.getGroupID();
 						String headline = getEntryHeadline(entry);
 						Link headlineLink = new Link(headline);
-						headlineLink.addParameter(ACTION,OPEN);
-						headlineLink.addParameter(CalendarParameters.PARAMETER_VIEW,this.view);
-						headlineLink.addParameter(CalendarParameters.PARAMETER_YEAR, stamp.getYear());
-						headlineLink.addParameter(CalendarParameters.PARAMETER_MONTH, stamp.getMonth());
-						headlineLink.addParameter(CalendarParameters.PARAMETER_DAY, stamp.getDay());
-						headlineLink.addParameter("entryID", entry.getPrimaryKey().toString());
-						if(!iwc.getAccessController().hasRole("cal_view_entry_creator",iwc) || this.isPrintable) {
+						headlineLink.addParameter(ACTION, OPEN);
+						headlineLink.addParameter(
+								CalendarParameters.PARAMETER_VIEW, this.view);
+						headlineLink.addParameter(
+								CalendarParameters.PARAMETER_YEAR,
+								stamp.getYear());
+						headlineLink.addParameter(
+								CalendarParameters.PARAMETER_MONTH,
+								stamp.getMonth());
+						headlineLink.addParameter(
+								CalendarParameters.PARAMETER_DAY,
+								stamp.getDay());
+						headlineLink.addParameter("entryID", entry
+								.getPrimaryKey().toString());
+						if (!iwc.getAccessController().hasRole(
+								"cal_view_entry_creator", iwc)
+								|| this.isPrintable) {
 							headlineLink.setWindowToOpen(EntryInfoWindow.class);
 						}
 						headlineLink.setStyleClass(this.entryLink);
-						if(i == fStamp.getHours()) {
-							if(fStamp.getMinutes() >= 30) {
-								entryTable.add(headlineLink,1,2);
+						if (i == fStamp.getHours()) {
+							if (fStamp.getMinutes() >= 30) {
+								entryTable.add(headlineLink, 1, 2);
+							} else {
+								entryTable.add(headlineLink, 1, 1);
+								entryTable.add(headlineLink, 1, 2);
 							}
-							else {
-								entryTable.add(headlineLink,1,1);
-								entryTable.add(headlineLink,1,2);
+						} else if (i == tStamp.getHours()) {
+							if (tStamp.getMinutes() >= 30) {
+								entryTable.add(headlineLink, 1, 1);
+								entryTable.add(headlineLink, 1, 2);
+							} else {
+								entryTable.add(headlineLink, 1, 1);
 							}
+						} else {
+							entryTable.add(headlineLink, 1, 1);
+							entryTable.add(headlineLink, 1, 2);
 						}
-						else if(i == tStamp.getHours()) {
-							if(tStamp.getMinutes() >= 30) {
-								entryTable.add(headlineLink,1,1);
-								entryTable.add(headlineLink,1,2);
-							}
-							else {
-								entryTable.add(headlineLink,1,1);
-							}
-						}
-						else {
-							entryTable.add(headlineLink,1,1);
-							entryTable.add(headlineLink,1,2);
-						}
-						entryTable.add(Text.BREAK,1,1);
-						entryTable.add(Text.BREAK,1,2);
+						entryTable.add(Text.BREAK, 1, 1);
+						entryTable.add(Text.BREAK, 1, 2);
 					}
 				}
 				// NEXT ENTRY
@@ -304,18 +328,19 @@ public class CalendarView extends Block{
 				}
 
 			}
-			backTable.add(entryTable,2,row);
+			backTable.add(entryTable, 2, row);
 			row++;
 		}
 		return backTable;
 	}
+
 	/**
-	 * draws the week view of the CalendarView
-	 * By default the week view varies from 8:00 until 17:00
-	 * but can be changed via setBeginHour(int hour) and setEndHour(int hour)
+	 * draws the week view of the CalendarView By default the week view varies
+	 * from 8:00 until 17:00 but can be changed via setBeginHour(int hour) and
+	 * setEndHour(int hour)
 	 */
 
-	private Table weekView(IWContext iwc,IWTimestamp stamp) {
+	private Table weekView(IWContext iwc, IWTimestamp stamp) {
 		int row = 1;
 		int column = 1;
 		int day = 0;
@@ -323,7 +348,6 @@ public class CalendarView extends Block{
 		 * now holds the current time
 		 */
 		this.now = new IWTimestamp();
-
 
 		Table backTable = new Table();
 		backTable.setColor("#cccccc");
@@ -335,173 +359,244 @@ public class CalendarView extends Block{
 		/*
 		 * timeStamp is used to traverse trough the week
 		 */
-//		IWTimestamp tStamp = new IWTimestamp();
+		// IWTimestamp tStamp = new IWTimestamp();
 		this.cal = new IWCalendar();
 		Text nameOfDay = new Text();
 
-		/*		backTable.mergeCells(1,1,8,1);
-		backTable.add(headTable,1,1);
-		 */		int weekdays = 8;
-		 int weekday = this.cal.getDayOfWeek(this.now.getYear(),this.now.getMonth(),this.now.getDay());
+		/*
+		 * backTable.mergeCells(1,1,8,1); backTable.add(headTable,1,1);
+		 */int weekdays = 8;
+		int weekday = this.cal.getDayOfWeek(this.now.getYear(),
+				this.now.getMonth(), this.now.getDay());
 
-		 int today = stamp.getDay();
-		 /*
-		  * The outer for-loop runs through the columns of the weekTable
-		  * the weekdays
-		  */
-		 for(int i=0;i<weekdays; i++) {
+		int today = stamp.getDay();
+		/*
+		 * The outer for-loop runs through the columns of the weekTable the
+		 * weekdays
+		 */
+		for (int i = 0; i < weekdays; i++) {
 
-			 row = 2;
-			 /*
-			  * The inner for-loop runs through the rows of the weekTable
-			  * the hours
-			  */
-			 for(int j=this.beginHour;j<=this.endHour;j++) {
-				 Table weekTable = new Table();
-				 weekTable.setWidth("100%");
-				 weekTable.setHeight("100%");
-				 weekTable.setColor("#ffffff");
-				 weekTable.setCellpadding(1);
-				 weekTable.setCellspacing(0);
+			row = 2;
+			/*
+			 * The inner for-loop runs through the rows of the weekTable the
+			 * hours
+			 */
+			for (int j = this.beginHour; j <= this.endHour; j++) {
+				Table weekTable = new Table();
+				weekTable.setWidth("100%");
+				weekTable.setHeight("100%");
+				weekTable.setColor("#ffffff");
+				weekTable.setCellpadding(1);
+				weekTable.setCellspacing(0);
 
-				 if(column == 1 && row != 2) {
-					 stamp.setTime(j,0,0);
-					 weekTable.add(stamp.getTime().toString(),1,1);
-					 backTable.add(weekTable,column,row);
-				 }
-				 else if(row == 2 && column != 1) {
-					 if(i==weekday) {
-						 weekTable.setColor("#e9e9e9");
-					 }
-					 nameOfDay = new Text(this.cal.getDayName(i, iwc.getCurrentLocale(), IWCalendar.LONG).toString());
+				if (column == 1 && row != 2) {
+					stamp.setTime(j, 0, 0);
+					weekTable.add(stamp.getTime().toString(), 1, 1);
+					backTable.add(weekTable, column, row);
+				} else if (row == 2 && column != 1) {
+					if (i == weekday) {
+						weekTable.setColor("#e9e9e9");
+					}
+					nameOfDay = new Text(this.cal.getDayName(i,
+							iwc.getCurrentLocale(), IWCalendar.LONG).toString());
 
-					 if(i < weekday) {
-						 if(today == 1) {
-							 int lengthOfPreviousMonth = 0;
-							 if(stamp.getMonth() == 1) {
-								 /*
-								  * if January the lengthOfPreviousMonth is the length of Desember the year before
-								  */
-								 lengthOfPreviousMonth = this.cal.getLengthOfMonth(12,stamp.getYear()-1);
-							 }
-							 else {
-								 /*
-								  * else lengthOfPreviousMonth is the length of the month before in the current year
-								  */
-								 lengthOfPreviousMonth = this.cal.getLengthOfMonth(stamp.getMonth()-1,stamp.getYear());
-							 }
-							 day = (today + lengthOfPreviousMonth) - (weekday - i);
-						 }
-						 else {
-							 day = today - (weekday - i);
-						 }
-						 stamp.setDay(day);
-					 }// end if
-					 weekTable.add(nameOfDay,1,1);
-					 weekTable.add("-" + stamp.getDateString("dd.MM"),1,1);
-					 backTable.add(weekTable,column,row);
+					if (i < weekday) {
+						if (today == 1) {
+							int lengthOfPreviousMonth = 0;
+							if (stamp.getMonth() == 1) {
+								/*
+								 * if January the lengthOfPreviousMonth is the
+								 * length of Desember the year before
+								 */
+								lengthOfPreviousMonth = this.cal
+										.getLengthOfMonth(12,
+												stamp.getYear() - 1);
+							} else {
+								/*
+								 * else lengthOfPreviousMonth is the length of
+								 * the month before in the current year
+								 */
+								lengthOfPreviousMonth = this.cal
+										.getLengthOfMonth(stamp.getMonth() - 1,
+												stamp.getYear());
+							}
+							day = (today + lengthOfPreviousMonth)
+									- (weekday - i);
+						} else {
+							day = today - (weekday - i);
+						}
+						stamp.setDay(day);
+					}// end if
+					weekTable.add(nameOfDay, 1, 1);
+					weekTable.add("-" + stamp.getDateString("dd.MM"), 1, 1);
+					backTable.add(weekTable, column, row);
 
-					 stamp.addDays(1);
-				 }// end else if
-				 else {
-//					 weekTable.setStyleClass(column,row,borderWhiteTableStyle);
-					 Timestamp fromStamp = Timestamp.valueOf(stamp.getDateString("yyyy-MM-dd hh:mm:ss.S"));
-					 fromStamp.setHours(this.beginHour);
-					 fromStamp.setMinutes(0);
-					 fromStamp.setNanos(0);
-					 Timestamp toStamp =Timestamp.valueOf(stamp.getDateString("yyyy-MM-dd hh:mm:ss.S"));
-					 toStamp.setHours(this.endHour);
-					 toStamp.setMinutes(0);
-					 toStamp.setNanos(0);
-					 //List listOfEntries = (List) getCalBusiness(iwc).getEntriesBetweenTimestamps(fromStamp,toStamp);
-					 User user = null;
-					 Integer userID = null;
-					 if(iwc.isLoggedOn()) {
-						 user = iwc.getCurrentUser();
-						 userID = (Integer) user.getPrimaryKey();
-					 }
-					 List listOfEntries = getCalBusiness(iwc).getUserEntriesBetweenTimestamps(user, fromStamp, toStamp, iwc);
-					 for(int h=0; h<listOfEntries.size(); h++) {
+					stamp.addDays(1);
+				}// end else if
+				else {
+					// weekTable.setStyleClass(column,row,borderWhiteTableStyle);
+					Timestamp fromStamp = Timestamp.valueOf(stamp
+							.getDateString("yyyy-MM-dd hh:mm:ss.S"));
+					fromStamp.setHours(this.beginHour);
+					fromStamp.setMinutes(0);
+					fromStamp.setNanos(0);
+					Timestamp toStamp = Timestamp.valueOf(stamp
+							.getDateString("yyyy-MM-dd hh:mm:ss.S"));
+					toStamp.setHours(this.endHour);
+					toStamp.setMinutes(0);
+					toStamp.setNanos(0);
+					// List listOfEntries = (List)
+					// getCalBusiness(iwc).getEntriesBetweenTimestamps(fromStamp,toStamp);
+					User user = null;
+					Integer userID = null;
+					if (iwc.isLoggedOn()) {
+						user = iwc.getCurrentUser();
+						userID = (Integer) user.getPrimaryKey();
+					}
+					List listOfEntries = getCalBusiness(iwc)
+							.getUserEntriesBetweenTimestamps(user, fromStamp,
+									toStamp, iwc);
+					for (int h = 0; h < listOfEntries.size(); h++) {
 
-						 CalendarEntry entry = (CalendarEntry) listOfEntries.get(h);
-						 Collection viewGroups = null;
-						 CalendarLedger ledger = null;
-						 boolean isInGroup = false;
-						 int groupIDInLedger = -1;
-						 if(user != null) {
-							 try {
-								 viewGroups = getUserBusiness(iwc).getUserGroups(user);
-							 }catch(Exception e) {
-								 e.printStackTrace();
-							 }
-						 }
+						CalendarEntry entry = (CalendarEntry) listOfEntries
+								.get(h);
+						Collection viewGroups = null;
+						CalendarLedger ledger = null;
+						boolean isInGroup = false;
+						int groupIDInLedger = -1;
+						if (user != null) {
+							try {
+								viewGroups = getUserBusiness(iwc)
+										.getUserGroups(user);
+							} catch (Exception e) {
+								e.printStackTrace();
+							}
+						}
 
-						 if(entry.getLedgerID() != -1) {
-							 ledger = getCalBusiness(iwc).getLedger(entry.getLedgerID());
-							 if(ledger != null) {
-								 groupIDInLedger = ledger.getGroupID();
-							 }
+						if (entry.getLedgerID() != -1) {
+							ledger = getCalBusiness(iwc).getLedger(
+									entry.getLedgerID());
+							if (ledger != null) {
+								groupIDInLedger = ledger.getGroupID();
+							}
 
-						 }
-						 else {
-							 groupIDInLedger = 1;
-						 }
-						 if(viewGroups != null) {
-							 Iterator viewGroupsIter = viewGroups.iterator();
-							 //goes through the groups the user may view and prints out the entry if
-							 //the group connected to the entry is the same as the group the user may view
-							 while(viewGroupsIter.hasNext()) {
-								 Group group =(Group) viewGroupsIter.next();
-								 Integer groupID = (Integer) group.getPrimaryKey();
-								 if(entry.getGroupID() == groupID.intValue()
-										 || groupIDInLedger == groupID.intValue()) {
-									 isInGroup = true;
-								 }
-							 }
-						 }
-						 if(groupIDInLedger == getViewGroupID()) {
-							 isInGroup = true;
-						 }
+						} else {
+							groupIDInLedger = 1;
+						}
+						if (viewGroups != null) {
+							Iterator viewGroupsIter = viewGroups.iterator();
+							// goes through the groups the user may view and
+							// prints out the entry if
+							// the group connected to the entry is the same as
+							// the group the user may view
+							while (viewGroupsIter.hasNext()) {
+								Group group = (Group) viewGroupsIter.next();
+								Integer groupID = (Integer) group
+										.getPrimaryKey();
+								if (entry.getGroupID() == groupID.intValue()
+										|| groupIDInLedger == groupID
+												.intValue()) {
+									isInGroup = true;
+								}
+							}
+						}
+						if (groupIDInLedger == getViewGroupID()) {
+							isInGroup = true;
+						}
 
-						 if(isInGroup || iwc.isSuperAdmin() ||
-								 getViewGroupID() == entry.getGroupID() ||
-								 (userID!=null && userID.intValue() == entry.getUserID()) ) {
-							 Timestamp fStamp = entry.getDate();
-							 Timestamp ttStamp = entry.getEndDate();
-							 if(j <= ttStamp.getHours() && j >= fStamp.getHours()) {
-								 String headline = getEntryHeadline(entry);
-								 Link headlineLink = new Link(headline);
-								 headlineLink.addParameter(ACTION,OPEN);
-								 headlineLink.addParameter(CalendarParameters.PARAMETER_YEAR, stamp.getYear());
-								 headlineLink.addParameter(CalendarParameters.PARAMETER_MONTH, stamp.getMonth());
-								 headlineLink.addParameter(CalendarParameters.PARAMETER_DAY, stamp.getDay());
-								 headlineLink.addParameter("entryID", entry.getPrimaryKey().toString());
-								 if(!iwc.getAccessController().hasRole("cal_view_entry_creator",iwc) || this.isPrintable) {
-									 headlineLink.setWindowToOpen(EntryInfoWindow.class);
-								 }
-								 headlineLink.setStyleClass(this.entryLink);
-								 headlineLink.addParameter(CalendarParameters.PARAMETER_VIEW,this.view);
-								 weekTable.add(headlineLink,1,1);
-								 weekTable.add("<br>",1,1);
-//								 backTable.add(weekTable,column,row);
-							 }
-						 }
-					 }	//end for
-					 backTable.setHeight(column,row,"40");
-					 backTable.add(weekTable,column,row);
-				 }
-				 row++;
-			 } //end inner for
-			 column++;
-		 }//end outer for
-		 return backTable;
+						if (isInGroup
+								|| iwc.isSuperAdmin()
+								|| getViewGroupID() == entry.getGroupID()
+								|| (userID != null && userID.intValue() == entry
+										.getUserID())) {
+							Timestamp fStamp = entry.getDate();
+							Timestamp ttStamp = entry.getEndDate();
+							if (j <= ttStamp.getHours()
+									&& j >= fStamp.getHours()) {
+								String headline = getEntryHeadline(entry);
+								Link headlineLink = new Link(headline);
+								headlineLink.addParameter(ACTION, OPEN);
+								headlineLink.addParameter(
+										CalendarParameters.PARAMETER_YEAR,
+										stamp.getYear());
+								headlineLink.addParameter(
+										CalendarParameters.PARAMETER_MONTH,
+										stamp.getMonth());
+								headlineLink.addParameter(
+										CalendarParameters.PARAMETER_DAY,
+										stamp.getDay());
+								headlineLink.addParameter("entryID", entry
+										.getPrimaryKey().toString());
+								if (!iwc.getAccessController().hasRole(
+										"cal_view_entry_creator", iwc)
+										|| this.isPrintable) {
+									headlineLink
+											.setWindowToOpen(EntryInfoWindow.class);
+								}
+								headlineLink.setStyleClass(this.entryLink);
+								headlineLink.addParameter(
+										CalendarParameters.PARAMETER_VIEW,
+										this.view);
+								weekTable.add(headlineLink, 1, 1);
+								weekTable.add("<br>", 1, 1);
+								// backTable.add(weekTable,column,row);
+							}
+						}
+					} // end for
+					backTable.setHeight(column, row, "40");
+					backTable.add(weekTable, column, row);
+				}
+				row++;
+			} // end inner for
+			column++;
+		}// end outer for
+		return backTable;
 	}
+
+	protected List<CalendarEntry> getEvents(IWContext iwc, User user, Timestamp from, Timestamp to) {
+		return getCalBusiness(iwc).getUserEntriesBetweenTimestamps(user, from, to, iwc);
+	}
+	
+	
+	private boolean append(Map<String, List<CalendarEntry>> eventsMap, List<CalendarEntry> events) {
+		if (MapUtil.isEmpty(eventsMap) || ListUtil.isEmpty(events)) {
+			return Boolean.FALSE;
+		}
+		
+		for (CalendarEntry event : events) {
+			String date = event.getDate().toString();
+			date = date.substring(0, date.lastIndexOf(CoreConstants.SPACE));
+			
+			List<CalendarEntry> eventsOnDay = eventsMap.get(date);
+			if (eventsOnDay == null) {
+				eventsMap.put(date, Arrays.asList(event));
+			} else {
+				eventsOnDay.add(event);
+				eventsMap.put(date, eventsOnDay);
+			}
+		}
+		
+		return Boolean.TRUE;
+	}
+	
 	/**
-	 *
+	 * 
 	 * @return a table displaying the days of the current month
 	 */
-
 	private Table monthView(IWContext iwc, IWTimestamp stamp) {
+		IWTimestamp to = new IWTimestamp(stamp.getTime());
+		to.setMonth(to.getMonth() + 1);
+		to.setDay(1);
+		to.setDay(to.getDay() - 1);
+		List<CalendarEntry> events = getEvents(iwc, iwc.getCurrentUser(), stamp.getTimestamp(), to.getTimestamp());
+		Map<String, List<CalendarEntry>> eventsMap = new HashMap<String, List<CalendarEntry>>();
+		if (events != null) {
+			append(eventsMap, events);
+		}
+		return monthView(iwc, stamp, eventsMap);
+	}
+	
+	protected Table monthView(IWContext iwc, IWTimestamp stamp, Map<String, List<CalendarEntry>> events) {
 		this.now = IWTimestamp.RightNow();
 		this.cal = new IWCalendar();
 
@@ -509,9 +604,11 @@ public class CalendarView extends Block{
 		Text t = new Text();
 
 		int weekdays = 8;
-		int daycount = this.cal.getLengthOfMonth(stamp.getMonth(),stamp.getYear());
-		int firstWeekDayOfMonth = this.cal.getDayOfWeek(stamp.getYear(),stamp.getMonth(),1);
-//		int dayOfMonth = cal.getDay();
+		int daycount = this.cal.getLengthOfMonth(stamp.getMonth(),
+				stamp.getYear());
+		int firstWeekDayOfMonth = this.cal.getDayOfWeek(stamp.getYear(),
+				stamp.getMonth(), 1);
+		// int dayOfMonth = cal.getDay();
 		int row = 1;
 		int column = firstWeekDayOfMonth;
 		int n = 1;
@@ -529,20 +626,22 @@ public class CalendarView extends Block{
 		backTable.setColor("#cccccc");
 		backTable.setCellspacing(1);
 		backTable.setCellpadding(0);
-		backTable.setWidth(Table.HUNDRED_PERCENT);//700
+		backTable.setWidth(Table.HUNDRED_PERCENT);// 700
 		backTable.setHeight(270);
 
-		/*		backTable.mergeCells(1,1,7,1);
-		backTable.add(headTable,1,1);
+		/*
+		 * backTable.mergeCells(1,1,7,1); backTable.add(headTable,1,1);
 		 */
 
 		int weekday = 1;
-		for(int i=1; i<weekdays; i++) {
+		for (int i = 1; i < weekdays; i++) {
 			weekday = i % 7;
 			if (weekday == 0) {
 				weekday = 7;
 			}
-			nameOfDay = new Text(this.cal.getDayName(weekday, iwc.getCurrentLocale(), IWCalendar.SHORT).toString().toLowerCase());
+			nameOfDay = new Text(this.cal
+					.getDayName(weekday, iwc.getCurrentLocale(),
+							IWCalendar.SHORT).toString().toLowerCase());
 			nameOfDay.setBold();
 			Table nameOfDayTable = new Table();
 			nameOfDayTable.setCellspacing(0);
@@ -551,29 +650,29 @@ public class CalendarView extends Block{
 			nameOfDayTable.setHeight(Table.HUNDRED_PERCENT);
 			nameOfDayTable.setColor("#f8f8f8");
 			nameOfDayTable.setStyleAttribute("border-top: 1px solid #cccccc");
-			nameOfDayTable.setAlignment(1,1,Table.HORIZONTAL_ALIGN_CENTER);
-			nameOfDayTable.setVerticalAlignment(1,1,Table.VERTICAL_ALIGN_BOTTOM);
-			nameOfDayTable.add(nameOfDay,1,1);
-			topTable.setHeight(i,1,"30");
-			topTable.setHeight(i,2,"5");
-			topTable.add(nameOfDayTable,i,1);
-//			backTable.setWidth(i,2,"200");
+			nameOfDayTable.setAlignment(1, 1, Table.HORIZONTAL_ALIGN_CENTER);
+			nameOfDayTable.setVerticalAlignment(1, 1,
+					Table.VERTICAL_ALIGN_BOTTOM);
+			nameOfDayTable.add(nameOfDay, 1, 1);
+			topTable.setHeight(i, 1, "30");
+			topTable.setHeight(i, 2, "5");
+			topTable.add(nameOfDayTable, i, 1);
+			// backTable.setWidth(i,2,"200");
 		}
 		User user = null;
 		Integer userID = null;
-		if(iwc.isLoggedOn()) {
+		if (iwc.isLoggedOn()) {
 			user = iwc.getCurrentUser();
 			userID = (Integer) user.getPrimaryKey();
-		}
-		else {
+		} else {
 			userID = new Integer(-2);
 		}
 		Collection viewGroups = null;
-		if(user != null) {
+		if (user != null) {
 			try {
 				viewGroups = getUserBusiness(iwc).getUserGroups(user);
 
-			}catch(Exception e) {
+			} catch (Exception e) {
 				e.printStackTrace();
 			}
 		}
@@ -584,43 +683,53 @@ public class CalendarView extends Block{
 			dayCell.setCellpadding(0);
 			dayCell.setWidth(Table.HUNDRED_PERCENT);
 			dayCell.setHeight(Table.HUNDRED_PERCENT);
-			dayCell.setVerticalAlignment(1,1,Table.VERTICAL_ALIGN_TOP);
+			dayCell.setVerticalAlignment(1, 1, Table.VERTICAL_ALIGN_TOP);
 
 			t = new Text(String.valueOf(n));
 			int cellRow = 2;
 
-			backTable.setWidth(column,row,"100");
-			backTable.setHeight(column,row,"95");
-			if(n == this.now.getDay()) {
+			backTable.setWidth(column, row, "100");
+			backTable.setHeight(column, row, "95");
+			if (n == this.now.getDay()) {
 				dayCell.setColor("#e9e9e9");
-			}
-			else {
+			} else {
 				dayCell.setColor("#ffffff");
 			}
 			Link dayLink = new Link(t);
 			dayLink.setStyleClass(this.styledLink);
-			dayLink.addParameter(CalendarParameters.PARAMETER_VIEW,CalendarParameters.DAY);
-			dayLink.addParameter(CalendarParameters.PARAMETER_YEAR, stamp.getYear());
-			dayLink.addParameter(CalendarParameters.PARAMETER_MONTH, stamp.getMonth());
+			dayLink.addParameter(CalendarParameters.PARAMETER_VIEW,
+					CalendarParameters.DAY);
+			dayLink.addParameter(CalendarParameters.PARAMETER_YEAR,
+					stamp.getYear());
+			dayLink.addParameter(CalendarParameters.PARAMETER_MONTH,
+					stamp.getMonth());
 			dayLink.addParameter(CalendarParameters.PARAMETER_DAY, n);
-			if(this.groupID != -2) {
-				dayLink.addParameter(PARAMETER_ISI_GROUP_ID,this.groupID);
+			if (this.groupID != -2) {
+				dayLink.addParameter(PARAMETER_ISI_GROUP_ID, this.groupID);
 			}
-			dayCell.add(dayLink,1,1);
-			dayCell.setHeight(1,1,12);
-			dayCell.add(Text.BREAK,1,1);
-			dayCell.setAlignment(1,1,Table.HORIZONTAL_ALIGN_RIGHT);
-			Timestamp fromStamp = Timestamp.valueOf(stamp.getDateString("yyyy-MM-dd hh:mm:ss.S"));
+			dayCell.add(dayLink, 1, 1);
+			dayCell.setHeight(1, 1, 12);
+			dayCell.add(Text.BREAK, 1, 1);
+			dayCell.setAlignment(1, 1, Table.HORIZONTAL_ALIGN_RIGHT);
+			Timestamp fromStamp = Timestamp.valueOf(stamp
+					.getDateString("yyyy-MM-dd hh:mm:ss.S"));
 			fromStamp.setDate(n);
 			fromStamp.setHours(0);
 			fromStamp.setMinutes(0);
 			fromStamp.setNanos(0);
-			Timestamp toStamp = Timestamp.valueOf(stamp.getDateString("yyyy-MM-dd hh:mm:ss.S"));
+			Timestamp toStamp = Timestamp.valueOf(stamp
+					.getDateString("yyyy-MM-dd hh:mm:ss.S"));
 			toStamp.setDate(n);
 			toStamp.setHours(23);
 			toStamp.setMinutes(59);
 			toStamp.setNanos(0);
-			List<CalendarEntry> listOfEntries = getCalBusiness(iwc).getUserEntriesBetweenTimestamps(user, fromStamp, toStamp, iwc);
+			
+			List<CalendarEntry> listOfEntries = null;
+			if (MapUtil.isEmpty(events)) {
+				listOfEntries = getEvents(iwc, user, fromStamp, toStamp);
+			} else {
+				listOfEntries =  events.get(stamp.getDateString("yyyy-MM-dd"));
+			}			
 			if (listOfEntries == null)
 				listOfEntries = new ArrayList<CalendarEntry>(0);
 
@@ -630,91 +739,104 @@ public class CalendarView extends Block{
 					return entry1.getDate().compareTo(entry2.getDate());
 				}
 			});
-			boolean ledgerAdmin = iwc.getAccessController().hasRole(CalBusinessBean.ROLE_LEDGER_ADMIN, iwc);
+			boolean ledgerAdmin = iwc.getAccessController().hasRole(
+					CalBusinessBean.ROLE_LEDGER_ADMIN, iwc);
 
-			for(int h=0; h<listOfEntries.size(); h++) {
+			for (int h = 0; h < listOfEntries.size(); h++) {
 				CalendarEntry entry = listOfEntries.get(h);
 				CalendarLedger ledger = null;
 				int groupIDInLedger = 0;
 				int coachGroupIDInLedger = 0;
 				boolean isInGroup = false;
 
-				if(entry.getLedgerID() != -1) {
+				if (entry.getLedgerID() != -1) {
 					ledger = getCalBusiness(iwc).getLedger(entry.getLedgerID());
-					if(ledger != null) {
+					if (ledger != null) {
 						groupIDInLedger = ledger.getGroupID();
 						coachGroupIDInLedger = ledger.getCoachGroupID();
 					}
-				}
-				else {
+				} else {
 					groupIDInLedger = -1;
 					coachGroupIDInLedger = -1;
 				}
-				if(viewGroups != null) {
+				if (viewGroups != null) {
 					Iterator viewGroupsIter = viewGroups.iterator();
-					//goes through the groups the user may view and prints out the entry if
-					//the group connected to the entry is the same as the group the user may view
-					while(viewGroupsIter.hasNext()) {
-						Group group =(Group) viewGroupsIter.next();
+					// goes through the groups the user may view and prints out
+					// the entry if
+					// the group connected to the entry is the same as the group
+					// the user may view
+					while (viewGroupsIter.hasNext()) {
+						Group group = (Group) viewGroupsIter.next();
 						Integer groupID = (Integer) group.getPrimaryKey();
 
-						if(entry.getGroupID() == groupID.intValue()
-								|| groupIDInLedger == groupID.intValue()){
+						if (entry.getGroupID() == groupID.intValue()
+								|| groupIDInLedger == groupID.intValue()) {
 							isInGroup = true;
 						}
 					}
 				}
-				if(groupIDInLedger == getViewGroupID()) {
+				if (groupIDInLedger == getViewGroupID()) {
 					isInGroup = true;
 				}
-				if(coachGroupIDInLedger == getViewGroupID()) {
+				if (coachGroupIDInLedger == getViewGroupID()) {
 					isInGroup = true;
 				}
-				if(isInGroup || iwc.isSuperAdmin() ||
-						getViewGroupID() == entry.getGroupID() ||
-						(userID!=null && userID.intValue() == entry.getUserID()) ||
-						ledgerAdmin) {
+				if (isInGroup
+						|| iwc.isSuperAdmin()
+						|| getViewGroupID() == entry.getGroupID()
+						|| (userID != null && userID.intValue() == entry
+								.getUserID()) || ledgerAdmin) {
 					String headline = getEntryHeadline(entry);
 					Link headlineLink = new Link(headline);
-					headlineLink.addParameter(ACTION,OPEN);
-					headlineLink.addParameter(CalendarParameters.PARAMETER_VIEW,this.view);
-					headlineLink.addParameter(CalendarParameters.PARAMETER_YEAR, stamp.getYear());
-					headlineLink.addParameter(CalendarParameters.PARAMETER_MONTH, stamp.getMonth());
-					headlineLink.addParameter(CalendarParameters.PARAMETER_DAY, stamp.getDay());
-					headlineLink.addParameter(CalendarEntryCreator.entryIDParameterName, entry.getPrimaryKey().toString());
-					if(!iwc.getAccessController().hasRole("cal_view_entry_creator",iwc) || this.isPrintable) {
+					headlineLink.addParameter(ACTION, OPEN);
+					headlineLink.addParameter(
+							CalendarParameters.PARAMETER_VIEW, this.view);
+					headlineLink.addParameter(
+							CalendarParameters.PARAMETER_YEAR, stamp.getYear());
+					headlineLink.addParameter(
+							CalendarParameters.PARAMETER_MONTH,
+							stamp.getMonth());
+					headlineLink.addParameter(CalendarParameters.PARAMETER_DAY,
+							stamp.getDay());
+					headlineLink.addParameter(
+							CalendarEntryCreator.entryIDParameterName, entry
+									.getPrimaryKey().toString());
+					if (!iwc.getAccessController().hasRole(
+							"cal_view_entry_creator", iwc)
+							|| this.isPrintable) {
 						headlineLink.setWindowToOpen(EntryInfoWindow.class);
 					}
 					headlineLink.setStyleClass(this.entryLink);
 
-					String e = iwc.getParameter(CalendarEntryCreator.entryIDParameterName);
+					String e = iwc
+							.getParameter(CalendarEntryCreator.entryIDParameterName);
 					CalendarEntry ent = null;
-					if(e == null || e.equals("")) {
+					if (e == null || e.equals("")) {
 						e = "";
-					}
-					else {
+					} else {
 						try {
-							ent = getCalBusiness(iwc).getEntry(Integer.parseInt(e));
-						}catch(Exception ex) {
+							ent = getCalBusiness(iwc).getEntry(
+									Integer.parseInt(e));
+						} catch (Exception ex) {
 							ent = null;
 						}
 
 					}
-					if(ent != null) {
-						if(ent.getPrimaryKey().equals(entry.getPrimaryKey())) {
+					if (ent != null) {
+						if (ent.getPrimaryKey().equals(entry.getPrimaryKey())) {
 							headlineLink.setStyleClass(this.entryLinkActive);
 						}
 					}
-					dayCell.add(headlineLink,1,cellRow);
-					dayCell.setVerticalAlignment(1,cellRow,"top");
-					dayCell.add("<br>",1,cellRow++);
+					dayCell.add(headlineLink, 1, cellRow);
+					dayCell.setVerticalAlignment(1, cellRow, "top");
+					dayCell.add("<br>", 1, cellRow++);
 				}
 
 			}
-			backTable.add(dayCell,column,row);
-			backTable.setColor(column,row,"#ffffff");
-			backTable.add(Text.NON_BREAKING_SPACE,column,row);
-			backTable.setVerticalAlignment(column,row,"top");
+			backTable.add(dayCell, column, row);
+			backTable.setColor(column, row, "#ffffff");
+			backTable.add(Text.NON_BREAKING_SPACE, column, row);
+			backTable.setVerticalAlignment(column, row, "top");
 			column = column % 7 + 1;
 			if (column == 1) {
 				row++;
@@ -722,14 +844,15 @@ public class CalendarView extends Block{
 			n++;
 
 		}
-		table.add(topTable,1,1);
-		table.add(backTable,1,2);
+		table.add(topTable, 1, 1);
+		table.add(backTable, 1, 2);
 		return table;
 	}
 
 	/**
 	 * The display of the entry in the calendar is in the form:
 	 * "fromtime - totime nameOfEntry, locationOfEntry"
+	 * 
 	 * @param entry
 	 * @return headline - the display string of the calendar entry
 	 */
@@ -744,18 +867,19 @@ public class CalendarView extends Block{
 		String name = entry.getName();
 		String location = entry.getLocation();
 
-		String headline = getTimeString(startHours,startMinutes) +
-		"-" + getTimeString(endHours,endMinutes);
-		if(name != null && !name.equals("")) {
+		String headline = getTimeString(startHours, startMinutes) + "-"
+				+ getTimeString(endHours, endMinutes);
+		if (name != null && !name.equals("")) {
 			headline = headline + " " + name;
 		}
-		if(location != null && !location.equals("")) {
+		if (location != null && !location.equals("")) {
 			headline = headline + ", " + location;
 		}
 		return headline;
 	}
+
 	/**
-	 *
+	 * 
 	 * @param hours
 	 * @param minutes
 	 * @return
@@ -763,16 +887,16 @@ public class CalendarView extends Block{
 	private String getTimeString(int hours, int minutes) {
 		String timeString;
 		String mi;
-		if(minutes<10) {
-			mi = "0"+minutes;
-		}
-		else {
-			mi = ""+minutes;
+		if (minutes < 10) {
+			mi = "0" + minutes;
+		} else {
+			mi = "" + minutes;
 		}
 		timeString = hours + ":" + mi;
 		return timeString;
 
 	}
+
 	private Table yearView(IWContext iwc, IWTimestamp stamp) {
 		this.now = new IWTimestamp();
 
@@ -786,9 +910,10 @@ public class CalendarView extends Block{
 			yearStamp = new IWTimestamp(stamp.getDay(), a, stamp.getYear());
 			smallCalendar = new SmallCalendar(yearStamp);
 			smallCalendar.setDaysAsLink(true);
-			smallCalendar.addParameterToLink(CalendarParameters.PARAMETER_VIEW,CalendarParameters.DAY);
-			yearTable.add(smallCalendar,column, row);
-			yearTable.setStyleClass(column,row,this.borderWhiteTableStyle);
+			smallCalendar.addParameterToLink(CalendarParameters.PARAMETER_VIEW,
+					CalendarParameters.DAY);
+			yearTable.add(smallCalendar, column, row);
+			yearTable.setStyleClass(column, row, this.borderWhiteTableStyle);
 			yearTable.setRowVerticalAlignment(row, "top");
 			yearTable.setAlignment("center");
 
@@ -806,28 +931,35 @@ public class CalendarView extends Block{
 		Link left = getLeftLink(iwc);
 		Text dateString = null;
 		switch (view) {
-		case CalendarParameters.DAY :
-			addNextDayPrm(right,this.timeStamp);
-			addLastDayPrm(left,this.timeStamp);
-			dateString = new Text(stamp.getDateString("dd MMMMMMMM, yyyy",iwc.getCurrentLocale()));
+		case CalendarParameters.DAY:
+			addNextDayPrm(right, this.timeStamp);
+			addLastDayPrm(left, this.timeStamp);
+			dateString = new Text(stamp.getDateString("dd MMMMMMMM, yyyy",
+					iwc.getCurrentLocale()));
 			break;
-		case CalendarParameters.WEEK :
-			addNextWeekPrm(right,this.timeStamp);
-			addLastWeekPrm(left,this.timeStamp);
-			dateString = new Text(getResourceBundle(iwc).getLocalizedString("calView.week_of_year","Week of the year") + " " + stamp.getWeekOfYear() + "<br>" + stamp.getDateString("yyyy"));
+		case CalendarParameters.WEEK:
+			addNextWeekPrm(right, this.timeStamp);
+			addLastWeekPrm(left, this.timeStamp);
+			dateString = new Text(getResourceBundle(iwc).getLocalizedString(
+					"calView.week_of_year", "Week of the year")
+					+ " "
+					+ stamp.getWeekOfYear()
+					+ "<br>"
+					+ stamp.getDateString("yyyy"));
 			break;
-		case CalendarParameters.MONTH :
+		case CalendarParameters.MONTH:
 			addNextMonthPrm(right, this.timeStamp);
 			addLastMonthPrm(left, this.timeStamp);
-			dateString = new Text(stamp.getDateString("MMMMMMMM yyyy",iwc.getCurrentLocale()));
+			dateString = new Text(stamp.getDateString("MMMMMMMM yyyy",
+					iwc.getCurrentLocale()));
 			break;
-		case CalendarParameters.YEAR :
-			addNextYearPrm(right,this.timeStamp);
-			addLastYearPrm(left,this.timeStamp);
+		case CalendarParameters.YEAR:
+			addNextYearPrm(right, this.timeStamp);
+			addLastYearPrm(left, this.timeStamp);
 			dateString = new Text(stamp.getDateString("yyyy"));
 			break;
 		}
-		if(dateString != null) {
+		if (dateString != null) {
 			dateString.setStyleClass(this.headline);
 			dateString.setBold();
 		}
@@ -840,13 +972,13 @@ public class CalendarView extends Block{
 		headTable.setWidth(Table.HUNDRED_PERCENT);
 		headTable.setHeight(Table.HUNDRED_PERCENT);
 		Table navTable = new Table();
-		navTable.add(left,1,1);
-		navTable.add(dateString,2,1);
-		navTable.add(right,3,1);
-		headTable.setAlignment(1,1,Table.HORIZONTAL_ALIGN_LEFT);
-		headTable.add(navTable,1,1);
-		headTable.setAlignment(2,1,Table.HORIZONTAL_ALIGN_RIGHT);
-		headTable.add(getIconTable(iwc),2,1);
+		navTable.add(left, 1, 1);
+		navTable.add(dateString, 2, 1);
+		navTable.add(right, 3, 1);
+		headTable.setAlignment(1, 1, Table.HORIZONTAL_ALIGN_LEFT);
+		headTable.add(navTable, 1, 1);
+		headTable.setAlignment(2, 1, Table.HORIZONTAL_ALIGN_RIGHT);
+		headTable.add(getIconTable(iwc), 2, 1);
 
 		return headTable;
 	}
@@ -854,36 +986,39 @@ public class CalendarView extends Block{
 	private Table getIconTable(IWContext iwc) {
 		Table iconTable = new Table();
 		/*
-		 * dayView, weekView, monthView and yearView trigger a change of the calendar view
+		 * dayView, weekView, monthView and yearView trigger a change of the
+		 * calendar view
 		 */
 		IWBundle iwb = getBundle(iwc);
 		Image day_on = iwb.getImage("day_on_blue.gif");
 		Link dayView = new Link();
-		addLinkParameters(dayView,CalendarParameters.DAY,this.timeStamp);
+		addLinkParameters(dayView, CalendarParameters.DAY, this.timeStamp);
 		dayView.setImage(day_on);
 
-		/*		Image week_on = iwb.getImage("week_on_blue.gif");
-		Link weekView = new Link();
-		addLinkParameters(weekView,CalendarParameters.WEEK,timeStamp);
-		weekView.setImage(week_on);
+		/*
+		 * Image week_on = iwb.getImage("week_on_blue.gif"); Link weekView = new
+		 * Link();
+		 * addLinkParameters(weekView,CalendarParameters.WEEK,timeStamp);
+		 * weekView.setImage(week_on);
 		 */
 		Image month_on = iwb.getImage("month_on_blue.gif");
 		Link monthView = new Link();
-		addLinkParameters(monthView,CalendarParameters.MONTH,this.timeStamp);
+		addLinkParameters(monthView, CalendarParameters.MONTH, this.timeStamp);
 		monthView.setImage(month_on);
 
 		Image year_on = iwb.getImage("year_on_blue.gif");
 		Link yearView = new Link();
-		addLinkParameters(yearView,CalendarParameters.YEAR,this.timeStamp);
+		addLinkParameters(yearView, CalendarParameters.YEAR, this.timeStamp);
 		yearView.setImage(year_on);
 
-		iconTable.add(dayView,1,1);
-//		iconTable.add(weekView,2,1);
-		iconTable.add(monthView,2,1);
-		iconTable.add(yearView,3,1);
+		iconTable.add(dayView, 1, 1);
+		// iconTable.add(weekView,2,1);
+		iconTable.add(monthView, 2, 1);
+		iconTable.add(yearView, 3, 1);
 
 		return iconTable;
 	}
+
 	private Table getAdminTable(IWContext iwc, CalendarEntryCreator creator) {
 		IWResourceBundle iwrb = getResourceBundle(iwc);
 		Table adminTable = new Table();
@@ -891,10 +1026,9 @@ public class CalendarView extends Block{
 		adminTable.setHeight(Table.HUNDRED_PERCENT);
 		adminTable.setCellpadding(0);
 		adminTable.setStyleAttribute("border-top: 1px solid #cccccc");
-		if(this.adminOnTop) {
-			adminTable.setStyleClass(1,1,"borderRight");
+		if (this.adminOnTop) {
+			adminTable.setStyleClass(1, 1, "borderRight");
 		}
-
 
 		Table ledgerListTable = new Table();
 		ledgerListTable.setCellpadding(5);
@@ -909,33 +1043,37 @@ public class CalendarView extends Block{
 		Table headlineLedgerTable = new Table();
 		headlineLedgerTable.setCellpadding(0);
 		headlineLedgerTable.setCellspacing(0);
-		headlineLedgerTable.setStyleAttribute("border-bottom:1px dotted #cccccc;");
+		headlineLedgerTable
+				.setStyleAttribute("border-bottom:1px dotted #cccccc;");
 		headlineLedgerTable.setWidth(Table.HUNDRED_PERCENT);
-		Text ledgerText = new Text(iwrb.getLocalizedString("calendarView.ledgers", "Ledgers"));
-//		ledgerText.setStyleClass(headline);
+		Text ledgerText = new Text(iwrb.getLocalizedString(
+				"calendarView.ledgers", "Ledgers"));
+		// ledgerText.setStyleClass(headline);
 		ledgerText.setBold();
 		ledgerText.setFontColor("#5f5f5f");
-		headlineLedgerTable.add(ledgerText,1,1);
-		headlineLedgerTable.setHeight(1,2,3);
+		headlineLedgerTable.add(ledgerText, 1, 1);
+		headlineLedgerTable.setHeight(1, 2, 3);
 
 		Table headlineCreatorTable = new Table();
 		headlineCreatorTable.setCellpadding(0);
 		headlineCreatorTable.setCellspacing(0);
-		headlineCreatorTable.setStyleAttribute("border-bottom:1px dotted #cccccc;");
+		headlineCreatorTable
+				.setStyleAttribute("border-bottom:1px dotted #cccccc;");
 		headlineCreatorTable.setWidth(Table.HUNDRED_PERCENT);
 		Text creatorText = null;
 		String entryID = iwc.getParameter("entryID");
-		if(entryID != null && !entryID.equals("")) {
-			creatorText = new Text(iwrb.getLocalizedString("calendarEntry.change_entry", "Change entry"));
+		if (entryID != null && !entryID.equals("")) {
+			creatorText = new Text(iwrb.getLocalizedString(
+					"calendarEntry.change_entry", "Change entry"));
+		} else {
+			creatorText = new Text(iwrb.getLocalizedString(
+					"calendarEntry.create_new", "Create new entry"));
 		}
-		else {
-			creatorText = new Text(iwrb.getLocalizedString("calendarEntry.create_new", "Create new entry"));
-		}
-//		creatorText.setStyleClass(headline);
+		// creatorText.setStyleClass(headline);
 		creatorText.setBold();
 		creatorText.setFontColor("#5f5f5f");
-		headlineCreatorTable.add(creatorText,1,1);
-		headlineCreatorTable.setHeight(1,2,3);
+		headlineCreatorTable.add(creatorText, 1, 1);
+		headlineCreatorTable.setHeight(1, 2, 3);
 
 		int row = 2;
 		Table ledgerTable = new Table();
@@ -943,41 +1081,49 @@ public class CalendarView extends Block{
 		ledgerTable.setCellspacing(0);
 		ledgerTable.setWidth(Table.HUNDRED_PERCENT);
 
-		String linkText = iwrb.getLocalizedString("calendarwindow.new_ledger","New Ledger");
+		String linkText = iwrb.getLocalizedString("calendarwindow.new_ledger",
+				"New Ledger");
 		GenericButton newLedgerButton = new GenericButton(linkText);
 		newLedgerButton.setWindowToOpen(CreateLedgerWindow.class);
 		StyledButton styledNewLedgerButton = new StyledButton(newLedgerButton);
 
-		ledgerTable.setAlignment(1,1,Table.HORIZONTAL_ALIGN_RIGHT);
-		ledgerTable.add(styledNewLedgerButton,1,1);
+		ledgerTable.setAlignment(1, 1, Table.HORIZONTAL_ALIGN_RIGHT);
+		ledgerTable.add(styledNewLedgerButton, 1, 1);
 
 		User user = null;
-		if(iwc.isLoggedOn()) {
+		if (iwc.isLoggedOn()) {
 			user = iwc.getCurrentUser();
 		}
 
-		//only get the correct ledger right away!
+		// only get the correct ledger right away!
 
 		boolean isRoot = iwc.isSuperAdmin();
 
 		Iterator ledgerIter = getCalBusiness(iwc).getAllLedgers().iterator();
-		while(ledgerIter.hasNext()) {
+		while (ledgerIter.hasNext()) {
 			CalendarLedger ledger = (CalendarLedger) ledgerIter.next();
 
-			if(user != null) {
+			if (user != null) {
 
-				if( isRoot || ((Integer) user.getPrimaryKey()).intValue() == ledger.getCoachID() || user.hasRelationTo(ledger.getCoachGroupID())) {
-					//dont know why the hell this is here after Birna...
-					ledgerTable.add(" &bull; ",1,row);
+				if (isRoot
+						|| ((Integer) user.getPrimaryKey()).intValue() == ledger
+								.getCoachID()
+						|| user.hasRelationTo(ledger.getCoachGroupID())) {
+					// dont know why the hell this is here after Birna...
+					ledgerTable.add(" &bull; ", 1, row);
 
-					Link ledgerLink =new Link(ledger.getName());
+					Link ledgerLink = new Link(ledger.getName());
 					ledgerLink.setStyleClass(this.styledLink);
-					ledgerLink.addParameter(LedgerWindow.LEDGER,ledger.getPrimaryKey().toString());
-					ledgerLink.addParameter(CalendarParameters.PARAMETER_DAY,this.timeStamp.getDay());
-					ledgerLink.addParameter(CalendarParameters.PARAMETER_MONTH,this.timeStamp.getMonth());
-					ledgerLink.addParameter(CalendarParameters.PARAMETER_YEAR,this.timeStamp.getYear());
+					ledgerLink.addParameter(LedgerWindow.LEDGER, ledger
+							.getPrimaryKey().toString());
+					ledgerLink.addParameter(CalendarParameters.PARAMETER_DAY,
+							this.timeStamp.getDay());
+					ledgerLink.addParameter(CalendarParameters.PARAMETER_MONTH,
+							this.timeStamp.getMonth());
+					ledgerLink.addParameter(CalendarParameters.PARAMETER_YEAR,
+							this.timeStamp.getYear());
 					ledgerLink.setWindowToOpen(LedgerWindow.class);
-					ledgerTable.add(ledgerLink,1,row++);
+					ledgerTable.add(ledgerLink, 1, row++);
 				}
 			}
 
@@ -986,31 +1132,30 @@ public class CalendarView extends Block{
 		Layer layer = new Layer(Layer.DIV);
 		layer.setStyleAttribute("overflow", "auto");
 
-		if(this.adminOnTop) {
+		if (this.adminOnTop) {
 			layer.setWidth("220px");
 			layer.setHeight("260px");
-		}
-		else {
+		} else {
 			layer.setWidth("240px");
 			layer.setHeight("200px");
-			ledgerListTable.setStyleAttribute("border-bottom: 1px solid #cccccc");
+			ledgerListTable
+					.setStyleAttribute("border-bottom: 1px solid #cccccc");
 		}
 
-//		layer.setStyleClass(ledgerListStyle);
+		// layer.setStyleClass(ledgerListStyle);
 		layer.add(ledgerTable);
 
-		adminTable.setVerticalAlignment(1,1,Table.VERTICAL_ALIGN_TOP);
-		adminTable.setVerticalAlignment(1,2,Table.VERTICAL_ALIGN_TOP);
-		ledgerListTable.add(headlineLedgerTable,1,1);
-		ledgerListTable.add(layer,1,2);
-		creatorTable.add(headlineCreatorTable,1,1);
-		creatorTable.add(creator,1,2);
-		adminTable.add(ledgerListTable,1,1);
-		if(this.adminOnTop) {
-			adminTable.add(creatorTable,2,1);
-		}
-		else {
-			adminTable.add(creatorTable,1,3);
+		adminTable.setVerticalAlignment(1, 1, Table.VERTICAL_ALIGN_TOP);
+		adminTable.setVerticalAlignment(1, 2, Table.VERTICAL_ALIGN_TOP);
+		ledgerListTable.add(headlineLedgerTable, 1, 1);
+		ledgerListTable.add(layer, 1, 2);
+		creatorTable.add(headlineCreatorTable, 1, 1);
+		creatorTable.add(creator, 1, 2);
+		adminTable.add(ledgerListTable, 1, 1);
+		if (this.adminOnTop) {
+			adminTable.add(creatorTable, 2, 1);
+		} else {
+			adminTable.add(creatorTable, 1, 3);
 		}
 		return adminTable;
 	}
@@ -1020,52 +1165,61 @@ public class CalendarView extends Block{
 		Image rightArrow = iwb.getImage("right_arrow.gif");
 		Link right = new Link();
 		right.setImage(rightArrow);
-		right.addParameter(CalendarParameters.PARAMETER_VIEW,this.view);
+		right.addParameter(CalendarParameters.PARAMETER_VIEW, this.view);
 		return right;
 	}
+
 	private Link getLeftLink(IWContext iwc) {
 		IWBundle iwb = getBundle(iwc);
 		Image leftArrow = iwb.getImage("left_arrow.gif");
 		Link left = new Link();
 		left.setImage(leftArrow);
-		left.addParameter(CalendarParameters.PARAMETER_VIEW,this.view);
+		left.addParameter(CalendarParameters.PARAMETER_VIEW, this.view);
 		return left;
 	}
 
+	private CalendarEntryCreator creator = null;
+
+	protected CalendarEntryCreator getCalendarEntryCreator(IWContext iwc) {
+		if (this.creator == null) {
+			this.creator = new CalendarEntryCreator();
+		}
+
+		return this.creator;
+	}
 
 	@Override
-	public void main(IWContext iwc) throws Exception{
+	public void main(IWContext iwc) throws Exception {
 		IWResourceBundle iwrb = getResourceBundle(iwc);
 
 		Page parentPage = this.getParentPage();
-		String styleSrc = iwc.getIWMainApplication().getBundle(getBundleIdentifier()).getResourcesURL();
+		String styleSrc = iwc.getIWMainApplication()
+				.getBundle(getBundleIdentifier()).getResourcesURL();
 		String styleSheetName = "CalStyle.css";
 		styleSrc = styleSrc + "/" + styleSheetName;
-		if(parentPage != null) {
+		if (parentPage != null) {
 			parentPage.addStyleSheetURL(styleSrc);
 		}
-
 
 		if (this.timeStamp == null) {
 			String day = iwc.getParameter(CalendarParameters.PARAMETER_DAY);
 			String month = iwc.getParameter(CalendarParameters.PARAMETER_MONTH);
 			String year = iwc.getParameter(CalendarParameters.PARAMETER_YEAR);
 
-			if(month != null && !month.equals("") &&
-					day != null && !day.equals("") &&
-					year != null && !year.equals("")) {
-				this.timeStamp = getTimestamp(day,month,year);
-			}
-			else {
+			if (month != null && !month.equals("") && day != null
+					&& !day.equals("") && year != null && !year.equals("")) {
+				this.timeStamp = getTimestamp(day, month, year);
+			} else {
 				this.timeStamp = IWTimestamp.RightNow();
 			}
 		}
 
-		CalendarEntryCreator creator = new CalendarEntryCreator();
+		CalendarEntryCreator creator = getCalendarEntryCreator(iwc);
 
-		String save = iwc.getParameter(CalendarEntryCreator.saveButtonParameterName);
-		if(save != null) {
-			creator.saveEntry(iwc,parentPage);
+		String save = iwc
+				.getParameter(CalendarEntryCreator.saveButtonParameterName);
+		if (save != null) {
+			creator.saveEntry(iwc, parentPage);
 		}
 
 		/*
@@ -1081,247 +1235,299 @@ public class CalendarView extends Block{
 		table.setColor("#f8f8f8");
 		table.setHeight(Table.HUNDRED_PERCENT);
 
-		table.setVerticalAlignment(2,2,Table.VERTICAL_ALIGN_TOP);
-		table.setVerticalAlignment(1,2,Table.VERTICAL_ALIGN_TOP);
-		table.setVerticalAlignment(1,1,Table.VERTICAL_ALIGN_TOP);
+		table.setVerticalAlignment(2, 2, Table.VERTICAL_ALIGN_TOP);
+		table.setVerticalAlignment(1, 2, Table.VERTICAL_ALIGN_TOP);
+		table.setVerticalAlignment(1, 1, Table.VERTICAL_ALIGN_TOP);
 
 		Table viewTable = new Table();
 
 		switch (this.view) {
-		case CalendarParameters.DAY :
+		case CalendarParameters.DAY:
 			viewTable = dayView(iwc, this.timeStamp);
 			break;
-		case CalendarParameters.WEEK :
-			viewTable = weekView(iwc,this.timeStamp);
+		case CalendarParameters.WEEK:
+			viewTable = weekView(iwc, this.timeStamp);
 			break;
-		case CalendarParameters.MONTH :
-			viewTable = monthView(iwc,this.timeStamp);
+		case CalendarParameters.MONTH:
+			viewTable = monthView(iwc, this.timeStamp);
 			break;
-		case CalendarParameters.YEAR :
-			viewTable = yearView(iwc,this.timeStamp);
+		case CalendarParameters.YEAR:
+			viewTable = yearView(iwc, this.timeStamp);
 			break;
 		}
 
-		table.add(getTopTable(this.view,this.timeStamp,iwc),1,1);
-		if(this.adminOnTop) {
+		table.add(getTopTable(this.view, this.timeStamp, iwc), 1, 1);
+		if (this.adminOnTop) {
 			table.setWidth(620);
-			table.add(viewTable,1,3);
-		}
-		else {
-			table.mergeCells(1,1,2,1);
+			table.add(viewTable, 1, 3);
+		} else {
+			table.mergeCells(1, 1, 2, 1);
 			table.setWidth(880);
-			table.add(viewTable,1,2);
+			table.add(viewTable, 1, 2);
 		}
 
-
-		if((iwc.getAccessController().hasRole("cal_view_entry_creator",iwc) || iwc.getAccessController().hasRole(CalBusinessBean.ROLE_LEDGER_ADMIN,iwc))&& !this.isPrintable) {
-			if(this.adminOnTop) {
-				table.add(getAdminTable(iwc,creator),1,2);
-			}
-			else {
-				table.add(getAdminTable(iwc,creator),2,2);
+		if ((iwc.getAccessController().hasRole("cal_view_entry_creator", iwc) || iwc
+				.getAccessController().hasRole(
+						CalBusinessBean.ROLE_LEDGER_ADMIN, iwc))
+				&& !this.isPrintable) {
+			if (this.adminOnTop) {
+				table.add(getAdminTable(iwc, creator), 1, 2);
+			} else {
+				table.add(getAdminTable(iwc, creator), 2, 2);
 			}
 		}
-		if(!this.isPrintable) {
-			Link printLink = new Link(iwrb.getLocalizedString("calendarwindow.printable_cal","Printerfriendly Calendar"));
+		if (!this.isPrintable) {
+			Link printLink = new Link(iwrb.getLocalizedString(
+					"calendarwindow.printable_cal", "Printerfriendly Calendar"));
 			printLink.setWindowToOpen(PrintableCalendarView.class);
 			printLink.addParameter("group_id", getViewGroupID());
 			printLink.addParameter("user_id", getViewUserID());
-			printLink.addParameter(CalendarParameters.PARAMETER_VIEW,this.view);
+			printLink
+					.addParameter(CalendarParameters.PARAMETER_VIEW, this.view);
 			printLink.setStyleClass(this.styledLink);
-			table.add(printLink,1,3);
+			table.add(printLink, 1, 3);
 		}
 		add(table);
 	}
+
 	/**
-	 *
+	 * 
 	 * @param l
 	 * @param viewValue
 	 * @param stamp
 	 */
 	public void addLinkParameters(Link l, int viewValue, IWTimestamp stamp) {
-		if(this.groupID != -2) {
-			l.addParameter("group_id",this.groupID);
+		if (this.groupID != -2) {
+			l.addParameter("group_id", this.groupID);
 		}
 		l.addParameter(CalendarParameters.PARAMETER_VIEW, viewValue);
 		l.addParameter(CalendarParameters.PARAMETER_YEAR, stamp.getYear());
 		l.addParameter(CalendarParameters.PARAMETER_MONTH, stamp.getMonth());
 		l.addParameter(CalendarParameters.PARAMETER_DAY, stamp.getDay());
-		l.addParameter(ACTION,this.action);
+		l.addParameter(ACTION, this.action);
 	}
 
 	/**
-	 *
-	 * @param hour - the time of day when the CalenderView - day- or weekView, starts
+	 * 
+	 * @param hour
+	 *            - the time of day when the CalenderView - day- or weekView,
+	 *            starts
 	 */
 	public void setBeginHour(int hour) {
 		this.beginHour = hour;
 	}
+
 	/**
-	 *
-	 * @param hour - the time of day when the CalendarView - day- or weekView, ends
+	 * 
+	 * @param hour
+	 *            - the time of day when the CalendarView - day- or weekView,
+	 *            ends
 	 */
 	public void setEndHour(int hour) {
 		this.endHour = hour;
 	}
+
 	public void setViewInGroupID(int id) {
 		this.groupID = id;
 	}
+
 	public void setViewInUserID(int id) {
 		this.userID = id;
 	}
+
 	public int getViewGroupID() {
 		return this.groupID;
 	}
+
 	public int getViewUserID() {
 		return this.userID;
 	}
+
 	public void setPrintableVersion(boolean isPrintable) {
 		this.isPrintable = isPrintable;
 	}
+
 	/**
 	 * Adds parameters for the next day to the next day link
+	 * 
 	 * @param L
 	 * @param idts
 	 */
 	public void addNextDayPrm(Link L, IWTimestamp idts) {
-		if(this.groupID != -2) {
-			L.addParameter(PARAMETER_ISI_GROUP_ID,this.groupID);
+		if (this.groupID != -2) {
+			L.addParameter(PARAMETER_ISI_GROUP_ID, this.groupID);
 		}
 
 		IWCalendar cal = new IWCalendar();
-		int lastDayOfMonth = cal.getLengthOfMonth(idts.getMonth(),idts.getYear());
+		int lastDayOfMonth = cal.getLengthOfMonth(idts.getMonth(),
+				idts.getYear());
 
-		if(idts.getDay() == lastDayOfMonth) {
-			if(idts.getMonth() == 12) {
-				L.addParameter(CalendarParameters.PARAMETER_YEAR, String.valueOf(idts.getYear() + 1));
-				L.addParameter(CalendarParameters.PARAMETER_MONTH, String.valueOf(1));
-			}
-			else {
-				L.addParameter(CalendarParameters.PARAMETER_YEAR, String.valueOf(idts.getYear()));
-				L.addParameter(CalendarParameters.PARAMETER_MONTH, String.valueOf(idts.getMonth() + 1));
+		if (idts.getDay() == lastDayOfMonth) {
+			if (idts.getMonth() == 12) {
+				L.addParameter(CalendarParameters.PARAMETER_YEAR,
+						String.valueOf(idts.getYear() + 1));
+				L.addParameter(CalendarParameters.PARAMETER_MONTH,
+						String.valueOf(1));
+			} else {
+				L.addParameter(CalendarParameters.PARAMETER_YEAR,
+						String.valueOf(idts.getYear()));
+				L.addParameter(CalendarParameters.PARAMETER_MONTH,
+						String.valueOf(idts.getMonth() + 1));
 			}
 			L.addParameter(CalendarParameters.PARAMETER_DAY, String.valueOf(1));
 
-		}
-		else {
-			L.addParameter(CalendarParameters.PARAMETER_DAY, String.valueOf(idts.getDay() + 1));
-			L.addParameter(CalendarParameters.PARAMETER_MONTH, String.valueOf(idts.getMonth()));
-			L.addParameter(CalendarParameters.PARAMETER_YEAR, String.valueOf(idts.getYear()));
+		} else {
+			L.addParameter(CalendarParameters.PARAMETER_DAY,
+					String.valueOf(idts.getDay() + 1));
+			L.addParameter(CalendarParameters.PARAMETER_MONTH,
+					String.valueOf(idts.getMonth()));
+			L.addParameter(CalendarParameters.PARAMETER_YEAR,
+					String.valueOf(idts.getYear()));
 		}
 	}
+
 	/**
-	 *
+	 * 
 	 * @param L
 	 * @param idts
 	 */
 	public void addLastDayPrm(Link L, IWTimestamp idts) {
-		if(this.groupID != -2) {
-			L.addParameter(PARAMETER_ISI_GROUP_ID,this.groupID);
+		if (this.groupID != -2) {
+			L.addParameter(PARAMETER_ISI_GROUP_ID, this.groupID);
 		}
 
 		IWCalendar cal = new IWCalendar();
-		int lastDayOfPreviousMonthThisYear = cal.getLengthOfMonth(idts.getMonth() - 1,idts.getYear());
-		int lastDayOfPreviousMonthLastYear = cal.getLengthOfMonth(idts.getMonth() - 1,idts.getYear() - 1);
+		int lastDayOfPreviousMonthThisYear = cal.getLengthOfMonth(
+				idts.getMonth() - 1, idts.getYear());
+		int lastDayOfPreviousMonthLastYear = cal.getLengthOfMonth(
+				idts.getMonth() - 1, idts.getYear() - 1);
 
-		if(idts.getDay() == 1) {
-			if(idts.getMonth() == 1) {
-				L.addParameter(CalendarParameters.PARAMETER_YEAR, String.valueOf(idts.getYear() - 1));
-				L.addParameter(CalendarParameters.PARAMETER_DAY, String.valueOf(lastDayOfPreviousMonthLastYear));
-				L.addParameter(CalendarParameters.PARAMETER_MONTH, String.valueOf(12));
-			}
-			else {
-				L.addParameter(CalendarParameters.PARAMETER_YEAR, String.valueOf(idts.getYear()));
-				L.addParameter(CalendarParameters.PARAMETER_DAY, String.valueOf(lastDayOfPreviousMonthThisYear));
-				L.addParameter(CalendarParameters.PARAMETER_MONTH, String.valueOf(idts.getMonth() - 1));
+		if (idts.getDay() == 1) {
+			if (idts.getMonth() == 1) {
+				L.addParameter(CalendarParameters.PARAMETER_YEAR,
+						String.valueOf(idts.getYear() - 1));
+				L.addParameter(CalendarParameters.PARAMETER_DAY,
+						String.valueOf(lastDayOfPreviousMonthLastYear));
+				L.addParameter(CalendarParameters.PARAMETER_MONTH,
+						String.valueOf(12));
+			} else {
+				L.addParameter(CalendarParameters.PARAMETER_YEAR,
+						String.valueOf(idts.getYear()));
+				L.addParameter(CalendarParameters.PARAMETER_DAY,
+						String.valueOf(lastDayOfPreviousMonthThisYear));
+				L.addParameter(CalendarParameters.PARAMETER_MONTH,
+						String.valueOf(idts.getMonth() - 1));
 			}
 
-		}
-		else {
-			L.addParameter(CalendarParameters.PARAMETER_DAY, String.valueOf(idts.getDay() - 1));
-			L.addParameter(CalendarParameters.PARAMETER_MONTH, String.valueOf(idts.getMonth()));
-			L.addParameter(CalendarParameters.PARAMETER_YEAR, String.valueOf(idts.getYear()));
+		} else {
+			L.addParameter(CalendarParameters.PARAMETER_DAY,
+					String.valueOf(idts.getDay() - 1));
+			L.addParameter(CalendarParameters.PARAMETER_MONTH,
+					String.valueOf(idts.getMonth()));
+			L.addParameter(CalendarParameters.PARAMETER_YEAR,
+					String.valueOf(idts.getYear()));
 
 		}
 	}
+
 	public void addNextWeekPrm(Link L, IWTimestamp idts) {
-		GregorianCalendar calendar = new GregorianCalendar(idts.getYear(),idts.getMonth(),idts.getDay());
+		GregorianCalendar calendar = new GregorianCalendar(idts.getYear(),
+				idts.getMonth(), idts.getDay());
 		Timestamp ts = idts.getTimestamp();
-		calendar.add(Calendar.DAY_OF_MONTH,6);
-		if(calendar.get(Calendar.DAY_OF_MONTH) < idts.getDay()) {
-			calendar.add(Calendar.MONTH,1);
-			if(calendar.get(Calendar.MONTH) < idts.getMonth()) {
-				calendar.add(Calendar.YEAR,1);
+		calendar.add(Calendar.DAY_OF_MONTH, 6);
+		if (calendar.get(Calendar.DAY_OF_MONTH) < idts.getDay()) {
+			calendar.add(Calendar.MONTH, 1);
+			if (calendar.get(Calendar.MONTH) < idts.getMonth()) {
+				calendar.add(Calendar.YEAR, 1);
 			}
 		}
 		Date sd = calendar.getTime();
 		SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd kk:mm:ss.S");
 		String f = format.format(sd);
 		ts = Timestamp.valueOf(f);
-//		int year = sd.getYear() + 1900;
-//		ts.setYear(year);
+		// int year = sd.getYear() + 1900;
+		// ts.setYear(year);
 		idts = new IWTimestamp(ts);
-		L.addParameter(CalendarParameters.PARAMETER_DAY,String.valueOf(idts.getDay()));
-		L.addParameter(CalendarParameters.PARAMETER_MONTH,String.valueOf(idts.getMonth()));
-		L.addParameter(CalendarParameters.PARAMETER_YEAR,String.valueOf(idts.getYear()));
+		L.addParameter(CalendarParameters.PARAMETER_DAY,
+				String.valueOf(idts.getDay()));
+		L.addParameter(CalendarParameters.PARAMETER_MONTH,
+				String.valueOf(idts.getMonth()));
+		L.addParameter(CalendarParameters.PARAMETER_YEAR,
+				String.valueOf(idts.getYear()));
 	}
+
 	public void addLastWeekPrm(Link L, IWTimestamp idts) {
 
 	}
 
 	/**
 	 * The same method as in SmallCalendar.java
+	 * 
 	 * @param L
 	 * @param idts
 	 */
 	public void addNextMonthPrm(Link L, IWTimestamp idts) {
-		if(this.groupID != -2) {
-			L.addParameter(PARAMETER_ISI_GROUP_ID,this.groupID);
+		if (this.groupID != -2) {
+			L.addParameter(PARAMETER_ISI_GROUP_ID, this.groupID);
 		}
 		if (idts.getMonth() == 12) {
 			L.addParameter(CalendarParameters.PARAMETER_DAY, idts.getDay());
-			L.addParameter(CalendarParameters.PARAMETER_MONTH, String.valueOf(1));
-			L.addParameter(CalendarParameters.PARAMETER_YEAR, String.valueOf(idts.getYear() + 1));
-		}
-		else {
+			L.addParameter(CalendarParameters.PARAMETER_MONTH,
+					String.valueOf(1));
+			L.addParameter(CalendarParameters.PARAMETER_YEAR,
+					String.valueOf(idts.getYear() + 1));
+		} else {
 			L.addParameter(CalendarParameters.PARAMETER_DAY, idts.getDay());
-			L.addParameter(CalendarParameters.PARAMETER_MONTH, String.valueOf(idts.getMonth() + 1));
-			L.addParameter(CalendarParameters.PARAMETER_YEAR, String.valueOf(idts.getYear()));
+			L.addParameter(CalendarParameters.PARAMETER_MONTH,
+					String.valueOf(idts.getMonth() + 1));
+			L.addParameter(CalendarParameters.PARAMETER_YEAR,
+					String.valueOf(idts.getYear()));
 		}
 	}
+
 	/**
 	 * The same method as in SmallCalendar.java
+	 * 
 	 * @param L
 	 * @param idts
 	 */
 
 	public void addLastMonthPrm(Link L, IWTimestamp idts) {
-		if(this.groupID != -2) {
-			L.addParameter(PARAMETER_ISI_GROUP_ID,this.groupID);
+		if (this.groupID != -2) {
+			L.addParameter(PARAMETER_ISI_GROUP_ID, this.groupID);
 		}
 
 		if (idts.getMonth() == 1) {
-			L.addParameter(CalendarParameters.PARAMETER_DAY,idts.getDay());
-			L.addParameter(CalendarParameters.PARAMETER_MONTH, String.valueOf(12));
-			L.addParameter(CalendarParameters.PARAMETER_YEAR, String.valueOf(idts.getYear() - 1));
-		}
-		else {
-			L.addParameter(CalendarParameters.PARAMETER_DAY,idts.getDay());
-			L.addParameter(CalendarParameters.PARAMETER_MONTH, String.valueOf(idts.getMonth() - 1));
-			L.addParameter(CalendarParameters.PARAMETER_YEAR, String.valueOf(idts.getYear()));
+			L.addParameter(CalendarParameters.PARAMETER_DAY, idts.getDay());
+			L.addParameter(CalendarParameters.PARAMETER_MONTH,
+					String.valueOf(12));
+			L.addParameter(CalendarParameters.PARAMETER_YEAR,
+					String.valueOf(idts.getYear() - 1));
+		} else {
+			L.addParameter(CalendarParameters.PARAMETER_DAY, idts.getDay());
+			L.addParameter(CalendarParameters.PARAMETER_MONTH,
+					String.valueOf(idts.getMonth() - 1));
+			L.addParameter(CalendarParameters.PARAMETER_YEAR,
+					String.valueOf(idts.getYear()));
 		}
 	}
 
 	public void addNextYearPrm(Link L, IWTimestamp idts) {
 		L.addParameter(CalendarParameters.PARAMETER_DAY, idts.getDay());
-		L.addParameter(CalendarParameters.PARAMETER_MONTH, String.valueOf(idts.getMonth()));
-		L.addParameter(CalendarParameters.PARAMETER_YEAR, String.valueOf(idts.getYear() + 1));
+		L.addParameter(CalendarParameters.PARAMETER_MONTH,
+				String.valueOf(idts.getMonth()));
+		L.addParameter(CalendarParameters.PARAMETER_YEAR,
+				String.valueOf(idts.getYear() + 1));
 	}
+
 	public void addLastYearPrm(Link L, IWTimestamp idts) {
-		L.addParameter(CalendarParameters.PARAMETER_DAY,idts.getDay());
-		L.addParameter(CalendarParameters.PARAMETER_MONTH, String.valueOf(idts.getMonth()));
-		L.addParameter(CalendarParameters.PARAMETER_YEAR, String.valueOf(idts.getYear() - 1));
+		L.addParameter(CalendarParameters.PARAMETER_DAY, idts.getDay());
+		L.addParameter(CalendarParameters.PARAMETER_MONTH,
+				String.valueOf(idts.getMonth()));
+		L.addParameter(CalendarParameters.PARAMETER_YEAR,
+				String.valueOf(idts.getYear() - 1));
 	}
+
 	public static IWTimestamp getTimestamp(String day, String month, String year) {
 		IWTimestamp stamp = new IWTimestamp();
 
@@ -1329,9 +1535,8 @@ public class CalendarView extends Block{
 			stamp.setDay(Integer.parseInt(day));
 		}
 		// removed dubius behavior A
-		/*else {
-		 stamp.setDay(1);
-		 }
+		/*
+		 * else { stamp.setDay(1); }
 		 */
 		if (month != null) {
 			stamp.setMonth(Integer.parseInt(month));
@@ -1346,10 +1551,10 @@ public class CalendarView extends Block{
 
 		return stamp;
 	}
+
 	public void setAdminOnTop(boolean adminOnTop) {
 		this.adminOnTop = adminOnTop;
 	}
-
 
 	@Override
 	public String getBundleIdentifier() {
@@ -1359,27 +1564,26 @@ public class CalendarView extends Block{
 	public CalBusiness getCalBusiness(IWApplicationContext iwc) {
 		if (this.calBiz == null) {
 			try {
-				this.calBiz = com.idega.business.IBOLookup.getServiceInstance(iwc, CalBusiness.class);
-			}
-			catch (java.rmi.RemoteException rme) {
+				this.calBiz = com.idega.business.IBOLookup.getServiceInstance(
+						iwc, CalBusiness.class);
+			} catch (java.rmi.RemoteException rme) {
 				throw new RuntimeException(rme.getMessage());
 			}
 		}
 		return this.calBiz;
 	}
+
 	protected UserBusiness getUserBusiness(IWApplicationContext iwc) {
 		UserBusiness userBusiness = null;
 		if (userBusiness == null) {
 			try {
-				userBusiness = com.idega.business.IBOLookup.getServiceInstance(iwc, UserBusiness.class);
-			}
-			catch (java.rmi.RemoteException rme) {
+				userBusiness = com.idega.business.IBOLookup.getServiceInstance(
+						iwc, UserBusiness.class);
+			} catch (java.rmi.RemoteException rme) {
 				throw new RuntimeException(rme.getMessage());
 			}
 		}
 		return userBusiness;
 	}
-
-
 
 }

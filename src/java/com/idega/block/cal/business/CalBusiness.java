@@ -93,14 +93,19 @@ public interface CalBusiness extends IBOService, UserGroupPlugInBusiness {
 	public Collection getEntryGroupsByLedgerID(int ledgerID);
 
 	/**
-	 * @see com.idega.block.cal.business.CalBusinessBean#getEntryTypeByName
+	 * FIXME document this
+	 * @param entryTypeName
+	 * @return
+	 * @author <a href="mailto:martynas@idega.com">Martynas Stakė</a>
 	 */
 	public CalendarEntryType getEntryTypeByName(String entryTypeName);
 
 	/**
-	 * @see com.idega.block.cal.business.CalBusinessBean#getAllEntryTypes
+	 * FIXME document this
+	 * @return
+	 * @author <a href="mailto:martynas@idega.com">Martynas Stakė</a>
 	 */
-	public List getAllEntryTypes();
+	public List<CalendarEntryType> getAllEntryTypes();
 
 	/**
 	 * @see com.idega.block.cal.business.CalBusinessBean#getLedger
@@ -183,7 +188,10 @@ public interface CalBusiness extends IBOService, UserGroupPlugInBusiness {
 	public void deleteMark(int markID);
 
 	/**
-	 * @see com.idega.block.cal.business.CalBusinessBean#createNewEntryType
+	 * FIXME document this
+	 * @param typeName
+	 * @return
+	 * @author <a href="mailto:martynas@idega.com">Martynas Stakė</a>
 	 */
 	public boolean createNewEntryType(String typeName);
 

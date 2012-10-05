@@ -21,6 +21,11 @@ import com.idega.business.IBOHomeImpl;
  */
 public class CalBusinessHomeImpl extends IBOHomeImpl implements CalBusinessHome {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 7340821250327743972L;
+
 	protected Class getBeanInterfaceClass() {
 		return CalBusiness.class;
 	}

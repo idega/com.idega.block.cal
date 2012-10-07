@@ -103,15 +103,15 @@ public class CalendarViewer extends GroupViewer {
 		add(cssFiles.toString());
 	}
 
-	@SuppressWarnings("cast")
+	@SuppressWarnings({ "cast", "deprecation" })
 	private void addJavaScript(IWContext iwc, String id, String instanceId) {
 		IWBundle iwb = getBundle(iwc);
 		List<String> files = new ArrayList<String>();
 
+		Web2Business web2 = ELUtil.getInstance().getBean(Web2Business.class);
 		boolean singleProcess = CoreUtil.isSingleComponentRenderingProcess(iwc);
 		if (!singleProcess) {
 			//	Web 2.0 stuff
-			Web2Business web2 = ELUtil.getInstance().getBean(Web2Business.class);
 			try {
 				files.add(web2.getBundleURIToMootoolsLib());
 				files.add(web2.getMoodalboxScriptFilePath(false));
@@ -119,6 +119,7 @@ public class CalendarViewer extends GroupViewer {
 				e.printStackTrace();
 			}
 		}
+		files.add(web2.getBundleURIToJQueryLib());
 
 		//	Calendar stuff
 		files.add(iwb.getVirtualPathWithFileNameString("javascript/CalendarViewerHelper.js"));

@@ -469,4 +469,25 @@ function addCalendarEntriesIntoContainer(entries, containerId, properties) {
 	}
 	
 	addEntriesToListOrSchedule(cloneOfEntries, extendedProperties, true);
+	
+	//	TODO: Make more general
+	LazyLoader.loadMultiple(['/dwr/engine.js', '/dwr/interface/BedeworkEventsProvider.js'], function() {
+		if (typeof BedeworkEventsProvider == 'undefined')
+			return;
+		
+		var dwrCallType = getDwrCallType(false);
+		var dwrCallPath = getDefaultDwrPath();
+		prepareDwr(BedeworkEventsProvider, dwrCallPath);
+		BedeworkEventsProvider.getEventsExporterLink({
+			callback: function(link) {
+				if (link == null)
+					return;
+				
+				jQuery('#' + containerId).next().append('<input type="button" value="' + link.value + '" onclick="window.location.href = ' +
+					link.id+ '"></input>');
+			},
+			rpcType: dwrCallType,
+			transport: dwrCallType
+		});
+	});
 }

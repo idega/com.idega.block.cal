@@ -483,8 +483,8 @@ function addCalendarEntriesIntoContainer(entries, containerId, properties) {
 				if (link == null)
 					return;
 				
-				jQuery('#' + containerId).next().append('<input type="button" value="' + link.value + '" onclick="window.location.href = ' +
-					link.id+ '"></input>');
+				jQuery('#scheduleEntryTableId').next().append('<input type="button" value="' + link.value + '" onclick="window.location.href=\'' +
+					link.id+ '\'"></input>');
 			},
 			rpcType: dwrCallType,
 			transport: dwrCallType

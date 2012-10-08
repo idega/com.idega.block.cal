@@ -28,6 +28,7 @@ var CALENDAR_DAY_LABEL = 'Day';
 var CALENDAR_WEEK_LABEL = 'Week';
 var CALENDAR_WORK_WEEK_LABEL = 'Work week';
 var CALENDAR_MONTH_LABEL = 'Month';
+var CALENDAR_EXPORT_EVENTS = 'Export events';
 
 //	CSS style classes
 var entryListTableStyleClass = 'entryList';
@@ -120,6 +121,14 @@ var ENTRY_IN_SCHEDULE_STYLE_CLASS = 'scheduleEntry';
 			changeModeToMonth(scheduleMonthButton.getProperty('id'));
 		});
 		
+		//	Export
+		var exportEventsButton = new Element('input');
+		exportEventsButton.setProperty('type', 'button');
+		exportEventsButton.setProperty('id', id + '_exportEventButton');
+		exportEventsButton.setProperty(CALENDAR_ELEMENT_PROPERTY_NAME_FOR_BEAN_ID, id);
+		exportEventsButton.addClass('scheduleExportEventsButtonStyleClass');
+		exportEventsButton.setProperty('value', CALENDAR_EXPORT_EVENTS);
+		
 		var scheduleButtonsLayer = new Element('div');
 		if (!extendedProperties.properties.hideMenu) {
 			if (!extendedProperties.properties.hidePreviousAndNext){
@@ -130,6 +139,7 @@ var ENTRY_IN_SCHEDULE_STYLE_CLASS = 'scheduleEntry';
 			scheduleButtonsLayer.appendChild(scheduleWeekButton);
 			scheduleButtonsLayer.appendChild(scheduleWorkweekButton);		
 			scheduleButtonsLayer.appendChild(scheduleMonthButton);
+			scheduleButtonsLayer.appendChild(exportEventsButton);
 		}
 		
 		return  scheduleButtonsLayer;	

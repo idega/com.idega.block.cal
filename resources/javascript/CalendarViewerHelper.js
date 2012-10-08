@@ -483,8 +483,19 @@ function addCalendarEntriesIntoContainer(entries, containerId, properties) {
 				if (link == null)
 					return;
 				
-				jQuery('#scheduleEntryTableId').next().append('<input type="button" value="' + link.value + '" onclick="window.location.href=\'' +
-					link.id+ '\'"></input>');
+				jQuery('#' + properties.instanceId + '_exportEventButton').click(function() {
+					if (entries == null || entries.length == 0) {
+						humanMsg.displayMsg(CALENDAR_NO_ENTRIES, {timeOut: 3000});
+						return false;
+					}
+					
+					showLoadingMessage(CALENDAR_LOADING_MESSAGE);
+					window.location.href = link.value;
+					var timeoutId = window.setTimeout(function() {
+						window.clearTimeout(timeoutId);
+						closeAllLoadingMessages();
+					}, 3000);
+				});
 			},
 			rpcType: dwrCallType,
 			transport: dwrCallType

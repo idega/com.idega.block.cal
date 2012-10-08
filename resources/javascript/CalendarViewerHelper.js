@@ -490,7 +490,7 @@ function addCalendarEntriesIntoContainer(entries, containerId, properties) {
 					}
 					
 					showLoadingMessage(CALENDAR_LOADING_MESSAGE);
-					window.location.href = link.value;
+					window.location.href = link.id;
 					var timeoutId = window.setTimeout(function() {
 						window.clearTimeout(timeoutId);
 						closeAllLoadingMessages();

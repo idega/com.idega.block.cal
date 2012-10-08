@@ -284,6 +284,7 @@ function loadCalendarViewer(id, instanceId, message) {
 				CALENDAR_ENTRY_INFO_WINDOW_TITLE = info[27];			//	27
 			}
 			
+			showLoadingMessage(CALENDAR_LOADING_MESSAGE);
 			getCalendarViewerProperties(instanceId, id, message);
 		},
 		rpcType: dwr.engine.XMLHttpRequest

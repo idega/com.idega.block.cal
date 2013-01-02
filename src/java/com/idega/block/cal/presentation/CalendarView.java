@@ -734,9 +734,8 @@ public class CalendarView extends Block {
 				listOfEntries = new ArrayList<CalendarEntry>(0);
 
 			Collections.sort(listOfEntries, new Comparator<CalendarEntry>() {
-				@Override
-				public int compare(CalendarEntry entry1, CalendarEntry entry2) {
-					return entry1.getDate().compareTo(entry2.getDate());
+				public int compare(CalendarEntry arg0, CalendarEntry arg1) {
+					return arg0.getDate().compareTo(arg1.getDate());
 				}
 			});
 			boolean ledgerAdmin = iwc.getAccessController().hasRole(

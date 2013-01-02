@@ -35,10 +35,6 @@
   <dependencies> 
     <dependency>
       <groupId>com.idega.block.platform</groupId>
-      <artifactId>com.idega.core</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>com.idega.block.platform</groupId>
       <artifactId>com.idega.user</artifactId>
     </dependency>    
     <dependency>
@@ -48,23 +44,11 @@
     <dependency>
       <groupId>com.idega.block.addon</groupId>
       <artifactId>com.idega.block.calendar</artifactId>
-    </dependency>    
-    <dependency>
-      <groupId>com.idega.block.addon</groupId>
-      <artifactId>com.idega.block.text</artifactId>
-    </dependency>    
+    </dependency>        
     <dependency>
       <groupId>com.idega.block.platform</groupId>
       <artifactId>com.idega.block.rss</artifactId>
-    </dependency>    
-    <dependency>
-      <groupId>com.idega.block.platform</groupId>
-      <artifactId>com.idega.content</artifactId>
-    </dependency>   
-    <dependency>
-      <groupId>com.idega.block.platform</groupId>
-      <artifactId>com.idega.faces</artifactId>
-    </dependency>   
+    </dependency>          
     <dependency>
       <groupId>jtidy</groupId>
       <artifactId>jtidy</artifactId>

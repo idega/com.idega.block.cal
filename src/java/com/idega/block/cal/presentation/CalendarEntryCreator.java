@@ -219,6 +219,11 @@ public class CalendarEntryCreator extends Form{
 		this.groupOrLedgerText = new Text(iwrb.getLocalizedString(groupOrLedger,"Save entry for group or ledger?"));
 		this.groupOrLedgerText.setStyleClass(this.boldText);
 	}
+	
+	protected Class getConfirmDeleteWindowClass() {
+		return ConfirmDeleteWindow.class;
+	}
+	
 	/**
 	 * initialized fields
 	 * @param iwc
@@ -385,7 +390,7 @@ public class CalendarEntryCreator extends Form{
 			this.newEntryLink.setAsImageButton(true,true);
 			
 			this.deleteLink = new Link(iwrb.getLocalizedString("delete","Delete"));
-			this.deleteLink.setWindowToOpen(ConfirmDeleteWindow.class);
+			this.deleteLink.setWindowToOpen(getConfirmDeleteWindowClass());
 			this.deleteLink.addParameter(ConfirmDeleteWindow.PRM_DELETE_ID, this.entryIDString);
 			this.deleteLink.addParameter(ConfirmDeleteWindow.PRM_DELETE, CalendarParameters.PARAMETER_TRUE);
 			this.deleteLink.addParameter(ConfirmDeleteWindow.PRM_ENTRY_OR_LEDGER,ENTRY);
@@ -519,6 +524,7 @@ public class CalendarEntryCreator extends Form{
 
 		
 		Table repeatTable = new Table();
+		repeatTable.setStyleClass("repeatTable");
 		repeatTable.setCellpadding(2);
 		repeatTable.setCellspacing(0);
 		repeatTable.setWidth(Table.HUNDRED_PERCENT);
@@ -559,6 +565,7 @@ public class CalendarEntryCreator extends Form{
 		table.add(timeToTable,2,5);
 				
 		Table ledgerTable = new Table();
+		ledgerTable.setStyleClass("ledgerTable");
 		ledgerTable.setWidth(Table.HUNDRED_PERCENT);
 		ledgerTable.add(this.groupOrLedgerText,1,1);
 		ledgerTable.add(this.ledgerField,1,2);
@@ -566,6 +573,7 @@ public class CalendarEntryCreator extends Form{
 		table.add(ledgerTable,1,6);
 		
 		Table groupTable = new Table();
+		groupTable.setStyleClass("groupTable");
 		groupTable.setWidth(Table.HUNDRED_PERCENT);
 		groupTable.add(this.attendeesText,1,1);
 		// AttentantChooser is a PresentationObject

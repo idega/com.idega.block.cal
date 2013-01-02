@@ -284,6 +284,7 @@ function loadCalendarViewer(id, instanceId, message) {
 				CALENDAR_ENTRY_INFO_WINDOW_TITLE = info[27];			//	27
 			}
 			
+			showLoadingMessage(CALENDAR_LOADING_MESSAGE);
 			getCalendarViewerProperties(instanceId, id, message);
 		},
 		rpcType: dwr.engine.XMLHttpRequest
@@ -459,6 +460,58 @@ function addCalendarEntriesIntoContainer(entries, containerId, properties) {
 	container.empty();
 	
 	var extendedProperties = new ExtendedCalendarViewerPropertiesBean(entries, properties, containerId);
+	extendedProperties.callback = function() {
+		//	TODO: Make more general
+		LazyLoader.loadMultiple(['/dwr/engine.js', '/dwr/interface/BedeworkEventsProvider.js'], function() {
+			if (typeof BedeworkEventsProvider == 'undefined')
+				return;
+			
+			showLoadingMessage(CALENDAR_LOADING_MESSAGE);
+			var dwrCallType = getDwrCallType(false);
+			var dwrCallPath = getDefaultDwrPath();
+			prepareDwr(BedeworkEventsProvider, dwrCallPath);
+			BedeworkEventsProvider.getEventsExporterLink({
+				callback: function(link) {
+					closeAllLoadingMessages();
+					if (link == null)
+						return;
+					
+					var buttonsContainer = jQuery('#scheduleEntryTableId').next();
+					
+					//	Export button
+					var exportButtonId = properties.instanceId + '_exportEventButton';
+					buttonsContainer.append('<input id="' + exportButtonId + '" type="button" value="' + CALENDAR_EXPORT_EVENTS + '" />');
+					jQuery('#' + exportButtonId).click(function() {
+						if (entries == null || entries.length == 0) {
+							humanMsg.displayMsg(CALENDAR_NO_ENTRIES, {timeOut: 3000});
+							return false;
+						}
+						
+						showLoadingMessage(CALENDAR_LOADING_MESSAGE);
+						window.location.href = link.id;
+						var timeoutId = window.setTimeout(function() {
+							window.clearTimeout(timeoutId);
+							closeAllLoadingMessages();
+						}, 3000);
+					});
+					
+					//	Subscribe button
+					var subscribeButtonId = properties.instanceId + '_subscribeToCalendarButton';
+					buttonsContainer.append('<input id="' + subscribeButtonId + '" type="button" value="' + CALENDAR_SUBSCRIBE_TO_CALENDAR + '" />');
+					jQuery('#' + subscribeButtonId).click(function() {
+						if (entries == null || entries.length == 0) {
+							humanMsg.displayMsg(CALENDAR_NO_ENTRIES, {timeOut: 3000});
+							return false;
+						}
+						
+						window.location.href = 'webcal://' + window.location.host + link.id;
+					});
+				},
+				rpcType: dwrCallType,
+				transport: dwrCallType
+			});
+		});
+	};
 	addExtendedCalendarViewerPropertiesBean(extendedProperties);
 	
 	var cloneOfEntries = new Array();

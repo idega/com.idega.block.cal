@@ -18,50 +18,60 @@ import com.idega.util.expression.ELUtil;
 import com.idega.webface.WFUtil;
 
 public class CalendarViewer extends GroupViewer {
-	
-	private boolean showEntriesAsList = false;
-	private boolean hideMenu = false;
-	private boolean hidePreviousAndNext = false;
-	private boolean showTime = false;
-	
+
+	private boolean showEntriesAsList = false,
+					hideMenu = false,
+					hidePreviousAndNext,
+					showTime = false,
+					showMyBedeworkEvents = false;
+
 	private List<String> events = null;
 	private List<String> ledgers = null;
-	
+
 	@Override
 	public void main(IWContext iwc) {
 		super.main(iwc);
-		
+
 		String instanceId = BuilderLogic.getInstance().getInstanceId(this);
-		
+
 		Layer container = new Layer();
 		if (instanceId != null) {
 			String containerId = new StringBuffer(instanceId).append(CalendarConstants.CALENDAR_VIEWER_MAIN_CONTAINER_ID_ENDING).toString();
 			container.setId(containerId);
 		}
-		
+
 		addJavaScript(iwc, container.getId(), instanceId);
 		addCssFiles(iwc);
-		
+
 		setCalendarPropertiesBean(instanceId);
-		
+
 		add(container);
 	}
-	
+
+	public boolean isShowMyBedeworkEvents() {
+		return showMyBedeworkEvents;
+	}
+
+	public void setShowMyBedeworkEvents(boolean showMyBedeworkEvents) {
+		this.showMyBedeworkEvents = showMyBedeworkEvents;
+	}
+
 	private void setCalendarPropertiesBean(String instanceId){
 		CalendarPropertiesBean properties = new CalendarPropertiesBean();
 		setBasicProperties(properties, instanceId);
-		
+
 		properties.setShowEntriesAsList(isShowEntriesAsList());
 		properties.setHideMenu(isHideMenu());
 		properties.setHidePreviousAndNext(isHidePreviousAndNext());
 		properties.setShowTime(isShowTime());
 		properties.setEvents(getEvents());
 		properties.setLedgers(ledgers);
-		
+		properties.setShowMyBedeworkEvents(isShowMyBedeworkEvents());
+
 		Object[] parameters = new Object[2];
 		parameters[0] = instanceId;
 		parameters[1] = properties;
-		
+
 		Class<?>[] classes = new Class[2];
 		classes[0] = String.class;
 		classes[1] = CalendarPropertiesBean.class;
@@ -69,17 +79,17 @@ public class CalendarViewer extends GroupViewer {
 		//	Setting parameters to bean, these parameters will be taken by DWR and sent to selected server to get required info
 		WFUtil.invoke(CalendarConstants.CALENDAR_MANAGER_BEAN_ID, "addCalendarProperties", parameters, classes);
 	}
-	
+
 	@SuppressWarnings("cast")
 	private void addCssFiles(IWContext iwc) {
 		IWBundle iwb = getBundle(iwc);
-		
+
 		StringBuffer cssFiles = new StringBuffer("<link rel=\"stylesheet\" href=\"");
 		cssFiles.append(iwb.getVirtualPathWithFileNameString("style/cal.css")).append("\" type=\"text/css\" />\n");
-		
+
 		cssFiles.append("<link rel=\"stylesheet\" href=\"");
 		cssFiles.append(iwb.getVirtualPathWithFileNameString("style/schedule.css")).append("\" type=\"text/css\" />\n");
-		
+
 		if (!CoreUtil.isSingleComponentRenderingProcess(iwc)) {
 			try {
 				Web2Business web2 = ELUtil.getInstance().getBean(Web2Business.class);
@@ -89,19 +99,19 @@ public class CalendarViewer extends GroupViewer {
 				e.printStackTrace();
 			}
 		}
-		
+
 		add(cssFiles.toString());
 	}
-	
-	@SuppressWarnings("cast")
+
+	@SuppressWarnings({ "cast", "deprecation" })
 	private void addJavaScript(IWContext iwc, String id, String instanceId) {
 		IWBundle iwb = getBundle(iwc);
 		List<String> files = new ArrayList<String>();
-		
+
+		Web2Business web2 = ELUtil.getInstance().getBean(Web2Business.class);
 		boolean singleProcess = CoreUtil.isSingleComponentRenderingProcess(iwc);
 		if (!singleProcess) {
 			//	Web 2.0 stuff
-			Web2Business web2 = ELUtil.getInstance().getBean(Web2Business.class);
 			try {
 				files.add(web2.getBundleURIToMootoolsLib());
 				files.add(web2.getMoodalboxScriptFilePath(false));
@@ -109,7 +119,8 @@ public class CalendarViewer extends GroupViewer {
 				e.printStackTrace();
 			}
 		}
-		
+		files.add(web2.getBundleURIToJQueryLib());
+
 		//	Calendar stuff
 		files.add(iwb.getVirtualPathWithFileNameString("javascript/CalendarViewerHelper.js"));
 		files.add(iwb.getVirtualPathWithFileNameString("javascript/CalendarList.js"));
@@ -119,14 +130,14 @@ public class CalendarViewer extends GroupViewer {
 		files.add(iwb.getVirtualPathWithFileNameString("javascript/domTT.js"));
 		files.add(iwb.getVirtualPathWithFileNameString("javascript/fadomatic.js"));
 		files.add(iwb.getVirtualPathWithFileNameString("javascript/schedule.js"));
-		
+
 		//	DWR
 		files.add(CalendarConstants.CALENDAR_SERVICE_DWR_INTERFACE_SCRIPT);
 		files.add(CoreConstants.DWR_ENGINE_SCRIPT);
 		files.add("/dwr/interface/ScheduleSession.js");
 
-		addScriptFiles(iwc, files, singleProcess);
-		
+		addScriptFiles(iwc, files);
+
 		StringBuffer singleAction = new StringBuffer("loadCalendarViewer('").append(id).append("', '").append(instanceId).append("', '");
 		singleAction.append(iwb.getResourceBundle(iwc).getLocalizedString("loading", "Loading...")).append("');");
 		StringBuffer action = null;
@@ -136,23 +147,23 @@ public class CalendarViewer extends GroupViewer {
 		else {
 			action = new StringBuffer("window.addEvent('load', function() {").append(singleAction.toString()).append("});");
 		}
-			
+
 		StringBuffer scriptString = new StringBuffer("<script type=\"text/javascript\" > \n\t").append(action.toString()).append(" \n</script> \n");
 		add(scriptString.toString());
 	}
-	
+
 	public void setCalendarProperties(CalendarPropertiesBean properties) {
 		super.setGroups(properties);
-		
+
 		if (properties == null) {
 			events = null;
 			ledgers = null;
 		}
-		
+
 		setEvents(properties.getEvents());
 		setLedgers(properties.getLedgers());
 	}
-	
+
 	@Override
 	public String getBundleIdentifier()	{
 		return CalendarConstants.IW_BUNDLE_IDENTIFIER;
@@ -205,5 +216,5 @@ public class CalendarViewer extends GroupViewer {
 	public void setLedgers(List<String> ledgers) {
 		this.ledgers = ledgers;
 	}
-	
+
 }

@@ -28,6 +28,8 @@ var CALENDAR_DAY_LABEL = 'Day';
 var CALENDAR_WEEK_LABEL = 'Week';
 var CALENDAR_WORK_WEEK_LABEL = 'Work week';
 var CALENDAR_MONTH_LABEL = 'Month';
+var CALENDAR_EXPORT_EVENTS = 'Export events';
+var CALENDAR_SUBSCRIBE_TO_CALENDAR = 'Subscribe to calendar';
 
 //	CSS style classes
 var entryListTableStyleClass = 'entryList';
@@ -120,6 +122,22 @@ var ENTRY_IN_SCHEDULE_STYLE_CLASS = 'scheduleEntry';
 			changeModeToMonth(scheduleMonthButton.getProperty('id'));
 		});
 		
+		/*//	Export
+		var exportEventsButton = new Element('input');
+		exportEventsButton.setProperty('type', 'button');
+		exportEventsButton.setProperty('id', id + '_exportEventButton');
+		exportEventsButton.setProperty(CALENDAR_ELEMENT_PROPERTY_NAME_FOR_BEAN_ID, id);
+		exportEventsButton.addClass('scheduleExportEventsButtonStyleClass');
+		exportEventsButton.setProperty('value', CALENDAR_EXPORT_EVENTS);
+		
+		//	Subscribe
+		var subscribeToCalendarButton = new Element('input');
+		subscribeToCalendarButton.setProperty('type', 'button');
+		subscribeToCalendarButton.setProperty('id', id + '_subscribeToCalendarButton');
+		subscribeToCalendarButton.setProperty(CALENDAR_ELEMENT_PROPERTY_NAME_FOR_BEAN_ID, id);
+		subscribeToCalendarButton.addClass('scheduleSubscribeToCalendarButtonStyleClass');
+		subscribeToCalendarButton.setProperty('value', CALENDAR_SUBSCRIBE_TO_CALENDAR);*/
+		
 		var scheduleButtonsLayer = new Element('div');
 		if (!extendedProperties.properties.hideMenu) {
 			if (!extendedProperties.properties.hidePreviousAndNext){
@@ -130,6 +148,8 @@ var ENTRY_IN_SCHEDULE_STYLE_CLASS = 'scheduleEntry';
 			scheduleButtonsLayer.appendChild(scheduleWeekButton);
 			scheduleButtonsLayer.appendChild(scheduleWorkweekButton);		
 			scheduleButtonsLayer.appendChild(scheduleMonthButton);
+			//scheduleButtonsLayer.appendChild(exportEventsButton);
+			//scheduleButtonsLayer.appendChild(subscribeToCalendarButton);
 		}
 		
 		return  scheduleButtonsLayer;	
@@ -145,7 +165,7 @@ var ENTRY_IN_SCHEDULE_STYLE_CLASS = 'scheduleEntry';
 		else {
 			ScheduleSession.getScheduleDOM(newProperties.id, {
 				callback: function(component) {
-					displayCalendarEntries(component, newProperties.id);
+					displayCalendarEntries(component, newProperties.id, extendedProperties.callback);
 				}
 			});
 		}
@@ -274,7 +294,7 @@ var ENTRY_IN_SCHEDULE_STYLE_CLASS = 'scheduleEntry';
 	}
 
 	//	Inserts schedule DOM object
-	function displayCalendarEntries(component, id) {
+	function displayCalendarEntries(component, id, callback) {
 		var extendedProperties = getExtendedCalendarViewerPropertiesBean(id);
 		if (extendedProperties == null) {
 			return false;
@@ -296,7 +316,9 @@ var ENTRY_IN_SCHEDULE_STYLE_CLASS = 'scheduleEntry';
 		insertNodesToContainer(component, scheduleEntries);
 
 		setBehaviourOnScheduleEntries(id);
-		closeAllLoadingMessages();	
+		if (callback)
+			callback();
+		closeAllLoadingMessages();
 	}
 	
 	//	Inserts entry list into DOM
@@ -566,7 +588,7 @@ var ENTRY_IN_SCHEDULE_STYLE_CLASS = 'scheduleEntry';
 		else {
 			ScheduleSession.getScheduleDOM(extendedProperties.properties.instanceId, {
 				callback: function(component) {
-					displayCalendarEntries(component, extendedProperties.properties.instanceId);
+					displayCalendarEntries(component, extendedProperties.properties.instanceId, extendedProperties.callback);
 				}
 			});
 		}

@@ -16,7 +16,7 @@ import org.apache.myfaces.custom.schedule.model.ScheduleDay;
 import org.apache.myfaces.custom.schedule.model.ScheduleEntry;
 import org.apache.myfaces.custom.schedule.model.ScheduleModel;
 import org.apache.myfaces.custom.schedule.model.SimpleScheduleModel;
-import org.jdom.Document;
+import org.jdom2.Document;
 
 import com.idega.builder.business.BuilderLogic;
 import com.idega.presentation.IWContext;

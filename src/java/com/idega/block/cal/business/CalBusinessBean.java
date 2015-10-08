@@ -221,9 +221,9 @@ public class CalBusinessBean extends IBOServiceBean implements CalBusiness,UserG
 
 
 	}
-	
+
 	private CalendarEntryTypeHome calendarEntryTypeHome = null;
-	
+
 	/**
 	 * FIXME document this
 	 * @return
@@ -235,14 +235,14 @@ public class CalBusinessBean extends IBOServiceBean implements CalBusiness,UserG
 				this.calendarEntryTypeHome = (CalendarEntryTypeHome) getIDOHome(
 						CalendarEntryType.class);
 			} catch (RemoteException e) {
-				getLogger().log(Level.WARNING, "Unable to find " 
+				getLogger().log(Level.WARNING, "Unable to find "
 						+ CalendarEntryTypeHome.class + ": ", e);
 			}
 		}
-		
+
 		return this.calendarEntryTypeHome;
 	}
-	
+
 	/*
 	 * (non-Javadoc)
 	 * @see com.idega.block.cal.business.CalBusiness#getEntryTypeByName(
@@ -254,30 +254,30 @@ public class CalBusinessBean extends IBOServiceBean implements CalBusiness,UserG
 		if (StringUtil.isEmpty(entryTypeName)) {
 			return null;
 		}
-		
+
 		Collection<?> typesByName = null;
 		try {
 			typesByName = getCalendarEntryTypeHome()
 					.findTypeByName(entryTypeName);
 		} catch (FinderException e) {
-			getLogger().log(Level.WARNING, 
-					"Unable to find such type '" + 
+			getLogger().log(Level.WARNING,
+					"Unable to find such type '" +
 					entryTypeName + "' cause of: ", e);
 		}
-		
+
 		if (ListUtil.isEmpty(typesByName)) {
 			return null;
 		}
-		
+
 		for (Object o : typesByName) {
 			if (o instanceof CalendarEntryType) {
 				return (CalendarEntryType) o;
 			}
 		}
-		
+
 		return null;
 	}
-	
+
 	/*
 	 * (non-Javadoc)
 	 * @see com.idega.block.cal.business.CalBusiness#getAllEntryTypes()
@@ -288,22 +288,22 @@ public class CalBusinessBean extends IBOServiceBean implements CalBusiness,UserG
 		try {
 			types = getCalendarEntryTypeHome().findTypes();
 		} catch (FinderException e) {
-			getLogger().log(Level.WARNING, "Unable to find " + 
+			getLogger().log(Level.WARNING, "Unable to find " +
 					CalendarEntryType.class + "'s, cause of: ", e);
 		}
-		
+
 		if (ListUtil.isEmpty(types)) {
 			return null;
 		}
-		
-		List<CalendarEntryType> parametrizedTypes = 
+
+		List<CalendarEntryType> parametrizedTypes =
 				new ArrayList<CalendarEntryType>(types.size());
 		for (Object type : types) {
 			if (type instanceof CalendarEntryType) {
 				parametrizedTypes.add((CalendarEntryType) type);
 			}
 		}
-		
+
 		return parametrizedTypes;
 	}
 
@@ -581,7 +581,7 @@ public class CalBusinessBean extends IBOServiceBean implements CalBusiness,UserG
 		if (StringUtil.isEmpty(typeName)) {
 			return Boolean.FALSE;
 		}
-		
+
 		List<CalendarEntryType> types = getAllEntryTypes();
 		if (!ListUtil.isEmpty(types)) {
 			for(Iterator<CalendarEntryType> typeIter = types.iterator(); typeIter.hasNext();) {
@@ -591,7 +591,7 @@ public class CalBusinessBean extends IBOServiceBean implements CalBusiness,UserG
 				}
 			}
 		}
-		
+
 		CalendarEntryType type = null;
 		try {
 			type = getCalendarEntryTypeHome().create();
@@ -600,7 +600,7 @@ public class CalBusinessBean extends IBOServiceBean implements CalBusiness,UserG
 		} catch(Exception e) {
 			return Boolean.FALSE;
 		}
-		
+
 		return Boolean.TRUE;
 	}
 	/**
@@ -1140,7 +1140,7 @@ public class CalBusinessBean extends IBOServiceBean implements CalBusiness,UserG
 						entries[a].remove();
 					}
 				}
-				
+
 				type.remove();
 			} catch (Exception e) {
 				getLogger().log(Level.WARNING, "Unable to remove type: ", e);
@@ -1426,6 +1426,19 @@ public class CalBusinessBean extends IBOServiceBean implements CalBusiness,UserG
 		try {
 			CalendarEntryHome entryHome = (CalendarEntryHome) getIDOHome(CalendarEntry.class);
 			list = new ArrayList(entryHome.getEntriesByLedgersIds(ledgersIds));
+		} catch(Exception e) {
+			e.printStackTrace();
+		}
+
+		return list;
+	}
+
+	@Override
+	public List<CalendarEntry> getEntriesByCriteria(List<String> groupsIds, List<String> userIds, Timestamp from, Timestamp to) {
+		List list = null;
+		try {
+			CalendarEntryHome entryHome = (CalendarEntryHome) getIDOHome(CalendarEntry.class);
+			list = new ArrayList(entryHome.findEntriesByCriteria(groupsIds, userIds, from, to));
 		} catch(Exception e) {
 			e.printStackTrace();
 		}

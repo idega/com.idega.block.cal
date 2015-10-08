@@ -67,7 +67,7 @@ public class CalendarEntryBMPBean extends GenericEntity implements com.idega.blo
 	public static String getColumnNameEntryTypeName() {return com.idega.block.cal.data.CalendarEntryTypeBMPBean.getColumnNameName();}
 	public static String getColumnNameEntryDate() { return "CAL_ENTRY_DATE"; }
 	public static String getColumnNameEntryEndDate() { return "CAL_ENTRY_END_DATE"; }
-  public static String getColumnNameUserID(){ return com.idega.user.data.UserBMPBean.getColumnNameUserID();}
+    public static String getColumnNameUserID(){ return com.idega.user.data.UserBMPBean.getColumnNameUserID();}
 	public static String getColumnNameGroupID() { return com.idega.user.data.GroupBMPBean.getColumnNameGroupID(); }
 	public static String getColumnNameLedgerID() { return com.idega.block.cal.data.CalendarLedgerBMPBean.getColumnNameLedgerID();}
 	public static String getColumnNameName() { return "CAL_ENTRY_NAME"; }
@@ -455,4 +455,38 @@ public Collection<CalendarEntry> getEntriesByLedgersIdsAndGroupsIds(List<String>
 
 	  return null;
   }
+
+  @Override
+  public Collection<CalendarEntry> ejbFindEntriesByCriteria(List<String> groupsIds, List<String> userIds, Timestamp from, Timestamp to) throws FinderException {
+	  Table table = new Table(this);
+	  SelectQuery query = new SelectQuery(table);
+	  query.addColumn(new Column(table, getIDColumnName()));
+
+	  boolean useGroups = !ListUtil.isEmpty(groupsIds);
+	  boolean useUsers = !ListUtil.isEmpty(userIds);
+
+	  InCriteria groupsIn = useGroups ? new InCriteria(new Column(table, getColumnNameGroupID()), groupsIds) : null;
+	  InCriteria usersIn = useUsers ? new InCriteria(new Column(table, getColumnNameUserID()), userIds) : null;
+
+	  if (useGroups) {
+		  query.addCriteria(groupsIn);
+	  }
+	  if (useUsers) {
+		  query.addCriteria(usersIn);
+	  }
+
+	  Column dateCol = new Column(table, getColumnNameEntryDate());
+	  if (from != null) {
+		  query.addCriteria(new MatchCriteria(dateCol, MatchCriteria.GREATEREQUAL, from));
+	  }
+	  if (to != null) {
+		  query.addCriteria(new MatchCriteria(dateCol, MatchCriteria.LESSEQUAL, to));
+	  }
+
+	  Order order = new Order(dateCol, true);
+	  query.addOrder(order);
+
+	  return this.idoFindPKsByQuery(query);
+  }
+
 }

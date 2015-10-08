@@ -1,7 +1,7 @@
 package com.idega.block.cal.data;
 
-import java.util.Collection;
 import java.sql.Timestamp;
+import java.util.Collection;
 import java.util.List;
 
 import javax.ejb.FinderException;
@@ -18,14 +18,17 @@ public interface CalendarEntryHome extends com.idega.data.IDOHome
  public java.util.Collection findEntriesByICGroup(int p0) throws javax.ejb.FinderException;
  public java.util.Collection findEntriesByEvents(List eventsList) throws javax.ejb.FinderException;
  public java.util.Collection findEntriesByLedgerId(List listOfLedgerIds) throws javax.ejb.FinderException;
- 
+
  public Collection<CalendarEntry> getEntriesByEventsIds(List<String> eventsIds);
- 
+
  public Collection<CalendarEntry> getEntriesByEventsIdsAndGroupsIds(List<String> eventsIds, List<String> groupsIds);
- 
+
 
  public Collection<CalendarEntry> findEntriesByLedgerIdsOrGroupsIds(List<String> ledgersIds, List groupsIds, Timestamp from, Timestamp to) throws FinderException;
  public Collection<CalendarEntry> getEntriesByLedgersIdsAndGroupsIds(List<String> ledgersIds, List<String> groupsIds);
- 
+
  public Collection<CalendarEntry> getEntriesByLedgersIds(List<String> ledgersIds);
+
+ public Collection<CalendarEntry> findEntriesByCriteria(List<String> groupsIds, List<String> userIds, Timestamp from, Timestamp to) throws FinderException;
+
 }

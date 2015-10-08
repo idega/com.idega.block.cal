@@ -346,4 +346,6 @@ public interface CalBusiness extends IBOService, UserGroupPlugInBusiness {
 	public List<CalendarLedger> getUserLedgers(String userId, IWContext iwc);
 
 	public List<CalendarEntry> getUserEntriesBetweenTimestamps(User user, Timestamp fromStamp, Timestamp toStamp, IWContext iwc);
+
+	public List<CalendarEntry> getEntriesByCriteria(List<String> groupsIds, List<String> userIds, Timestamp from, Timestamp to);
 }

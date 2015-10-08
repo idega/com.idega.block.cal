@@ -4,6 +4,8 @@ import java.sql.Timestamp;
 import java.util.Collection;
 import java.util.List;
 
+import javax.ejb.FinderException;
+
 
 public interface CalendarEntry extends com.idega.data.IDOEntity
 {
@@ -35,10 +37,13 @@ public interface CalendarEntry extends com.idega.data.IDOEntity
  public void setRepeat(String p0);
  public void setUserID(int p0);
  public void setEntryGroupID(int p0);
- 
+
  public Collection<CalendarEntry> getEntriesByEventsIds(List<String> eventsIds);
- 
+
  public Collection<CalendarEntry> getEntriesByEventsIdsAndGroupsIds(List<String> eventsIds, List<String> groupsIds);
- 
+
  public Collection<CalendarEntry> getEntriesByLedgersIdsAndGroupsIds(List<String> ledgersIds, List<String> groupsIds);
+
+ public Collection<CalendarEntry> ejbFindEntriesByCriteria(List<String> groupsIds, List<String> userIds, Timestamp from, Timestamp to) throws FinderException;
+
 }

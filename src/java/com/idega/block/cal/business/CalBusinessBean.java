@@ -1434,11 +1434,11 @@ public class CalBusinessBean extends IBOServiceBean implements CalBusiness,UserG
 	}
 
 	@Override
-	public List<CalendarEntry> getEntriesByCriteria(List<String> groupsIds, List<String> userIds, Timestamp from, Timestamp to) {
+	public List<CalendarEntry> getEntriesByCriteria(String calendarId, List<String> groupsIds, List<String> userIds, Timestamp from, Timestamp to) {
 		List list = null;
 		try {
 			CalendarEntryHome entryHome = (CalendarEntryHome) getIDOHome(CalendarEntry.class);
-			list = new ArrayList(entryHome.findEntriesByCriteria(groupsIds, userIds, from, to));
+			list = new ArrayList(entryHome.findEntriesByCriteria(calendarId, groupsIds, userIds, from, to));
 		} catch(Exception e) {
 			e.printStackTrace();
 		}

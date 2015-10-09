@@ -155,9 +155,9 @@ public Collection<CalendarEntry> findEntriesByLedgerIdsOrGroupsIds(List<String> 
  }
 
  @Override
-public Collection<CalendarEntry> findEntriesByCriteria(List<String> groupsIds, List<String> userIds, Timestamp from, Timestamp to) throws FinderException {
+public Collection<CalendarEntry> findEntriesByCriteria(String calendarId, List<String> groupsIds, List<String> userIds, Timestamp from, Timestamp to) throws FinderException {
 		IDOEntity entity = this.idoCheckOutPooledEntity();
-		Collection ids = ((CalendarEntryBMPBean)entity).ejbFindEntriesByCriteria(groupsIds, userIds, from, to);
+		Collection ids = ((CalendarEntryBMPBean)entity).ejbFindEntriesByCriteria(calendarId, groupsIds, userIds, from, to);
 		this.idoCheckInPooledEntity(entity);
 		return this.getEntityCollectionForPrimaryKeys(ids);
 

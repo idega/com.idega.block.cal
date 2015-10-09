@@ -23,6 +23,7 @@ import com.idega.data.query.SelectQuery;
 import com.idega.data.query.Table;
 import com.idega.user.data.User;
 import com.idega.util.ListUtil;
+import com.idega.util.StringUtil;
 
 public class CalendarEntryBMPBean extends GenericEntity implements com.idega.block.cal.data.CalendarEntry {
 
@@ -44,21 +45,22 @@ public class CalendarEntryBMPBean extends GenericEntity implements com.idega.blo
 	public void initializeAttributes(){
 		addAttribute(getIDColumnName());
 		addAttribute(getColumnNameName(),"CalEntryName",true,true,String.class);
-    addAttribute(getColumnNameEntryTypeID(),"CalEntryType",true,true,Integer.class,"many-to-one",CalendarEntryType.class);
-    addAttribute(getColumnNameEntryTypeName(),"CalEntryTypeName",true,true,String.class);
+		addAttribute(getColumnNameEntryTypeID(),"CalEntryType",true,true,Integer.class,"many-to-one",CalendarEntryType.class);
+		addAttribute(getColumnNameEntryTypeName(),"CalEntryTypeName",true,true,String.class);
 		addAttribute(getColumnNameEntryDate(),"CalEntryDate",true,true,Timestamp.class);
 		addAttribute(getColumnNameEntryEndDate(),"CalEntryEndDate",true,true,Timestamp.class);
-    addAttribute(getColumnNameGroupID(), "Group", true, true, Integer.class);
+		addAttribute(getColumnNameGroupID(), "Group", true, true, Integer.class);
 		addAttribute(getColumnNameLedgerID(),"CalLedgerID",true,true,Integer.class);
-    addAttribute(getColumnNameRepeat(), "CalEntryRepeat", true, true, String.class);
-    addAttribute(getColumnNameDescription(), "CalEntryDescription",true,true,String.class);
-    addAttribute(getColumnNameLocation(), "CalEntryLocation", true,true,String.class);
-    addAttribute(getColumnNameUserID(), "CalEntryUserID", true, true, Integer.class);
-    addAttribute(getColumnNameEntryGroupID(), "CalEntryGroup", true, true, Integer.class);
-    addManyToManyRelationShip(CalendarEntryGroup.class);
-    addManyToManyRelationShip(LocalizedText.class);
-    addManyToManyRelationShip(User.class);
-    setNullable(getColumnNameEntryTypeID(),false);
+	    addAttribute(getColumnNameRepeat(), "CalEntryRepeat", true, true, String.class);
+	    addAttribute(getColumnNameDescription(), "CalEntryDescription",true,true,String.class);
+	    addAttribute(getColumnNameLocation(), "CalEntryLocation", true,true,String.class);
+	    addAttribute(getColumnNameUserID(), "CalEntryUserID", true, true, Integer.class);
+	    addAttribute(getColumnNameEntryGroupID(), "CalEntryGroup", true, true, Integer.class);
+	    addAttribute(getColumnNameCalendarId(), "CalendarId", true,true,String.class);
+	    addManyToManyRelationShip(CalendarEntryGroup.class);
+	    addManyToManyRelationShip(LocalizedText.class);
+	    addManyToManyRelationShip(User.class);
+	    setNullable(getColumnNameEntryTypeID(),false);
 	}
 
 	public static String getEntityTableName() { return "CAL_ENTRY"; }
@@ -74,6 +76,7 @@ public class CalendarEntryBMPBean extends GenericEntity implements com.idega.blo
 	public static String getColumnNameDescription() { return "CAL_ENTRY_DESCRIPTION"; }
 	public static String getColumnNameLocation() { return "CAL_ENTRY_LOCATION"; }
 	public static String getColumnNameRepeat() { return "CAL_ENTRY_REPEAT"; }
+	public static String getColumnNameCalendarId() { return "CAL_CALENDAR_ID"; }
 	public static String getColumnNameEntryGroupID() { return com.idega.block.cal.data.CalendarEntryGroupBMPBean.getColumnNameEntryGroupID(); }
 
   @Override
@@ -165,6 +168,11 @@ public int getEntryGroupID() {
   	return getIntColumnValue(getColumnNameEntryGroupID());
   }
 
+  @Override
+  public String getCalendarId() {
+  	return getStringColumnValue(getColumnNameCalendarId());
+  }
+
   //SET
   @Override
 public void setEntryTypeID(int entryTypeID) {
@@ -220,6 +228,11 @@ public void setLocation(String location) {
   @Override
 public void setEntryGroupID(int entryGroupID) {
   	setColumn(getColumnNameEntryGroupID(), entryGroupID);
+  }
+
+  @Override
+  public void setCalendarId(String calendarId) {
+  	setColumn(getColumnNameCalendarId(), calendarId);
   }
 
 //add a user to the middle table
@@ -457,7 +470,7 @@ public Collection<CalendarEntry> getEntriesByLedgersIdsAndGroupsIds(List<String>
   }
 
   @Override
-  public Collection<CalendarEntry> ejbFindEntriesByCriteria(List<String> groupsIds, List<String> userIds, Timestamp from, Timestamp to) throws FinderException {
+  public Collection<CalendarEntry> ejbFindEntriesByCriteria(String calendarId, List<String> groupsIds, List<String> userIds, Timestamp from, Timestamp to) throws FinderException {
 	  Table table = new Table(this);
 	  SelectQuery query = new SelectQuery(table);
 	  query.addColumn(new Column(table, getIDColumnName()));
@@ -473,6 +486,11 @@ public Collection<CalendarEntry> getEntriesByLedgersIdsAndGroupsIds(List<String>
 	  }
 	  if (useUsers) {
 		  query.addCriteria(usersIn);
+	  }
+
+	  Column calendarIdCol = new Column(table, getColumnNameCalendarId());
+	  if (!StringUtil.isEmpty(calendarId)) {
+		  query.addCriteria(new MatchCriteria(calendarIdCol, MatchCriteria.EQUALS, calendarId));
 	  }
 
 	  Column dateCol = new Column(table, getColumnNameEntryDate());

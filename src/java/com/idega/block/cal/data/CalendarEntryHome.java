@@ -29,6 +29,6 @@ public interface CalendarEntryHome extends com.idega.data.IDOHome
 
  public Collection<CalendarEntry> getEntriesByLedgersIds(List<String> ledgersIds);
 
- public Collection<CalendarEntry> findEntriesByCriteria(List<String> groupsIds, List<String> userIds, Timestamp from, Timestamp to) throws FinderException;
+ public Collection<CalendarEntry> findEntriesByCriteria(String calendarId, List<String> groupsIds, List<String> userIds, Timestamp from, Timestamp to) throws FinderException;
 
 }

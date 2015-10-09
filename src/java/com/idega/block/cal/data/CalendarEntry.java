@@ -25,6 +25,7 @@ public interface CalendarEntry extends com.idega.data.IDOEntity
  public int getUserID();
  public Collection getUsers();
  public int getEntryGroupID();
+ public String getCalendarId();
  public void setDate(Timestamp p0);
  public void setDescription(String p0);
  public void setLocation(String p0);
@@ -37,6 +38,7 @@ public interface CalendarEntry extends com.idega.data.IDOEntity
  public void setRepeat(String p0);
  public void setUserID(int p0);
  public void setEntryGroupID(int p0);
+ public void setCalendarId(String calendarId);
 
  public Collection<CalendarEntry> getEntriesByEventsIds(List<String> eventsIds);
 
@@ -44,6 +46,6 @@ public interface CalendarEntry extends com.idega.data.IDOEntity
 
  public Collection<CalendarEntry> getEntriesByLedgersIdsAndGroupsIds(List<String> ledgersIds, List<String> groupsIds);
 
- public Collection<CalendarEntry> ejbFindEntriesByCriteria(List<String> groupsIds, List<String> userIds, Timestamp from, Timestamp to) throws FinderException;
+ public Collection<CalendarEntry> ejbFindEntriesByCriteria(String calendarId, List<String> groupsIds, List<String> userIds, Timestamp from, Timestamp to) throws FinderException;
 
 }

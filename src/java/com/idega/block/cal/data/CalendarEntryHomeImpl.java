@@ -27,6 +27,13 @@ public CalendarEntry create() throws javax.ejb.CreateException{
   return (CalendarEntry) super.createIDO();
  }
 
+	@Override
+	public Collection<CalendarEntry> findEntryByExternalId(String externalEntryID) throws javax.ejb.FinderException {
+		com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
+		java.util.Collection ids = ((CalendarEntryBMPBean)entity).ejbFindEntryByExternalId(externalEntryID);
+		this.idoCheckInPooledEntity(entity);
+		return this.getEntityCollectionForPrimaryKeys(ids);
+	}
 
 @Override
 public java.util.Collection findEntryByTimestamp(java.sql.Timestamp p0)throws javax.ejb.FinderException{

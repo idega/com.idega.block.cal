@@ -26,6 +26,8 @@ public interface CalendarEntry extends com.idega.data.IDOEntity
  public Collection getUsers();
  public int getEntryGroupID();
  public String getCalendarId();
+ public String getExternalEventId();
+ public String getEventRecurrence();
  public void setDate(Timestamp p0);
  public void setDescription(String p0);
  public void setLocation(String p0);
@@ -39,6 +41,8 @@ public interface CalendarEntry extends com.idega.data.IDOEntity
  public void setUserID(int p0);
  public void setEntryGroupID(int p0);
  public void setCalendarId(String calendarId);
+ public void setExternalEventId(String externalEvent);
+ public void setEventRecurrence(String eventRecurrence);
 
  public Collection<CalendarEntry> getEntriesByEventsIds(List<String> eventsIds);
 

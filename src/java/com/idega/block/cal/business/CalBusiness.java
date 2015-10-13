@@ -46,6 +46,11 @@ public interface CalBusiness extends IBOService, UserGroupPlugInBusiness {
 	public CalendarEntry getEntry(int entryID);
 
 	/**
+	 * @see com.idega.block.cal.business.CalBusinessBean#getEntryByExternalId
+	 */
+	public CalendarEntry getEntryByExternalId(String externalEventId);
+
+	/**
 	 * @see com.idega.block.cal.business.CalBusinessBean#getEntriesByTimestamp
 	 */
 	public Collection getEntriesByTimestamp(Timestamp stamp);
@@ -194,6 +199,13 @@ public interface CalBusiness extends IBOService, UserGroupPlugInBusiness {
 	 * @author <a href="mailto:martynas@idega.com">Martynas Stakė</a>
 	 */
 	public boolean createNewEntryType(String typeName);
+
+	/**
+	 * @see com.idega.block.cal.business.CalBusinessBean#createNewEntry
+	 */
+	public void createNewEntry(String headline, User user, String type, String repeat, String startDate,
+			String startHour, String startMinute, String endDate, String endHour, String endMinute, String attendees,
+			String ledger, String description, String location, String recurrence);
 
 	/**
 	 * @see com.idega.block.cal.business.CalBusinessBean#createNewEntry

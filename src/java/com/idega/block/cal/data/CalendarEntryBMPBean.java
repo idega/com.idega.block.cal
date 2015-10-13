@@ -57,6 +57,8 @@ public class CalendarEntryBMPBean extends GenericEntity implements com.idega.blo
 	    addAttribute(getColumnNameUserID(), "CalEntryUserID", true, true, Integer.class);
 	    addAttribute(getColumnNameEntryGroupID(), "CalEntryGroup", true, true, Integer.class);
 	    addAttribute(getColumnNameCalendarId(), "CalendarId", true,true,String.class);
+	    addAttribute(getColumnNameExternalEventId(), "CalExtEventId", true,true,String.class);
+	    addAttribute(getColumnNameRecurrence(), "CalEventRecurrence", true,true,String.class);
 	    addManyToManyRelationShip(CalendarEntryGroup.class);
 	    addManyToManyRelationShip(LocalizedText.class);
 	    addManyToManyRelationShip(User.class);
@@ -77,6 +79,8 @@ public class CalendarEntryBMPBean extends GenericEntity implements com.idega.blo
 	public static String getColumnNameLocation() { return "CAL_ENTRY_LOCATION"; }
 	public static String getColumnNameRepeat() { return "CAL_ENTRY_REPEAT"; }
 	public static String getColumnNameCalendarId() { return "CAL_CALENDAR_ID"; }
+	public static String getColumnNameExternalEventId() { return "CAL_EXT_EVENT_ID"; }
+	public static String getColumnNameRecurrence() { return "CAL_EVENT_RECURRENCE"; }
 	public static String getColumnNameEntryGroupID() { return com.idega.block.cal.data.CalendarEntryGroupBMPBean.getColumnNameEntryGroupID(); }
 
   @Override
@@ -173,6 +177,16 @@ public int getEntryGroupID() {
   	return getStringColumnValue(getColumnNameCalendarId());
   }
 
+  @Override
+  public String getExternalEventId() {
+  	return getStringColumnValue(getColumnNameExternalEventId());
+  }
+
+  @Override
+  public String getEventRecurrence() {
+  	return getStringColumnValue(getColumnNameRecurrence());
+  }
+
   //SET
   @Override
 public void setEntryTypeID(int entryTypeID) {
@@ -235,6 +249,16 @@ public void setEntryGroupID(int entryGroupID) {
   	setColumn(getColumnNameCalendarId(), calendarId);
   }
 
+  @Override
+  public void setExternalEventId(String externalEvent) {
+  	setColumn(getColumnNameCalendarId(), externalEvent);
+  }
+
+  @Override
+  public void setEventRecurrence(String eventRecurrence) {
+  	setColumn(getColumnNameRecurrence(), eventRecurrence);
+  }
+
 //add a user to the middle table
   public void addUser(User user) {
   	try {
@@ -263,6 +287,11 @@ public Collection<CalendarEntry> getEntriesByEventsIds(List<String> eventsIds) {
   public Collection ejbFindEntryByName(String name) throws FinderException{
   	IDOQuery query = idoQueryGetSelect();
   	query.appendWhereEqualsQuoted("CAL_ENTRY_NAME",name);
+  	return super.idoFindPKsByQuery(query);
+  }
+  public Collection ejbFindEntryByExternalId(String externalId) throws FinderException{
+  	IDOQuery query = idoQueryGetSelect();
+  	query.appendWhereEqualsQuoted(getColumnNameExternalEventId(), externalId);
   	return super.idoFindPKsByQuery(query);
   }
   public Collection ejbFindEntryById(int id) throws FinderException{

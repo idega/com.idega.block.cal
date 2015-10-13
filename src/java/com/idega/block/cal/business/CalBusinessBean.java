@@ -78,6 +78,30 @@ public class CalBusinessBean extends IBOServiceBean implements CalBusiness,UserG
 		}
 		return entry;
 	}
+
+	/**
+	 * @return A calendar entry with the specific external entry id
+	 */
+	@Override
+	public CalendarEntry getEntryByExternalId(String externalEntryID) {
+		CalendarEntry entry = null;
+		try {
+			if (!StringUtil.isEmpty(externalEntryID)) {
+				CalendarEntryHome entryHome = (CalendarEntryHome) getIDOHome(CalendarEntry.class);
+				Collection<CalendarEntry> entryList = entryHome.findEntryByExternalId(externalEntryID);
+				if (entryList != null && !entryList.isEmpty()) {
+					Iterator<CalendarEntry> iter = entryList.iterator();
+					entry = iter.next();
+				}
+			}
+		} catch(FinderException e) {
+			entry = null;
+		} catch(RemoteException re) {
+			re.printStackTrace();
+		}
+		return entry;
+	}
+
 	/**
 	 *
 	 */
@@ -603,11 +627,20 @@ public class CalBusinessBean extends IBOServiceBean implements CalBusiness,UserG
 
 		return Boolean.TRUE;
 	}
+
 	/**
 	 * startDate and endDate have to be of the form  yyyy-MM-dd hh:mm:ss.S
 	 */
 	@Override
 	public void createNewEntry(String headline, User user, String type, String repeat, String startDate, String startHour, String startMinute, String endDate, String endHour, String endMinute, String attendees, String ledger, String description, String location) {
+		createNewEntry(headline,user, type, repeat, startDate, startHour, startMinute, endDate, endHour, endMinute, attendees, ledger, description, location, null);
+	}
+
+	/**
+	 * startDate and endDate have to be of the form  yyyy-MM-dd hh:mm:ss.S
+	 */
+	@Override
+	public void createNewEntry(String headline, User user, String type, String repeat, String startDate, String startHour, String startMinute, String endDate, String endHour, String endMinute, String attendees, String ledger, String description, String location, String recurrence) {
 		CalendarEntryGroup entryGroup = null;
 //		if(repeat != null && !repeat.equals("")) {
 			try {

@@ -633,14 +633,14 @@ public class CalBusinessBean extends IBOServiceBean implements CalBusiness,UserG
 	 */
 	@Override
 	public void createNewEntry(String headline, User user, String type, String repeat, String startDate, String startHour, String startMinute, String endDate, String endHour, String endMinute, String attendees, String ledger, String description, String location) {
-		createNewEntry(headline,user, type, repeat, startDate, startHour, startMinute, endDate, endHour, endMinute, attendees, ledger, description, location, null);
+		createNewEntry(headline,user, type, repeat, startDate, startHour, startMinute, endDate, endHour, endMinute, attendees, ledger, description, location, null, null, null);
 	}
 
 	/**
 	 * startDate and endDate have to be of the form  yyyy-MM-dd hh:mm:ss.S
 	 */
 	@Override
-	public void createNewEntry(String headline, User user, String type, String repeat, String startDate, String startHour, String startMinute, String endDate, String endHour, String endMinute, String attendees, String ledger, String description, String location, String recurrence) {
+	public void createNewEntry(String headline, User user, String type, String repeat, String startDate, String startHour, String startMinute, String endDate, String endHour, String endMinute, String attendees, String ledger, String description, String location, String recurrence, String calendarId, String externalEventId) {
 		CalendarEntryGroup entryGroup = null;
 //		if(repeat != null && !repeat.equals("")) {
 			try {
@@ -736,6 +736,9 @@ public class CalBusinessBean extends IBOServiceBean implements CalBusiness,UserG
 				entry.setRepeat(repeat);
 				entry.setDate(startTime);
 				entry.setEndDate(endOfEntryTime);
+				entry.setEventRecurrence(recurrence);
+				entry.setCalendarId(calendarId);
+				entry.setExternalEventId(externalEventId);
 				if(groupID != null) {
 					entry.setGroupID(groupID.intValue());
 				}

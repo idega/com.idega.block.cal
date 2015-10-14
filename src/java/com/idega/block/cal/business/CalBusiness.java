@@ -205,7 +205,7 @@ public interface CalBusiness extends IBOService, UserGroupPlugInBusiness {
 	 */
 	public void createNewEntry(String headline, User user, String type, String repeat, String startDate,
 			String startHour, String startMinute, String endDate, String endHour, String endMinute, String attendees,
-			String ledger, String description, String location, String recurrence);
+			String ledger, String description, String location, String recurrence, String calendarId, String externalEventId);
 
 	/**
 	 * @see com.idega.block.cal.business.CalBusinessBean#createNewEntry

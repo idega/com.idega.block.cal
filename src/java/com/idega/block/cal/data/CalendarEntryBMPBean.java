@@ -251,7 +251,7 @@ public void setEntryGroupID(int entryGroupID) {
 
   @Override
   public void setExternalEventId(String externalEvent) {
-  	setColumn(getColumnNameCalendarId(), externalEvent);
+  	setColumn(getColumnNameExternalEventId(), externalEvent);
   }
 
   @Override

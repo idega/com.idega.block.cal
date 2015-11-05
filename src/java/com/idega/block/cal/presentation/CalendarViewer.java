@@ -132,8 +132,8 @@ public class CalendarViewer extends GroupViewer {
 		files.add(iwb.getVirtualPathWithFileNameString("javascript/schedule.js"));
 
 		//	DWR
-		files.add(CalendarConstants.CALENDAR_SERVICE_DWR_INTERFACE_SCRIPT);
 		files.add(CoreConstants.DWR_ENGINE_SCRIPT);
+		files.add(CalendarConstants.CALENDAR_SERVICE_DWR_INTERFACE_SCRIPT);
 		files.add("/dwr/interface/ScheduleSession.js");
 
 		addScriptFiles(iwc, files);

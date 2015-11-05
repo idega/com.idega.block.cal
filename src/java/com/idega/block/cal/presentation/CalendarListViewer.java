@@ -11,45 +11,46 @@ import com.idega.presentation.Layer;
 import com.idega.util.CoreConstants;
 
 public class CalendarListViewer extends Block {
-	
+
 	private String calendarListContainerId = "local_calendar_list_container_id";
-	
+
+	@Override
 	public void main(IWContext iwc) {
 		Layer main = new Layer();
-		
+
 		Layer listContainer = new Layer();
 		listContainer.setId(calendarListContainerId);
 		main.add(listContainer);
-		
+
 		addJavaScript(iwc);
-		
+
 		add(main);
 	}
 	private void addJavaScript(IWContext iwc) {
 		IWBundle iwb = getBundle(iwc);
-		
+
 		AddResource resourceAdder = AddResourceFactory.getInstance(iwc);
-		
+
 //		//	"Helpers"
 		resourceAdder.addJavaScriptAtPosition(iwc, AddResource.HEADER_BEGIN,iwb.getVirtualPathWithFileNameString("javascript/CalendarList.js"));
 		resourceAdder.addJavaScriptAtPosition(iwc, AddResource.HEADER_BEGIN,iwb.getVirtualPathWithFileNameString("javascript/cal.js"));
-		
+
 		//	DWR
-		resourceAdder.addJavaScriptAtPosition(iwc, AddResource.HEADER_BEGIN, CalendarConstants.CALENDAR_SERVICE_DWR_INTERFACE_SCRIPT);
 		resourceAdder.addJavaScriptAtPosition(iwc, AddResource.HEADER_BEGIN, CoreConstants.DWR_ENGINE_SCRIPT);
-		
+		resourceAdder.addJavaScriptAtPosition(iwc, AddResource.HEADER_BEGIN, CalendarConstants.CALENDAR_SERVICE_DWR_INTERFACE_SCRIPT);
+
 		resourceAdder.addStyleSheet(iwc, AddResource.HEADER_BEGIN, iwb.getVirtualPathWithFileNameString("style/cal.css"));
 
-		
+
 //		//	Actions to be performed on page loaded event
 		StringBuffer action = new StringBuffer("registerEvent(window, 'load', function() {loadLocalCalendarList('");
 		action.append(calendarListContainerId).append("')});");
-		
+
 		StringBuffer scriptString = new StringBuffer();
 		scriptString.append("<script type=\"text/javascript\" > \n")
 		.append("\t").append(action).append(" \n")
 		.append("</script> \n");
-		 
+
 		add(scriptString.toString());
 	}
 	public String getCalendarListContainerId() {
@@ -58,6 +59,7 @@ public class CalendarListViewer extends Block {
 	public void setCalendarListContainerId(String calendarListContainerId) {
 		this.calendarListContainerId = calendarListContainerId;
 	}
+	@Override
 	public String getBundleIdentifier()	{
 		return CalendarConstants.IW_BUNDLE_IDENTIFIER;
 	}

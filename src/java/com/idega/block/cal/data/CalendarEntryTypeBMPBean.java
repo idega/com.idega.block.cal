@@ -9,7 +9,9 @@ package com.idega.block.cal.data;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
+import java.util.logging.Level;
 
 import javax.ejb.FinderException;
 
@@ -90,12 +92,20 @@ public class CalendarEntryTypeBMPBean extends com.idega.data.GenericEntity imple
   	List result = new ArrayList(super.idoFindAllIDsOrderedBySQL("CAL_TYPE_NAME"));
   	return result;
   }
-  
-  public Collection ejbFindTypeByName(String name) throws FinderException {
-  	IDOQuery query = idoQueryGetSelect();
-  	query.appendWhereEqualsQuoted("CAL_TYPE_NAME", name);
-  	return super.idoFindPKsByQuery(query);
-  }
+ 
+	public Collection<Object> ejbFindTypeByName(String name) {
+		IDOQuery query = idoQueryGetSelect();
+		query.appendWhereEqualsQuoted("CAL_TYPE_NAME", name);
+
+		try {
+			return super.idoFindPKsByQuery(query);
+		} catch (FinderException e) {
+			getLogger().log(Level.WARNING,
+					"Failed to get primary keys by query: " + query.toString());
+		}
+
+		return Collections.emptyList();
+	}
   
   public Collection ejbFindTypeById(int id) throws FinderException{
   	Collection result = new ArrayList(1);

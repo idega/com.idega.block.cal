@@ -2,6 +2,7 @@ package com.idega.block.cal.data;
 
 import java.sql.Timestamp;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 import javax.ejb.FinderException;
@@ -44,12 +45,19 @@ public interface CalendarEntry extends com.idega.data.IDOEntity
  public void setExternalEventId(String externalEvent);
  public void setEventRecurrence(String eventRecurrence);
 
- public Collection<CalendarEntry> getEntriesByEventsIds(List<String> eventsIds);
-
  public Collection<CalendarEntry> getEntriesByEventsIdsAndGroupsIds(List<String> eventsIds, List<String> groupsIds);
 
  public Collection<CalendarEntry> getEntriesByLedgersIdsAndGroupsIds(List<String> ledgersIds, List<String> groupsIds);
 
- public Collection<CalendarEntry> ejbFindEntriesByCriteria(String calendarId, List<String> groupsIds, List<String> userIds, Timestamp from, Timestamp to) throws FinderException;
+ public Collection<Object> ejbFindEntriesByCriteria(String calendarId, List<String> groupsIds, List<String> userIds, Timestamp from, Timestamp to) throws FinderException;
 
+	/**
+	 * 
+	 * @param calendarEntryTypes is {@link Collection} of 
+	 * {@link CalendarEntryType#getPrimaryKey()}, not <code>null</code>;
+	 * @return {@link Collection} of {@link CalendarEntry#getPrimaryKey()}
+	 * or {@link Collections#emptyList()} on failure;
+	 * @author <a href="mailto:martynas@idega.is">Martynas Stakė</a>
+	 */
+	Collection<Object> ejbFindByTypes(List<String> calendarEntryTypes);
 }

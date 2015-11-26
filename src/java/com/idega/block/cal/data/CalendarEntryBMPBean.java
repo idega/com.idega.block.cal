@@ -5,7 +5,9 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
+import java.util.logging.Level;
 
 import javax.ejb.FinderException;
 
@@ -14,6 +16,7 @@ import com.idega.data.GenericEntity;
 import com.idega.data.IDOAddRelationshipException;
 import com.idega.data.IDOQuery;
 import com.idega.data.IDORelationshipException;
+import com.idega.data.IDOUtil;
 import com.idega.data.query.Column;
 import com.idega.data.query.InCriteria;
 import com.idega.data.query.MatchCriteria;
@@ -22,6 +25,8 @@ import com.idega.data.query.Order;
 import com.idega.data.query.SelectQuery;
 import com.idega.data.query.Table;
 import com.idega.user.data.User;
+import com.idega.user.data.bean.Group;
+import com.idega.util.IWTimestamp;
 import com.idega.util.ListUtil;
 import com.idega.util.StringUtil;
 
@@ -269,16 +274,6 @@ public void setEntryGroupID(int entryGroupID) {
   	}
   }
 
-  @Override
-public Collection<CalendarEntry> getEntriesByEventsIds(List<String> eventsIds) {
-	  try {
-		return ejbFindEntriesByEventsIds(eventsIds);
-	  } catch (Exception e) {
-		e.printStackTrace();
-		return null;
-	  }
-  }
-
   //ejbFind...
   public Collection ejbFindEntries() throws FinderException{
   	List result = new ArrayList(super.idoFindAllIDsOrderedBySQL("CAL_ENTRY_NAME"));
@@ -289,11 +284,39 @@ public Collection<CalendarEntry> getEntriesByEventsIds(List<String> eventsIds) {
   	query.appendWhereEqualsQuoted("CAL_ENTRY_NAME",name);
   	return super.idoFindPKsByQuery(query);
   }
-  public Collection ejbFindEntryByExternalId(String externalId) throws FinderException{
-  	IDOQuery query = idoQueryGetSelect();
-  	query.appendWhereEqualsQuoted(getColumnNameExternalEventId(), externalId);
-  	return super.idoFindPKsByQuery(query);
-  }
+
+	/**
+	 * 
+	 * @param externalIds is {@link Collection} of 
+	 * {@link CalendarEntry#getExternalEventId()}, not <code>null</code>;
+	 * @return {@link Collection} of {@link CalendarEntry#getPrimaryKey()}s
+	 * or {@link Collections#emptyList()} on failure;
+	 * @author <a href="mailto:martynas@idega.is">Martynas Stakė</a>
+	 */
+	public Collection<Object> ejbFindEntryByExternalId(
+			Collection<String> externalIds) {
+		if (!ListUtil.isEmpty(externalIds)) {
+			String commaSeparatedList = IDOUtil.getInstance()
+					.convertCollectionOfStringsToCommaseparatedString(
+							externalIds);
+
+			StringBuilder query = new StringBuilder();
+			query.append("SELECT ce.CAL_ENTRY_ID FROM CAL_ENTRY ce ");
+			query.append("WHERE ce.CAL_EXT_EVENT_ID IN (")
+					.append(commaSeparatedList).append(");");
+
+			try {
+				return idoFindPKsBySQL(query.toString());
+			} catch (FinderException e) {
+				java.util.logging.Logger.getLogger(getClass().getName()).log(
+						Level.WARNING, 
+						"Failed to get primary keys by query: " + query.toString());
+			}
+		}
+
+		return Collections.emptyList();
+	}
+
   public Collection ejbFindEntryById(int id) throws FinderException{
   	Collection result = new ArrayList(1);
   	result.add(idoFindOnePKByColumnBySQL(getIDColumnName(),Integer.toString(id)));
@@ -338,14 +361,33 @@ public Collection<CalendarEntry> getEntriesByEventsIds(List<String> eventsIds) {
 	  	return super.idoFindPKsByQuery(query);
   }
 
-  private Collection<CalendarEntry> ejbFindEntriesByEventsIds(List<String> eventsIds) throws Exception {
-	  	IDOQuery query = idoQueryGetSelect();
-	  	query.appendWhereEquals(getColumnNameEntryTypeID(), eventsIds.get(0));
-	  	for (int i = 1; i < eventsIds.size(); i++) {
-	  		query.appendOrEquals(getColumnNameEntryTypeID(), eventsIds.get(i));
+	/*
+	 * (non-Javadoc)
+	 * @see com.idega.block.cal.data.CalendarEntry#ejbFindByTypes(java.util.List)
+	 */
+	@Override
+	public Collection<Object> ejbFindByTypes(List<String> calendarEntryTypes) {
+		if (!ListUtil.isEmpty(calendarEntryTypes)) {
+			String commaSeparatedList = IDOUtil.getInstance()
+					.convertCollectionOfStringsToCommaseparatedString(
+							calendarEntryTypes);
+
+			StringBuilder query = new StringBuilder();
+			query.append("SELECT ce.CAL_ENTRY_ID FROM CAL_ENTRY ce ");
+			query.append("WHERE ce.CAL_TYPE_ID IN (")
+					.append(commaSeparatedList).append(");");
+
+			try {
+				return idoFindPKsBySQL(query.toString());
+			} catch (FinderException e) {
+				java.util.logging.Logger.getLogger(getClass().getName()).log(
+						Level.WARNING,
+						"Failed to get entities by query: '" + query + "'");
+			}
 		}
-	  	return super.idoFindPKsByQuery(query);
-  }
+
+		return Collections.emptyList();
+	}
 
   private Collection<CalendarEntry> ejbFindEntriesByEventsIdsAndGroupsIds(List<String> eventsIds, List<String> groupsIds) throws Exception {
 	  IDOQuery query = idoQueryGetSelect();
@@ -499,7 +541,7 @@ public Collection<CalendarEntry> getEntriesByLedgersIdsAndGroupsIds(List<String>
   }
 
   @Override
-  public Collection<CalendarEntry> ejbFindEntriesByCriteria(String calendarId, List<String> groupsIds, List<String> userIds, Timestamp from, Timestamp to) throws FinderException {
+  public Collection<Object> ejbFindEntriesByCriteria(String calendarId, List<String> groupsIds, List<String> userIds, Timestamp from, Timestamp to) throws FinderException {
 	  Table table = new Table(this);
 	  SelectQuery query = new SelectQuery(table);
 	  query.addColumn(new Column(table, getIDColumnName()));
@@ -536,4 +578,108 @@ public Collection<CalendarEntry> getEntriesByLedgersIdsAndGroupsIds(List<String>
 	  return this.idoFindPKsByQuery(query);
   }
 
+	/**
+	 * 
+	 * @param calendarId, skipped if <code>null</code>;
+	 * @param groupsIds is {@link Collection} of {@link Group#getId()}, 
+	 * skipped if <code>null</code>;
+	 * @param userIds is {@link Collection} of {@link User#getId()}, 
+	 * skipped if <code>null</code>;
+	 * @param from is start {@link Date} of event, skipped if <code>null</code>;
+	 * @param to is end {@link Date} of event, skipped if <code>null</code>;
+	 * @param extendedResultSet when <code>true</code> events, 
+	 * which are already happening will be included or which going to end later, 
+	 * but it going to start today;
+	 * @return {@link Collection} of {@link CalendarEntry#getPrimaryKey()} or
+	 * {@link Collections#emptyList()} on failure;
+	 * @author <a href="mailto:martynas@idega.is">Martynas Stakė</a>
+	 */
+	public Collection<Object> ejbFindBy(
+			String calendarId,
+			List<String> groupsIds, 
+			List<String> userIds, 
+			Timestamp from,
+			Timestamp to,
+			boolean extendedResultSet) {
+		StringBuilder query = new StringBuilder();
+		query.append("SELECT ce.CAL_ENTRY_ID FROM CAL_ENTRY ce ");
+
+		/*
+		 * Lazy bones
+		 */
+		query.append("WHERE ce.CAL_CALENDAR_ID IS NOT NULL ");
+
+		/*
+		 * Calendar id
+		 */
+		if (!StringUtil.isEmpty(calendarId)) {
+			query.append("AND ce.CAL_CALENDAR_ID = '").append(calendarId).append("' ");
+		}
+
+		/*
+		 * Group id
+		 */
+		if (!ListUtil.isEmpty(groupsIds)) {
+			String commaSeparatedList = IDOUtil.getInstance()
+					.convertCollectionOfStringsToCommaseparatedString(groupsIds);
+			query.append("AND ce.IC_GROUP_ID IN (").append(commaSeparatedList).append(") ");
+		}
+
+		/*
+		 * User id
+		 */
+		if (!ListUtil.isEmpty(userIds)) {
+			String commaSeparatedList = IDOUtil.getInstance()
+					.convertCollectionOfStringsToCommaseparatedString(userIds);
+			query.append("AND ce.IC_USER_ID IN (").append(commaSeparatedList).append(") ");
+		}
+
+		/*
+		 * Date from
+		 */
+		if (from != null) {
+			IWTimestamp fromTimestamp = new IWTimestamp(from);
+			query.append("AND (ce.CAL_ENTRY_DATE >= '").append(fromTimestamp.toSQLString()).append("' ");
+			if (extendedResultSet) {
+				query.append("OR (");
+				query.append("ce.CAL_ENTRY_DATE < '").append(fromTimestamp.toSQLString());
+				query.append("' AND ");
+				query.append("ce.CAL_ENTRY_END_DATE > '").append(fromTimestamp.toSQLString());
+				query.append("')");
+			}
+
+			query.append(") ");
+		}
+
+		/*
+		 * Date to
+		 */
+		if (to != null) {
+			IWTimestamp toTimestamp = new IWTimestamp(to);
+			query.append("AND (ce.CAL_ENTRY_END_DATE <= '").append(toTimestamp.toSQLString()).append("' ");
+			if (extendedResultSet) {
+				query.append("OR (");
+				query.append("ce.CAL_ENTRY_END_DATE > '").append(toTimestamp.toSQLString());
+				query.append("' AND ");
+				query.append("ce.CAL_ENTRY_DATE < '").append(toTimestamp.toSQLString());
+				query.append("')");
+			}
+
+			query.append(") ");
+		}
+
+		/*
+		 * Order
+		 */
+		query.append("ORDER BY ce.CAL_ENTRY_DATE; ");
+
+		try {
+			return idoFindPKsBySQL(query.toString());
+		} catch (FinderException e) {
+			java.util.logging.Logger.getLogger(getClass().getName()).log(Level.WARNING, 
+					"Failed to get results by query: '" + query.toString() + "'");
+		}
+
+		return Collections.emptyList();
+	}
 }

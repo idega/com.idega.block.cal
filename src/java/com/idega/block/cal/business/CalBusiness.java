@@ -46,11 +46,6 @@ public interface CalBusiness extends IBOService, UserGroupPlugInBusiness {
 	public CalendarEntry getEntry(int entryID);
 
 	/**
-	 * @see com.idega.block.cal.business.CalBusinessBean#getEntryByExternalId
-	 */
-	public CalendarEntry getEntryByExternalId(String externalEventId);
-
-	/**
 	 * @see com.idega.block.cal.business.CalBusinessBean#getEntriesByTimestamp
 	 */
 	public Collection getEntriesByTimestamp(Timestamp stamp);

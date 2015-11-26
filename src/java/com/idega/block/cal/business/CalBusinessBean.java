@@ -49,6 +49,7 @@ import com.idega.util.CoreUtil;
 import com.idega.util.IWTimestamp;
 import com.idega.util.ListUtil;
 import com.idega.util.StringUtil;
+import com.idega.util.timer.DateUtil;
 
 /**
  * Description: <br>
@@ -71,31 +72,6 @@ public class CalBusinessBean extends IBOServiceBean implements CalBusiness,UserG
 		try {
 			CalendarEntryHome entryHome = (CalendarEntryHome) getIDOHome(CalendarEntry.class);
 			entry = entryHome.findByPrimaryKey(id);
-		} catch(FinderException e) {
-			entry = null;
-		} catch(RemoteException re) {
-			re.printStackTrace();
-		}
-		return entry;
-	}
-
-	/**
-	 * @return A calendar entry with the specific external entry id
-	 */
-	@Override
-	public CalendarEntry getEntryByExternalId(String externalEntryID) {
-		CalendarEntry entry = null;
-		try {
-			if (!StringUtil.isEmpty(externalEntryID)) {
-				CalendarEntryHome entryHome = (CalendarEntryHome) getIDOHome(CalendarEntry.class);
-				Collection<CalendarEntry> entryList = entryHome.findEntryByExternalId(externalEntryID);
-				if (entryList != null && !entryList.isEmpty()) {
-					Iterator<CalendarEntry> iter = entryList.iterator();
-					entry = iter.next();
-				}
-			}
-		} catch(FinderException e) {
-			entry = null;
 		} catch(RemoteException re) {
 			re.printStackTrace();
 		}
@@ -248,11 +224,6 @@ public class CalBusinessBean extends IBOServiceBean implements CalBusiness,UserG
 
 	private CalendarEntryTypeHome calendarEntryTypeHome = null;
 
-	/**
-	 * FIXME document this
-	 * @return
-	 * @author <a href="mailto:martynas@idega.com">Martynas Stakė</a>
-	 */
 	protected CalendarEntryTypeHome getCalendarEntryTypeHome() {
 		if (this.calendarEntryTypeHome == null) {
 			try {
@@ -279,16 +250,8 @@ public class CalBusinessBean extends IBOServiceBean implements CalBusiness,UserG
 			return null;
 		}
 
-		Collection<?> typesByName = null;
-		try {
-			typesByName = getCalendarEntryTypeHome()
-					.findTypeByName(entryTypeName);
-		} catch (FinderException e) {
-			getLogger().log(Level.WARNING,
-					"Unable to find such type '" +
-					entryTypeName + "' cause of: ", e);
-		}
-
+		Collection<?> typesByName = getCalendarEntryTypeHome()
+					.findTypesByName(entryTypeName);
 		if (ListUtil.isEmpty(typesByName)) {
 			return null;
 		}
@@ -628,6 +591,9 @@ public class CalBusinessBean extends IBOServiceBean implements CalBusiness,UserG
 		return Boolean.TRUE;
 	}
 
+	
+	
+	
 	/**
 	 * startDate and endDate have to be of the form  yyyy-MM-dd hh:mm:ss.S
 	 */
@@ -655,7 +621,7 @@ public class CalBusinessBean extends IBOServiceBean implements CalBusiness,UserG
 				e.printStackTrace();
 			}
 //		}
-			IWTimestamp st = new IWTimestamp(startDate);
+			IWTimestamp st = new IWTimestamp(DateUtil.getDateTime(startDate));
 		Timestamp startTime = st.getTimestamp();
 		//modifications of the time properties of the start timestamp
 		if(startHour != null && !startHour.equals("")) {
@@ -668,7 +634,7 @@ public class CalBusinessBean extends IBOServiceBean implements CalBusiness,UserG
 		}
 		startTime.setSeconds(0);
 //		startTime.setNanos(0);
-		IWTimestamp et = new IWTimestamp(endDate);
+		IWTimestamp et = new IWTimestamp(DateUtil.getDateTime(endDate));
 		Timestamp endTime = et.getTimestamp();
 		//modifications of the time properties of the end timestamp
 		if(endHour != null && !endHour.equals("")) {
@@ -728,6 +694,7 @@ public class CalBusinessBean extends IBOServiceBean implements CalBusiness,UserG
 				CalendarEntryType entryType = getEntryTypeByName(type);
 				Integer entryTypePK = (Integer) entryType.getPrimaryKey();
 				CalendarEntryHome entryHome = (CalendarEntryHome) getIDOHome(CalendarEntry.class);
+				
 				CalendarEntry entry = entryHome.create();
 				entry.setName(headline);
 				entry.setUserID(userID.intValue());
@@ -748,6 +715,7 @@ public class CalBusinessBean extends IBOServiceBean implements CalBusiness,UserG
 				entry.setDescription(description);
 				entry.setLocation(location);
 				entry.store();
+
 				if(entryGroup !=null) {
 					entryGroup.addEntry(entry);
 					entry.setEntryGroupID(entryGroup.getEntryGroupID());
@@ -860,13 +828,14 @@ public class CalBusinessBean extends IBOServiceBean implements CalBusiness,UserG
 		}
 
 	}
+
 	@Override
 	public void updateEntry(int entryID, String headline, User user, String type, String repeat, String startDate, String startHour, String startMinute, String endDate, String endHour, String endMinute, String attendees, String ledger, String description, String location, String oneOrMany) {
 		CalendarEntry entry = getEntry(entryID);
 
 		IWTimestamp startD = new IWTimestamp(startDate);
 		Timestamp startTime = startD.getTimestamp();//Timestamp.valueOf(startDate);
-		//modifications of the time properties of the start timestamp
+		//modifications of the time properties of the updateEntrystart timestamp
 		if(startHour != null && !startHour.equals("")) {
 			Integer sH =new Integer(startHour);
 			startTime.setHours(sH.intValue());
@@ -1243,7 +1212,7 @@ public class CalBusinessBean extends IBOServiceBean implements CalBusiness,UserG
 		List<CalendarEntry> entries = null;
 		try {
 			CalendarEntryHome entryHome = (CalendarEntryHome) getIDOHome(CalendarEntry.class);
-			Collection<CalendarEntry> foundEntries = entryHome.getEntriesByEventsIds(eventsIds);
+			Collection<CalendarEntry> foundEntries = entryHome.findByTypes(eventsIds);
 			if (foundEntries != null) {
 				entries = new ArrayList(foundEntries);
 			}

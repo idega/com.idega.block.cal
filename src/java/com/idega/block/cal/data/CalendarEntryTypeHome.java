@@ -12,8 +12,7 @@ public interface CalendarEntryTypeHome extends com.idega.data.IDOHome {
 	 */
 	public CalendarEntryType create();
 
-	public CalendarEntryType findByPrimaryKey(Object pk)
-			throws javax.ejb.FinderException;
+	public CalendarEntryType findByPrimaryKey(Object pk);
 
 	public java.util.Collection findTypeById(int p0)
 			throws javax.ejb.FinderException;

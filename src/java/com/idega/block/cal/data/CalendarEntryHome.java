@@ -85,7 +85,7 @@ public interface CalendarEntryHome extends com.idega.data.IDOHome
 	 * <p>Created or updates {@link CalendarEntry}</p>
 	 * @param userId is {@link User#getId()}, not <code>null</code>;
 	 * @param headline is the name of event, not <code>null</code>;
-	 * @param entryTypeName is {@link CalendarEntryType#getName()}, 
+	 * @param entryTypeId is {@link CalendarEntryType#getPrimaryKey()}, 
 	 * usually one of:
 	 * <li>general</li>
 	 * <li>practice</li>, 'general' is default value;
@@ -107,7 +107,7 @@ public interface CalendarEntryHome extends com.idega.data.IDOHome
 	 * @return entity or <code>null</code> on failure;
 	 * @author <a href="mailto:martynas@idega.is">Martynas Stakė</a>
 	 */
-	CalendarEntry update(Integer userId, String headline, String entryTypeName,
+	CalendarEntry update(Integer userId, String headline, Integer entryTypeId,
 			Date startTime, Date endTime, Integer attendeesGroupId,
 			String ledger, String description, String location, String calendarId,
 			String externalEventId, String reccurenceGroupName);

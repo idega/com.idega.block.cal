@@ -92,11 +92,23 @@ public java.util.Collection findTypes()throws javax.ejb.FinderException{
 	return this.getEntityCollectionForPrimaryKeys(ids);
 }
 
- public CalendarEntryType findByPrimaryKey(Object pk) throws javax.ejb.FinderException{
-  return (CalendarEntryType) super.findByPrimaryKeyIDO(pk);
- }
+	/*
+	 * (non-Javadoc)
+	 * @see com.idega.block.cal.data.CalendarEntryTypeHome#findByPrimaryKey(java.lang.Object)
+	 */
+	public CalendarEntryType findByPrimaryKey(Object pk) {
+		if (pk != null) {
+			try {
+				return (CalendarEntryType) super.findByPrimaryKeyIDO(pk);
+			} catch (FinderException e) {
+				java.util.logging.Logger.getLogger(getClass().getName()).log(
+						Level.WARNING, "Failed to get entity by primary key: " + pk);
+			}
+		}
 
-	
+		return null;
+	}
+
 	/*
 	 * (non-Javadoc)
 	 * @see com.idega.block.cal.data.CalendarEntryTypeHome#update(java.lang.String)

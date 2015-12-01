@@ -173,7 +173,7 @@ public class CalendarEntryHomeImpl extends com.idega.data.IDOFactory implements 
 	public CalendarEntry update(
 			Integer userId,
 			String headline,
-			String entryTypeName,
+			Integer entryTypeId,
 			Date startTime,
 			Date endTime,
 			Integer attendeesGroupId,
@@ -186,7 +186,7 @@ public class CalendarEntryHomeImpl extends com.idega.data.IDOFactory implements 
 		return update(
 				getUserDAO().getUser(userId), 
 				headline, 
-				getCalendarEntryTypeHome().findTypeByName(entryTypeName), 
+				getCalendarEntryTypeHome().findByPrimaryKey(entryTypeId), 
 				startTime, 
 				endTime, 
 				getGroupDAO().findGroup(attendeesGroupId), 

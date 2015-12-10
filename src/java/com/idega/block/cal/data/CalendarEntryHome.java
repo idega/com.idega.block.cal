@@ -8,6 +8,7 @@ import java.util.List;
 
 import javax.ejb.FinderException;
 
+import com.idega.block.calendar.bean.Recurrence;
 import com.idega.user.data.bean.Group;
 import com.idega.user.data.bean.User;
 
@@ -98,19 +99,12 @@ public interface CalendarEntryHome extends com.idega.data.IDOHome
 	 * @param location
 	 * @param calendarId
 	 * @param externalEventId
-	 * @param reccurenceGroupName is name of recurrence, one of:
-	 * <li>none</li>
-	 * <li>daily</li>
-	 * <li>weekly</li>
-	 * <li>monthly</li>
-	 * <li>yearly</li>
-	 * @return entity or <code>null</code> on failure;
-	 * @author <a href="mailto:martynas@idega.is">Martynas Stakė</a>
+	 * @return entities or {@link Collections#emptyList()} on failure
 	 */
-	CalendarEntry update(Integer userId, String headline, Integer entryTypeId,
+	List<CalendarEntry> update(Integer userId, String headline, Integer entryTypeId,
 			Date startTime, Date endTime, Integer attendeesGroupId,
 			String ledger, String description, String location, String calendarId,
-			String externalEventId, String reccurenceGroupName);
+			String externalEventId, Recurrence recurrence);
 
 
  public Collection<CalendarEntry> getEntriesByEventsIdsAndGroupsIds(List<String> eventsIds, List<String> groupsIds);

@@ -2,11 +2,16 @@ package com.idega.block.cal.data;
 
 import java.rmi.RemoteException;
 import java.sql.Timestamp;
+import java.time.LocalDate;
+import java.time.LocalTime;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
+import java.util.TreeSet;
 import java.util.logging.Level;
 
 import javax.ejb.CreateException;
@@ -15,16 +20,20 @@ import javax.ejb.FinderException;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.idega.block.cal.presentation.CalendarEntryCreator;
+import com.idega.block.calendar.bean.Recurrence;
 import com.idega.data.IDOEntity;
 import com.idega.data.IDOLookup;
 import com.idega.data.IDOLookupException;
 import com.idega.data.IDOStoreException;
+import com.idega.data.SimpleQuerier;
 import com.idega.user.dao.GroupDAO;
 import com.idega.user.dao.UserDAO;
 import com.idega.user.data.bean.Group;
 import com.idega.user.data.bean.User;
 import com.idega.util.ListUtil;
+import com.idega.util.StringUtil;
 import com.idega.util.expression.ELUtil;
+import com.idega.util.timer.DateUtil;
 
 
 
@@ -138,7 +147,18 @@ public class CalendarEntryHomeImpl extends com.idega.data.IDOFactory implements 
 			entryType = getCalendarEntryTypeHome().update("general");
 		}
 
-		CalendarEntry entry = findEntryByExternalId(externalEventId);
+		CalendarEntry entry = null;
+
+		/*
+		 * Search for existing entry only when there is no recurrence,
+		 * otherwise the existing entries will be overwritten. Services like
+		 * Google creates only one entry of event with the id, Idega creates
+		 * multiple entries in a calendar entry group.
+		 */
+		if (reccurenceGroup.getName().equalsIgnoreCase("none")) {
+			entry = findEntryByExternalId(externalEventId);
+		}
+
 		if (entry == null) {
 			entry = create();
 		}
@@ -183,12 +203,146 @@ public class CalendarEntryHomeImpl extends com.idega.data.IDOFactory implements 
 		return null;
 	}
 
+	/**
+	 * 
+	 * <p>Calculates next day of week to store</p>
+	 * @param iteratedDate is a starting point to calculate, not <code>null</code>
+	 * @param recurrence is rules defining how the result should be calculated, 
+	 * not <code>null</code>;
+	 * @return iterated date;
+	 */
+	private LocalDate getNextWeekDate(LocalDate iteratedDate, Recurrence recurrence) {
+		int currentDayValue = iteratedDate.getDayOfWeek().getValue();
+
+		TreeSet<Integer> selectedDaysOfWeek = recurrence.getWeekDays().getSelectedValues();
+		if (!ListUtil.isEmpty(selectedDaysOfWeek)) {
+
+			/*
+			 * Get next day on the same week
+			 */
+			Iterator<Integer> iterator = selectedDaysOfWeek.iterator();
+			while (iterator.hasNext()) {
+				Integer selectedDay = iterator.next();
+				if (selectedDay > currentDayValue) {
+					return iteratedDate.plusDays(selectedDay - currentDayValue);
+				}
+			}
+
+			/*
+			 * Get day on the next week
+			 */
+			iterator = selectedDaysOfWeek.iterator();
+			iteratedDate = iteratedDate.plusDays(7 - currentDayValue);
+			iteratedDate = iteratedDate.plusWeeks(recurrence.getRate() - 1);
+			iteratedDate = iteratedDate.plusDays(iterator.next());
+			return iteratedDate;
+		}
+
+		return iteratedDate.plusWeeks(recurrence.getRate());
+	}
+
+	public List<CalendarEntry> update(
+			User user,
+			String headline,
+			CalendarEntryType entryType,
+			Date startDate,
+			Date endDate,
+			Group attendeesGroup,
+			String ledger,
+			String description,
+			String location,
+			String calendarId,
+			String externalEventId,
+			Recurrence reccurence) {
+
+		ArrayList<CalendarEntry> entries = new ArrayList<CalendarEntry>();
+
+		/*
+		 * Cleaning old records before creating new ones
+		 */
+		CalendarEntryGroup reccurenceGroup = null;
+		if (!StringUtil.isEmpty(externalEventId)) {
+			CalendarEntry existingEntry = findEntryByExternalId(externalEventId);
+			if (existingEntry != null) {
+				reccurenceGroup = getCalendarEntryGroupHome().findByPrimaryKey(
+						existingEntry.getEntryGroupID());
+				if (reccurenceGroup != null) {
+					try {
+						removeByGroup(reccurenceGroup);
+						reccurenceGroup.remove();
+					} catch (Exception e) {
+						java.util.logging.Logger.getLogger(getClass().getName()).log(
+								Level.WARNING, "Failed to remove old records, cause of:", e);
+						return entries;
+					}
+				}
+			}
+		}
+
+		/* 
+		 * Creating new calendar recurrence group 
+		 */
+		reccurenceGroup = getCalendarEntryGroupHome().update(null, 
+				reccurence.getType(),
+				Integer.valueOf(ledger));
+
+		LocalDate iterator = DateUtil.getDate(reccurence.getFrom());
+		LocalDate end = DateUtil.getDate(reccurence.getTo());
+
+		LocalTime startTime = DateUtil.getTime(startDate);
+		LocalTime endTime = DateUtil.getTime(endDate);
+
+		/*
+		 * Creating new events
+		 */
+		while (iterator.isBefore(end) || iterator.isEqual(end)) {
+			CalendarEntry entry = update(
+					user, 
+					headline, 
+					entryType, 
+					DateUtil.getDate(startTime, iterator), 
+					DateUtil.getDate(endTime, iterator), 
+					attendeesGroup, 
+					ledger, 
+					description, 
+					location, 
+					calendarId, 
+					externalEventId,
+					reccurenceGroup);
+			if (entry != null) {
+				entries.add(entry);
+			}
+
+			if (reccurenceGroup.getName().equalsIgnoreCase(CalendarEntryCreator.noRepeatFieldParameterName)) {
+				break;
+			}
+
+			if (reccurenceGroup.getName().equalsIgnoreCase(CalendarEntryCreator.dailyFieldParameterName)) {
+				iterator = iterator.plusDays(reccurence.getRate());
+			}
+
+			if (reccurenceGroup.getName().equalsIgnoreCase(CalendarEntryCreator.weeklyFieldParameterName)) {
+				iterator = getNextWeekDate(iterator, reccurence);
+			}
+
+			if (reccurenceGroup.getName().equalsIgnoreCase(CalendarEntryCreator.monthlyFieldParameterName)) {
+				iterator = iterator.plusMonths(reccurence.getRate());
+			}
+
+			if (reccurenceGroup.getName().equalsIgnoreCase(CalendarEntryCreator.yearlyFieldParameterName)) {
+				iterator = iterator.plusYears(reccurence.getRate());
+			}
+		}
+
+		return entries;
+	}
+
 	/*
 	 * (non-Javadoc)
 	 * @see com.idega.block.cal.data.CalendarEntryHome#update(java.lang.Integer, java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.Integer, java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.String)
 	 */
 	@Override
-	public CalendarEntry update(
+	public List<CalendarEntry> update(
 			Integer userId,
 			String headline,
 			Integer entryTypeId,
@@ -200,7 +354,7 @@ public class CalendarEntryHomeImpl extends com.idega.data.IDOFactory implements 
 			String location,
 			String calendarId,
 			String externalEventId,
-			String reccurenceGroupName) {
+			Recurrence recurrence) {
 		return update(
 				getUserDAO().getUser(userId), 
 				headline, 
@@ -208,8 +362,12 @@ public class CalendarEntryHomeImpl extends com.idega.data.IDOFactory implements 
 				startTime, 
 				endTime, 
 				getGroupDAO().findGroup(attendeesGroupId), 
-				ledger, description, location, calendarId, externalEventId, 
-				getCalendarEntryGroupHome().update(null, reccurenceGroupName, Integer.valueOf(ledger)));
+				ledger, 
+				description, 
+				location, 
+				calendarId, 
+				externalEventId, 
+				recurrence);
 	}
 
 	@Override

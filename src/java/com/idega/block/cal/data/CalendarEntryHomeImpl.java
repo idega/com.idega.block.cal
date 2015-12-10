@@ -89,6 +89,24 @@ public class CalendarEntryHomeImpl extends com.idega.data.IDOFactory implements 
 		return this.calendarEntryGroupHome;
 	}
 
+	public void removeByGroup(CalendarEntryGroup entryGroup) throws IllegalStateException {
+		if (entryGroup != null) {
+			StringBuilder removeQuery = new StringBuilder();
+			removeQuery.append("DELETE ce.*, ceceg.* ");
+			removeQuery.append("FROM cal_entry ce ");
+			removeQuery.append("JOIN cal_entry_cal_entry_group ceceg ");
+			removeQuery.append("ON ceceg.cal_entry_id = ce.cal_entry_id ");
+			removeQuery.append("AND ceceg.cal_entry_group_id = ").append(entryGroup.getPrimaryKey().toString());
+
+			try {
+				SimpleQuerier.executeUpdate(removeQuery.toString(), true);
+			} catch (Exception e) {
+				throw new IllegalStateException(
+						"Failed to execute remove by query: " + removeQuery.toString(), e);
+			}
+		}
+	}
+
 	/*
 	 * (non-Javadoc)
 	 * @see com.idega.block.cal.data.CalendarEntryHome#update(com.idega.user.data.bean.User, java.lang.String, com.idega.block.cal.data.CalendarEntryType, java.sql.Timestamp, java.sql.Timestamp, com.idega.user.data.bean.Group, java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.String, com.idega.block.cal.data.CalendarEntryGroup)

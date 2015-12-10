@@ -74,7 +74,7 @@ public java.util.Collection findTypeById(int p0)throws javax.ejb.FinderException
 	@Override
 	public CalendarEntryType findTypeByName(String entryTypeName) {
 		Collection<?> typesByName = findTypesByName(entryTypeName);
-		if (ListUtil.isEmpty(typesByName)) {
+		if (!ListUtil.isEmpty(typesByName)) {
 			for (Object o : typesByName) {
 				if (o instanceof CalendarEntryType) {
 					return (CalendarEntryType) o;

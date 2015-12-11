@@ -591,9 +591,9 @@ public class CalBusinessBean extends IBOServiceBean implements CalBusiness,UserG
 		return Boolean.TRUE;
 	}
 
-	
-	
-	
+
+
+
 	/**
 	 * startDate and endDate have to be of the form  yyyy-MM-dd hh:mm:ss.S
 	 */
@@ -694,7 +694,7 @@ public class CalBusinessBean extends IBOServiceBean implements CalBusiness,UserG
 				CalendarEntryType entryType = getEntryTypeByName(type);
 				Integer entryTypePK = (Integer) entryType.getPrimaryKey();
 				CalendarEntryHome entryHome = (CalendarEntryHome) getIDOHome(CalendarEntry.class);
-				
+
 				CalendarEntry entry = entryHome.create();
 				entry.setName(headline);
 				entry.setUserID(userID.intValue());
@@ -1449,6 +1449,11 @@ public class CalBusinessBean extends IBOServiceBean implements CalBusiness,UserG
 		}
 
 		return list;
+	}
+
+	@Override
+	public Integer getPracticeEventTypeId() {
+		return getIWMainApplication().getSettings().getInt("statistics_event_type", 2);
 	}
 
 }

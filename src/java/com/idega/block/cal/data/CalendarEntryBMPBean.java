@@ -286,8 +286,8 @@ public void setEntryGroupID(int entryGroupID) {
   }
 
 	/**
-	 * 
-	 * @param externalIds is {@link Collection} of 
+	 *
+	 * @param externalIds is {@link Collection} of
 	 * {@link CalendarEntry#getExternalEventId()}, not <code>null</code>;
 	 * @return {@link Collection} of {@link CalendarEntry#getPrimaryKey()}s
 	 * or {@link Collections#emptyList()} on failure;
@@ -309,7 +309,7 @@ public void setEntryGroupID(int entryGroupID) {
 				return idoFindPKsBySQL(query.toString());
 			} catch (FinderException e) {
 				java.util.logging.Logger.getLogger(getClass().getName()).log(
-						Level.WARNING, 
+						Level.WARNING,
 						"Failed to get primary keys by query: " + query.toString());
 			}
 		}
@@ -579,16 +579,16 @@ public Collection<CalendarEntry> getEntriesByLedgersIdsAndGroupsIds(List<String>
   }
 
 	/**
-	 * 
+	 *
 	 * @param calendarId, skipped if <code>null</code>;
-	 * @param groupsIds is {@link Collection} of {@link Group#getId()}, 
+	 * @param groupsIds is {@link Collection} of {@link Group#getId()},
 	 * skipped if <code>null</code>;
-	 * @param userIds is {@link Collection} of {@link User#getId()}, 
+	 * @param userIds is {@link Collection} of {@link User#getId()},
 	 * skipped if <code>null</code>;
 	 * @param from is start {@link Date} of event, skipped if <code>null</code>;
 	 * @param to is end {@link Date} of event, skipped if <code>null</code>;
-	 * @param extendedResultSet when <code>true</code> events, 
-	 * which are already happening will be included or which going to end later, 
+	 * @param extendedResultSet when <code>true</code> events,
+	 * which are already happening will be included or which going to end later,
 	 * but it going to start today;
 	 * @return {@link Collection} of {@link CalendarEntry#getPrimaryKey()} or
 	 * {@link Collections#emptyList()} on failure;
@@ -596,8 +596,9 @@ public Collection<CalendarEntry> getEntriesByLedgersIdsAndGroupsIds(List<String>
 	 */
 	public Collection<Object> ejbFindBy(
 			String calendarId,
-			List<String> groupsIds, 
-			List<String> userIds, 
+			List<String> groupsIds,
+			Integer eventTypeId,
+			List<String> userIds,
 			Timestamp from,
 			Timestamp to,
 			boolean extendedResultSet) {
@@ -623,6 +624,10 @@ public Collection<CalendarEntry> getEntriesByLedgersIdsAndGroupsIds(List<String>
 			String commaSeparatedList = IDOUtil.getInstance()
 					.convertCollectionOfStringsToCommaseparatedString(groupsIds);
 			query.append("AND ce.IC_GROUP_ID IN (").append(commaSeparatedList).append(") ");
+		}
+
+		if (eventTypeId != null) {
+			query.append("AND ce.").append(com.idega.block.cal.data.CalendarEntryTypeBMPBean.getColumnNameCalendarTypeID()).append(" = ").append(eventTypeId).append(" ");
 		}
 
 		/*
@@ -676,7 +681,7 @@ public Collection<CalendarEntry> getEntriesByLedgersIdsAndGroupsIds(List<String>
 		try {
 			return idoFindPKsBySQL(query.toString());
 		} catch (FinderException e) {
-			java.util.logging.Logger.getLogger(getClass().getName()).log(Level.WARNING, 
+			java.util.logging.Logger.getLogger(getClass().getName()).log(Level.WARNING,
 					"Failed to get results by query: '" + query.toString() + "'");
 		}
 

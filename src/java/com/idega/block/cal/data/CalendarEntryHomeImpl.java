@@ -37,7 +37,7 @@ import com.idega.util.timer.DateUtil;
 
 
 
-public class CalendarEntryHomeImpl extends com.idega.data.IDOFactory implements CalendarEntryHome {	
+public class CalendarEntryHomeImpl extends com.idega.data.IDOFactory implements CalendarEntryHome {
 
 	private static final long serialVersionUID = 6804879831234569243L;
 
@@ -89,8 +89,8 @@ public class CalendarEntryHomeImpl extends com.idega.data.IDOFactory implements 
 						.getHome(CalendarEntryGroup.class);
 			} catch (IDOLookupException e) {
 				java.util.logging.Logger.getLogger(getClass().getName()).log(
-						Level.WARNING, 
-						"Failed to get " + CalendarEntryGroupHome.class + 
+						Level.WARNING,
+						"Failed to get " + CalendarEntryGroupHome.class +
 						" cause of: ", e);
 			}
 		}
@@ -137,8 +137,8 @@ public class CalendarEntryHomeImpl extends com.idega.data.IDOFactory implements 
 
 		/* Calendar group can't be null */
 		if (reccurenceGroup == null) {
-			reccurenceGroup = getCalendarEntryGroupHome().update(null, 
-					CalendarEntryCreator.noRepeatFieldParameterName, 
+			reccurenceGroup = getCalendarEntryGroupHome().update(null,
+					CalendarEntryCreator.noRepeatFieldParameterName,
 					Integer.valueOf(ledger));
 		}
 
@@ -194,7 +194,7 @@ public class CalendarEntryHomeImpl extends com.idega.data.IDOFactory implements 
 			entry.store();
 			reccurenceGroup.addEntry(entry);
 
-			return entry; 
+			return entry;
 		} catch(IDOStoreException e) {
 			java.util.logging.Logger.getLogger(getClass().getName()).log(
 					Level.WARNING, "Failed to store entity, cause of:", e);
@@ -204,10 +204,10 @@ public class CalendarEntryHomeImpl extends com.idega.data.IDOFactory implements 
 	}
 
 	/**
-	 * 
+	 *
 	 * <p>Calculates next day of week to store</p>
 	 * @param iteratedDate is a starting point to calculate, not <code>null</code>
-	 * @param recurrence is rules defining how the result should be calculated, 
+	 * @param recurrence is rules defining how the result should be calculated,
 	 * not <code>null</code>;
 	 * @return iterated date;
 	 */
@@ -279,10 +279,10 @@ public class CalendarEntryHomeImpl extends com.idega.data.IDOFactory implements 
 			}
 		}
 
-		/* 
-		 * Creating new calendar recurrence group 
+		/*
+		 * Creating new calendar recurrence group
 		 */
-		reccurenceGroup = getCalendarEntryGroupHome().update(null, 
+		reccurenceGroup = getCalendarEntryGroupHome().update(null,
 				reccurence.getType(),
 				Integer.valueOf(ledger));
 
@@ -297,16 +297,16 @@ public class CalendarEntryHomeImpl extends com.idega.data.IDOFactory implements 
 		 */
 		while (iterator.isBefore(end) || iterator.isEqual(end)) {
 			CalendarEntry entry = update(
-					user, 
-					headline, 
-					entryType, 
-					DateUtil.getDate(startTime, iterator), 
-					DateUtil.getDate(endTime, iterator), 
-					attendeesGroup, 
-					ledger, 
-					description, 
-					location, 
-					calendarId, 
+					user,
+					headline,
+					entryType,
+					DateUtil.getDate(startTime, iterator),
+					DateUtil.getDate(endTime, iterator),
+					attendeesGroup,
+					ledger,
+					description,
+					location,
+					calendarId,
 					externalEventId,
 					reccurenceGroup);
 			if (entry != null) {
@@ -356,17 +356,17 @@ public class CalendarEntryHomeImpl extends com.idega.data.IDOFactory implements 
 			String externalEventId,
 			Recurrence recurrence) {
 		return update(
-				getUserDAO().getUser(userId), 
-				headline, 
-				getCalendarEntryTypeHome().findByPrimaryKey(entryTypeId), 
-				startTime, 
-				endTime, 
-				getGroupDAO().findGroup(attendeesGroupId), 
-				ledger, 
-				description, 
-				location, 
-				calendarId, 
-				externalEventId, 
+				getUserDAO().getUser(userId),
+				headline,
+				getCalendarEntryTypeHome().findByPrimaryKey(entryTypeId),
+				startTime,
+				endTime,
+				getGroupDAO().findGroup(attendeesGroupId),
+				ledger,
+				description,
+				location,
+				calendarId,
+				externalEventId,
 				recurrence);
 	}
 
@@ -386,7 +386,7 @@ public class CalendarEntryHomeImpl extends com.idega.data.IDOFactory implements 
 		} catch (CreateException e) {
 			java.util.logging.Logger.getLogger(getClass().getName()).log(
 					Level.WARNING, "Failed to create entity, cause of:", e);
-			
+
 		}
 
 		return null;
@@ -404,8 +404,8 @@ public class CalendarEntryHomeImpl extends com.idega.data.IDOFactory implements 
 		try {
 			return getEntityCollectionForPrimaryKeys(ids);
 		} catch (FinderException e) {
-			java.util.logging.Logger.getLogger(getClass().getName()).log(Level.WARNING, 
-					"Failed to get " + getEntityInterfaceClass() + 
+			java.util.logging.Logger.getLogger(getClass().getName()).log(Level.WARNING,
+					"Failed to get " + getEntityInterfaceClass() +
 					" by primary keys: " + ids);
 		}
 
@@ -585,30 +585,31 @@ public Collection<CalendarEntry> findEntriesByCriteria(String calendarId, List<S
 	/*
 	 * (non-Javadoc)
 	 * @see com.idega.block.cal.data.CalendarEntryHome#findAllBy(
-	 * 		java.lang.String, 
-	 * 		java.util.List, 
-	 * 		java.util.List, 
-	 * 		java.sql.Timestamp, 
-	 * 		java.sql.Timestamp, 
+	 * 		java.lang.String,
+	 * 		java.util.List,
+	 * 		java.util.List,
+	 * 		java.sql.Timestamp,
+	 * 		java.sql.Timestamp,
 	 * 		boolean
 	 * )
 	 */
 	@Override
 	public Collection<CalendarEntry> findAllBy(
 			String calendarId,
-			List<String> groupsIds, 
-			List<String> userIds, 
+			List<String> groupsIds,
+			Integer eventTypeId,
+			List<String> userIds,
 			Timestamp from,
-			Timestamp to, 
+			Timestamp to,
 			boolean extendedResultSet) {
 		CalendarEntryBMPBean entity = (CalendarEntryBMPBean) idoCheckOutPooledEntity();
-		Collection<Object> ids = entity.ejbFindBy(calendarId, groupsIds, 
+		Collection<Object> ids = entity.ejbFindBy(calendarId, groupsIds, eventTypeId,
 				userIds, from, to, extendedResultSet);
 
 		try {
 			return getEntityCollectionForPrimaryKeys(ids);
 		} catch (FinderException e) {
-			java.util.logging.Logger.getLogger(getClass().getName()).log(Level.WARNING, 
+			java.util.logging.Logger.getLogger(getClass().getName()).log(Level.WARNING,
 					"Failed to get entities by priamry keys: " + ids);
 		}
 

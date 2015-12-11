@@ -20,7 +20,7 @@ public interface CalendarEntryHome extends com.idega.data.IDOHome
 	public CalendarEntry findByPrimaryKey(Object pk);
 
 	/**
-	 * 
+	 *
 	 * @param externalIds
 	 *            is {@link Collection} of
 	 *            {@link CalendarEntry#getExternalEventId()}, not
@@ -40,8 +40,8 @@ public interface CalendarEntryHome extends com.idega.data.IDOHome
  public java.util.Collection findEntriesByLedgerId(List listOfLedgerIds) throws javax.ejb.FinderException;
 
 	/**
-	 * 
-	 * @param calendarEntryTypes is {@link Collection} of 
+	 *
+	 * @param calendarEntryTypes is {@link Collection} of
 	 * {@link CalendarEntryType#getPrimaryKey()}, not <code>null</code>;
 	 * @return {@link Collection} of {@link CalendarEntry} or
 	 *         {@link Collections#emptyList()} on failure;
@@ -49,15 +49,15 @@ public interface CalendarEntryHome extends com.idega.data.IDOHome
 	Collection<CalendarEntry> findByTypes(List<String> calendarEntryTypes);
 
 	/**
-	 * 
-	 * @param externalEntryID is {@link CalendarEntryType#getPrimaryKey()}, 
+	 *
+	 * @param externalEntryID is {@link CalendarEntryType#getPrimaryKey()},
 	 * not <code>null</code>;
 	 * @return entity or <code>null</code> on failure;
 	 */
 	CalendarEntry findEntryByExternalId(String externalEntryID);
 
 	/**
-	 * 
+	 *
 	 * <p>Created or updates {@link CalendarEntry}</p>
 	 * @param headline is the name of event, not <code>null</code>;
 	 * @param ledger
@@ -68,25 +68,25 @@ public interface CalendarEntryHome extends com.idega.data.IDOHome
 	 * @return entity or <code>null</code> on failure;
 	 */
 	CalendarEntry update(
-			User user, 
-			String headline, 
+			User user,
+			String headline,
 			CalendarEntryType entryType,
-			Date startTime, 
-			Date endTime, 
+			Date startTime,
+			Date endTime,
 			Group attendeesGroup,
-			String ledger, 
+			String ledger,
 			String description,
-			String location, 
+			String location,
 			String calendarId,
-			String externalEventId, 
+			String externalEventId,
 			CalendarEntryGroup reccurenceGroup);
 
 	/**
-	 * 
+	 *
 	 * <p>Created or updates {@link CalendarEntry}</p>
 	 * @param userId is {@link User#getId()}, not <code>null</code>;
 	 * @param headline is the name of event, not <code>null</code>;
-	 * @param entryTypeId is {@link CalendarEntryType#getPrimaryKey()}, 
+	 * @param entryTypeId is {@link CalendarEntryType#getPrimaryKey()},
 	 * usually one of:
 	 * <li>general</li>
 	 * <li>practice</li>, 'general' is default value;
@@ -119,16 +119,16 @@ public interface CalendarEntryHome extends com.idega.data.IDOHome
 
 
 	/**
-	 * 
+	 *
 	 * @param calendarId, skipped if <code>null</code>;
-	 * @param groupsIds is {@link Collection} of {@link Group#getId()}, 
+	 * @param groupsIds is {@link Collection} of {@link Group#getId()},
 	 * skipped if <code>null</code>;
-	 * @param userIds is {@link Collection} of {@link User#getId()}, 
+	 * @param userIds is {@link Collection} of {@link User#getId()},
 	 * skipped if <code>null</code>;
 	 * @param from is start {@link Date} of event, skipped if <code>null</code>;
 	 * @param to is end {@link Date} of event, skipped if <code>null</code>;
-	 * @param extendedResultSet when <code>true</code> events, 
-	 * which are already happening will be included or which going to end later, 
+	 * @param extendedResultSet when <code>true</code> events,
+	 * which are already happening will be included or which going to end later,
 	 * but it going to start today;
 	 * @return {@link Collection} of {@link CalendarEntry} or
 	 * {@link Collections#emptyList()} on failure;
@@ -136,8 +136,9 @@ public interface CalendarEntryHome extends com.idega.data.IDOHome
 	 */
 	public Collection<CalendarEntry> findAllBy(
 			String calendarId,
-			List<String> groupsIds, 
-			List<String> userIds, 
+			List<String> groupsIds,
+			Integer eventTypeId,
+			List<String> userIds,
 			Timestamp from,
 			Timestamp to,
 			boolean extendedResultSet);

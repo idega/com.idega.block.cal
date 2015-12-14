@@ -34,4 +34,14 @@ public interface CalendarEntryGroupHome extends com.idega.data.IDOHome
 	 * @author <a href="mailto:martynas@idega.is">Martynas Stakė</a>
 	 */
 	CalendarEntryGroup update(Integer primaryKey, String name, Integer ledgerId);
+
+	/**
+	 * 
+	 * <p>Removed record with all his children</p>
+	 * @param id is {@link CalendarEntryGroup#getPrimaryKey()} to remove, 
+	 * not <code>null</code>;
+	 * @throws IllegalStateException when system fails to clean data;
+	 * @author <a href="mailto:martynas@idega.is">Martynas Stakė</a>
+	 */
+	void purge(Integer id) throws IllegalStateException;
 }

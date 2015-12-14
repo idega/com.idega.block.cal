@@ -25,7 +25,6 @@ import com.idega.data.IDOEntity;
 import com.idega.data.IDOLookup;
 import com.idega.data.IDOLookupException;
 import com.idega.data.IDOStoreException;
-import com.idega.data.SimpleQuerier;
 import com.idega.user.dao.GroupDAO;
 import com.idega.user.dao.UserDAO;
 import com.idega.user.data.bean.Group;
@@ -96,24 +95,6 @@ public class CalendarEntryHomeImpl extends com.idega.data.IDOFactory implements 
 		}
 
 		return this.calendarEntryGroupHome;
-	}
-
-	public void removeByGroup(CalendarEntryGroup entryGroup) throws IllegalStateException {
-		if (entryGroup != null) {
-			StringBuilder removeQuery = new StringBuilder();
-			removeQuery.append("DELETE ce.*, ceceg.* ");
-			removeQuery.append("FROM cal_entry ce ");
-			removeQuery.append("JOIN cal_entry_cal_entry_group ceceg ");
-			removeQuery.append("ON ceceg.cal_entry_id = ce.cal_entry_id ");
-			removeQuery.append("AND ceceg.cal_entry_group_id = ").append(entryGroup.getPrimaryKey().toString());
-
-			try {
-				SimpleQuerier.executeUpdate(removeQuery.toString(), true);
-			} catch (Exception e) {
-				throw new IllegalStateException(
-						"Failed to execute remove by query: " + removeQuery.toString(), e);
-			}
-		}
 	}
 
 	/*
@@ -268,7 +249,8 @@ public class CalendarEntryHomeImpl extends com.idega.data.IDOFactory implements 
 						existingEntry.getEntryGroupID());
 				if (reccurenceGroup != null) {
 					try {
-						removeByGroup(reccurenceGroup);
+						getCalendarEntryGroupHome().purge(Integer.valueOf(
+								reccurenceGroup.getPrimaryKey().toString()));
 						reccurenceGroup.remove();
 					} catch (Exception e) {
 						java.util.logging.Logger.getLogger(getClass().getName()).log(
@@ -613,5 +595,25 @@ public Collection<CalendarEntry> findEntriesByCriteria(String calendarId, List<S
 		}
 
 		return Collections.emptyList();
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see com.idega.block.cal.data.CalendarEntryHome#remove(com.idega.block.cal.data.CalendarEntry)
+	 */
+	@Override
+	public void purge(CalendarEntry entity) {
+		if (entity != null) {
+			getCalendarEntryGroupHome().purge(entity.getEntryGroupID());
+		}
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see com.idega.block.cal.data.CalendarEntryHome#remove(java.lang.Integer)
+	 */
+	@Override
+	public void purge(Integer primaryKey) {
+		purge(findByPrimaryKey(primaryKey));
 	}
 }

@@ -132,7 +132,6 @@ public interface CalendarEntryHome extends com.idega.data.IDOHome
 	 * but it going to start today;
 	 * @return {@link Collection} of {@link CalendarEntry} or
 	 * {@link Collections#emptyList()} on failure;
-	 * @author <a href="mailto:martynas@idega.is">Martynas Stakė</a>
 	 */
 	public Collection<CalendarEntry> findAllBy(
 			String calendarId,
@@ -141,5 +140,20 @@ public interface CalendarEntryHome extends com.idega.data.IDOHome
 			Timestamp from,
 			Timestamp to,
 			boolean extendedResultSet);
+
+	/**
+	 * 
+	 * <p>Removes the event and all recurring events, if exist</p>
+	 * @param primaryKey is {@link CalendarEntry#getPrimaryKey()}, 
+	 * not <code>null</code>;
+	 */
+	void purge(Integer primaryKey);
+
+	/**
+	 * 
+	 * <p>Removes the event and all recurring events, if exist</p>
+	 * @param entity to remove, not <code>null</code>;
+	 */
+	void purge(CalendarEntry entity);
 
 }

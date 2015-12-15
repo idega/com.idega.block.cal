@@ -8,6 +8,7 @@ import java.util.List;
 
 import javax.ejb.FinderException;
 
+import com.google.api.services.calendar.model.Calendar;
 import com.idega.block.calendar.bean.Recurrence;
 import com.idega.user.data.bean.Group;
 import com.idega.user.data.bean.User;
@@ -120,7 +121,8 @@ public interface CalendarEntryHome extends com.idega.data.IDOHome
 
 	/**
 	 *
-	 * @param calendarId, skipped if <code>null</code>;
+	 * @param calendarId is {@link Collection} of {@link Calendar#getId()}, 
+	 * skipped if <code>null</code>;
 	 * @param groupsIds is {@link Collection} of {@link Group#getId()},
 	 * skipped if <code>null</code>;
 	 * @param userIds is {@link Collection} of {@link User#getId()},
@@ -134,12 +136,12 @@ public interface CalendarEntryHome extends com.idega.data.IDOHome
 	 * {@link Collections#emptyList()} on failure;
 	 */
 	public Collection<CalendarEntry> findAllBy(
-			String calendarId,
-			List<String> groupsIds,
+			Collection<String> calendarId,
+			List<Integer> groupsIds,
 			Integer eventTypeId,
 			List<String> userIds,
-			Timestamp from,
-			Timestamp to,
+			Date from,
+			Date to,
 			boolean extendedResultSet);
 
 	/**

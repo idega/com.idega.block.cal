@@ -595,12 +595,12 @@ public Collection<CalendarEntry> getEntriesByLedgersIdsAndGroupsIds(List<String>
 	 * @author <a href="mailto:martynas@idega.is">Martynas Stakė</a>
 	 */
 	public Collection<Object> ejbFindBy(
-			String calendarId,
-			List<String> groupsIds,
+			Collection<String> calendarId,
+			List<Integer> groupsIds,
 			Integer eventTypeId,
 			List<String> userIds,
-			Timestamp from,
-			Timestamp to,
+			Date from,
+			Date to,
 			boolean extendedResultSet) {
 		StringBuilder query = new StringBuilder();
 		query.append("SELECT ce.CAL_ENTRY_ID FROM CAL_ENTRY ce ");
@@ -613,16 +613,17 @@ public Collection<CalendarEntry> getEntriesByLedgersIdsAndGroupsIds(List<String>
 		/*
 		 * Calendar id
 		 */
-		if (!StringUtil.isEmpty(calendarId)) {
-			query.append("AND ce.CAL_CALENDAR_ID = '").append(calendarId).append("' ");
+		if (!ListUtil.isEmpty(calendarId)) {
+			String commaSeparatedList = IDOUtil.getInstance()
+					.convertCollectionOfStringsToCommaseparatedString(calendarId);
+			query.append("AND ce.CAL_CALENDAR_ID IN (").append(commaSeparatedList).append(") ");
 		}
 
 		/*
 		 * Group id
 		 */
 		if (!ListUtil.isEmpty(groupsIds)) {
-			String commaSeparatedList = IDOUtil.getInstance()
-					.convertCollectionOfStringsToCommaseparatedString(groupsIds);
+			String commaSeparatedList = IDOUtil.getInstance().convertCollectionOfIntegersToCommaseparatedString(groupsIds);
 			query.append("AND ce.IC_GROUP_ID IN (").append(commaSeparatedList).append(") ");
 		}
 

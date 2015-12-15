@@ -577,12 +577,12 @@ public Collection<CalendarEntry> findEntriesByCriteria(String calendarId, List<S
 	 */
 	@Override
 	public Collection<CalendarEntry> findAllBy(
-			String calendarId,
-			List<String> groupsIds,
+			Collection<String> calendarId,
+			List<Integer> groupsIds,
 			Integer eventTypeId,
 			List<String> userIds,
-			Timestamp from,
-			Timestamp to,
+			Date from,
+			Date to,
 			boolean extendedResultSet) {
 		CalendarEntryBMPBean entity = (CalendarEntryBMPBean) idoCheckOutPooledEntity();
 		Collection<Object> ids = entity.ejbFindBy(calendarId, groupsIds, eventTypeId,

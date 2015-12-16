@@ -268,22 +268,33 @@ public class CalendarEntryHomeImpl extends com.idega.data.IDOFactory implements 
 				reccurence.getType(),
 				Integer.valueOf(ledger));
 
+		if (reccurence.getFrom() == null) {
+			reccurence.setFrom(startDate);
+		}
+
+		if (reccurence.getTo() == null) {
+			reccurence.setTo(endDate);
+		}
+
 		LocalDate iterator = DateUtil.getDate(reccurence.getFrom());
 		LocalDate end = DateUtil.getDate(reccurence.getTo());
 
 		LocalTime startTime = DateUtil.getTime(startDate);
-		LocalTime endTime = DateUtil.getTime(endDate);
+		long difference = endDate.getTime() - startDate.getTime();
 
 		/*
 		 * Creating new events
 		 */
 		while (iterator.isBefore(end) || iterator.isEqual(end)) {
+			Date momentStart = DateUtil.getDate(startTime, iterator);
+			Date momentEnd = new Date(momentStart.getTime() + difference);
+
 			CalendarEntry entry = update(
 					user,
 					headline,
 					entryType,
-					DateUtil.getDate(startTime, iterator),
-					DateUtil.getDate(endTime, iterator),
+					momentStart,
+					momentEnd,
 					attendeesGroup,
 					ledger,
 					description,
@@ -578,15 +589,17 @@ public Collection<CalendarEntry> findEntriesByCriteria(String calendarId, List<S
 	@Override
 	public Collection<CalendarEntry> findAllBy(
 			Collection<String> calendarId,
-			List<Integer> groupsIds,
+			Collection<Integer> groupsIds,
+			Collection<Integer> recurrenceGroups,
 			Integer eventTypeId,
 			List<String> userIds,
 			Date from,
 			Date to,
 			boolean extendedResultSet) {
 		CalendarEntryBMPBean entity = (CalendarEntryBMPBean) idoCheckOutPooledEntity();
-		Collection<Object> ids = entity.ejbFindBy(calendarId, groupsIds, eventTypeId,
-				userIds, from, to, extendedResultSet);
+		Collection<Object> ids = entity.ejbFindBy(calendarId, groupsIds, 
+				recurrenceGroups, eventTypeId, userIds, from, to, 
+				extendedResultSet);
 
 		try {
 			return getEntityCollectionForPrimaryKeys(ids);

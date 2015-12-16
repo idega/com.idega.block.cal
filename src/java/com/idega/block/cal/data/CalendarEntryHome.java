@@ -125,6 +125,9 @@ public interface CalendarEntryHome extends com.idega.data.IDOHome
 	 * skipped if <code>null</code>;
 	 * @param groupsIds is {@link Collection} of {@link Group#getId()},
 	 * skipped if <code>null</code>;
+	 * @param recurrenceGroups is {@link Collection} of 
+	 * {@link CalendarEntryGroup#getPrimaryKey()}s, 
+	 * skipped if <code>null</code>;
 	 * @param userIds is {@link Collection} of {@link User#getId()},
 	 * skipped if <code>null</code>;
 	 * @param from is start {@link Date} of event, skipped if <code>null</code>;
@@ -137,7 +140,8 @@ public interface CalendarEntryHome extends com.idega.data.IDOHome
 	 */
 	public Collection<CalendarEntry> findAllBy(
 			Collection<String> calendarId,
-			List<Integer> groupsIds,
+			Collection<Integer> groupsIds,
+			Collection<Integer> recurrenceGroups,
 			Integer eventTypeId,
 			List<String> userIds,
 			Date from,

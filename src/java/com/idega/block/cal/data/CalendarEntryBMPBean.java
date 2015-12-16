@@ -583,6 +583,9 @@ public Collection<CalendarEntry> getEntriesByLedgersIdsAndGroupsIds(List<String>
 	 * @param calendarId, skipped if <code>null</code>;
 	 * @param groupsIds is {@link Collection} of {@link Group#getId()},
 	 * skipped if <code>null</code>;
+	 * @param recurrenceGroups is {@link Collection} of 
+	 * {@link CalendarEntryGroup#getPrimaryKey()}s, 
+	 * skipped if <code>null</code>;
 	 * @param userIds is {@link Collection} of {@link User#getId()},
 	 * skipped if <code>null</code>;
 	 * @param from is start {@link Date} of event, skipped if <code>null</code>;
@@ -596,7 +599,8 @@ public Collection<CalendarEntry> getEntriesByLedgersIdsAndGroupsIds(List<String>
 	 */
 	public Collection<Object> ejbFindBy(
 			Collection<String> calendarId,
-			List<Integer> groupsIds,
+			Collection<Integer> groupsIds,
+			Collection<Integer> recurrenceGroups,
 			Integer eventTypeId,
 			List<String> userIds,
 			Date from,
@@ -604,6 +608,20 @@ public Collection<CalendarEntry> getEntriesByLedgersIdsAndGroupsIds(List<String>
 			boolean extendedResultSet) {
 		StringBuilder query = new StringBuilder();
 		query.append("SELECT ce.CAL_ENTRY_ID FROM CAL_ENTRY ce ");
+
+		/*
+		 * Calendar recurrence groups
+		 */
+		if (!ListUtil.isEmpty(recurrenceGroups)) {
+			String commaSeparatedList = IDOUtil.getInstance()
+					.convertCollectionOfIntegersToCommaseparatedString(recurrenceGroups);
+
+			query.append("JOIN CAL_ENTRY_CAL_ENTRY_GROUP ceceg ");
+			query.append("ON ceceg.CAL_ENTRY_ID = ce.CAL_ENTRY_ID ");
+			query.append("AND ceceg.CAL_ENTRY_GROUP_ID IN (");
+			query.append(commaSeparatedList);
+			query.append(") ");
+		}
 
 		/*
 		 * Lazy bones
@@ -677,7 +695,7 @@ public Collection<CalendarEntry> getEntriesByLedgersIdsAndGroupsIds(List<String>
 		/*
 		 * Order
 		 */
-		query.append("ORDER BY ce.CAL_ENTRY_DATE; ");
+		query.append("ORDER BY ce.CAL_ENTRY_ID; ");
 
 		try {
 			return idoFindPKsBySQL(query.toString());

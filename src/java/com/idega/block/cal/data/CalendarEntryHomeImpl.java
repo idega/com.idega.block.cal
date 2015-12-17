@@ -20,7 +20,9 @@ import javax.ejb.FinderException;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.idega.block.cal.presentation.CalendarEntryCreator;
+import com.idega.block.calendar.bean.ExcludedPeriod;
 import com.idega.block.calendar.bean.Recurrence;
+import com.idega.block.calendar.data.dao.ExcludedPeriodDAO;
 import com.idega.data.IDOEntity;
 import com.idega.data.IDOLookup;
 import com.idega.data.IDOLookupException;
@@ -49,6 +51,17 @@ public class CalendarEntryHomeImpl extends com.idega.data.IDOFactory implements 
 
 	@Autowired
 	private UserDAO userDAO;
+
+	@Autowired
+	private ExcludedPeriodDAO excludedPeriodDAO;
+
+	private ExcludedPeriodDAO getExcludedPeriodDAO() {
+		if (this.excludedPeriodDAO == null) {
+			ELUtil.getInstance().autowire(this);
+		}
+
+		return this.excludedPeriodDAO;
+	}
 
 	private UserDAO getUserDAO() {
 		if (this.userDAO == null) {
@@ -249,8 +262,10 @@ public class CalendarEntryHomeImpl extends com.idega.data.IDOFactory implements 
 						existingEntry.getEntryGroupID());
 				if (reccurenceGroup != null) {
 					try {
-						getCalendarEntryGroupHome().purge(Integer.valueOf(
-								reccurenceGroup.getPrimaryKey().toString()));
+						Integer recurrenceGroupId = Integer.valueOf(
+								reccurenceGroup.getPrimaryKey().toString());
+						getCalendarEntryGroupHome().purge(recurrenceGroupId);
+						getExcludedPeriodDAO().removeGroup(recurrenceGroupId);
 						reccurenceGroup.remove();
 					} catch (Exception e) {
 						java.util.logging.Logger.getLogger(getClass().getName()).log(
@@ -267,7 +282,7 @@ public class CalendarEntryHomeImpl extends com.idega.data.IDOFactory implements 
 		reccurenceGroup = getCalendarEntryGroupHome().update(null,
 				reccurence.getType(),
 				Integer.valueOf(ledger));
-
+		
 		if (reccurence.getFrom() == null) {
 			reccurence.setFrom(startDate);
 		}
@@ -289,21 +304,30 @@ public class CalendarEntryHomeImpl extends com.idega.data.IDOFactory implements 
 			Date momentStart = DateUtil.getDate(startTime, iterator);
 			Date momentEnd = new Date(momentStart.getTime() + difference);
 
-			CalendarEntry entry = update(
-					user,
-					headline,
-					entryType,
-					momentStart,
-					momentEnd,
-					attendeesGroup,
-					ledger,
-					description,
-					location,
-					calendarId,
-					externalEventId,
-					reccurenceGroup);
-			if (entry != null) {
-				entries.add(entry);
+			boolean excluded = Boolean.FALSE;
+			for (ExcludedPeriod period : reccurence.getExcludedPeriods()) {
+				if (period.getFrom().before(momentStart) && momentStart.before(period.getTo())) {
+					excluded = Boolean.TRUE;
+				}
+			}
+
+			if (!excluded) {
+				CalendarEntry entry = update(
+						user,
+						headline,
+						entryType,
+						momentStart,
+						momentEnd,
+						attendeesGroup,
+						ledger,
+						description,
+						location,
+						calendarId,
+						externalEventId,
+						reccurenceGroup);
+				if (entry != null) {
+					entries.add(entry);
+				}
 			}
 
 			if (reccurenceGroup.getName().equalsIgnoreCase(CalendarEntryCreator.noRepeatFieldParameterName)) {
@@ -325,6 +349,13 @@ public class CalendarEntryHomeImpl extends com.idega.data.IDOFactory implements 
 			if (reccurenceGroup.getName().equalsIgnoreCase(CalendarEntryCreator.yearlyFieldParameterName)) {
 				iterator = iterator.plusYears(reccurence.getRate());
 			}
+		}
+
+		for (ExcludedPeriod period : reccurence.getExcludedPeriods()) {
+			getExcludedPeriodDAO().update(null, 
+					Integer.valueOf(reccurenceGroup.getPrimaryKey().toString()), 
+					period.getFrom(), 
+					period.getTo());
 		}
 
 		return entries;

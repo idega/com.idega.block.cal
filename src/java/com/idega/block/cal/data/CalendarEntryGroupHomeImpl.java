@@ -104,6 +104,8 @@ public class CalendarEntryGroupHomeImpl extends com.idega.data.IDOFactory implem
 				throw new IllegalStateException(
 						"Failed to execute remove by query: " + removeQuery.toString(), e);
 			}
+
+			remove(id);
 		}
 	}
 

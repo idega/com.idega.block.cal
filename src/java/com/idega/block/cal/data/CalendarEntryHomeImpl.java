@@ -22,6 +22,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import com.idega.block.cal.presentation.CalendarEntryCreator;
 import com.idega.block.calendar.bean.ExcludedPeriod;
 import com.idega.block.calendar.bean.Recurrence;
+import com.idega.block.calendar.data.dao.AttendeeDAO;
 import com.idega.block.calendar.data.dao.ExcludedPeriodDAO;
 import com.idega.data.IDOEntity;
 import com.idega.data.IDOLookup;
@@ -54,6 +55,17 @@ public class CalendarEntryHomeImpl extends com.idega.data.IDOFactory implements 
 
 	@Autowired
 	private ExcludedPeriodDAO excludedPeriodDAO;
+
+	@Autowired
+	private AttendeeDAO attendeeDAO;
+
+	private AttendeeDAO getAttendeeDAO() {
+		if (this.attendeeDAO == null) {
+			ELUtil.getInstance().autowire(this);
+		}
+
+		return this.attendeeDAO;
+	}
 
 	private ExcludedPeriodDAO getExcludedPeriodDAO() {
 		if (this.excludedPeriodDAO == null) {
@@ -261,12 +273,12 @@ public class CalendarEntryHomeImpl extends com.idega.data.IDOFactory implements 
 				reccurenceGroup = getCalendarEntryGroupHome().findByPrimaryKey(
 						existingEntry.getEntryGroupID());
 				if (reccurenceGroup != null) {
+					Integer recurrenceGroupId = Integer.valueOf(
+							reccurenceGroup.getPrimaryKey().toString());
 					try {
-						Integer recurrenceGroupId = Integer.valueOf(
-								reccurenceGroup.getPrimaryKey().toString());
+						getAttendeeDAO().removeByEventGroup(recurrenceGroupId);
+						getExcludedPeriodDAO().removeByEventGroup(recurrenceGroupId);
 						getCalendarEntryGroupHome().purge(recurrenceGroupId);
-						getExcludedPeriodDAO().removeGroup(recurrenceGroupId);
-						reccurenceGroup.remove();
 					} catch (Exception e) {
 						java.util.logging.Logger.getLogger(getClass().getName()).log(
 								Level.WARNING, "Failed to remove old records, cause of:", e);

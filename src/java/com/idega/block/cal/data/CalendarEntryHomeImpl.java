@@ -22,6 +22,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import com.idega.block.cal.presentation.CalendarEntryCreator;
 import com.idega.block.calendar.bean.ExcludedPeriod;
 import com.idega.block.calendar.bean.Recurrence;
+import com.idega.block.calendar.data.AttendeeEntity;
 import com.idega.block.calendar.data.dao.AttendeeDAO;
 import com.idega.block.calendar.data.dao.ExcludedPeriodDAO;
 import com.idega.data.IDOEntity;
@@ -672,5 +673,30 @@ public Collection<CalendarEntry> findEntriesByCriteria(String calendarId, List<S
 	@Override
 	public void purge(Integer primaryKey) {
 		purge(findByPrimaryKey(primaryKey));
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see com.idega.block.cal.data.CalendarEntryHome#findByInvitee(com.idega.user.data.bean.User, java.util.Date, java.util.Date, java.lang.Integer)
+	 */
+	@Override
+	public Collection<CalendarEntry> findByInvitee(
+			com.idega.user.data.bean.User user, 
+			Date from, 
+			Date to, 
+			Integer typeId) {
+		ArrayList<Integer> calendarEntryGroups = new ArrayList<Integer>();
+
+		List<AttendeeEntity> attendees = getAttendeeDAO().findByInvitee(user);
+		for (AttendeeEntity attendee : attendees) {
+			calendarEntryGroups.add(attendee.getEventGroupId());
+		}
+
+		if (!ListUtil.isEmpty(calendarEntryGroups)) {
+			return findAllBy(null, null, 
+					calendarEntryGroups, typeId, null, from, to, true);
+		}
+
+		return Collections.emptyList();
 	}
 }

@@ -163,4 +163,19 @@ public interface CalendarEntryHome extends com.idega.data.IDOHome
 	 */
 	void purge(CalendarEntry entity);
 
+	/**
+	 * 
+	 * @param user is invitee to events, not <code>null</code>;
+	 * @param from is date event starts, skipped if <code>null</code>
+	 * @param to is date event ends, skipped if <code>null</code>
+	 * @param typeId is {@link CalendarEntryType#getPrimaryKey()}, 
+	 * skipped if <code>null</code>
+	 * @return entities or {@link Collections#emptyList()} on failure;
+	 */
+	Collection<CalendarEntry> findByInvitee(
+			User user, 
+			Date from, 
+			Date to,
+			Integer typeId);
+
 }

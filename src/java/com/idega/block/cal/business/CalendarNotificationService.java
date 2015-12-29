@@ -85,6 +85,7 @@ package com.idega.block.cal.business;
 import java.util.Collection;
 
 import com.idega.block.cal.data.CalendarEntry;
+import com.idega.block.calendar.data.AttendeeEntity;
 import com.idega.user.data.bean.Group;
 import com.idega.user.data.bean.User;
 
@@ -105,7 +106,7 @@ public interface CalendarNotificationService {
 	 * assigned to, not <code>null</code>;
 	 * @param entries for adding to .ics file, not <code>null</code>;
 	 */
-	void notify(User receiver, Collection<CalendarEntry> entries);
+	void notifyUser(User receiver, Collection<CalendarEntry> entries);
 
 	/**
 	 * 
@@ -122,7 +123,7 @@ public interface CalendarNotificationService {
 	 * assigned to, not <code>null</code>;
 	 * @param entries for adding to .ics file, not <code>null</code>;
 	 */
-	void notify(Group receivers, Collection<CalendarEntry> entries);
+	void notifyGroup(Group receivers, Collection<CalendarEntry> entries);
 
 	/**
 	 * 
@@ -132,4 +133,39 @@ public interface CalendarNotificationService {
 	 * @param entries for adding to .ics file, not <code>null</code>;
 	 */
 	void notifyGroup(Integer receiversGroupId, Collection<CalendarEntry> entries);
+
+	/**
+	 * 
+	 * <p>Sends e-mails to all {@link User} mails</p>
+	 * @param receiver is a person to send e-mails, not <code>null</code>;
+	 * @param url to add to letter, not <code>null</code>;
+	 */
+	void notifyUser(User receiver, String url);
+
+	/**
+	 * 
+	 * <p>Converts events and sends e-mails to {@link User}s</p>
+	 * @param receivers of iCalendar files, not <code>null</code>;
+	 * @param entries to convert to iCalendar and send, not <code>null</code>;
+	 */
+	void notify(Collection<User> receivers, Collection<CalendarEntry> entries);
+
+	/**
+	 * 
+	 * <p>Converts events and sends e-mails to {@link User}s</p>
+	 * @param receivers of iCalendar files, not <code>null</code>;
+	 * @param entries to convert to iCalendar and send, not <code>null</code>;
+	 */
+	void notifyUsers(
+			Collection<Integer> receivers,
+			Collection<CalendarEntry> entries);
+
+	/**
+	 * 
+	 * <p>Converts events and sends e-mails to {@link User}s</p>
+	 * @param receivers of iCalendar files, not <code>null</code>;
+	 * @param entries to convert to iCalendar and send, not <code>null</code>;
+	 */
+	void notifyInvitees(Collection<AttendeeEntity> receivers,
+			Collection<CalendarEntry> entries);
 }

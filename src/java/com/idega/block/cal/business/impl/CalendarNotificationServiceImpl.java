@@ -82,15 +82,14 @@
  */
 package com.idega.block.cal.business.impl;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.rmi.RemoteException;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 import java.util.Set;
 import java.util.logging.Level;
 
-import javax.jcr.RepositoryException;
 import javax.mail.MessagingException;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -102,14 +101,14 @@ import com.idega.block.cal.business.CalendarNotificationService;
 import com.idega.block.cal.data.CalendarEntry;
 import com.idega.block.cal.writer.ICalWriter;
 import com.idega.block.calendar.business.GoogleEventService;
+import com.idega.block.calendar.data.AttendeeEntity;
 import com.idega.business.IBOLookup;
 import com.idega.business.IBOLookupException;
 import com.idega.core.business.DefaultSpringBean;
-import com.idega.core.file.util.MimeType;
+import com.idega.data.IDOUtil;
 import com.idega.idegaweb.IWMainApplication;
 import com.idega.idegaweb.IWResourceBundle;
 import com.idega.user.business.UserBusiness;
-import com.idega.user.dao.GroupDAO;
 import com.idega.user.dao.UserDAO;
 import com.idega.user.data.bean.Group;
 import com.idega.user.data.bean.User;
@@ -141,9 +140,6 @@ public class CalendarNotificationServiceImpl extends DefaultSpringBean implement
 	@Autowired
 	private ICalWriter iCalWriter;
 
-	@Autowired
-	private GroupDAO groupDAO;
-
 	private IWResourceBundle resourceBundle;
 
 	private IWResourceBundle getResourceBundle() {
@@ -153,14 +149,6 @@ public class CalendarNotificationServiceImpl extends DefaultSpringBean implement
 		}
 
 		return this.resourceBundle;
-	}
-
-	private GroupDAO getGroupDAO() {
-		if (this.groupDAO == null) {
-			ELUtil.getInstance().autowire(this);
-		}
-
-		return this.groupDAO;
 	}
 
 	private GoogleEventService getGoogleEventService() {
@@ -207,47 +195,13 @@ public class CalendarNotificationServiceImpl extends DefaultSpringBean implement
 		return getResourceBundle().getLocalizedString(key, value);
 	}
 
-	/* (non-Javadoc)
-	 * @see com.idega.block.cal.business.CalendarNotificationService#notify(com.idega.user.data.bean.User, java.util.Collection)
+	/*
+	 * (non-Javadoc)
+	 * @see com.idega.block.cal.business.CalendarNotificationService#notifyUser(com.idega.user.data.bean.User, java.lang.String)
 	 */
 	@Override
-	public void notify(User receiver, Collection<CalendarEntry> entries) {
-		if (ListUtil.isEmpty(entries)) {
-			getLogger().warning("No entries were given to send!");
-			return;
-		}
-		
-		/*
-		 * Creating calendar file
-		 */
-		String name = entries.iterator().next().getName();
-		name = name.replace(CoreConstants.SPACE, "_");
-		String filename = name + "_" + LocalDate.now() + ".ics";
-		ByteArrayOutputStream stream = new ByteArrayOutputStream();
-
-		/*
-		 * Writing data 
-		 */
-		getICalWriter().write(entries, stream);
-
-		/*
-		 * Writing file
-		 */
-		String url = null;
-		try {
-			if (getRepositoryService().uploadFile(
-					"/content/files/public/tmp/", filename, MimeType.pdf.toString(), 
-					new ByteArrayInputStream(stream.toByteArray()))) {
-				url = getApplication().getIWApplicationContext().getDomain().getURL() 
-						+ "content/files/public/tmp/" + filename;
-			}
-		} catch (RepositoryException e) {
-			java.util.logging.Logger.getLogger(getClass().getName()).log(Level.WARNING, 
-					"Failed to save calendar file, cause of: ", e);
-		}
-
+	public void notifyUser(User receiver, String url) {
 		Set<String> emails = getUserDAO().getEmailAddresses(receiver);
-
 		for (String email : emails) {
 			try {
 				SendMail.send(
@@ -260,39 +214,88 @@ public class CalendarNotificationServiceImpl extends DefaultSpringBean implement
 						true, false, null);
 			} catch (MessagingException e) {
 				java.util.logging.Logger.getLogger(getClass().getName()).log(
-						Level.WARNING, "Failed to send message to email: martynas@idega.is, cause of: " , e);
+						Level.WARNING, 
+								"Failed to send message to email: " + email + 
+								", cause of: " , e);
 			}
 		}
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * @see com.idega.block.cal.business.CalendarNotificationService#notify(java.util.Collection, java.util.Collection)
+	 */
+	@Override
+	public void notify(
+			Collection<User> receivers, 
+			Collection<CalendarEntry> entries) {
+		if (!ListUtil.isEmpty(receivers)) {
+
+			/*
+			 * Convert events
+			 */
+			String name = entries.iterator().next().getName();
+			name = name.replace(CoreConstants.SPACE, "_");
+			String filename = name + "_" + LocalDate.now() + ".ics";
+			String url = getICalWriter().write(entries, filename);
+
+			/*
+			 * Send e-mails
+			 */
+			for (User receiver : receivers) {
+				notifyUser(receiver, url);
+			}
+		}
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see com.idega.block.cal.business.CalendarNotificationService#notifyInvitees(java.util.Collection, java.util.Collection)
+	 */
+	@Override
+	public void notifyInvitees(
+			Collection<AttendeeEntity> receivers, 
+			Collection<CalendarEntry> entries) {
+		List<User> users = new ArrayList<User>();
+
+		if (!ListUtil.isEmpty(receivers)) {
+			for (AttendeeEntity receiver: receivers) {
+				users.add(receiver.getInvitee());
+			}
+		}
+
+		notify(users, entries);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see com.idega.block.cal.business.CalendarNotificationService#notifyUsers(java.util.Collection, java.util.Collection)
+	 */
+	@Override
+	public void notifyUsers(
+			Collection<Integer> receivers, 
+			Collection<CalendarEntry> entries) {
+		notify(getUserDAO().findAll(receivers), entries);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see com.idega.block.cal.business.CalendarNotificationService#notifyUser(java.lang.Integer, java.util.Collection)
+	 */
 	@Override
 	public void notifyUser(Integer receiverId, Collection<CalendarEntry> entries) {
-		notify(getUserDAO().getUser(receiverId), entries);
+		if (receiverId != null) {
+			notifyUsers(java.util.Arrays.asList(receiverId), entries);
+		}
 	}
 
 	/* (non-Javadoc)
-	 * @see com.idega.block.cal.business.CalendarNotificationService#notify(com.idega.user.data.bean.Group, java.util.Collection)
+	 * @see com.idega.block.cal.business.CalendarNotificationService#notify(com.idega.user.data.bean.User, java.util.Collection)
 	 */
 	@Override
-	public void notify(Group receivers, Collection<CalendarEntry> entries) {
-		if (receivers != null) {
-			Collection<com.idega.user.data.User> users = null;
-			try {
-				users = getUserBusiness()
-						.getUsersInGroup(receivers.getID());
-			} catch (RemoteException e) {
-				java.util.logging.Logger.getLogger(getClass().getName()).log(
-						Level.WARNING, 
-						"Failed to get users for group by id " + receivers.getID());
-			}
-
-			if (!ListUtil.isEmpty(users)) {
-				for (com.idega.user.data.User user : users) {
-					notify(getUserDAO().getUser(
-							(Integer) user.getPrimaryKey()), 
-							entries);
-				}
-			}
+	public void notifyUser(User receiver, Collection<CalendarEntry> entries) {
+		if (receiver != null) {
+			notifyUsers(java.util.Arrays.asList(receiver.getId()), entries);
 		}
 	}
 
@@ -304,6 +307,27 @@ public class CalendarNotificationServiceImpl extends DefaultSpringBean implement
 	public void notifyGroup(
 			Integer receiversGroupId,
 			Collection<CalendarEntry> entries) {
-		notify(getGroupDAO().findGroup(receiversGroupId), entries);	
+		if (receiversGroupId != null) {
+			Collection<com.idega.user.data.User> users = null;
+			try {
+				users = getUserBusiness().getUsersInGroup(receiversGroupId);
+			} catch (RemoteException e) {
+				java.util.logging.Logger.getLogger(getClass().getName()).log(
+						Level.WARNING, 
+						"Failed to get users for group by id " + receiversGroupId);
+			}
+
+			notifyUsers(IDOUtil.getInstance().getIntegerPrimaryKeys(users), entries);
+		}
+	}
+
+	/* (non-Javadoc)
+	 * @see com.idega.block.cal.business.CalendarNotificationService#notify(com.idega.user.data.bean.Group, java.util.Collection)
+	 */
+	@Override
+	public void notifyGroup(Group receivers, Collection<CalendarEntry> entries) {
+		if (receivers != null) {
+			notifyGroup(receivers.getID(), entries);
+		}
 	}
 }

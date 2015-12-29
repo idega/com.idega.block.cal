@@ -82,31 +82,18 @@
  */
 package com.idega.block.cal.writer;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.OutputStream;
-import java.util.ArrayList;
+import java.net.URL;
 import java.util.Collection;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import javax.jcr.RepositoryException;
+
 import net.fortuna.ical4j.data.CalendarOutputter;
 import net.fortuna.ical4j.model.Calendar;
-import net.fortuna.ical4j.model.DateTime;
-import net.fortuna.ical4j.model.TimeZone;
-import net.fortuna.ical4j.model.TimeZoneRegistry;
-import net.fortuna.ical4j.model.TimeZoneRegistryFactory;
-import net.fortuna.ical4j.model.ValidationException;
-import net.fortuna.ical4j.model.component.VEvent;
-import net.fortuna.ical4j.model.component.VTimeZone;
-import net.fortuna.ical4j.model.property.CalScale;
-import net.fortuna.ical4j.model.property.Description;
-import net.fortuna.ical4j.model.property.DtEnd;
-import net.fortuna.ical4j.model.property.DtStamp;
-import net.fortuna.ical4j.model.property.DtStart;
-import net.fortuna.ical4j.model.property.Location;
-import net.fortuna.ical4j.model.property.ProdId;
-import net.fortuna.ical4j.model.property.Summary;
-import net.fortuna.ical4j.model.property.Uid;
-import net.fortuna.ical4j.model.property.Version;
 
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.Scope;
@@ -114,12 +101,12 @@ import org.springframework.stereotype.Service;
 
 import com.idega.block.cal.data.CalendarEntry;
 import com.idega.block.cal.data.CalendarEntryHome;
+import com.idega.block.cal.util.ICalendarUtil;
 import com.idega.core.business.DefaultSpringBean;
+import com.idega.core.file.util.MimeType;
 import com.idega.data.IDOLookup;
 import com.idega.data.IDOLookupException;
 import com.idega.user.data.bean.User;
-import com.idega.util.ListUtil;
-import com.idega.util.StringUtil;
 
 /**
  * <p>Class for writing calendar event to iCalendar file</p>
@@ -149,116 +136,58 @@ public class ICalWriter extends DefaultSpringBean {
 		return this.calendarEntryHome;
 	}
 
-	public Calendar newCalendar() {
-		Calendar calendar = new Calendar();
-		calendar.getProperties().add(new ProdId("-//Idega Open Source//iCal4j 1.0//EN"));
-		calendar.getProperties().add(Version.VERSION_2_0);
-		calendar.getProperties().add(CalScale.GREGORIAN);
-		return calendar;
+	/**
+	 * 
+	 * <p>Writes all events to iCalendar format to given {@link OutputStream}</p>
+	 * @param calendarEntries to write, not <code>null</code>;
+	 * @param stream as the destination, not <code>null</code>;
+	 */
+	public void write(Collection<CalendarEntry> calendarEntries, OutputStream stream) {
+		Calendar calendar = ICalendarUtil.getCalendar(calendarEntries);
+		if (calendar != null && stream != null) {
+			try {
+				new CalendarOutputter().output(calendar, stream);
+			} catch (Exception e) {
+				java.util.logging.Logger.getLogger(getClass().getName()).log(
+						Level.WARNING, 
+						"Failed to write data to output stream, cause of: ", e);
+			}
+		}
 	}
 
-	public VEvent parseEvent(CalendarEntry entry) {
-		if (entry != null) {
-			TimeZoneRegistry registry = TimeZoneRegistryFactory.getInstance().createRegistry();
-			TimeZone timezone = registry.getTimeZone("Atlantic/Reykjavik");
-			VTimeZone tz = timezone.getVTimeZone();
+	/**
+	 * 
+	 * <p>Writes all {@link User} events to iCalendar format 
+	 * to given {@link OutputStream}</p>
+	 * @param user to get events for, not <code>null</code>;
+	 * @param stream as the destination, not <code>null</code>;
+	 */
+	public void write(User user, OutputStream stream) {
+		write(getCalendarEntryHome().findAll(user, null, null, null), stream);
+	}
 
-			VEvent event = new VEvent();
+	/**
+	 * 
+	 * @param calendarEntries to convert and write to file;
+	 * @param filename is name of file to write, not <code>null</code>;
+	 * @return {@link URL} to created file;
+	 */
+	public String write(Collection<CalendarEntry> calendarEntries, String filename) {
+		ByteArrayOutputStream stream = new ByteArrayOutputStream();
+		write(calendarEntries, stream);
 
-			/*
-			 * Name
-			 */
-			Summary name = new Summary(entry.getName());
-			event.getProperties().add(name);
-
-			/*
-			 * Start time
-			 */
-			event.getProperties().remove(event.getDateStamp());
-
-			DateTime dateTime = new DateTime(entry.getDate());
-			DtStamp start = new DtStamp(dateTime);
-			event.getProperties().add(start);
-
-			/*
-			 * Start date
-			 */
-			event.getProperties().remove(event.getStartDate());
-
-			DtStart startDate = new DtStart(new DateTime(entry.getDate()));
-			event.getProperties().add(startDate);
-
-			/*
-			 * End date
-			 */
-			DtEnd endDate = new DtEnd(new DateTime(entry.getEndDate()));
-			event.getProperties().add(endDate);
-
-			/*
-			 * Location
-			 */
-			if (!StringUtil.isEmpty(entry.getLocation())) {
-				Location location = new Location(entry.getLocation());
-				event.getProperties().add(location);
+		try {
+			if (getRepositoryService().uploadFile(
+					"/content/files/public/tmp/", filename, MimeType.pdf.toString(), 
+					new ByteArrayInputStream(stream.toByteArray()))) {
+				return getApplication().getIWApplicationContext().getDomain().getURL() 
+						+ "content/files/public/tmp/" + filename;
 			}
-
-			/*
-			 * Description
-			 */
-			if (!StringUtil.isEmpty(entry.getDescription())) {
-				Description description = new Description(entry.getDescription());
-				event.getProperties().add(description);
-			}
-
-			/*
-			 * id
-			 */
-			if (!StringUtil.isEmpty(entry.getExternalEventId())) {
-				Uid uid = new Uid(entry.getPrimaryKey().toString());
-				event.getProperties().add(uid);
-			}
-
-			try {
-				event.validate();
-			} catch (ValidationException e) {
-				java.util.logging.Logger.getLogger(getClass().getName()).log(
-						Level.WARNING, "Event creation problem: ", e);
-			}
-
-			return event;
+		} catch (RepositoryException e) {
+			java.util.logging.Logger.getLogger(getClass().getName()).log(Level.WARNING, 
+					"Failed to save calendar file, cause of: ", e);
 		}
 
 		return null;
 	}
-
-	public void write(Collection<CalendarEntry> calendarEntries, OutputStream stream) {
-		if (!ListUtil.isEmpty(calendarEntries)) {
-			ArrayList<VEvent> events = new ArrayList<VEvent>();
-			for (CalendarEntry calendarEntry: calendarEntries) {
-				VEvent event = parseEvent(calendarEntry);
-				if (event != null) {
-					events.add(event);
-				}
-			}
-
-			if (!ListUtil.isEmpty(events)) {
-				Calendar calendar = newCalendar();
-				calendar.getComponents().addAll(events);
-
-				CalendarOutputter outputter = new CalendarOutputter();
-				try {
-					outputter.output(calendar, stream);
-				} catch (Exception e) {
-					java.util.logging.Logger.getLogger(getClass().getName()).log(
-							Level.WARNING, 
-							"Failed to write data to output stream, cause of: ", e);
-				}
-			}
-		}
-	}
-
-	public void write(User user, OutputStream stream) {
-		write(getCalendarEntryHome().findAll(user, null, null, null), stream);
-	}
-	
 }

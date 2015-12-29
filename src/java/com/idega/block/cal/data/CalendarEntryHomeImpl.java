@@ -25,10 +25,14 @@ import com.idega.block.calendar.bean.Recurrence;
 import com.idega.block.calendar.data.AttendeeEntity;
 import com.idega.block.calendar.data.dao.AttendeeDAO;
 import com.idega.block.calendar.data.dao.ExcludedPeriodDAO;
+import com.idega.business.IBOLookup;
+import com.idega.business.IBOLookupException;
 import com.idega.data.IDOEntity;
 import com.idega.data.IDOLookup;
 import com.idega.data.IDOLookupException;
 import com.idega.data.IDOStoreException;
+import com.idega.idegaweb.IWMainApplication;
+import com.idega.user.business.UserBusiness;
 import com.idega.user.dao.GroupDAO;
 import com.idega.user.dao.UserDAO;
 import com.idega.user.data.bean.Group;
@@ -90,6 +94,23 @@ public class CalendarEntryHomeImpl extends com.idega.data.IDOFactory implements 
 		}
 
 		return this.groupDAO;
+	}
+
+	private UserBusiness userBusiness;
+
+	private UserBusiness getUserBusiness() {
+		if (this.userBusiness == null) {
+			try {
+				this.userBusiness = IBOLookup.getServiceInstance(
+						IWMainApplication.getDefaultIWApplicationContext(), 
+						UserBusiness.class);
+			} catch (IBOLookupException e) {
+				java.util.logging.Logger.getLogger(getClass().getName()).log(Level.WARNING, 
+						"Failed to get " + UserBusiness.class + " cause of: ", e);
+			}
+		}
+
+		return this.userBusiness;
 	}
 
 	private CalendarEntryTypeHome getCalendarEntryTypeHome() {
@@ -698,5 +719,43 @@ public Collection<CalendarEntry> findEntriesByCriteria(String calendarId, List<S
 		}
 
 		return Collections.emptyList();
+	}
+
+	@Override
+	public Collection<CalendarEntry> findAll(User user, Date from, Date to, Integer type) {
+		ArrayList<CalendarEntry> result = new ArrayList<CalendarEntry>();
+		
+		if (user != null) {
+			ArrayList<Integer> gruopsIds = new ArrayList<Integer>();
+
+			Collection<com.idega.user.data.Group> groups = null;
+			try {
+				groups = getUserBusiness().getUserGroups(user.getId());
+			} catch (Exception e) {
+				java.util.logging.Logger.getLogger(getClass().getName()).log(
+						Level.WARNING, 
+						"Failed to get groups for user by name: " + user.getName());
+			}
+
+			if (!ListUtil.isEmpty(groups)) {
+				for (com.idega.user.data.Group group : groups) {
+					gruopsIds.add((Integer) group.getPrimaryKey());
+				}
+			}
+
+			Collection<CalendarEntry> groupEvents = findAllBy(null, gruopsIds, 
+					null, type, null, from, to, true);
+			if (!ListUtil.isEmpty(groupEvents)) {
+				result.addAll(groupEvents);
+			}
+
+			Collection<CalendarEntry> eventInvites = findByInvitee(user, from, 
+					to, type);
+			if (!ListUtil.isEmpty(eventInvites)) {
+				result.addAll(eventInvites);
+			}
+		}
+
+		return result;
 	}
 }

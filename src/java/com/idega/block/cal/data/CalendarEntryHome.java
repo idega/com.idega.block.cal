@@ -178,4 +178,17 @@ public interface CalendarEntryHome extends com.idega.data.IDOHome
 			Date to,
 			Integer typeId);
 
+	/**
+	 * 
+	 * @param user
+	 * @param from
+	 * @param to
+	 * @param type is {@link CalendarEntryType#getPrimaryKey()}, 
+	 * skipped if <code>null</code>
+	 * @return entities or {@link Collections#emptyList()} on failure;
+	 * @author <a href="mailto:martynas@idega.is">Martynas Stakė</a>
+	 */
+	Collection<CalendarEntry> findAll(User user, Date from, Date to,
+			Integer type);
+
 }

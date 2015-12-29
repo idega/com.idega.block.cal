@@ -161,6 +161,7 @@ public class CalendarEntryHomeImpl extends com.idega.data.IDOFactory implements 
 			String location,
 			String calendarId,
 			String externalEventId,
+			String link,
 			CalendarEntryGroup reccurenceGroup) {
 
 		/* Calendar group can't be null */
@@ -198,6 +199,10 @@ public class CalendarEntryHomeImpl extends com.idega.data.IDOFactory implements 
 		entry.setExternalEventId(externalEventId);
 		entry.setDescription(description);
 		entry.setLocation(location);
+		
+		if (!StringUtil.isEmpty(link)) {
+			entry.setLink(link);
+		}
 
 		if (user != null) {
 			entry.setUserID(user.getId());
@@ -281,6 +286,7 @@ public class CalendarEntryHomeImpl extends com.idega.data.IDOFactory implements 
 			String location,
 			String calendarId,
 			String externalEventId,
+			String link,
 			Recurrence reccurence) {
 
 		ArrayList<CalendarEntry> entries = new ArrayList<CalendarEntry>();
@@ -358,6 +364,7 @@ public class CalendarEntryHomeImpl extends com.idega.data.IDOFactory implements 
 						location,
 						calendarId,
 						externalEventId,
+						link,
 						reccurenceGroup);
 				if (entry != null) {
 					entries.add(entry);
@@ -412,6 +419,7 @@ public class CalendarEntryHomeImpl extends com.idega.data.IDOFactory implements 
 			String location,
 			String calendarId,
 			String externalEventId,
+			String link,
 			Recurrence recurrence) {
 		return update(
 				getUserDAO().getUser(userId),
@@ -425,6 +433,7 @@ public class CalendarEntryHomeImpl extends com.idega.data.IDOFactory implements 
 				location,
 				calendarId,
 				externalEventId,
+				link,
 				recurrence);
 	}
 

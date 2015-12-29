@@ -60,4 +60,16 @@ public interface CalendarEntry extends com.idega.data.IDOEntity
 	 * @author <a href="mailto:martynas@idega.is">Martynas Stakė</a>
 	 */
 	Collection<Object> ejbFindByTypes(List<String> calendarEntryTypes);
+
+	/**
+	 * 
+	 * @return link to view of this event
+	 */
+	String getLink();
+
+	/**
+	 * 
+	 * @param link to view of this event 
+	 */
+	void setLink(String link);
 }

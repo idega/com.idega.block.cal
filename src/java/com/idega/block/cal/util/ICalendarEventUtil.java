@@ -82,6 +82,8 @@
  */
 package com.idega.block.cal.util;
 
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -103,6 +105,7 @@ import net.fortuna.ical4j.model.property.DtStart;
 import net.fortuna.ical4j.model.property.Location;
 import net.fortuna.ical4j.model.property.Summary;
 import net.fortuna.ical4j.model.property.Uid;
+import net.fortuna.ical4j.model.property.Url;
 
 import com.idega.block.cal.data.CalendarEntry;
 import com.idega.util.ListUtil;
@@ -182,6 +185,17 @@ public class ICalendarEventUtil {
 			if (!StringUtil.isEmpty(entry.getExternalEventId())) {
 				Uid uid = new Uid(entry.getPrimaryKey().toString());
 				event.getProperties().add(uid);
+			}
+
+			/*
+			 * Link
+			 */
+			if (!StringUtil.isEmpty(entry.getLink())) {
+				Url link = null;
+				try {
+					link = new Url(new URI(entry.getLink()));
+					event.getProperties().add(link);
+				} catch (URISyntaxException e) {}
 			}
 
 			try {

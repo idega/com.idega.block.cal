@@ -68,6 +68,7 @@ public class CalendarEntryBMPBean extends GenericEntity implements com.idega.blo
 	    addManyToManyRelationShip(LocalizedText.class);
 	    addManyToManyRelationShip(User.class);
 	    setNullable(getColumnNameEntryTypeID(),false);
+	    addAttribute(getColumnNameLink(), "Link", String.class);
 	}
 
 	public static String getEntityTableName() { return "CAL_ENTRY"; }
@@ -86,7 +87,27 @@ public class CalendarEntryBMPBean extends GenericEntity implements com.idega.blo
 	public static String getColumnNameCalendarId() { return "CAL_CALENDAR_ID"; }
 	public static String getColumnNameExternalEventId() { return "CAL_EXT_EVENT_ID"; }
 	public static String getColumnNameRecurrence() { return "CAL_EVENT_RECURRENCE"; }
+	public static String getColumnNameLink() { return "LINK"; }
 	public static String getColumnNameEntryGroupID() { return com.idega.block.cal.data.CalendarEntryGroupBMPBean.getColumnNameEntryGroupID(); }
+
+
+	/*
+	 * (non-Javadoc)
+	 * @see com.idega.block.cal.data.CalendarEntry#getLink()
+	 */
+	@Override
+	public String getLink() {
+		return getStringColumnValue(getColumnNameLink());
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see com.idega.block.cal.data.CalendarEntry#setLink(java.lang.String)
+	 */
+	@Override
+	public void setLink(String link) {
+		setColumn(getColumnNameLink(), link);
+	}
 
   @Override
 	public String getIDColumnName(){

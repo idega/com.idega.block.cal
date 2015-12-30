@@ -8,6 +8,7 @@ import javax.ejb.FinderException;
 
 import com.idega.data.IDOStoreException;
 import com.idega.data.SimpleQuerier;
+import com.idega.util.StringUtil;
 
 
 
@@ -20,7 +21,8 @@ public class CalendarEntryGroupHomeImpl extends com.idega.data.IDOFactory implem
 	 * @see com.idega.block.cal.data.CalendarEntryGroupHome#update(java.lang.Integer, java.lang.String, java.lang.Integer)
 	 */
 	@Override
-	public CalendarEntryGroup update(Integer primaryKey, String name, Integer ledgerId) {
+	public CalendarEntryGroup update(Integer primaryKey, String name, 
+			Integer ledgerId, String timezone) {
 		CalendarEntryGroup entity = findByPrimaryKey(primaryKey);
 		if (entity == null) {
 			entity = create();
@@ -31,7 +33,11 @@ public class CalendarEntryGroupHomeImpl extends com.idega.data.IDOFactory implem
 		if (ledgerId != null && ledgerId > -1) {
 			entity.setLedgerID(ledgerId);
 		}
-		
+
+		if (!StringUtil.isEmpty(timezone)) {
+			entity.setTimezone(timezone);
+		}
+
 		try {
 			entity.store();
 			return entity;

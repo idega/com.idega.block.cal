@@ -92,12 +92,8 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import net.fortuna.ical4j.model.DateTime;
-import net.fortuna.ical4j.model.TimeZone;
-import net.fortuna.ical4j.model.TimeZoneRegistry;
-import net.fortuna.ical4j.model.TimeZoneRegistryFactory;
 import net.fortuna.ical4j.model.ValidationException;
 import net.fortuna.ical4j.model.component.VEvent;
-import net.fortuna.ical4j.model.component.VTimeZone;
 import net.fortuna.ical4j.model.property.Description;
 import net.fortuna.ical4j.model.property.DtEnd;
 import net.fortuna.ical4j.model.property.DtStamp;
@@ -128,10 +124,6 @@ public class ICalendarEventUtil {
 	 */
 	public static VEvent getEvent(CalendarEntry entry) {
 		if (entry != null) {
-			TimeZoneRegistry registry = TimeZoneRegistryFactory.getInstance().createRegistry();
-			TimeZone timezone = registry.getTimeZone("Atlantic/Reykjavik");
-			VTimeZone tz = timezone.getVTimeZone();
-
 			VEvent event = new VEvent();
 
 			/*

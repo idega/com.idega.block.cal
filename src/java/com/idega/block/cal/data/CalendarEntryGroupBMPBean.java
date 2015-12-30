@@ -32,12 +32,14 @@ public class CalendarEntryGroupBMPBean extends GenericEntity implements Calendar
 		addAttribute(getColumnNameName(),"CalEntryGroupName", true, true, String.class);
 		addAttribute(getColumnNameLedgerID(), "CalLedgerID", true, true, Integer.class);
 		addManyToManyRelationShip(CalendarEntry.class);
+		addAttribute(getColumnNameTimezone(), "Timezone", String.class);
 	}
 
 	public static String getEntityTableName() { return "CAL_ENTRY_GROUP"; }
 	public static String getColumnNameEntryGroupID() { return "CAL_ENTRY_GROUP_ID"; }
 	public static String getColumnNameName() { return "CAL_ENTRY_GROUP_NAME"; }
 	public static String getColumnNameLedgerID() { return CalendarLedgerBMPBean.getColumnNameLedgerID(); }
+	public static String getColumnNameTimezone() { return "TIMEZONE"; }
 
 	public String getEntityName(){
 		return getEntityTableName();
@@ -95,7 +97,22 @@ public class CalendarEntryGroupBMPBean extends GenericEntity implements Calendar
 		return super.idoFindPKsByQuery(query);
 		
 	}
-	
-	
-	
+
+	/*
+	 * (non-Javadoc)
+	 * @see com.idega.block.cal.data.CalendarEntryGroup#getTimezone()
+	 */
+	@Override
+	public String getTimezone() {
+		return getStringColumnValue(getColumnNameTimezone());
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see com.idega.block.cal.data.CalendarEntryGroup#setTimezone(java.lang.String)
+	 */
+	@Override
+	public void setTimezone(String timezone) {
+		setColumn(getColumnNameTimezone(), timezone);
+	}
 }

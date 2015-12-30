@@ -108,7 +108,16 @@ public interface CalendarEntryHome extends com.idega.data.IDOHome
 			String ledger, String description, String location, String calendarId,
 			String externalEventId,
 			String link,
+			String timezone,
 			Recurrence recurrence);
+
+	List<CalendarEntry> update(User user, String headline,
+			CalendarEntryType entryType, Date startDate, Date endDate,
+			Group attendeesGroup, String ledger, String description,
+			String location, String calendarId, String externalEventId,
+			String link, 
+			String timezone,
+			Recurrence reccurence);
 
 
  public Collection<CalendarEntry> getEntriesByEventsIdsAndGroupsIds(List<String> eventsIds, List<String> groupsIds);

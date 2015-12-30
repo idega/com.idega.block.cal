@@ -84,14 +84,23 @@ package com.idega.block.cal.util;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import net.fortuna.ical4j.model.Calendar;
+import net.fortuna.ical4j.model.TimeZone;
+import net.fortuna.ical4j.model.TimeZoneRegistry;
+import net.fortuna.ical4j.model.TimeZoneRegistryFactory;
 import net.fortuna.ical4j.model.component.VEvent;
 import net.fortuna.ical4j.model.property.CalScale;
 import net.fortuna.ical4j.model.property.ProdId;
 import net.fortuna.ical4j.model.property.Version;
 
 import com.idega.block.cal.data.CalendarEntry;
+import com.idega.block.cal.data.CalendarEntryGroup;
+import com.idega.block.cal.data.CalendarEntryGroupHome;
+import com.idega.data.IDOLookup;
+import com.idega.data.IDOLookupException;
 import com.idega.util.ListUtil;
 
 /**
@@ -104,17 +113,39 @@ import com.idega.util.ListUtil;
  */
 public class ICalendarUtil {
 
+	public static CalendarEntryGroupHome getCalendarEntryGroupHome() {
+		try {
+			return (CalendarEntryGroupHome) IDOLookup.getHome(CalendarEntryGroup.class);
+		} catch (IDOLookupException e) {
+			Logger.getLogger(ICalendarUtil.class.getName()).log(Level.WARNING, 
+					"Failed to get " + CalendarEntryGroupHome.class + 
+					" cause of: ", e);
+		}
+
+		return null;
+	}
+
 	/**
 	 * 
 	 * @param entities to convert, not <code>null</code>;
 	 * @return calendar created from events;
 	 */
-	public static final Calendar getCalendar(Collection<CalendarEntry> entities) {
+	public static Calendar getCalendar(
+			Collection<CalendarEntry> entities) {
 		if (!ListUtil.isEmpty(entities)) {
 			Calendar calendar = new Calendar();
 			calendar.getProperties().add(new ProdId("-//Idega Open Source//iCal4j 1.0//EN"));
 			calendar.getProperties().add(Version.VERSION_2_0);
 			calendar.getProperties().add(CalScale.GREGORIAN);
+
+			int randomCalendarGroupId = entities.iterator().next().getEntryGroupID();
+			CalendarEntryGroup calendarEntryGroup = getCalendarEntryGroupHome().findByPrimaryKey(randomCalendarGroupId);
+
+			if (calendarEntryGroup != null) {
+				TimeZoneRegistry registry = TimeZoneRegistryFactory.getInstance().createRegistry();
+				TimeZone timezone = registry.getTimeZone(calendarEntryGroup.getTimezone());
+				calendar.getComponents().add(timezone.getVTimeZone());
+			}
 
 			List<VEvent> events = ICalendarEventUtil.getEvents(entities);
 			if (!ListUtil.isEmpty(events)) {

@@ -6,6 +6,7 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
@@ -168,7 +169,8 @@ public class CalendarEntryHomeImpl extends com.idega.data.IDOFactory implements 
 		if (reccurenceGroup == null) {
 			reccurenceGroup = getCalendarEntryGroupHome().update(null,
 					CalendarEntryCreator.noRepeatFieldParameterName,
-					Integer.valueOf(ledger));
+					Integer.valueOf(ledger), 
+					Calendar.getInstance().getTimeZone().getID());
 		}
 
 		/* Calendar type can't be null */
@@ -274,6 +276,11 @@ public class CalendarEntryHomeImpl extends com.idega.data.IDOFactory implements 
 		return iteratedDate.plusWeeks(recurrence.getRate());
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * @see com.idega.block.cal.data.CalendarEntryHome#update(com.idega.user.data.bean.User, java.lang.String, com.idega.block.cal.data.CalendarEntryType, java.util.Date, java.util.Date, com.idega.user.data.bean.Group, java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.String, com.idega.block.calendar.bean.Recurrence)
+	 */
+	@Override
 	public List<CalendarEntry> update(
 			User user,
 			String headline,
@@ -287,6 +294,7 @@ public class CalendarEntryHomeImpl extends com.idega.data.IDOFactory implements 
 			String calendarId,
 			String externalEventId,
 			String link,
+			String timezone,
 			Recurrence reccurence) {
 
 		ArrayList<CalendarEntry> entries = new ArrayList<CalendarEntry>();
@@ -294,34 +302,21 @@ public class CalendarEntryHomeImpl extends com.idega.data.IDOFactory implements 
 		/*
 		 * Cleaning old records before creating new ones
 		 */
-		CalendarEntryGroup reccurenceGroup = null;
-		if (!StringUtil.isEmpty(externalEventId)) {
-			CalendarEntry existingEntry = findEntryByExternalId(externalEventId);
-			if (existingEntry != null) {
-				reccurenceGroup = getCalendarEntryGroupHome().findByPrimaryKey(
-						existingEntry.getEntryGroupID());
-				if (reccurenceGroup != null) {
-					Integer recurrenceGroupId = Integer.valueOf(
-							reccurenceGroup.getPrimaryKey().toString());
-					try {
-						getAttendeeDAO().removeByEventGroup(recurrenceGroupId);
-						getExcludedPeriodDAO().removeByEventGroup(recurrenceGroupId);
-						getCalendarEntryGroupHome().purge(recurrenceGroupId);
-					} catch (Exception e) {
-						java.util.logging.Logger.getLogger(getClass().getName()).log(
-								Level.WARNING, "Failed to remove old records, cause of:", e);
-						return entries;
-					}
-				}
-			}
+		try {
+			purge(findEntryByExternalId(externalEventId));
+		} catch (Exception e) {
+			java.util.logging.Logger.getLogger(getClass().getName()).log(
+					Level.WARNING, "Failed to remove old records, cause of:", e);
+			return entries;
 		}
 
 		/*
 		 * Creating new calendar recurrence group
 		 */
-		reccurenceGroup = getCalendarEntryGroupHome().update(null,
+		CalendarEntryGroup reccurenceGroup = getCalendarEntryGroupHome().update(null,
 				reccurence.getType(),
-				Integer.valueOf(ledger));
+				Integer.valueOf(ledger),
+				timezone);
 		
 		if (reccurence.getFrom() == null) {
 			reccurence.setFrom(startDate);
@@ -420,6 +415,7 @@ public class CalendarEntryHomeImpl extends com.idega.data.IDOFactory implements 
 			String calendarId,
 			String externalEventId,
 			String link,
+			String timezone,
 			Recurrence recurrence) {
 		return update(
 				getUserDAO().getUser(userId),
@@ -434,6 +430,7 @@ public class CalendarEntryHomeImpl extends com.idega.data.IDOFactory implements 
 				calendarId,
 				externalEventId,
 				link,
+				timezone,
 				recurrence);
 	}
 
@@ -485,10 +482,12 @@ public class CalendarEntryHomeImpl extends com.idega.data.IDOFactory implements 
 	 */
 	@Override
 	public CalendarEntry findEntryByExternalId(String externalEntryID) {
-		Collection<CalendarEntry> entries = findEntryByExternalId(
-				Arrays.asList(externalEntryID));
-		if (!ListUtil.isEmpty(entries)) {
-			return entries.iterator().next();
+		if (!StringUtil.isEmpty(externalEntryID)) {
+			Collection<CalendarEntry> entries = findEntryByExternalId(
+					Arrays.asList(externalEntryID));
+			if (!ListUtil.isEmpty(entries)) {
+				return entries.iterator().next();
+			}
 		}
 
 		return null;
@@ -692,6 +691,8 @@ public Collection<CalendarEntry> findEntriesByCriteria(String calendarId, List<S
 	@Override
 	public void purge(CalendarEntry entity) {
 		if (entity != null) {
+			getAttendeeDAO().removeByEventGroup(entity.getEntryGroupID());
+			getExcludedPeriodDAO().removeByEventGroup(entity.getEntryGroupID());
 			getCalendarEntryGroupHome().purge(entity.getEntryGroupID());
 		}
 	}

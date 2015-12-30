@@ -33,7 +33,7 @@ public interface CalendarEntryGroupHome extends com.idega.data.IDOHome
 	 * @return entity or <code>null</code> on failure;
 	 * @author <a href="mailto:martynas@idega.is">Martynas Stakė</a>
 	 */
-	CalendarEntryGroup update(Integer primaryKey, String name, Integer ledgerId);
+	CalendarEntryGroup update(Integer primaryKey, String name, Integer ledgerId, String timezone);
 
 	/**
 	 * 

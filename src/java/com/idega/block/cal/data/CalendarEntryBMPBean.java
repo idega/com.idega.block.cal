@@ -2,6 +2,8 @@
 package com.idega.block.cal.data;
 import java.sql.SQLException;
 import java.sql.Timestamp;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -26,13 +28,15 @@ import com.idega.data.query.SelectQuery;
 import com.idega.data.query.Table;
 import com.idega.user.data.User;
 import com.idega.user.data.bean.Group;
-import com.idega.util.IWTimestamp;
 import com.idega.util.ListUtil;
 import com.idega.util.StringUtil;
+import com.idega.util.timer.DateUtil;
 
 public class CalendarEntryBMPBean extends GenericEntity implements com.idega.block.cal.data.CalendarEntry {
 
 	private static final long serialVersionUID = 8762106863386057912L;
+
+	public static final DateTimeFormatter SQL_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
 	public CalendarEntryBMPBean(){
 		super();
@@ -683,13 +687,17 @@ public Collection<CalendarEntry> getEntriesByLedgersIdsAndGroupsIds(List<String>
 		 * Date from
 		 */
 		if (from != null) {
-			IWTimestamp fromTimestamp = new IWTimestamp(from);
-			query.append("AND (ce.CAL_ENTRY_DATE >= '").append(fromTimestamp.toSQLString()).append("' ");
+			LocalDateTime dateTimeFrom = DateUtil.getDateTime(from);
+			dateTimeFrom = dateTimeFrom.withHour(0);
+			dateTimeFrom = dateTimeFrom.withMinute(0);
+			dateTimeFrom = dateTimeFrom.withSecond(0);
+
+			query.append("AND (ce.CAL_ENTRY_DATE >= '").append(dateTimeFrom.format(SQL_FORMATTER)).append("' ");
 			if (extendedResultSet) {
 				query.append("OR (");
-				query.append("ce.CAL_ENTRY_DATE < '").append(fromTimestamp.toSQLString());
+				query.append("ce.CAL_ENTRY_DATE < '").append(dateTimeFrom.format(SQL_FORMATTER));
 				query.append("' AND ");
-				query.append("ce.CAL_ENTRY_END_DATE > '").append(fromTimestamp.toSQLString());
+				query.append("ce.CAL_ENTRY_END_DATE > '").append(dateTimeFrom.format(SQL_FORMATTER));
 				query.append("')");
 			}
 
@@ -700,13 +708,17 @@ public Collection<CalendarEntry> getEntriesByLedgersIdsAndGroupsIds(List<String>
 		 * Date to
 		 */
 		if (to != null) {
-			IWTimestamp toTimestamp = new IWTimestamp(to);
-			query.append("AND (ce.CAL_ENTRY_END_DATE <= '").append(toTimestamp.toSQLString()).append("' ");
+			LocalDateTime dateTimeTo = DateUtil.getDateTime(to);
+			dateTimeTo = dateTimeTo.withHour(23);
+			dateTimeTo = dateTimeTo.withMinute(59);
+			dateTimeTo = dateTimeTo.withSecond(59);
+
+			query.append("AND (ce.CAL_ENTRY_END_DATE <= '").append(dateTimeTo.format(SQL_FORMATTER)).append("' ");
 			if (extendedResultSet) {
 				query.append("OR (");
-				query.append("ce.CAL_ENTRY_END_DATE > '").append(toTimestamp.toSQLString());
+				query.append("ce.CAL_ENTRY_END_DATE > '").append(dateTimeTo.format(SQL_FORMATTER));
 				query.append("' AND ");
-				query.append("ce.CAL_ENTRY_DATE < '").append(toTimestamp.toSQLString());
+				query.append("ce.CAL_ENTRY_DATE < '").append(dateTimeTo.format(SQL_FORMATTER));
 				query.append("')");
 			}
 

@@ -103,10 +103,10 @@ public class CalendarEntryHomeImpl extends com.idega.data.IDOFactory implements 
 		if (this.userBusiness == null) {
 			try {
 				this.userBusiness = IBOLookup.getServiceInstance(
-						IWMainApplication.getDefaultIWApplicationContext(), 
+						IWMainApplication.getDefaultIWApplicationContext(),
 						UserBusiness.class);
 			} catch (IBOLookupException e) {
-				java.util.logging.Logger.getLogger(getClass().getName()).log(Level.WARNING, 
+				java.util.logging.Logger.getLogger(getClass().getName()).log(Level.WARNING,
 						"Failed to get " + UserBusiness.class + " cause of: ", e);
 			}
 		}
@@ -169,7 +169,7 @@ public class CalendarEntryHomeImpl extends com.idega.data.IDOFactory implements 
 		if (reccurenceGroup == null) {
 			reccurenceGroup = getCalendarEntryGroupHome().update(null,
 					CalendarEntryCreator.noRepeatFieldParameterName,
-					Integer.valueOf(ledger), 
+					Integer.valueOf(ledger),
 					Calendar.getInstance().getTimeZone().getID());
 		}
 
@@ -201,7 +201,7 @@ public class CalendarEntryHomeImpl extends com.idega.data.IDOFactory implements 
 		entry.setExternalEventId(externalEventId);
 		entry.setDescription(description);
 		entry.setLocation(location);
-		
+
 		if (!StringUtil.isEmpty(link)) {
 			entry.setLink(link);
 		}
@@ -317,12 +317,12 @@ public class CalendarEntryHomeImpl extends com.idega.data.IDOFactory implements 
 				reccurence.getType(),
 				Integer.valueOf(ledger),
 				timezone);
-		
-		if (reccurence.getFrom() == null) {
+
+		if (reccurence.getFrom() == null || reccurence.getType().equalsIgnoreCase("none")) {
 			reccurence.setFrom(startDate);
 		}
 
-		if (reccurence.getTo() == null) {
+		if (reccurence.getTo() == null || reccurence.getType().equalsIgnoreCase("none")) {
 			reccurence.setTo(endDate);
 		}
 
@@ -388,9 +388,9 @@ public class CalendarEntryHomeImpl extends com.idega.data.IDOFactory implements 
 		}
 
 		for (ExcludedPeriod period : reccurence.getExcludedPeriods()) {
-			getExcludedPeriodDAO().update(null, 
-					Integer.valueOf(reccurenceGroup.getPrimaryKey().toString()), 
-					period.getFrom(), 
+			getExcludedPeriodDAO().update(null,
+					Integer.valueOf(reccurenceGroup.getPrimaryKey().toString()),
+					period.getFrom(),
 					period.getTo());
 		}
 
@@ -670,8 +670,8 @@ public Collection<CalendarEntry> findEntriesByCriteria(String calendarId, List<S
 			Date to,
 			boolean extendedResultSet) {
 		CalendarEntryBMPBean entity = (CalendarEntryBMPBean) idoCheckOutPooledEntity();
-		Collection<Object> ids = entity.ejbFindBy(calendarId, groupsIds, 
-				recurrenceGroups, eventTypeId, userIds, from, to, 
+		Collection<Object> ids = entity.ejbFindBy(calendarId, groupsIds,
+				recurrenceGroups, eventTypeId, userIds, from, to,
 				extendedResultSet);
 
 		try {
@@ -712,9 +712,9 @@ public Collection<CalendarEntry> findEntriesByCriteria(String calendarId, List<S
 	 */
 	@Override
 	public Collection<CalendarEntry> findByInvitee(
-			com.idega.user.data.bean.User user, 
-			Date from, 
-			Date to, 
+			com.idega.user.data.bean.User user,
+			Date from,
+			Date to,
 			Integer typeId) {
 		ArrayList<Integer> calendarEntryGroups = new ArrayList<Integer>();
 
@@ -724,7 +724,7 @@ public Collection<CalendarEntry> findEntriesByCriteria(String calendarId, List<S
 		}
 
 		if (!ListUtil.isEmpty(calendarEntryGroups)) {
-			return findAllBy(null, null, 
+			return findAllBy(null, null,
 					calendarEntryGroups, typeId, null, from, to, true);
 		}
 
@@ -734,7 +734,7 @@ public Collection<CalendarEntry> findEntriesByCriteria(String calendarId, List<S
 	@Override
 	public Collection<CalendarEntry> findAll(User user, Date from, Date to, Integer type) {
 		ArrayList<CalendarEntry> result = new ArrayList<CalendarEntry>();
-		
+
 		if (user != null) {
 			ArrayList<Integer> gruopsIds = new ArrayList<Integer>();
 
@@ -743,7 +743,7 @@ public Collection<CalendarEntry> findEntriesByCriteria(String calendarId, List<S
 				groups = getUserBusiness().getUserGroups(user.getId());
 			} catch (Exception e) {
 				java.util.logging.Logger.getLogger(getClass().getName()).log(
-						Level.WARNING, 
+						Level.WARNING,
 						"Failed to get groups for user by name: " + user.getName());
 			}
 
@@ -753,13 +753,13 @@ public Collection<CalendarEntry> findEntriesByCriteria(String calendarId, List<S
 				}
 			}
 
-			Collection<CalendarEntry> groupEvents = findAllBy(null, gruopsIds, 
+			Collection<CalendarEntry> groupEvents = findAllBy(null, gruopsIds,
 					null, type, null, from, to, true);
 			if (!ListUtil.isEmpty(groupEvents)) {
 				result.addAll(groupEvents);
 			}
 
-			Collection<CalendarEntry> eventInvites = findByInvitee(user, from, 
+			Collection<CalendarEntry> eventInvites = findByInvitee(user, from,
 					to, type);
 			if (!ListUtil.isEmpty(eventInvites)) {
 				result.addAll(eventInvites);

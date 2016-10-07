@@ -230,6 +230,7 @@ public class CalendarNotificationServiceImpl extends DefaultSpringBean implement
 			Collection<User> receivers, 
 			Collection<CalendarEntry> entries) {
 		if (!ListUtil.isEmpty(receivers)) {
+			String replacement = getSettings().getProperty("default_service_url", "https://beta.felix.is");
 
 			/*
 			 * Convert events
@@ -238,6 +239,8 @@ public class CalendarNotificationServiceImpl extends DefaultSpringBean implement
 			name = name.replace(CoreConstants.SPACE, "_");
 			String filename = name + "_" + LocalDate.now() + ".ics";
 			String url = getICalWriter().write(entries, filename);
+			url = url.substring(url.indexOf("/content"));
+			url = replacement + url;
 
 			/*
 			 * Send e-mails

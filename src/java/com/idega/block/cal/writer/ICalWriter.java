@@ -186,7 +186,7 @@ public class ICalWriter extends DefaultSpringBean {
 				)
 			) {
 				IWContext iwc = CoreUtil.getIWContext();
-				String serverURL = iwc == null ? null : iwc.getServerURL();
+				String serverURL = iwc == null ? null : CoreUtil.getServerURL(iwc.getRequest());
 				serverURL = serverURL == null ? getApplication().getIWApplicationContext().getDomain().getURL() : serverURL;
 				if (serverURL.endsWith(CoreConstants.SLASH)) {
 					path = path.substring(1);

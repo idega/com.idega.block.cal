@@ -108,6 +108,7 @@ import com.idega.core.business.DefaultSpringBean;
 import com.idega.core.messaging.MessagingSettings;
 import com.idega.data.IDOUtil;
 import com.idega.idegaweb.IWMainApplication;
+import com.idega.idegaweb.IWMainApplicationSettings;
 import com.idega.idegaweb.IWResourceBundle;
 import com.idega.user.business.UserBusiness;
 import com.idega.user.dao.UserDAO;
@@ -116,6 +117,7 @@ import com.idega.user.data.bean.User;
 import com.idega.util.CoreConstants;
 import com.idega.util.ListUtil;
 import com.idega.util.SendMail;
+import com.idega.util.StringUtil;
 import com.idega.util.expression.ELUtil;
 
 /**
@@ -202,13 +204,20 @@ public class CalendarNotificationServiceImpl extends DefaultSpringBean implement
 	 */
 	@Override
 	public void notifyUser(User receiver, String url) {
-		Set<String> emails = getUserDAO().getEmailAddresses(receiver);
-		String from = getSettings().getProperty(MessagingSettings.PROP_MESSAGEBOX_FROM_ADDRESS);
-		for (String email : emails) {
+		Set<String> receiverEmails = getUserDAO().getEmailAddresses(receiver);
+		if (ListUtil.isEmpty(receiverEmails)) {
+			getLogger().warning(receiver + " (personal ID: " + receiver.getPersonalID() + ") does not have email, can not send link to calendar: " + url);
+			return;
+		}
+
+		IWMainApplicationSettings settings = getSettings();
+		String from = settings.getProperty(MessagingSettings.PROP_MESSAGEBOX_FROM_ADDRESS);
+		String testReceiver = settings.getProperty("calendar_test_receiver");
+		for (String receiverEmail: receiverEmails) {
 			try {
 				SendMail.send(
 						from,
-						email,
+						StringUtil.isEmpty(testReceiver) ? receiverEmail : testReceiver,
 						null,
 						null,
 						null,
@@ -221,7 +230,7 @@ public class CalendarNotificationServiceImpl extends DefaultSpringBean implement
 			} catch (MessagingException e) {
 				java.util.logging.Logger.getLogger(getClass().getName()).log(
 						Level.WARNING,
-								"Failed to send message to email: " + email +
+								"Failed to send message to email: " + receiverEmail +
 								", cause of: " , e);
 			}
 		}

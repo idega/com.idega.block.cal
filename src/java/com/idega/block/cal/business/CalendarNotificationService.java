@@ -82,6 +82,7 @@
  */
 package com.idega.block.cal.business;
 
+import java.io.File;
 import java.util.Collection;
 
 import com.idega.block.cal.data.CalendarEntry;
@@ -140,7 +141,7 @@ public interface CalendarNotificationService {
 	 * @param receiver is a person to send e-mails, not <code>null</code>;
 	 * @param url to add to letter, not <code>null</code>;
 	 */
-	void notifyUser(User receiver, String url);
+	void notifyUser(User receiver, File attachment);
 
 	/**
 	 * 

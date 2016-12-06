@@ -82,6 +82,10 @@
  */
 package com.idega.block.cal.business.impl;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
 import java.rmi.RemoteException;
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -203,10 +207,10 @@ public class CalendarNotificationServiceImpl extends DefaultSpringBean implement
 	 * @see com.idega.block.cal.business.CalendarNotificationService#notifyUser(com.idega.user.data.bean.User, java.lang.String)
 	 */
 	@Override
-	public void notifyUser(User receiver, String url) {
+	public void notifyUser(User receiver, File attachment) {
 		Set<String> receiverEmails = getUserDAO().getEmailAddresses(receiver);
 		if (ListUtil.isEmpty(receiverEmails)) {
-			getLogger().warning(receiver + " (personal ID: " + receiver.getPersonalID() + ") does not have email, can not send link to calendar: " + url);
+			getLogger().warning(receiver + " (personal ID: " + receiver.getPersonalID() + ") does not have email, can not send link to calendar");
 			return;
 		}
 
@@ -222,10 +226,10 @@ public class CalendarNotificationServiceImpl extends DefaultSpringBean implement
 						null,
 						null,
 						localize("calendar_update", "Calendar update"),
-						localize("your_calendar_has_been_updated", "Your calendar has been updated. You can download it: " ) + url,
+						localize("calendar_has_been_updated", "Your calendar has been updated." ),
 						true,
 						false,
-						null
+						attachment
 				);
 			} catch (MessagingException e) {
 				java.util.logging.Logger.getLogger(getClass().getName()).log(
@@ -251,14 +255,23 @@ public class CalendarNotificationServiceImpl extends DefaultSpringBean implement
 			 */
 			String name = entries.iterator().next().getName();
 			name = name.replace(CoreConstants.SPACE, CoreConstants.UNDER);
-			String filename = name + CoreConstants.UNDER + LocalDate.now() + ".ics";
-			String url = getICalWriter().write(entries, filename);
+			String filename = name + CoreConstants.UNDER + LocalDate.now() ;
+
+			File attachment = null;
+			try {
+				attachment = File.createTempFile(filename, ".ics");
+				OutputStream fileOutputStream = new FileOutputStream(attachment);
+				getICalWriter().write(entries, fileOutputStream);
+				fileOutputStream.close();
+			} catch (IOException e) {
+				getLogger().log(Level.WARNING, "Failed ot create calendar file, cause of:", e);
+			};
 
 			/*
 			 * Send e-mails
 			 */
 			for (User receiver : receivers) {
-				notifyUser(receiver, url);
+				notifyUser(receiver, attachment);
 			}
 		}
 	}

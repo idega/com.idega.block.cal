@@ -85,7 +85,6 @@ package com.idega.block.cal.writer;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.OutputStream;
-import java.net.URL;
 import java.util.Collection;
 import java.util.UUID;
 import java.util.logging.Level;
@@ -101,10 +100,8 @@ import com.idega.core.business.DefaultSpringBean;
 import com.idega.core.file.util.MimeType;
 import com.idega.data.IDOLookup;
 import com.idega.data.IDOLookupException;
-import com.idega.presentation.IWContext;
 import com.idega.user.data.bean.User;
 import com.idega.util.CoreConstants;
-import com.idega.util.CoreUtil;
 import com.idega.util.IOUtil;
 
 import net.fortuna.ical4j.data.CalendarOutputter;
@@ -168,7 +165,7 @@ public class ICalWriter extends DefaultSpringBean {
 	 *
 	 * @param calendarEntries to convert and write to file;
 	 * @param filename is name of file to write, not <code>null</code>;
-	 * @return {@link URL} to created file;
+	 * @return path to created file;
 	 */
 	public String write(Collection<CalendarEntry> calendarEntries, String filename) {
 		ByteArrayOutputStream out = new ByteArrayOutputStream();
@@ -185,13 +182,8 @@ public class ICalWriter extends DefaultSpringBean {
 					in
 				)
 			) {
-				IWContext iwc = CoreUtil.getIWContext();
-				String serverURL = iwc == null ? null : CoreUtil.getServerURL(iwc.getRequest());
-				serverURL = serverURL == null ? getApplication().getIWApplicationContext().getDomain().getURL() : serverURL;
-				if (serverURL.endsWith(CoreConstants.SLASH)) {
-					path = path.substring(1);
-				}
-				return serverURL.concat(path).concat(filename);
+
+				return path.concat(filename);
 			}
 		} catch (Exception e) {
 			getLogger().log(Level.WARNING, "Failed to save calendar file, cause of: ", e);

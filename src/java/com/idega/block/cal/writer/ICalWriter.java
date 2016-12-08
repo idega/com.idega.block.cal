@@ -85,10 +85,14 @@ package com.idega.block.cal.writer;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.OutputStream;
+import java.net.URL;
+import java.sql.SQLException;
 import java.util.Collection;
+import java.util.Date;
 import java.util.UUID;
 import java.util.logging.Level;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
@@ -97,12 +101,18 @@ import com.idega.block.cal.data.CalendarEntry;
 import com.idega.block.cal.data.CalendarEntryHome;
 import com.idega.block.cal.util.ICalendarUtil;
 import com.idega.core.business.DefaultSpringBean;
+import com.idega.core.dao.ICFileDAO;
+import com.idega.core.file.data.bean.ICFile;
+import com.idega.core.file.data.bean.dao.ICMimeTypeDAO;
 import com.idega.core.file.util.MimeType;
 import com.idega.data.IDOLookup;
 import com.idega.data.IDOLookupException;
+import com.idega.presentation.IWContext;
 import com.idega.user.data.bean.User;
 import com.idega.util.CoreConstants;
+import com.idega.util.CoreUtil;
 import com.idega.util.IOUtil;
+import com.idega.util.expression.ELUtil;
 
 import net.fortuna.ical4j.data.CalendarOutputter;
 import net.fortuna.ical4j.model.Calendar;
@@ -120,6 +130,28 @@ import net.fortuna.ical4j.model.Calendar;
 public class ICalWriter extends DefaultSpringBean {
 
 	private CalendarEntryHome calendarEntryHome;
+
+	@Autowired
+	private ICFileDAO fileDAO;
+
+	@Autowired
+	private ICMimeTypeDAO fileTypeDAO;
+
+	private ICMimeTypeDAO getFileTypeDAO() {
+		if (this.fileTypeDAO == null) {
+			ELUtil.getInstance().autowire(this);
+		}
+
+		return this.fileTypeDAO;
+	}
+
+	private ICFileDAO getFileDAO() {
+		if (this.fileDAO == null) {
+			ELUtil.getInstance().autowire(this);
+		}
+
+		return this.fileDAO;
+	}
 
 	private CalendarEntryHome getCalendarEntryHome() {
 		if (this.calendarEntryHome == null) {
@@ -165,7 +197,7 @@ public class ICalWriter extends DefaultSpringBean {
 	 *
 	 * @param calendarEntries to convert and write to file;
 	 * @param filename is name of file to write, not <code>null</code>;
-	 * @return path to created file;
+	 * @return {@link URL} to created file;
 	 */
 	public String write(Collection<CalendarEntry> calendarEntries, String filename) {
 		ByteArrayOutputStream out = new ByteArrayOutputStream();
@@ -175,15 +207,15 @@ public class ICalWriter extends DefaultSpringBean {
 		ByteArrayInputStream in = null;
 		try {
 			in = new ByteArrayInputStream(out.toByteArray());
-			if (getRepositoryService().uploadFile(
-					path,
-					filename,
-					MimeType.pdf.toString(),
-					in
-				)
-			) {
+			if (getRepositoryService().uploadFile(path, filename, MimeType.pdf.toString(), in)) {
+				IWContext iwc = CoreUtil.getIWContext();
+				String serverURL = iwc == null ? null : CoreUtil.getServerURL(iwc.getRequest());
+				serverURL = serverURL == null ? getApplication().getIWApplicationContext().getDomain().getURL() : serverURL;
+				if (serverURL.endsWith(CoreConstants.SLASH)) {
+					path = path.substring(1);
+				}
 
-				return path.concat(filename);
+				return serverURL.concat(path).concat(filename);
 			}
 		} catch (Exception e) {
 			getLogger().log(Level.WARNING, "Failed to save calendar file, cause of: ", e);
@@ -193,5 +225,28 @@ public class ICalWriter extends DefaultSpringBean {
 		}
 
 		return null;
+	}
+
+	/**
+	 * 
+	 * @param calendarEntries to write, not <code>null</code>
+	 * @param filename is name of the file to write, not <code>null</code>
+	 * @return entity or <code>null</code> on failure;
+	 * @throws SQLException when writing to database failed
+	 * @deprecated writing files to database is considered to be an anti-pattern. This method is workaround and should 
+	 * be avoided when possible
+	 */
+	public ICFile writeToDatabase(Collection<CalendarEntry> calendarEntries, String filename) throws SQLException {
+		ByteArrayOutputStream out = new ByteArrayOutputStream();
+		write(calendarEntries, out);
+
+		byte[] bytes = out.toByteArray();
+		ICFile file = getFileDAO().update(null, filename, null, bytes, new Date(System.currentTimeMillis()), 
+				new Date(System.currentTimeMillis()), Long.valueOf(bytes.length).intValue(), 
+				getFileTypeDAO().update("text/calendar", "Internet Calendaring and Scheduling Core Object Specification (iCalendar)"));
+
+		IOUtil.close(out);
+
+		return file;
 	}
 }

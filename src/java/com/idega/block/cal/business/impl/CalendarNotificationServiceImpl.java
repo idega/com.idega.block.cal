@@ -87,6 +87,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.rmi.RemoteException;
+import java.sql.SQLException;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -109,16 +110,19 @@ import com.idega.block.calendar.data.AttendeeEntity;
 import com.idega.business.IBOLookup;
 import com.idega.business.IBOLookupException;
 import com.idega.core.business.DefaultSpringBean;
+import com.idega.core.file.data.bean.ICFile;
 import com.idega.core.messaging.MessagingSettings;
 import com.idega.data.IDOUtil;
 import com.idega.idegaweb.IWMainApplication;
 import com.idega.idegaweb.IWMainApplicationSettings;
 import com.idega.idegaweb.IWResourceBundle;
+import com.idega.presentation.IWContext;
 import com.idega.user.business.UserBusiness;
 import com.idega.user.dao.UserDAO;
 import com.idega.user.data.bean.Group;
 import com.idega.user.data.bean.User;
 import com.idega.util.CoreConstants;
+import com.idega.util.CoreUtil;
 import com.idega.util.ListUtil;
 import com.idega.util.SendMail;
 import com.idega.util.StringUtil;
@@ -207,7 +211,7 @@ public class CalendarNotificationServiceImpl extends DefaultSpringBean implement
 	 * @see com.idega.block.cal.business.CalendarNotificationService#notifyUser(com.idega.user.data.bean.User, java.lang.String)
 	 */
 	@Override
-	public void notifyUser(User receiver, File attachment) {
+	public void notifyUser(User receiver, File attachment, String link) {
 		Set<String> receiverEmails = getUserDAO().getEmailAddresses(receiver);
 		if (ListUtil.isEmpty(receiverEmails)) {
 			getLogger().warning(receiver + " (personal ID: " + receiver.getPersonalID() + ") does not have email, can not send link to calendar");
@@ -226,7 +230,7 @@ public class CalendarNotificationServiceImpl extends DefaultSpringBean implement
 						null,
 						null,
 						localize("calendar_update", "Calendar update"),
-						localize("calendar_has_been_updated", "Your calendar has been updated." ),
+						localize("your_calendar_has_been_updated", "Your calendar has been updated: ") + link != null ? link : "",
 						true,
 						false,
 						attachment
@@ -255,7 +259,7 @@ public class CalendarNotificationServiceImpl extends DefaultSpringBean implement
 			 */
 			String name = entries.iterator().next().getName();
 			name = name.replace(CoreConstants.SPACE, CoreConstants.UNDER);
-			String filename = name + CoreConstants.UNDER + LocalDate.now() ;
+			String filename = name + CoreConstants.UNDER + LocalDate.now() + CoreConstants.UNDER + System.currentTimeMillis() ;
 
 			File attachment = null;
 			try {
@@ -264,14 +268,37 @@ public class CalendarNotificationServiceImpl extends DefaultSpringBean implement
 				getICalWriter().write(entries, fileOutputStream);
 				fileOutputStream.close();
 			} catch (IOException e) {
-				getLogger().log(Level.WARNING, "Failed ot create calendar file, cause of:", e);
+				getLogger().log(Level.WARNING, "Failed to create calendar file, cause of:", e);
 			};
+
+			String serverURL = null;
+			try {
+				ICFile databaseFile = getICalWriter().writeToDatabase(entries, filename + ".ics");
+				if (databaseFile != null) {
+					String path = "/file?id=" + databaseFile.getMetaData("uuid");
+
+					IWContext iwc = CoreUtil.getIWContext();
+					if (iwc != null) {
+						serverURL = CoreUtil.getServerURL(iwc.getRequest());
+					} else {
+						serverURL = getApplication().getIWApplicationContext().getDomain().getURL();
+					}
+
+					if (serverURL.endsWith(CoreConstants.SLASH)) {
+						path = path.substring(1);
+					}
+
+					serverURL = serverURL + path;
+				}
+			} catch (SQLException e) {
+				getLogger().log(Level.WARNING, "Failed to create calendar file in database, cause of:", e);
+			}
 
 			/*
 			 * Send e-mails
 			 */
 			for (User receiver : receivers) {
-				notifyUser(receiver, attachment);
+				notifyUser(receiver, attachment, serverURL);
 			}
 		}
 	}

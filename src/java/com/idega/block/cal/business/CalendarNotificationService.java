@@ -139,9 +139,10 @@ public interface CalendarNotificationService {
 	 * 
 	 * <p>Sends e-mails to all {@link User} mails</p>
 	 * @param receiver is a person to send e-mails, not <code>null</code>;
+	 * @param link TODO
 	 * @param url to add to letter, not <code>null</code>;
 	 */
-	void notifyUser(User receiver, File attachment);
+	void notifyUser(User receiver, File attachment, String link);
 
 	/**
 	 * 

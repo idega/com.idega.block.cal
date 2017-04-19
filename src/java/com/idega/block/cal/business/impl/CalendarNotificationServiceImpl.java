@@ -274,8 +274,14 @@ public class CalendarNotificationServiceImpl extends DefaultSpringBean implement
 			String serverURL = null;
 			try {
 				ICFile databaseFile = getICalWriter().writeToDatabase(entries, filename + ".ics");
+				String uuid = databaseFile.getMetaData("uuid");
+				if (StringUtil.isEmpty(uuid)) {
+					databaseFile = getICalWriter().getFileDAO().findById(databaseFile.getId());
+					uuid = databaseFile.getMetaData("uuid");
+				}
+
 				if (databaseFile != null) {
-					String path = "/file?id=" + databaseFile.getMetaData("uuid");
+					String path = "/file?id=" + uuid;
 
 					IWContext iwc = CoreUtil.getIWContext();
 					if (iwc != null) {

@@ -145,7 +145,7 @@ public class ICalWriter extends DefaultSpringBean {
 		return this.fileTypeDAO;
 	}
 
-	private ICFileDAO getFileDAO() {
+	public ICFileDAO getFileDAO() {
 		if (this.fileDAO == null) {
 			ELUtil.getInstance().autowire(this);
 		}
@@ -228,21 +228,22 @@ public class ICalWriter extends DefaultSpringBean {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param calendarEntries to write, not <code>null</code>
 	 * @param filename is name of the file to write, not <code>null</code>
 	 * @return entity or <code>null</code> on failure;
 	 * @throws SQLException when writing to database failed
-	 * @deprecated writing files to database is considered to be an anti-pattern. This method is workaround and should 
+	 * @deprecated writing files to database is considered to be an anti-pattern. This method is workaround and should
 	 * be avoided when possible
 	 */
+	@Deprecated
 	public ICFile writeToDatabase(Collection<CalendarEntry> calendarEntries, String filename) throws SQLException {
 		ByteArrayOutputStream out = new ByteArrayOutputStream();
 		write(calendarEntries, out);
 
 		byte[] bytes = out.toByteArray();
-		ICFile file = getFileDAO().update(null, filename, null, bytes, new Date(System.currentTimeMillis()), 
-				new Date(System.currentTimeMillis()), Long.valueOf(bytes.length).intValue(), 
+		ICFile file = getFileDAO().update(null, filename, null, bytes, new Date(System.currentTimeMillis()),
+				new Date(System.currentTimeMillis()), Long.valueOf(bytes.length).intValue(),
 				getFileTypeDAO().update("text/calendar", "Internet Calendaring and Scheduling Core Object Specification (iCalendar)"));
 
 		IOUtil.close(out);

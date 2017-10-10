@@ -116,13 +116,11 @@ import com.idega.data.IDOUtil;
 import com.idega.idegaweb.IWMainApplication;
 import com.idega.idegaweb.IWMainApplicationSettings;
 import com.idega.idegaweb.IWResourceBundle;
-import com.idega.presentation.IWContext;
 import com.idega.user.business.UserBusiness;
 import com.idega.user.dao.UserDAO;
 import com.idega.user.data.bean.Group;
 import com.idega.user.data.bean.User;
 import com.idega.util.CoreConstants;
-import com.idega.util.CoreUtil;
 import com.idega.util.ListUtil;
 import com.idega.util.SendMail;
 import com.idega.util.StringUtil;
@@ -283,13 +281,7 @@ public class CalendarNotificationServiceImpl extends DefaultSpringBean implement
 				if (databaseFile != null) {
 					String path = "/file?id=" + uuid;
 
-					IWContext iwc = CoreUtil.getIWContext();
-					if (iwc != null) {
-						serverURL = CoreUtil.getServerURL(iwc.getRequest());
-					} else {
-						serverURL = getApplication().getIWApplicationContext().getDomain().getURL();
-					}
-
+					serverURL = getApplicationProperty("default_service_url");
 					if (serverURL.endsWith(CoreConstants.SLASH)) {
 						path = path.substring(1);
 					}

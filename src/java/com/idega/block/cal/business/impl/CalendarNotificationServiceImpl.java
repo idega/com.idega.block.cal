@@ -105,7 +105,6 @@ import org.springframework.stereotype.Service;
 import com.idega.block.cal.business.CalendarNotificationService;
 import com.idega.block.cal.data.CalendarEntry;
 import com.idega.block.cal.writer.ICalWriter;
-import com.idega.block.calendar.business.GoogleEventService;
 import com.idega.block.calendar.data.AttendeeEntity;
 import com.idega.business.IBOLookup;
 import com.idega.business.IBOLookupException;
@@ -146,9 +145,6 @@ public class CalendarNotificationServiceImpl extends DefaultSpringBean implement
 	private UserDAO userDAO;
 
 	@Autowired
-	private GoogleEventService googleEventService;
-
-	@Autowired
 	private ICalWriter iCalWriter;
 
 	private IWResourceBundle resourceBundle;
@@ -160,14 +156,6 @@ public class CalendarNotificationServiceImpl extends DefaultSpringBean implement
 		}
 
 		return this.resourceBundle;
-	}
-
-	private GoogleEventService getGoogleEventService() {
-		if (this.googleEventService == null) {
-			ELUtil.getInstance().autowire(this);
-		}
-
-		return this.googleEventService;
 	}
 
 	private ICalWriter getICalWriter() {
@@ -276,7 +264,7 @@ public class CalendarNotificationServiceImpl extends DefaultSpringBean implement
 				ICFile databaseFile = getICalWriter().writeToDatabase(entries, filename + ".ics");
 				String uuid = databaseFile.getMetaData("uuid");
 				if (StringUtil.isEmpty(uuid)) {
-					databaseFile = getICalWriter().getFileDAO().findById(databaseFile.getId());
+					databaseFile = getICalWriter().getFileDAO().findById(databaseFile.getFileId());
 					uuid = databaseFile.getMetaData("uuid");
 				}
 

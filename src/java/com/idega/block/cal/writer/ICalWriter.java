@@ -244,7 +244,7 @@ public class ICalWriter extends DefaultSpringBean {
 		byte[] bytes = out.toByteArray();
 		ICFile file = getFileDAO().update(null, filename, null, bytes, new Date(System.currentTimeMillis()),
 				new Date(System.currentTimeMillis()), Long.valueOf(bytes.length).intValue(),
-				getFileTypeDAO().update("text/calendar", "Internet Calendaring and Scheduling Core Object Specification (iCalendar)"));
+				getFileTypeDAO().update("text/calendar", "Internet Calendaring and Scheduling Core Object Specification (iCalendar)"), true);
 
 		IOUtil.close(out);
 
